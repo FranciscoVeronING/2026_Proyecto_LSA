@@ -111,6 +111,7 @@ SIGN_CLASSES = [
 
 USE_POSE = True
 USE_HANDS = True
+USE_FACE = False
 
 POSE_DIM = 33 * 3 if USE_POSE else 0
 HANDS_DIM = (21 * 3) * 2 if USE_HANDS else 0

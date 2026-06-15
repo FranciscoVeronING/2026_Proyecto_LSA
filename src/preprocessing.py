@@ -10,7 +10,8 @@ from src.utils import get_anchor_and_scale, normalize_spatial_points, uniform_su
 from src.config import (
     DATASET_VIDEOS_DIR, 
     DATASET_NPY_DIR, 
-    TARGET_FRAMES, 
+    TARGET_FRAMES,
+    USE_FACE, 
     USE_POSE, 
     USE_HANDS,
     FRAME_FEATURES_DIM
@@ -21,7 +22,8 @@ def process_video_to_landmarks(
     holistic_model: Any, 
     target_frames: int,
     use_pose: bool,
-    use_hands: bool
+    use_hands: bool,
+    use_face: bool
 ) -> np.ndarray:
     """
     Opens a video file, extracts, spatially normalizes each frame, 
@@ -58,6 +60,12 @@ def process_video_to_landmarks(
             normalized_pose = normalize_spatial_points(raw_pose, anchor, scale)
             features_to_combine.append(normalized_pose)
 
+        if use_face:
+            raw_face = np.array([[lm.x, lm.y, lm.z] for lm in results.face_landmarks.landmark]).flatten() \
+                if results.face_landmarks else np.zeros(468 * 3)
+            normalized_face = normalize_spatial_points(raw_face, anchor, scale)
+            features_to_combine.append(normalized_face)
+
         if use_hands:
             raw_left_hand = np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten() \
                 if results.left_hand_landmarks else np.zeros(21 * 3)
@@ -89,6 +97,7 @@ def run_extraction_pipeline(
         dest_dir: str,
         use_pose: bool,
         use_hands: bool,
+        use_face: bool,
         target_frames: int
     ) -> None:
     """
@@ -130,7 +139,8 @@ def run_extraction_pipeline(
                         holistic_model=holistic, 
                         target_frames=target_frames,
                         use_pose=use_pose,
-                        use_hands=use_hands
+                        use_hands=use_hands,
+                        use_face=use_face
                     )
                     if landmarks_tensor.shape[0] == target_frames:
                         np.save(final_save_path, landmarks_tensor)
@@ -150,5 +160,6 @@ if __name__ == "__main__":
         dest_dir=DATASET_NPY_DIR,
         use_pose=USE_POSE,
         use_hands=USE_HANDS,
+        use_face=USE_FACE,
         target_frames=TARGET_FRAMES
     )
