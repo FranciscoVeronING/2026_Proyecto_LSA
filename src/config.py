@@ -56,7 +56,7 @@ SIGN_CLASSES = [
     "Z",
     "yo",
     "vos",
-    "el/ella"
+    "el_ella",
     "nosotros",
     "ellos",
     "hola",
@@ -67,21 +67,21 @@ SIGN_CLASSES = [
     "apellido",
     "documento",
     "dia",
-    "hora"
+    "hora",
     "familia",
     "mama",
     "papa",
-    "hermano/a",
+    "hermano_a",
     "tener",
     #"arma",
     "cuchillo",
     "brazo",
     "cara",
-    "hijo/a",
+    "hijo_a",
     "numero",
-    "años(Edad)",
+    "años",
     "ojo",
-    "esposo/a",
+    "esposo_a",
     "casa",
     "calle",
     "lunes",
@@ -92,7 +92,7 @@ SIGN_CLASSES = [
     "sabado",
     "domingo",
     "plaza",
-    "hoy/ahora",
+    "ahora_hoy",
     "ayer",
     #"golpear",
     "poder",
@@ -106,7 +106,7 @@ SIGN_CLASSES = [
     "llamar",
     "repetir",
     "vivir",
-    "vivir en"
+    "vivir_en"
 ]
 
 USE_POSE = True
