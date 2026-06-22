@@ -151,3 +151,4 @@ CONFIDENCE_THRESHOLD = 0.85
 MOTION_PIXEL_THRESHOLD = 700
 STILL_FRAMES_LIMIT = 25
 CAPTURE_BUFFER_SIZE = 100 # Máximo de frames en buffer visual
+MISSING_HANDS_LIMIT = 15 # Medio segundo de tolerancia si las manos salen de cámara
