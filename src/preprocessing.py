@@ -6,8 +6,8 @@ import mediapipe as mp
 from typing import List, Any
 from tqdm import tqdm
 
-from src.utils import get_anchor_and_scale, normalize_spatial_points, uniform_subsampling
-from src.config import (
+from utils import get_anchor_and_scale, normalize_spatial_points, uniform_subsampling
+from config import (
     DATASET_VIDEOS_DIR, 
     DATASET_NPY_DIR, 
     TARGET_FRAMES,

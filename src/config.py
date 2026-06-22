@@ -1,17 +1,18 @@
 
-DATASET_VIDEOS_DIR = "./dataset"
-DATASET_NPY_DIR = "./dataset_landmarks"
-MODEL_SAVE_DIR = "/src/model"
+DATASET_VIDEOS_DIR = "../dataset"
+DATASET_NPY_DIR = "../dataset_landmarks"
+MODEL_SAVE_DIR = "../src/model"
 
 NUM_CLASSES = 94
 SAMPLES_PER_CLASS = 50
+MAX_FRAMES = 16
 
 SIGN_CLASSES = [
     "como",
     "cuando",
     "donde",
     "que",
-    "quienes",
+    "quien",
     "si",
     "no",
     "cuantos",
@@ -56,7 +57,7 @@ SIGN_CLASSES = [
     "Z",
     "yo",
     "vos",
-    "el/ella"
+    "el_ella",
     "nosotros",
     "ellos",
     "hola",
@@ -67,21 +68,21 @@ SIGN_CLASSES = [
     "apellido",
     "documento",
     "dia",
-    "hora"
+    "hora",
     "familia",
     "mama",
     "papa",
-    "hermano/a",
+    "hermano_a",
     "tener",
     #"arma",
     "cuchillo",
     "brazo",
     "cara",
-    "hijo/a",
+    "hijo_a",
     "numero",
-    "años(Edad)",
+    "años",
     "ojo",
-    "esposo/a",
+    "esposo a",
     "casa",
     "calle",
     "lunes",
@@ -92,7 +93,7 @@ SIGN_CLASSES = [
     "sabado",
     "domingo",
     "plaza",
-    "hoy/ahora",
+    "ahora_hoy",
     "ayer",
     #"golpear",
     "poder",
@@ -106,7 +107,7 @@ SIGN_CLASSES = [
     "llamar",
     "repetir",
     "vivir",
-    "vivir en"
+    "vivir_en"
 ]
 
 USE_POSE = True
@@ -123,9 +124,30 @@ FRAME_HEIGHT = 1080
 SIGN_TO_INDEX = {sign: idx for idx, sign in enumerate(SIGN_CLASSES)}
 INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 
-MAX_FRAMES = 16
-BATCH_SIZE = 32
-EPOCHS_BASE = 15
-LEARNING_RATE_TRANSFER = 1e-3
-LEARNING_RATE_FINE_TUNING = 1e-5
+
+# ==========================================
+# HIPERPARÁMETROS DEL TINY TRANSFORMER
+# ==========================================
+HIDDEN_DIM = 128
+NUM_HEADS = 4
+NUM_LAYERS = 2
+DROPOUT_RATE = 0.5
+
+# ==========================================
+# ENTRENAMIENTO Y DATA AUGMENTATION
+# ==========================================
+USE_DATA_AUGMENTATION = False
+BATCH_SIZE = 16
+EPOCHS = 200
 PATIENCE = 15
+VIRTUAL_MULTIPLIER = 1 
+AUG_NOISE_STD = 0.015
+AUG_SCALE_RANGE = (0.85, 1.15)
+
+# ==========================================
+# INFERENCIA EN TIEMPO REAL (WEBCAM)
+# ==========================================
+CONFIDENCE_THRESHOLD = 0.85
+MOTION_PIXEL_THRESHOLD = 700
+STILL_FRAMES_LIMIT = 25
+CAPTURE_BUFFER_SIZE = 100 # Máximo de frames en buffer visual

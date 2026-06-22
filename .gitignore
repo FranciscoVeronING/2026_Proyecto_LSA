@@ -1,11 +1,12 @@
 dataset/
 *.mp4
 
+dataset_landmarks/
+
 __pycache__/
 *.pyc
 .venv/
 .env
 
-models/
-*.h5
-*.tflite
+src/model/2026-06-16/mapeo_clases.json
+src/model/2026-06-17/mapeo_clases.json
