@@ -152,6 +152,7 @@ if __name__ == "__main__":
     print(f"Starting extraction:")
     print(f" > Extract Pose: {USE_POSE}")
     print(f" > Extract Hands: {USE_HANDS}")
+    print(f" > Extract Face: {USE_FACE}")
     print(f" > Expected features per frame: {FRAME_FEATURES_DIM} features.")
     print(f" > Output temporal sequence: {TARGET_FRAMES} frames.")
     

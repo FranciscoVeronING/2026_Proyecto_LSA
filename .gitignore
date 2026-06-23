@@ -9,3 +9,5 @@ __pycache__/
 models/
 *.h5
 *.tflite
+
+.prueba_gpu
