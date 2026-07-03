@@ -2,6 +2,9 @@ import os
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
 from src.model.backbone import get_model
 from src.config import SIGN_CLASSES, LEARNING_RATE_TRANSFER, DATASET_NPY_DIR, WEIGHTS_PATH, \
     NUM_CLASSES, MODEL_SAVE_DIR, BATCH_SIZE, EPOCHS, PATIENCE, VAL_SIZE
@@ -37,9 +40,7 @@ base_model = get_model()
 print("Adding weights from pre-trained model...")
 base_model.load_weights(WEIGHTS_PATH)
 
-# Freeze all layers of the base model to prevent them from being updated during training
-for layer in base_model.layers:
-    layer.trainable = False
+base_model.trainable = True
 
 # Remove the last layer of the base model to prepare for our custom classifier
 x = base_model.layers[-2].output
@@ -62,8 +63,15 @@ print(model_lsa.summary())
 # Callbacks to save the best model and implement early stopping
 os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 callbacks = [
-    tf.keras.callbacks.ModelCheckpoint(os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_best.h5'), save_best_only=True, monitor='val_accuracy'),
-    tf.keras.callbacks.EarlyStopping(patience=PATIENCE, monitor='val_loss', restore_best_weights=True)
+    tf.keras.callbacks.ModelCheckpoint(os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_best.h5'), save_best_only=True, monitor='val_accuracy', mode='max'),
+    tf.keras.callbacks.EarlyStopping(patience=PATIENCE, monitor='val_loss', restore_best_weights=True),
+    tf.keras.callbacks.ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.2,       # Multiplies the LR by 0.2 (reduces it by 80%)
+        patience=5,        # Waits 5 epochs of "plateau" before acting
+        min_lr=1e-6,       # The minimum LR that can be reached
+        verbose=1          # Informs you in the terminal when the change is made
+    )
 ]
 
 print("Initiating training...")
@@ -76,3 +84,75 @@ history = model_lsa.fit(
 )
 
 print("Final model saved at: " + os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_last.h5'))
+
+
+print("Generating reports...")
+
+REPORT_DIR = os.path.join(MODEL_SAVE_DIR, "reports")
+os.makedirs(REPORT_DIR, exist_ok=True)
+
+# A. Loss y Accuracy
+plt.figure(figsize=(14, 5))
+
+# Subplot 1: Loss
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Train Loss', color='blue', lw=2)
+plt.plot(history.history['val_loss'], label='Validation Loss', color='red', linestyle='--', lw=2)
+plt.title("Curva de Pérdida (Loss) - LSA Transformer")
+plt.xlabel("Épocas")
+plt.ylabel("Pérdida")
+plt.legend()
+plt.grid(True)
+
+# Subplot 2: Accuracy
+plt.subplot(1, 2, 2)
+plt.plot(history.history['accuracy'], label='Train Accuracy', color='blue', lw=2)
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy', color='red', linestyle='--', lw=2)
+plt.title("Accuracy - LSA Transfer Learning Media Pipe")
+plt.xlabel("Epochs")
+plt.ylabel("Precision")
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.savefig(os.path.join(REPORT_DIR, "accuracy_lsa.png"), dpi=300)
+plt.close()
+
+
+print("Calculating predictions...")
+y_pred_prob = model_lsa.predict(X_val, batch_size=BATCH_SIZE)
+y_pred = np.argmax(y_pred_prob, axis=1)
+
+cm = confusion_matrix(y_val, y_pred)
+
+plt.figure(figsize=(24, 20))
+sns.heatmap(
+    cm, 
+    annot=False,
+    cmap='Blues', 
+    xticklabels=SIGN_CLASSES, 
+    yticklabels=SIGN_CLASSES
+)
+plt.title("Confusion Matrix - 94 Classes LSA", fontsize=16)
+plt.xlabel("Predicted Class", fontsize=12)
+plt.ylabel("True Class", fontsize=12)
+plt.xticks(rotation=90, fontsize=8)
+plt.yticks(fontsize=8)
+plt.tight_layout()
+
+plt.savefig(os.path.join(REPORT_DIR, "confusion_matrix_lsa.png"), dpi=300)
+plt.close()
+
+classes_index = list(range(NUM_CLASSES))
+
+report_txt = classification_report(
+    y_val, 
+    y_pred, 
+    labels=classes_index, 
+    target_names=SIGN_CLASSES
+)
+report_path = os.path.join(REPORT_DIR, "report.txt")
+
+with open(report_path, "w", encoding="utf-8") as f:
+    f.write("=== REPORT - TRANSFER LEARNING MEDIA PIPE LSA ===\n\n")
+    f.write(report_txt)

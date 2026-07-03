@@ -125,7 +125,7 @@ FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM + FACE_DIM
 
 FRAME_WIDTH = 1920
 FRAME_HEIGHT = 1080
-TARGET_FRAMES = 75
+TARGET_FRAMES = 16
 
 SIGN_TO_INDEX = {sign: idx for idx, sign in enumerate(SIGN_CLASSES)}
 INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
