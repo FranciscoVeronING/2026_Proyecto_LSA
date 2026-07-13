@@ -2,7 +2,7 @@ dataset/
 *.mp4
 
 dataset_landmarks/
-
+dataset_landmarks_32/
 __pycache__/
 *.pyc
 .venv/

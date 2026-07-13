@@ -8,13 +8,13 @@ from tqdm import tqdm
 
 from utils import get_anchor_and_scale, normalize_spatial_points, uniform_subsampling
 from config import (
-    DATASET_VIDEOS_DIR, 
-    DATASET_NPY_DIR, 
-    TARGET_FRAMES,
-    USE_FACE, 
-    USE_POSE, 
+    DATASET_VIDEOS_DIR,
+    DATASET_NPY_DIR,
+    MAX_FRAMES,
+    USE_FACE,
+    USE_POSE,
     USE_HANDS,
-    FRAME_FEATURES_DIM
+    FRAME_FEATURES_DIM,
 )
 
 def process_video_to_landmarks(
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     print(f" > Extract Pose: {USE_POSE}")
     print(f" > Extract Hands: {USE_HANDS}")
     print(f" > Expected features per frame: {FRAME_FEATURES_DIM} features.")
-    print(f" > Output temporal sequence: {TARGET_FRAMES} frames.")
+    print(f" > Output temporal sequence: {MAX_FRAMES} frames.")
     
     run_extraction_pipeline(
         source_dir=DATASET_VIDEOS_DIR, 
@@ -161,5 +161,5 @@ if __name__ == "__main__":
         use_pose=USE_POSE,
         use_hands=USE_HANDS,
         use_face=USE_FACE,
-        target_frames=TARGET_FRAMES
+        target_frames=MAX_FRAMES
     )
