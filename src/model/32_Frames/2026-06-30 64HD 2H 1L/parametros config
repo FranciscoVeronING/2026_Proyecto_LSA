@@ -1,11 +1,15 @@
+ //Train Loss: 1.3970 (Acc: 88.85%) | Val Loss: 1.1562 (Acc: 97.47%)
+
 
 DATASET_VIDEOS_DIR = "../dataset"
-DATASET_NPY_DIR = "../dataset_landmarks"
+DATASET_NPY_DIR = "../dataset_landmarks_32"
 MODEL_SAVE_DIR = "../src/model"
 
 NUM_CLASSES = 94
 SAMPLES_PER_CLASS = 50
 MAX_FRAMES = 16
+TARGET_FRAMES = 32
+
 
 SIGN_CLASSES = [
     "como",
@@ -128,9 +132,9 @@ INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 # ==========================================
 # HIPERPARÁMETROS DEL TINY TRANSFORMER
 # ==========================================
-HIDDEN_DIM = 128
-NUM_HEADS = 4
-NUM_LAYERS = 2
+HIDDEN_DIM = 64
+NUM_HEADS = 2
+NUM_LAYERS = 1
 DROPOUT_RATE = 0.5
 
 # ==========================================
@@ -143,3 +147,12 @@ PATIENCE = 15
 VIRTUAL_MULTIPLIER = 1 
 AUG_NOISE_STD = 0.015
 AUG_SCALE_RANGE = (0.85, 1.15)
+
+# ==========================================
+# INFERENCIA EN TIEMPO REAL (WEBCAM)
+# ==========================================
+CONFIDENCE_THRESHOLD = 0.85
+MOTION_PIXEL_THRESHOLD = 700
+STILL_FRAMES_LIMIT = 25
+CAPTURE_BUFFER_SIZE = 100 # Máximo de frames en buffer visual
+MISSING_HANDS_LIMIT = 15 # Medio segundo de tolerancia si las manos salen de cámara
