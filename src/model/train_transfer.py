@@ -38,7 +38,7 @@ print("Initializing base model...")
 base_model = get_model() 
 
 print("Adding weights from pre-trained model...")
-base_model.load_weights(WEIGHTS_PATH)
+base_model.load_weights(WEIGHTS_PATH, by_name=True, skip_mismatch=True)
 
 base_model.trainable = True
 
@@ -68,7 +68,7 @@ callbacks = [
     tf.keras.callbacks.ReduceLROnPlateau(
         monitor='val_loss',
         factor=0.2,       # Multiplies the LR by 0.2 (reduces it by 80%)
-        patience=5,        # Waits 5 epochs of "plateau" before acting
+        patience=5,        # Waits 5 epochs of "plateau" before acting.             TRY 5 = 3
         min_lr=1e-6,       # The minimum LR that can be reached
         verbose=1          # Informs you in the terminal when the change is made
     )
