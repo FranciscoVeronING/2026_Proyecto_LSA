@@ -1,0 +1,4874 @@
+{
+  "dataset": [
+    {
+      "glosses": [
+        "CUANTOS",
+        "AÑOS"
+      ],
+      "spanish": "¿Cuántos años tenés?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé el brazo."
+    },
+    {
+      "glosses": [
+        "PAPA",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi papá."
+    },
+    {
+      "glosses": [
+        "HERMANO_A",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi hermano o hermana."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "PODER"
+      ],
+      "spanish": "Vos podés."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PAPA",
+        "VER"
+      ],
+      "spanish": "Veo a mi papá."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "PAPA",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestro papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "GOLPEAR"
+      ],
+      "spanish": "Yo golpeo."
+    },
+    {
+      "glosses": [
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "No llevo."
+    },
+    {
+      "glosses": [
+        "SI",
+        "BIEN",
+        "AHORA_HOY"
+      ],
+      "spanish": "Sí, hoy estoy bien."
+    },
+    {
+      "glosses": [
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "4",
+        "5",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "spanish": "Mi documento es el número 45123456."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Walter."
+    },
+    {
+      "glosses": [
+        "HIJO_A",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi hijo o hija."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevamos el documento."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "HERMANO_A",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su hermano o hermana."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DEPARTAMENTO",
+        "VIVIR"
+      ],
+      "spanish": "Vivimos en un departamento."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El miércoles paso el documento."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El domingo veo a mi familia."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O"
+      ],
+      "spanish": "Hola, me llamo Hugo."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "HIJO_A"
+      ],
+      "spanish": "¿Cómo está tu hijo o hija?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO_A",
+        "VER"
+      ],
+      "spanish": "Veo a mi esposo o esposa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "GOLPEAR",
+        "NO"
+      ],
+      "spanish": "Yo no golpeo."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el miércoles?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "7"
+      ],
+      "spanish": "Tengo 7 años."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DOCUMENTO",
+        "SACAR"
+      ],
+      "spanish": "Sacamos el documento."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "C",
+        "A",
+        "R",
+        "L",
+        "O",
+        "S"
+      ],
+      "spanish": "Hola, el sábado me llamo Carlos."
+    },
+    {
+      "glosses": [
+        "ARMA",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el arma?"
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el sábado?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "A",
+        "U",
+        "R",
+        "A"
+      ],
+      "spanish": "Me llamo Laura."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ROBAR",
+        "CUCHILLO"
+      ],
+      "spanish": "Me robaron el cuchillo."
+    },
+    {
+      "glosses": [
+        "LUGAR",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo el lugar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CARA",
+        "GOLPEAR"
+      ],
+      "spanish": "Me golpearon en la cara."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O"
+      ],
+      "spanish": "Hola, el sábado me llamo Pablo."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el viernes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Juan."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "K",
+        "E",
+        "N",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo Kenia."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "Ellos ven la plaza."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "L",
+        "A",
+        "U",
+        "R",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Laura."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "REPETIR",
+        "NO"
+      ],
+      "spanish": "Yo no repito."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR",
+        "NO"
+      ],
+      "spanish": "Yo no vivo acá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "2",
+        "8",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "PASAR"
+      ],
+      "spanish": "Paso mi documento, número 28456789."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el miércoles?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Hola, el sábado me llamo Juan."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O"
+      ],
+      "spanish": "Hola, el miércoles me llamo Pablo."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El domingo paso el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "R",
+        "O",
+        "J",
+        "A",
+        "S"
+      ],
+      "spanish": "Mi apellido es Rojas."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Marta?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "K",
+        "E",
+        "N",
+        "I",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Kenia."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Él o ella lleva el documento."
+    },
+    {
+      "glosses": [
+        "CASA",
+        "DONDE",
+        "VOS",
+        "VIVIR"
+      ],
+      "spanish": "¿Dónde vivís vos?"
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "ROBAR"
+      ],
+      "spanish": "Le robaron."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Ximena?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "M",
+        "U",
+        "Ñ",
+        "O",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Muñoz."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo Ximena."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "A",
+        "N",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Ana."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Rosa."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "CUCHILLO",
+        "ROBAR"
+      ],
+      "spanish": "Me robaron un cuchillo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Luis, estoy bien."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DOCUMENTO",
+        "VER"
+      ],
+      "spanish": "Vemos el documento."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A"
+      ],
+      "spanish": "Hola, me llamo Marta."
+    },
+    {
+      "glosses": [
+        "CUCHILLO",
+        "DONDE",
+        "AHORA_HOY"
+      ],
+      "spanish": "¿Dónde está el cuchillo hoy?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "K",
+        "E",
+        "N",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo Kenia."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el lunes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "CUCHILLO",
+        "TENER"
+      ],
+      "spanish": "Tengo un cuchillo."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el lunes?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "CALLE",
+        "S",
+        "A",
+        "N",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle San Martín, cerca de la plaza?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Rosa."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "Hola, ¿cómo estás vos?"
+    },
+    {
+      "glosses": [
+        "OJO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé el ojo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo Marta."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO_A",
+        "TENER"
+      ],
+      "spanish": "Tengo esposo o esposa."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "PLAZA",
+        "VIVIR"
+      ],
+      "spanish": "Vivimos en la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CALLE",
+        "B",
+        "E",
+        "L",
+        "G",
+        "R",
+        "A",
+        "N",
+        "O"
+      ],
+      "spanish": "Vivo en la calle Belgrano."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "4",
+        "5",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número 45123456?"
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El miércoles veo la plaza."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos?"
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "M",
+        "I",
+        "T",
+        "R",
+        "E",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Mitre?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CASA",
+        "CALLE",
+        "Y",
+        "E",
+        "R",
+        "B",
+        "A",
+        "L"
+      ],
+      "spanish": "Vivo en la casa de la calle Yerbal."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "GOLPEAR"
+      ],
+      "spanish": "Él o ella golpea."
+    },
+    {
+      "glosses": [
+        "ROBAR",
+        "NO"
+      ],
+      "spanish": "No robo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el domingo?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R"
+      ],
+      "spanish": "Hola, el miércoles me llamo Walter."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CASA",
+        "CALLE",
+        "B",
+        "E",
+        "L",
+        "G",
+        "R",
+        "A",
+        "N",
+        "O"
+      ],
+      "spanish": "Vivo en la casa de la calle Belgrano."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "VIVIR"
+      ],
+      "spanish": "Nosotros vivimos acá."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "CALLE",
+        "M",
+        "I",
+        "T",
+        "R",
+        "E",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Mitre, cerca de la plaza?"
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "PODER"
+      ],
+      "spanish": "Ellos pueden."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "Él o ella vive en la casa."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R"
+      ],
+      "spanish": "Hola, me llamo Walter."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "0",
+        "1",
+        "1",
+        "1",
+        "2",
+        "2",
+        "2",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número 30111222?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "3",
+        "0"
+      ],
+      "spanish": "Tengo 30 años."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "LLAMAR"
+      ],
+      "spanish": "Nosotros llamamos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestra familia."
+    },
+    {
+      "glosses": [
+        "SACAR",
+        "NO"
+      ],
+      "spanish": "No saco."
+    },
+    {
+      "glosses": [
+        "MAMA",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "K",
+        "E",
+        "N",
+        "I",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Kenia?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O"
+      ],
+      "spanish": "Hola, me llamo Quino."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CASA",
+        "CALLE",
+        "S",
+        "A",
+        "N",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Vivo en la casa de la calle San Martín."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R"
+      ],
+      "spanish": "Me llamo Walter."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo María, estoy bien."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DEPARTAMENTO",
+        "VIVIR"
+      ],
+      "spanish": "Él o ella vive en un departamento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Walter?"
+    },
+    {
+      "glosses": [
+        "CASA",
+        "TUYO",
+        "NOSOTROS"
+      ],
+      "spanish": "La casa es nuestra, tuya también."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DOCUMENTO",
+        "TENER"
+      ],
+      "spanish": "Vos tenés documento."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "VER"
+      ],
+      "spanish": "Ellos ven."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "8",
+        "9",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "spanish": "Mi número de documento es 38901234."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Hugo."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Pasamos el documento."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el viernes?"
+    },
+    {
+      "glosses": [
+        "CUANTOS",
+        "NUMERO"
+      ],
+      "spanish": "¿Cuántos números hay?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "L",
+        "O",
+        "P",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, López."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CALLE",
+        "M",
+        "I",
+        "T",
+        "R",
+        "E"
+      ],
+      "spanish": "Vivo en la calle Mitre."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DEPARTAMENTO",
+        "VER"
+      ],
+      "spanish": "Vemos el departamento."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Ximena."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "LUGAR",
+        "VER"
+      ],
+      "spanish": "Vos ves el lugar."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "DOCUMENTO",
+        "TENER"
+      ],
+      "spanish": "Tenemos documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "4",
+        "2"
+      ],
+      "spanish": "Tengo 42 años."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DEPARTAMENTO",
+        "VER"
+      ],
+      "spanish": "Ellos ven el departamento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "0",
+        "1",
+        "1",
+        "1",
+        "2",
+        "2",
+        "2",
+        "PASAR"
+      ],
+      "spanish": "Paso mi documento, número 30111222."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "D",
+        "I",
+        "A",
+        "Z"
+      ],
+      "spanish": "Mi apellido es Díaz."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "D",
+        "I",
+        "E",
+        "G",
+        "O"
+      ],
+      "spanish": "Me llamo Diego."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "CUANTOS",
+        "AÑOS",
+        "FAMILIA"
+      ],
+      "spanish": "¿Cuántos años tiene tu familia?"
+    },
+    {
+      "glosses": [
+        "OJO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde te duele el ojo?"
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el martes?"
+    },
+    {
+      "glosses": [
+        "SI",
+        "MAL",
+        "NO"
+      ],
+      "spanish": "Sí, no estoy mal."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "K",
+        "E",
+        "N",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, el miércoles me llamo Kenia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ROBAR"
+      ],
+      "spanish": "Me robaron."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O"
+      ],
+      "spanish": "Hola, el miércoles me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No llamo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "V",
+        "E",
+        "G",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Vega."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el martes?"
+    },
+    {
+      "glosses": [
+        "OJO",
+        "YO",
+        "LASTIMAR",
+        "AYER"
+      ],
+      "spanish": "Ayer me lastimé el ojo."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El lunes paso el documento."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "Y",
+        "E",
+        "R",
+        "B",
+        "A",
+        "L",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Yerbal?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "BIEN"
+      ],
+      "spanish": "Hola, ¿todo bien?"
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "PAPA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CARA",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé la cara."
+    },
+    {
+      "glosses": [
+        "CHAU",
+        "VER",
+        "VOS"
+      ],
+      "spanish": "Chau, nos vemos."
+    },
+    {
+      "glosses": [
+        "BRAZO",
+        "DONDE",
+        "LASTIMAR"
+      ],
+      "spanish": "¿Dónde te lastimaste el brazo?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "D",
+        "I",
+        "E",
+        "G",
+        "O"
+      ],
+      "spanish": "Hola, el sábado me llamo Diego."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "C",
+        "A",
+        "R",
+        "L",
+        "O",
+        "S",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Carlos."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Juan, estoy bien."
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "V",
+        "E",
+        "G",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Vega?"
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "HIJO_A",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su hijo o hija."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El jueves paso el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "Yo no llamo."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el jueves?"
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El sábado veo a mi familia."
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "D",
+        "I",
+        "A",
+        "Z",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Díaz?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O"
+      ],
+      "spanish": "Hola, el miércoles me llamo Hugo."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "YO",
+        "MAL"
+      ],
+      "spanish": "Ayer estuve mal."
+    },
+    {
+      "glosses": [
+        "CUANTOS",
+        "FAMILIA"
+      ],
+      "spanish": "¿Cuántos son en la familia?"
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el domingo?"
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El lunes veo a mi familia."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el martes?"
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimó el brazo."
+    },
+    {
+      "glosses": [
+        "PAPA",
+        "BIEN"
+      ],
+      "spanish": "Mi papá está bien."
+    },
+    {
+      "glosses": [
+        "YO",
+        "SACAR",
+        "NO"
+      ],
+      "spanish": "Yo no saco."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "8",
+        "9",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número 38901234?"
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el miércoles?"
+    },
+    {
+      "glosses": [
+        "ARMA",
+        "YO",
+        "TENER",
+        "NO"
+      ],
+      "spanish": "No tengo un arma."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "C",
+        "A",
+        "R",
+        "L",
+        "O",
+        "S"
+      ],
+      "spanish": "Me llamo Carlos."
+    },
+    {
+      "glosses": [
+        "SI"
+      ],
+      "spanish": "Sí."
+    },
+    {
+      "glosses": [
+        "PAPA",
+        "QUIENES"
+      ],
+      "spanish": "¿Quién es tu papá?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "HIJO_A",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu hijo o hija."
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "R",
+        "O",
+        "J",
+        "A",
+        "S",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Rojas?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Quino."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "CHAU",
+        "VOS"
+      ],
+      "spanish": "El viernes te digo chau."
+    },
+    {
+      "glosses": [
+        "CARA",
+        "DONDE",
+        "GOLPEAR"
+      ],
+      "spanish": "¿Te golpearon en la cara?"
+    },
+    {
+      "glosses": [
+        "CARA",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé la cara."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Vos llevás el documento."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "HIJO_A",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su hijo o hija."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el miércoles?"
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "2",
+        "8",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número 28456789?"
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "CHAU",
+        "VOS"
+      ],
+      "spanish": "El miércoles te digo chau."
+    },
+    {
+      "glosses": [
+        "FAMILIA",
+        "QUIENES"
+      ],
+      "spanish": "¿Quiénes son de tu familia?"
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "ESPOSO_A",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestro esposo o esposa."
+    },
+    {
+      "glosses": [
+        "ESPOSO_A",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi esposo o esposa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "M",
+        "U",
+        "Ñ",
+        "O",
+        "Z"
+      ],
+      "spanish": "Mi apellido es Muñoz."
+    },
+    {
+      "glosses": [
+        "CUANDO",
+        "HORA"
+      ],
+      "spanish": "¿Cuándo es la hora?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "M",
+        "U",
+        "Ñ",
+        "O",
+        "Z",
+        "NOMBRE",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido Muñoz."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "LUGAR",
+        "VER"
+      ],
+      "spanish": "Vemos el lugar."
+    },
+    {
+      "glosses": [
+        "CUCHILLO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el cuchillo?"
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El viernes vivo en casa."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Sofía, estoy bien."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "G",
+        "A",
+        "R",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Mi apellido es García."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O"
+      ],
+      "spanish": "Hola, el sábado me llamo Quino."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "1",
+        "0",
+        "2",
+        "9",
+        "3",
+        "8",
+        "4",
+        "7"
+      ],
+      "spanish": "Mi número de documento es 10293847."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "CHAU",
+        "VOS"
+      ],
+      "spanish": "El lunes te digo chau."
+    },
+    {
+      "glosses": [
+        "HIJO_A",
+        "QUIENES"
+      ],
+      "spanish": "¿Quién es tu hijo o hija?"
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "HERMANO_A",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestro hermano o hermana."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "MAMA"
+      ],
+      "spanish": "¿Cómo está tu mamá?"
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "CHAU",
+        "VOS"
+      ],
+      "spanish": "El jueves te digo chau."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es?"
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el viernes?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Hugo, estoy bien."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "LLAMAR"
+      ],
+      "spanish": "Él o ella llama."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O"
+      ],
+      "spanish": "Me llamo Hugo."
+    },
+    {
+      "glosses": [
+        "MAMA",
+        "BIEN"
+      ],
+      "spanish": "Mi mamá está bien."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "LLAMAR"
+      ],
+      "spanish": "Ellos llaman."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el martes?"
+    },
+    {
+      "glosses": [
+        "OJO",
+        "YO",
+        "VER",
+        "MAL"
+      ],
+      "spanish": "Veo mal con el ojo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DOCUMENTO",
+        "SACAR"
+      ],
+      "spanish": "Vos sacás el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A"
+      ],
+      "spanish": "Me llamo Ximena."
+    },
+    {
+      "glosses": [
+        "SI",
+        "BIEN"
+      ],
+      "spanish": "Sí, estoy bien."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "G",
+        "A",
+        "R",
+        "C",
+        "I",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, García."
+    },
+    {
+      "glosses": [
+        "CHAU",
+        "AHORA_HOY"
+      ],
+      "spanish": "Chau por hoy."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ARMA",
+        "VER",
+        "MAL"
+      ],
+      "spanish": "Veo un arma y me asusté."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CASA",
+        "TUYO"
+      ],
+      "spanish": "Esta casa es tuya."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "CALLE",
+        "Y",
+        "E",
+        "R",
+        "B",
+        "A",
+        "L",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Yerbal, cerca de la plaza?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Quino."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CALLE",
+        "Y",
+        "E",
+        "R",
+        "B",
+        "A",
+        "L"
+      ],
+      "spanish": "Vivo en la calle Yerbal."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el jueves?"
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "1",
+        "0",
+        "2",
+        "9",
+        "3",
+        "8",
+        "4",
+        "7",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número 10293847?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "HERMANO_A",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu hermano o hermana."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Quino, estoy bien."
+    },
+    {
+      "glosses": [
+        "BIEN",
+        "SI"
+      ],
+      "spanish": "Sí, todo bien."
+    },
+    {
+      "glosses": [
+        "SI",
+        "MAL",
+        "AYER"
+      ],
+      "spanish": "Sí, ayer estuve mal."
+    },
+    {
+      "glosses": [
+        "YO",
+        "MAMA",
+        "VER"
+      ],
+      "spanish": "Veo a mi mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "PLAZA",
+        "CALLE",
+        "Y",
+        "E",
+        "R",
+        "B",
+        "A",
+        "L"
+      ],
+      "spanish": "Vivo cerca de la plaza, en la calle Yerbal."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el jueves?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "MAMA",
+        "TENER"
+      ],
+      "spanish": "Tengo mamá."
+    },
+    {
+      "glosses": [
+        "MAMA",
+        "QUIENES"
+      ],
+      "spanish": "¿Quién es tu mamá?"
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DOCUMENTO",
+        "SACAR"
+      ],
+      "spanish": "Él o ella saca el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo el documento."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "HERMANO_A",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su hermano o hermana."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "LUGAR",
+        "VER"
+      ],
+      "spanish": "Ellos ven el lugar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "4",
+        "5",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "spanish": "Mi número de documento es 45123456."
+    },
+    {
+      "glosses": [
+        "CASA",
+        "TUYO",
+        "VOS"
+      ],
+      "spanish": "La casa es tuya."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PODER",
+        "NO"
+      ],
+      "spanish": "Yo no puedo."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El domingo vivo en casa."
+    },
+    {
+      "glosses": [
+        "LUGAR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda el lugar?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Ximena, estoy bien."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "TUYO"
+      ],
+      "spanish": "El documento es tuyo."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el martes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "PODER"
+      ],
+      "spanish": "Yo puedo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "ESPOSO_A",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu esposo o esposa."
+    },
+    {
+      "glosses": [
+        "HORA",
+        "AHORA_HOY",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es ahora?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "QUE"
+      ],
+      "spanish": "¿Qué pasó ayer?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "M",
+        "U",
+        "Ñ",
+        "O",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Muñoz."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Te lastimaste el brazo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "V",
+        "E",
+        "G",
+        "A",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Paso el documento, apellido Vega."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "PODER"
+      ],
+      "spanish": "Él o ella puede."
+    },
+    {
+      "glosses": [
+        "AHORA_HOY",
+        "YO",
+        "BIEN"
+      ],
+      "spanish": "Hoy estoy bien."
+    },
+    {
+      "glosses": [
+        "HERMANO_A",
+        "QUIENES"
+      ],
+      "spanish": "¿Quién es tu hermano o hermana?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "V",
+        "E",
+        "G",
+        "A"
+      ],
+      "spanish": "Mi apellido es Vega."
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "M",
+        "U",
+        "Ñ",
+        "O",
+        "Z",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Muñoz?"
+    },
+    {
+      "glosses": [
+        "ARMA",
+        "DONDE",
+        "AYER"
+      ],
+      "spanish": "¿Dónde estaba el arma ayer?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "ARMA",
+        "VER"
+      ],
+      "spanish": "Veo un arma."
+    },
+    {
+      "glosses": [
+        "YO",
+        "OJO",
+        "VER",
+        "MAL"
+      ],
+      "spanish": "Veo mal con el ojo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "V",
+        "E",
+        "G",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Vega."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "TUYO",
+        "VOS"
+      ],
+      "spanish": "El documento es tuyo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CARA",
+        "GOLPEAR",
+        "AYER"
+      ],
+      "spanish": "Ayer me golpearon la cara."
+    },
+    {
+      "glosses": [
+        "YO",
+        "BRAZO",
+        "LASTIMAR",
+        "AYER"
+      ],
+      "spanish": "Ayer me lastimé el brazo."
+    },
+    {
+      "glosses": [
+        "CUANTOS",
+        "AÑOS",
+        "YO"
+      ],
+      "spanish": "¿Cuántos años tengo?"
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El martes vivo en casa."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El lunes veo la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DEPARTAMENTO",
+        "VIVIR_EN"
+      ],
+      "spanish": "Vivo en un departamento."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "PLAZA",
+        "VIVIR"
+      ],
+      "spanish": "Él o ella vive en la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "Veo la plaza."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "Vemos la plaza."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El martes veo a mi familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "REPETIR"
+      ],
+      "spanish": "Yo repito."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CASA"
+      ],
+      "spanish": "Vivo en casa."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DOCUMENTO",
+        "TENER"
+      ],
+      "spanish": "Tienen documento."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Vos llamás."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "4",
+        "2",
+        "REPETIR"
+      ],
+      "spanish": "Repito: tengo 42 años."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PAPA",
+        "TENER"
+      ],
+      "spanish": "Tengo papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "P",
+        "E",
+        "R",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Pérez."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "S",
+        "U",
+        "A",
+        "R",
+        "E",
+        "Z"
+      ],
+      "spanish": "Mi apellido es Suárez."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "PAPA",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "2",
+        "8",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "spanish": "Mi número de documento es 28456789."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O"
+      ],
+      "spanish": "Me llamo Quino."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "MAMA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su mamá."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "PAPA",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su papá."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "REPETIR"
+      ],
+      "spanish": "Él o ella repite."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DOCUMENTO",
+        "VER"
+      ],
+      "spanish": "Él o ella ve el documento."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El viernes veo la plaza."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "PODER"
+      ],
+      "spanish": "Nosotros podemos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "ROBAR"
+      ],
+      "spanish": "Nos robaron."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "A",
+        "N",
+        "A"
+      ],
+      "spanish": "Me llamo Ana."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A"
+      ],
+      "spanish": "Me llamo Marta."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CASA",
+        "VER"
+      ],
+      "spanish": "Veo la casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CASA",
+        "CALLE",
+        "M",
+        "I",
+        "T",
+        "R",
+        "E"
+      ],
+      "spanish": "Vivo en la casa de la calle Mitre."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "7",
+        "REPETIR"
+      ],
+      "spanish": "Repito: tengo 7 años."
+    },
+    {
+      "glosses": [
+        "DEPARTAMENTO",
+        "YO",
+        "VIVIR_EN"
+      ],
+      "spanish": "Vivo en departamento."
+    },
+    {
+      "glosses": [
+        "CASA",
+        "TUYO"
+      ],
+      "spanish": "La casa es tuya."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VER"
+      ],
+      "spanish": "Yo veo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "D",
+        "I",
+        "E",
+        "G",
+        "O",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Diego."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Nos lastimamos el brazo."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "GOLPEAR"
+      ],
+      "spanish": "Golpeamos."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "P",
+        "E",
+        "R",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Pérez."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "CASA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve la casa."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "VIVIR"
+      ],
+      "spanish": "Él o ella vive acá."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "ROBAR"
+      ],
+      "spanish": "Les robaron."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DOCUMENTO",
+        "SACAR"
+      ],
+      "spanish": "Sacan el documento."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El martes paso el documento."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "NOSOTROS",
+        "VER"
+      ],
+      "spanish": "Vemos la plaza."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "LUGAR",
+        "VER"
+      ],
+      "spanish": "Él o ella ve el lugar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "2",
+        "5",
+        "REPETIR"
+      ],
+      "spanish": "Repito: tengo 25 años."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "L",
+        "O",
+        "P",
+        "E",
+        "Z"
+      ],
+      "spanish": "Mi apellido es López."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DEPARTAMENTO",
+        "VIVIR"
+      ],
+      "spanish": "Ellos viven en un departamento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "3",
+        "0",
+        "REPETIR"
+      ],
+      "spanish": "Repito: tengo 30 años."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "G",
+        "A",
+        "R",
+        "C",
+        "I",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: García."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "Ellos viven en la casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo María."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DOCUMENTO",
+        "VER"
+      ],
+      "spanish": "Vos ves el documento."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "CASA",
+        "VER"
+      ],
+      "spanish": "Vos ves la casa."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El jueves veo la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "Vivo en la casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi nombre."
+    },
+    {
+      "glosses": [
+        "DEPARTAMENTO",
+        "YO",
+        "VIVIR_EN"
+      ],
+      "spanish": "Vivo en un departamento."
+    },
+    {
+      "glosses": [
+        "HIJO_A",
+        "YO",
+        "TENER"
+      ],
+      "spanish": "Tengo hijo o hija."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "CASA",
+        "VER"
+      ],
+      "spanish": "Ellos ven la casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "TENER"
+      ],
+      "spanish": "Yo tengo documento."
+    },
+    {
+      "glosses": [
+        "FAMILIA",
+        "YO",
+        "VER"
+      ],
+      "spanish": "Veo a mi familia."
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El sábado veo la plaza."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimaron el brazo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "S",
+        "U",
+        "A",
+        "R",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Suárez."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "FAMILIA",
+        "VIVIR"
+      ],
+      "spanish": "Nosotros vivimos en familia."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "ESPOSO_A",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su esposo o esposa."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "MAMA",
+        "VER"
+      ],
+      "spanish": "Vos ves a tu mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LLAMAR"
+      ],
+      "spanish": "Yo llamo."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El jueves vivo en casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Pablo."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "VIVIR"
+      ],
+      "spanish": "Ellos viven acá."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El viernes veo a mi familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LUGAR",
+        "VER"
+      ],
+      "spanish": "Veo el lugar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A"
+      ],
+      "spanish": "Me llamo Rosa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "0",
+        "1",
+        "1",
+        "1",
+        "2",
+        "2",
+        "2"
+      ],
+      "spanish": "Mi número de documento es 30111222."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "ROBAR"
+      ],
+      "spanish": "Te robaron."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El miércoles veo a mi familia."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "MAMA",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestra mamá."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "REPETIR"
+      ],
+      "spanish": "Nosotros repetimos."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "REPETIR"
+      ],
+      "spanish": "Vos repetís."
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El miércoles vivo en casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO_A",
+        "VER"
+      ],
+      "spanish": "Veo a mi hijo o hija."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "1",
+        "8",
+        "REPETIR"
+      ],
+      "spanish": "Repito: tengo 18 años."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Yo llevo el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR_EN",
+        "CALLE",
+        "S",
+        "A",
+        "N",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Vivo en la calle San Martín."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "Vos vivís en la casa."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "GOLPEAR"
+      ],
+      "spanish": "Ellos golpean."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "3",
+        "8",
+        "9",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "PASAR"
+      ],
+      "spanish": "Paso mi documento, número 38901234."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "2",
+        "5"
+      ],
+      "spanish": "Tengo 25 años."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "Vivimos en la casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CUCHILLO",
+        "VER"
+      ],
+      "spanish": "Veo un cuchillo."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "CASA",
+        "VER"
+      ],
+      "spanish": "Vemos la casa."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Vos pasás el documento."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "MAMA",
+        "VER"
+      ],
+      "spanish": "Ellos ven a su mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO_A",
+        "VER"
+      ],
+      "spanish": "Veo a mi hermano o hermana."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DOCUMENTO",
+        "LLEVAR"
+      ],
+      "spanish": "Ellos llevan el documento."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "El jueves veo a mi familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O"
+      ],
+      "spanish": "Me llamo Pablo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "PLAZA",
+        "VIVIR"
+      ],
+      "spanish": "Vos vivís en la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Walter."
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El sábado vivo en casa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "SACAR"
+      ],
+      "spanish": "Saco el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DEPARTAMENTO",
+        "VER"
+      ],
+      "spanish": "Veo el departamento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O"
+      ],
+      "spanish": "Me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo María."
+    },
+    {
+      "glosses": [
+        "YO",
+        "FAMILIA",
+        "TENER"
+      ],
+      "spanish": "Tengo familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S"
+      ],
+      "spanish": "Me llamo Luis."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VIVIR"
+      ],
+      "spanish": "Vivo acá."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Pasan el documento."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "HIJO_A",
+        "VER"
+      ],
+      "spanish": "Vemos a nuestro hijo o hija."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "ESPOSO_A",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su esposo o esposa."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "REPETIR"
+      ],
+      "spanish": "Ellos repiten."
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El viernes paso el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "NUMERO",
+        "1",
+        "0",
+        "2",
+        "9",
+        "3",
+        "8",
+        "4",
+        "7",
+        "PASAR"
+      ],
+      "spanish": "Paso mi documento, número 10293847."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "PLAZA",
+        "VIVIR"
+      ],
+      "spanish": "Ellos viven en la plaza."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "GOLPEAR"
+      ],
+      "spanish": "Vos golpeás."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "X",
+        "I",
+        "M",
+        "E",
+        "N",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Ximena."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DEPARTAMENTO",
+        "VER"
+      ],
+      "spanish": "Vos ves el departamento."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El domingo veo la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "R",
+        "O",
+        "J",
+        "A",
+        "S",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Rojas."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "DEPARTAMENTO",
+        "VIVIR"
+      ],
+      "spanish": "Vos vivís en un departamento."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "R",
+        "O",
+        "J",
+        "A",
+        "S",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Rojas."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Hugo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "A",
+        "U",
+        "R",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Laura."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "L",
+        "O",
+        "P",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: López."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DOCUMENTO",
+        "TENER"
+      ],
+      "spanish": "Él o ella tiene documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Luis."
+    },
+    {
+      "glosses": [
+        "MARTES",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "El martes veo la plaza."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Vos ves."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "DOCUMENTO",
+        "VER"
+      ],
+      "spanish": "Ellos ven el documento."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "VER"
+      ],
+      "spanish": "Nosotros vemos."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "D",
+        "I",
+        "A",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido, Díaz."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DEPARTAMENTO",
+        "VER"
+      ],
+      "spanish": "Él o ella ve el departamento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Paso el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "S",
+        "U",
+        "A",
+        "R",
+        "E",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Suárez."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "Él o ella pasa el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DEPARTAMENTO",
+        "VIVIR"
+      ],
+      "spanish": "Vivo en un departamento."
+    },
+    {
+      "glosses": [
+        "EL_ELLA",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "Él o ella ve a su familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Me llamo Juan."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO_A",
+        "TENER"
+      ],
+      "spanish": "Tengo hermano o hermana."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "VIVIR"
+      ],
+      "spanish": "Vos vivís acá."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "YO",
+        "CASA",
+        "VIVIR"
+      ],
+      "spanish": "El lunes vivo en casa."
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "DOCUMENTO",
+        "PASAR"
+      ],
+      "spanish": "El sábado paso el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO_A",
+        "TENER"
+      ],
+      "spanish": "Tengo hijo o hija."
+    },
+    {
+      "glosses": [
+        "YO",
+        "FAMILIA",
+        "VER"
+      ],
+      "spanish": "Veo a mi familia."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "D",
+        "I",
+        "A",
+        "Z",
+        "REPETIR"
+      ],
+      "spanish": "Repito mi apellido: Díaz."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "PLAZA",
+        "VER"
+      ],
+      "spanish": "Vos ves la plaza."
+    },
+    {
+      "glosses": [
+        "YO",
+        "DOCUMENTO",
+        "VER"
+      ],
+      "spanish": "Veo el documento."
+    },
+    {
+      "glosses": [
+        "YO",
+        "APELLIDO",
+        "P",
+        "E",
+        "R",
+        "E",
+        "Z"
+      ],
+      "spanish": "Mi apellido es Pérez."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AÑOS",
+        "NUMERO",
+        "1",
+        "8"
+      ],
+      "spanish": "Tengo 18 años."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A",
+        "REPETIR"
+      ],
+      "spanish": "Repito: me llamo Marta."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PLAZA",
+        "VIVIR"
+      ],
+      "spanish": "Vivo en la plaza."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "S",
+        "A",
+        "N",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle San Martín?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "A",
+        "N",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Ana?"
+    },
+    {
+      "glosses": [
+        "CUANDO",
+        "AYER"
+      ],
+      "spanish": "¿Cuándo fue ayer?"
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el viernes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "H",
+        "U",
+        "G",
+        "O",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Hugo?"
+    },
+    {
+      "glosses": [
+        "AHORA_HOY",
+        "QUE"
+      ],
+      "spanish": "¿Qué pasa hoy?"
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "NUMERO",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el número de documento?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está la plaza?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo María."
+    },
+    {
+      "glosses": [
+        "DOCUMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el documento?"
+    },
+    {
+      "glosses": [
+        "ESPOSO_A",
+        "QUIENES"
+      ],
+      "spanish": "¿Quién es tu esposo o esposa?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Rosa?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "A",
+        "U",
+        "R",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Laura?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "HERMANO_A"
+      ],
+      "spanish": "¿Cómo está tu hermano o hermana?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Marta."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Pablo?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "D",
+        "I",
+        "E",
+        "G",
+        "O"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Diego."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "S",
+        "U",
+        "A",
+        "R",
+        "E",
+        "Z",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Suárez?"
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el sábado?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "CALLE",
+        "B",
+        "E",
+        "L",
+        "G",
+        "R",
+        "A",
+        "N",
+        "O",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Belgrano, cerca de la plaza?"
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el domingo?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Juan?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "LLAMAR"
+      ],
+      "spanish": "¿Cómo me llamo?"
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido?"
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el lunes?"
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el domingo?"
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "G",
+        "A",
+        "R",
+        "C",
+        "I",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido García?"
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "P",
+        "E",
+        "R",
+        "E",
+        "Z",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido Pérez?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "P",
+        "A",
+        "B",
+        "L",
+        "O"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Pablo."
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el lunes?"
+    },
+    {
+      "glosses": [
+        "VIERNES",
+        "DIA",
+        "QUE"
+      ],
+      "spanish": "¿Qué día es el viernes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "Q",
+        "U",
+        "I",
+        "N",
+        "O",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Quino?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Luis."
+    },
+    {
+      "glosses": [
+        "SABADO",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el sábado?"
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "COMO",
+        "VOS"
+      ],
+      "spanish": "¿Cómo estás vos el jueves?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Luis?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Sofía?"
+    },
+    {
+      "glosses": [
+        "LUNES",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el lunes?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "C",
+        "A",
+        "R",
+        "L",
+        "O",
+        "S",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, Carlos?"
+    },
+    {
+      "glosses": [
+        "MIERCOLES",
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento el miércoles?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "NOMBRE",
+        "C",
+        "A",
+        "R",
+        "L",
+        "O",
+        "S"
+      ],
+      "spanish": "¿Cómo me llamo? Me llamo Carlos."
+    },
+    {
+      "glosses": [
+        "JUEVES",
+        "HORA",
+        "QUE"
+      ],
+      "spanish": "¿Qué hora es el jueves?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "FAMILIA"
+      ],
+      "spanish": "¿Cómo está la familia?"
+    },
+    {
+      "glosses": [
+        "COMO",
+        "ESPOSO_A"
+      ],
+      "spanish": "¿Cómo está tu esposo o esposa?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre, María?"
+    },
+    {
+      "glosses": [
+        "DEPARTAMENTO",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está el departamento?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es mi nombre?"
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "L",
+        "O",
+        "P",
+        "E",
+        "Z",
+        "QUE"
+      ],
+      "spanish": "¿Cuál es el apellido López?"
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "B",
+        "E",
+        "L",
+        "G",
+        "R",
+        "A",
+        "N",
+        "O",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la calle Belgrano?"
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo es el domingo?"
+    },
+    {
+      "glosses": [
+        "CASA",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está la casa?"
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O"
+      ],
+      "spanish": "Hola, me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "TENER",
+        "NO"
+      ],
+      "spanish": "No tengo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PASAR",
+        "NO"
+      ],
+      "spanish": "Yo no paso."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "W",
+        "A",
+        "L",
+        "T",
+        "E",
+        "R"
+      ],
+      "spanish": "Hola, el sábado me llamo Walter."
+    },
+    {
+      "glosses": [
+        "VIVIR",
+        "NO"
+      ],
+      "spanish": "No vivo acá."
+    },
+    {
+      "glosses": [
+        "CHAU",
+        "FAMILIA"
+      ],
+      "spanish": "Chau, saludos a la familia."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A"
+      ],
+      "spanish": "Hola, me llamo Rosa."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O"
+      ],
+      "spanish": "Hola, el sábado me llamo Pedro."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VER",
+        "NO"
+      ],
+      "spanish": "Yo no veo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "T",
+        "A",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Marta, estoy bien."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, el miércoles me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "A",
+        "N",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo Ana."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S"
+      ],
+      "spanish": "Hola, el sábado me llamo Luis."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "SABADO",
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A"
+      ],
+      "spanish": "Hola, el sábado me llamo María."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "L",
+        "A",
+        "U",
+        "R",
+        "A"
+      ],
+      "spanish": "Hola, el miércoles me llamo Laura."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "P",
+        "E",
+        "D",
+        "R",
+        "O",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Pedro, estoy bien."
+    },
+    {
+      "glosses": [
+        "DOMINGO",
+        "CHAU",
+        "VOS"
+      ],
+      "spanish": "El domingo te digo chau."
+    },
+    {
+      "glosses": [
+        "COMO",
+        "YO",
+        "BIEN"
+      ],
+      "spanish": "¿Cómo estoy? Bien."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "D",
+        "I",
+        "E",
+        "G",
+        "O",
+        "BIEN"
+      ],
+      "spanish": "Hola, me llamo Diego, estoy bien."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S"
+      ],
+      "spanish": "Hola, el miércoles me llamo Luis."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ROBAR",
+        "NO"
+      ],
+      "spanish": "Yo no robo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Hola, me llamo Juan."
+    },
+    {
+      "glosses": [
+        "YO",
+        "TENER",
+        "NO"
+      ],
+      "spanish": "Yo no tengo."
+    },
+    {
+      "glosses": [
+        "BIEN"
+      ],
+      "spanish": "Bien."
+    },
+    {
+      "glosses": [
+        "VER",
+        "NO"
+      ],
+      "spanish": "No veo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Hola, el miércoles me llamo Juan."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "MIERCOLES",
+        "YO",
+        "NOMBRE",
+        "R",
+        "O",
+        "S",
+        "A"
+      ],
+      "spanish": "Hola, el miércoles me llamo Rosa."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LASTIMAR",
+        "NO"
+      ],
+      "spanish": "Yo no lastimo."
+    },
+    {
+      "glosses": [
+        "CHAU",
+        "HOLA"
+      ],
+      "spanish": "Chau, hola de nuevo."
+    },
+    {
+      "glosses": [
+        "HOLA",
+        "YO",
+        "NOMBRE",
+        "A",
+        "N",
+        "A"
+      ],
+      "spanish": "Hola, me llamo Ana."
+    }
+  ]
+}

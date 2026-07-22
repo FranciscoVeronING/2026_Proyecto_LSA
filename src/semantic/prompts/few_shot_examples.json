@@ -1,0 +1,32 @@
+{
+  "examples": [
+    {
+      "glosses": ["HOLA"],
+      "spanish": "Hola."
+    },
+    {
+      "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
+      "spanish": "Me llamo Juan."
+    },
+    {
+      "glosses": ["YO", "NOMBRE"],
+      "spanish": "Me llamo…"
+    },
+    {
+      "glosses": ["DONDE", "CASA"],
+      "spanish": "¿Dónde queda la casa?"
+    },
+    {
+      "glosses": ["DOCUMENTO", "NUMERO"],
+      "spanish": "¿Cuál es tu número de documento?"
+    },
+    {
+      "glosses": ["NO", "PODER"],
+      "spanish": "No puedo."
+    },
+    {
+      "glosses": ["NOMBRE", "M", "A", "R", "I", "A"],
+      "spanish": "Me llamo María."
+    }
+  ]
+}

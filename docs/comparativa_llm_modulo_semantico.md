@@ -4,7 +4,7 @@ Documento técnico del proyecto **2026_Proyecto_LSA** — rama `modulo-semantico
 
 **Objetivo:** elegir y desplegar un LLM que convierta **glosas LSA → español argentino** en un **agente local** consumido por una **extensión de navegador** (Google Meet, etc.), funcionando en **PCs heterogéneas**: con GPU dedicada (dGPU), con GPU integrada (iGPU) o **solo CPU**.
 
-**Restricciones del proyecto:** procesamiento 100% local (RNF-02), latencia razonable (RNF-01), licencia permisiva, adaptación few-shot + LoRA opcional.
+**Restricciones del proyecto:** procesamiento 100% local (RNF-02), latencia razonable (RNF-01), licencia permisiva, adaptación few-shot + LoRA (Low Rank Adaptation) opcional.
 
 **Última actualización:** julio 2026 (revisión: soporte CPU / iGPU / extensión web).
 

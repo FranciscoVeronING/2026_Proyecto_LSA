@@ -1,0 +1,118 @@
+{
+  "dataset": [
+    // ----------------------------------------
+    //       RESPUESTAS BASICAS
+    // ----------------------------------------
+    {
+      "glosses": [
+        "SI"
+      ],
+      "spanish": "Sí."
+    },
+    {
+      "glosses": [
+        "NO"
+      ],
+      "spanish": "No."
+    },
+    {
+      "glosses": [
+        "MAL"
+      ],
+      "spanish": "Mal."
+    },
+    {
+      "glosses": [
+        "BIEN"
+      ],
+      "spanish": "Bien."
+    },
+    {
+      "glosses": [
+        "CHAU"
+      ],
+      "spanish": "Chau."
+    },
+    {
+      "glosses": [
+        "BIEN",
+        "SI"
+      ],
+      "spanish": "Sí, todo bien."
+    },
+    {
+      "glosses": [
+        "MAL",
+        "NO"
+      ],
+      "spanish": "No, todo mal."
+    },
+    {
+      "glosses": [
+        "CHAU",
+        "VER",
+        "VOS"
+      ],
+      "spanish": "Chau, nos vemos."
+    },
+
+
+
+
+    // ----------------------------------------
+    //       INTRODUCCIONES
+    // ----------------------------------------
+    {
+      "glosses": [
+        "HOLA"
+      ],
+      "spanish": "Hola."
+    },
+    { // TODO: dudoso
+      "glosses": [
+        "HOLA",
+        "BIEN"
+      ],
+      "spanish": "Hola, ¿todo bien?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "L",
+        "U",
+        "I",
+        "S"
+      ],
+      "spanish": "Me llamo Luis."
+    },
+    {
+      "glosses": [
+        "YO",
+        "NOMBRE",
+        "M",
+        "A",
+        "R",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo María."
+    },
+    // Expresar edad
+    // Expresar apellido
+    // Expresar direccion de vivienda
+    // Expresar unicamente calle
+    // Expresar unicamente numero
+
+    // Preguntar nombre
+    // Preguntar apellido
+    // Preguntar edad
+    // Preguntar por la direccion de vivienda
+    // Preguntar por la calle
+    // Preguntar por el numero (atura de la calle)
+    // Preguntar por departamento
+
+
+
+  ]
+}
