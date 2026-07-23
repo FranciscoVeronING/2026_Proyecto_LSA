@@ -1,18 +1,18 @@
 import json
+import os
 import torch
 from datasets import Dataset
 import evaluate
 from transformers import TrainingArguments
 from trl import SFTTrainer
 from unsloth import FastLanguageModel
-import os
 
 # ==========================================
 # 1. CONFIGURACIÓN DEL EXPERIMENTO
 # ==========================================
 # Podés probar cambiando el modelo base aquí:
 # - "unsloth/Qwen2.5-0.5B-Instruct"  (Ultra liviano)
-# - "unsloth/Qwen2.5-1.5B-Instruct" 
+# - "unsloth/Qwen2.5-1.5B-Instruct"
 # - "unsloth/Llama-3.2-1B-Instruct"   (Alternativa de Meta)
 # - Phi-3-mini-4k
 # - SmolLM2-1.7B
@@ -30,35 +30,32 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # 2. CARGAR PROMPTS Y EJEMPLOS EXTERNOS
 # ==========================================
 def cargar_prompts_y_ejemplos():
-    # Cargar System Prompt
     with open("./prompts/sys_prompt.txt", "r", encoding="utf-8") as f:
         system_prompt_base = f.read().strip()
 
-    # Cargar Ejemplos Few-Shot
     try:
         with open("./prompts/few_shot_examples.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Accedemos a la clave "examples"
             few_shots = data.get("examples", [])
     except FileNotFoundError:
         few_shots = []
 
-    # Construir el System Prompt usando las claves "glosses" y "spanish"
     system_prompt_completo = system_prompt_base
     if few_shots:
         system_prompt_completo += "\n\nEjemplos de traducción:"
         for ex in few_shots:
-            glosas_str = " ".join(ex["glosses"])  # Usamos "glosses"
-            system_prompt_completo += f"\nGlosas: {glosas_str} -> Español: {ex['spanish']}"  # Usamos "spanish"
+            glosas_str = " ".join(ex["glosses"])
+            system_prompt_completo += f"\nGlosas: {glosas_str} -> Español: {ex['spanish']}"
 
     return system_prompt_completo
+
 
 SYSTEM_PROMPT = cargar_prompts_y_ejemplos()
 print("--- SYSTEM PROMPT CONSTRUIDO ---")
 print(SYSTEM_PROMPT)
 print("--------------------------------\n")
 
-MAX_SEQ_LENGTH = 512  # Longitud máxima de texto
+MAX_SEQ_LENGTH = 512
 
 # ==========================================
 # 3. CARGAR MODELO Y TOKENIZADOR
@@ -67,22 +64,18 @@ print(f"Loading model: {MODEL_NAME}...")
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=MODEL_NAME,
     max_seq_length=MAX_SEQ_LENGTH,
-    load_in_4bit=True,  # Cuantización de 4 bits para ahorrar VRAM
-    dtype=None,  # Detecta automáticamente float16 o bfloat16 segun tu GPU
+    load_in_4bit=True,
+    dtype=None,
 )
 
-# Configurar adaptadores LoRA (Fine-Tuning eficiente)
 model = FastLanguageModel.get_peft_model(
     model,
-    r=16,  # Rango LoRA (16 suele ser ideal)
-    # TODO: SI TIRA ERROR = ValueError: Target modules not found
-    # es porque hay que cambiar el target_modules a target_modules = "all-linear"  # Unsloth detecta automáticamente las capas en cualquier arquitectura
+    r=16,
     target_modules=[
-        # Al incluir tanto las capas de atención como las Feed-Forward, el Fine-Tuning es mucho más preciso para aprender un cambio gramatical completo (como pasar de LSA a Español).
-        "q_proj", # (Query): Lo que la palabra actual busca en la oración
-        "k_proj", # (Key): Lo que cada palabra ofrece como contexto
-        "v_proj", # (Value): El contenido o significado de la palabra.
-        "o_proj", # (Output): La combinación final de la atención.
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
         "gate_proj",
         "up_proj",
         "down_proj",
@@ -96,17 +89,16 @@ model = FastLanguageModel.get_peft_model(
 # ==========================================
 # 4. CARGAR Y FORMATO DEL DATASET
 # ==========================================
-# Cargar el archivo JSON
 with open("./dataset_glosas.json", "r", encoding="utf-8") as f:
     raw_json = json.load(f)
     raw_data = raw_json.get("dataset", raw_json.get("examples", []))
 
-# Creamos el dataset y lo dividimos: 80% Entrenamiento, 20% Evaluación
 full_dataset = Dataset.from_list(raw_data)
 split_dataset = full_dataset.train_test_split(test_size=0.2, seed=3407)
 
 train_raw = split_dataset["train"]
 test_raw = split_dataset["test"]
+
 
 def format_prompts(examples):
     formatted_texts = []
@@ -121,8 +113,8 @@ def format_prompts(examples):
         formatted_texts.append(text)
     return {"text": formatted_texts}
 
-train_dataset = train_raw.map(format_prompts, batched=True)
 
+train_dataset = train_raw.map(format_prompts, batched=True)
 
 # ==========================================
 # 5. CONFIGURAR ENTRENAMIENTO
@@ -134,12 +126,12 @@ trainer = SFTTrainer(
     dataset_text_field="text",
     max_seq_length=MAX_SEQ_LENGTH,
     dataset_num_proc=2,
-    packing=False,  # False si los datos son oraciones/ejemplos cortos
+    packing=False,
     args=TrainingArguments(
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
         warmup_steps=5,
-        max_steps=60,  # Podés usar num_train_epochs=3 en lugar de max_steps si tu dataset es grande
+        max_steps=60,
         learning_rate=2e-4,
         fp16=not torch.cuda.is_bf16_supported(),
         bf16=torch.cuda.is_bf16_supported(),
@@ -158,7 +150,6 @@ trainer.train()
 model.save_pretrained(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
 
-
 # ==========================================
 # 6. EVALUACIÓN DE PRECISIÓN EN EL TEST SET
 # ==========================================
@@ -175,21 +166,21 @@ for item in test_raw:
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"Glosas: {glosas_str}"}
+        {"role": "user", "content": f"Glosas: {glosas_str}"},
     ]
 
     inputs = tokenizer.apply_chat_template(
         messages,
         tokenize=True,
         add_generation_prompt=True,
-        return_tensors="pt"
+        return_tensors="pt",
     ).to("cuda")
 
     outputs = model.generate(
         input_ids=inputs,
         max_new_tokens=64,
         use_cache=True,
-        temperature=0.1
+        temperature=0.1,
     )
 
     prediccion_modelo = tokenizer.decode(outputs[0][inputs.shape[1]:], skip_special_tokens=True).strip()
@@ -197,19 +188,15 @@ for item in test_raw:
     predicciones.append(prediccion_modelo)
     referencias.append(referencia_real)
 
-    # Contar exact match
     if prediccion_modelo.lower() == referencia_real.lower():
         exact_matches += 1
 
-# Calcular Métricas
 total_test = len(test_raw)
 accuracy_exact = round((exact_matches / total_test) * 100, 2)
 
-# Métrica BLEU
 bleu_results = bleu_metric.compute(predictions=predicciones, references=[[r] for r in referencias])
 bleu_score = round(bleu_results["bleu"] * 100, 2)
 
-# Métrica ROUGE-L
 rouge_results = rouge_metric.compute(predictions=predicciones, references=referencias)
 rouge_l_score = round(rouge_results["rougeL"] * 100, 2)
 
@@ -225,7 +212,7 @@ metrics_accuracy = {
     "ejemplos_evaluados": [
         {"glosas": " ".join(item["glosses"]), "esperado": ref, "predicho": pred}
         for item, ref, pred in zip(test_raw, referencias, predicciones)
-    ]
+    ],
 }
 
 metrics_filepath = os.path.join(OUTPUT_DIR, "metrics.json")

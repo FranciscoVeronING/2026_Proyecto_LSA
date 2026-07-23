@@ -1,0 +1,16 @@
+# Dependencias para entrenamiento LoRA (train_llm.py / train_all_models.py)
+#
+# IMPORTANTE: instalar PyTorch con CUDA ANTES que unsloth.
+# Ver docs/entrenamiento_llm.md para el setup completo con Conda.
+
+datasets>=3.4,<4.4
+evaluate>=0.4
+trl>=0.18,<=0.24
+transformers>=4.51,<=5.5
+accelerate>=0.30
+bitsandbytes>=0.45
+matplotlib>=3.8
+sentencepiece>=0.2
+peft>=0.18
+unsloth
+unsloth_zoo

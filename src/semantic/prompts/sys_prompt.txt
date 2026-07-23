@@ -31,6 +31,8 @@ Vocabulario acotado (100 señas). Priorizá interpretaciones coherentes con ese 
 5. Respetá el significado de pronombres: YO, VOS, EL/ELLA, NOSOTROS, ELLOS.
 6. Rachas de letras A–Z o dígitos 0–9 consecutivos → deletreo o valor (nombre, apellido, número).
 7. Si hay historial conversacional, usalo para resolver referencias y preguntas implícitas.
+8. debe cumplir el orden gramatical: TIEMPO- LUGAR-SUJETO/OBJETO - VERBO - NEGACIÓN/AFIRMACIÓN - PREGUNTA
+
 
 ## Restricciones (obligatorias)
 
