@@ -24,14 +24,24 @@ MODELS = [
         "label": "Qwen2.5 1.5B",
     },
     {
+        "id": "qwen2.5-3b",
+        "name": "unsloth/Qwen2.5-3B-Instruct",
+        "label": "Qwen2.5 3B (mayor capacidad)",
+    },
+    {
         "id": "llama-3.2-1b",
         "name": "unsloth/Llama-3.2-1B-Instruct",
         "label": "Llama 3.2 1B (Meta)",
     },
     {
+        "id": "gemma-2-2b",
+        "name": "unsloth/gemma-2-2b-it",
+        "label": "Gemma 2 2B (Google)",
+    },
+    {
         "id": "phi-3-mini-4k",
         "name": "unsloth/Phi-3-mini-4k-instruct",
-        "label": "Phi-3 mini 4k",
+        "label": "Phi-3 mini 4k (Microsoft)",
     },
     {
         "id": "smollm2-1.7b",
@@ -39,7 +49,6 @@ MODELS = [
         "label": "SmolLM2 1.7B",
     },
 ]
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(

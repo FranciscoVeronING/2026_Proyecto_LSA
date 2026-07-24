@@ -1,10 +1,12 @@
-from unsloth import FastLanguageModel  # noqa: E402 — importar antes que trl/transformers
-
+import re
+import time
 import json
 import os
 
 import evaluate
 import torch
+
+from unsloth import FastLanguageModel  # noqa: E402 — importar antes que trl/transformers
 from datasets import Dataset
 from trl import SFTConfig, SFTTrainer
 
@@ -22,6 +24,13 @@ MODEL_NAME = "unsloth/Qwen2.5-0.5B-Instruct"
 # Cargar métricas de Hugging Face
 bleu_metric = evaluate.load("bleu")
 rouge_metric = evaluate.load("rouge")
+meteor_metric = evaluate.load("meteor")
+
+def normalizar_texto(texto):
+    """Limpia signos de puntuación y espacios para una comparación justa."""
+    texto = texto.lower().strip()
+    texto = re.sub(r"[¿?¡!.,;\"]", "", texto)
+    return " ".join(texto.split())
 
 folder_safe_name = MODEL_NAME.replace("/", "_")
 OUTPUT_DIR = f"./outputs/{folder_safe_name}"
@@ -158,8 +167,11 @@ FastLanguageModel.for_inference(model)
 
 predicciones = []
 referencias = []
-exact_matches = 0
+exact_matches_strict = 0
+exact_matches_normalized = 0
+latencies_ms = []
 
+# Loop de Evaluación
 for item in test_raw:
     glosas_str = " ".join(item["glosses"])
     referencia_real = item["spanish"].strip()
@@ -170,35 +182,62 @@ for item in test_raw:
     ]
 
     inputs = tokenizer.apply_chat_template(
-        messages,
-        tokenize=True,
-        add_generation_prompt=True,
-        return_tensors="pt",
+        messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
     ).to("cuda")
 
+    # Medir latencia de inferencia
+    start_time = time.time()
     outputs = model.generate(
-        input_ids=inputs,
-        max_new_tokens=64,
-        use_cache=True,
-        temperature=0.1,
+        input_ids=inputs, max_new_tokens=64, use_cache=True, temperature=0.1
     )
+    end_time = time.time()
 
-    prediccion_modelo = tokenizer.decode(outputs[0][inputs.shape[1]:], skip_special_tokens=True).strip()
+    latencies_ms.append((end_time - start_time) * 1000)
+
+    prediccion_modelo = tokenizer.decode(
+        outputs[0][inputs.shape[1] :], skip_special_tokens=True
+    ).strip()
 
     predicciones.append(prediccion_modelo)
     referencias.append(referencia_real)
 
-    if prediccion_modelo.lower() == referencia_real.lower():
-        exact_matches += 1
+    # 1. Accuracy Estricta
+    if prediccion_modelo == referencia_real:
+        exact_matches_strict += 1
 
+    # 2. Accuracy Normalizada (sin puntuación/mayúsculas)
+    if normalizar_texto(prediccion_modelo) == normalizar_texto(referencia_real):
+        exact_matches_normalized += 1
+
+# ==========================================
+# CÁLCULO DE MÉTRICAS
+# ==========================================
 total_test = len(test_raw)
-accuracy_exact = round((exact_matches / total_test) * 100, 2)
 
-bleu_results = bleu_metric.compute(predictions=predicciones, references=[[r] for r in referencias])
+# Accuracies
+accuracy_strict = round((exact_matches_strict / total_test) * 100, 2)
+accuracy_normalized = round((exact_matches_normalized / total_test) * 100, 2)
+
+# BLEU Score
+bleu_results = bleu_metric.compute(
+    predictions=predicciones, references=[[r] for r in referencias]
+)
 bleu_score = round(bleu_results["bleu"] * 100, 2)
 
-rouge_results = rouge_metric.compute(predictions=predicciones, references=referencias)
+# ROUGE-L Score
+rouge_results = rouge_metric.compute(
+    predictions=predicciones, references=referencias
+)
 rouge_l_score = round(rouge_results["rougeL"] * 100, 2)
+
+# METEOR Score (Flexible a sinónimos)
+meteor_results = meteor_metric.compute(
+    predictions=predicciones, references=referencias
+)
+meteor_score = round(meteor_results["meteor"] * 100, 2)
+
+# Latencia Promedio
+avg_latency_ms = round(sum(latencies_ms) / len(latencies_ms), 2)
 
 # ==========================================
 # 7. GUARDAR RESULTADOS EN METRICS.JSON
@@ -206,9 +245,12 @@ rouge_l_score = round(rouge_results["rougeL"] * 100, 2)
 metrics_accuracy = {
     "model_name": MODEL_NAME,
     "total_test_samples": total_test,
-    "accuracy_exact_match_percent": accuracy_exact,
+    "accuracy_strict_percent": accuracy_strict,
+    "accuracy_normalized_percent": accuracy_normalized,
     "bleu_score": bleu_score,
     "rouge_l_score": rouge_l_score,
+    "meteor_score": meteor_score,
+    "avg_latency_ms": avg_latency_ms,
     "ejemplos_evaluados": [
         {"glosas": " ".join(item["glosses"]), "esperado": ref, "predicho": pred}
         for item, ref, pred in zip(test_raw, referencias, predicciones)
@@ -221,8 +263,11 @@ with open(metrics_filepath, "w", encoding="utf-8") as f:
 
 print("\n==========================================")
 print(f"RESULTADOS DE EVALUACIÓN: {MODEL_NAME}")
-print(f"Accuracy Exacta (Frase idéntica): {accuracy_exact}%")
-print(f"BLEU Score (Calidad de traducción): {bleu_score} / 100")
-print(f"ROUGE-L Score (Fluidez): {rouge_l_score} / 100")
+print(f"Accuracy Estricta: {accuracy_strict}%")
+print(f"Accuracy Normalizada (sin puntuación): {accuracy_normalized}%")
+print(f"BLEU Score (Precisión n-gramas): {bleu_score} / 100")
+print(f"ROUGE-L Score (Fluidez estructural): {rouge_l_score} / 100")
+print(f"METEOR Score (Manejo de sinónimos): {meteor_score} / 100")
+print(f"Latencia promedio por oración: {avg_latency_ms} ms")
 print(f"Métricas guardadas en: {metrics_filepath}")
 print("==========================================")

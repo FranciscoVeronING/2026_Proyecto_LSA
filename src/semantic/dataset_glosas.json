@@ -106,8 +106,8 @@
     },
     {
       "glosses": [
-        "CASA",
-        "TUYO"
+        "TUYO",
+        "CASA"
       ],
       "spanish": "Tu casa."
     },
@@ -226,8 +226,8 @@
     },
     {
       "glosses": [
-        "DOCUMENTO",
-        "TUYO"
+        "TUYO",
+        "DOCUMENTO"
       ],
       "spanish": "Tu documento."
     },
@@ -343,6 +343,7 @@
     },
     {
       "glosses": [
+        "ELLOS",
         "VOS",
         "ROBAR"
       ],
@@ -381,6 +382,7 @@
     },
     {
       "glosses": [
+        "ELLOS",
         "EL_ELLA",
         "ROBAR"
       ],
@@ -622,7 +624,6 @@
     },
     {
       "glosses": [
-        "VIVIR_EN",
         "CALLE",
         "B",
         "E",
@@ -632,7 +633,8 @@
         "A",
         "N",
         "O",
-        "YO"
+        "YO",
+        "VIVIR_EN"
       ],
       "spanish": "Vivo en la calle Belgrano."
     },
@@ -669,7 +671,6 @@
     },
     {
       "glosses": [
-        "VIVIR_EN",
         "CASA",
         "CALLE",
         "B",
@@ -680,7 +681,8 @@
         "A",
         "N",
         "O",
-        "YO"
+        "YO",
+        "VIVIR_EN"
       ],
       "spanish": "Vivo en la casa de la calle Belgrano."
     },
@@ -723,14 +725,14 @@
     },
     {
       "glosses": [
-        "VIVIR_EN",
         "CALLE",
         "M",
         "I",
         "T",
         "R",
         "E",
-        "YO"
+        "YO",
+        "VIVIR_EN"
       ],
       "spanish": "Vivo en la calle Mitre."
     },
@@ -828,8 +830,8 @@
     {
       "glosses": [
         "DEPARTAMENTO",
-        "VIVIR_EN",
-        "YO"
+        "YO",
+        "VIVIR_EN"
       ],
       "spanish": "Vivo en un departamento."
     },
@@ -1043,13 +1045,6 @@
     },
     {
       "glosses": [
-        "PLAZA",
-        "QUIENES"
-      ],
-      "spanish": "¿Quién es plaza?"
-    },
-    {
-      "glosses": [
         "LUGAR",
         "DONDE"
       ],
@@ -1177,13 +1172,6 @@
         "DONDE"
       ],
       "spanish": "¿Dónde vivís vos?"
-    },
-    {
-      "glosses": [
-        "LUGAR",
-        "CUANDO"
-      ],
-      "spanish": "¿Dónde y a qué hora es?"
     },
     {
       "glosses": [
@@ -1558,24 +1546,93 @@
       "glosses": [
         "LUNES",
         "YO",
-        "NOMBRE",
+        "LLAMAR",
         "A",
         "N",
         "A"
       ],
-      "spanish": "El lunes me llamo Ana."
+      "spanish": "El lunes me llamó Ana."
     },
     {
       "glosses": [
         "MARTES",
         "YO",
-        "NOMBRE",
+        "LLAMAR",
         "L",
         "U",
         "I",
         "S"
       ],
-      "spanish": "El martes me llamo Luis."
+      "spanish": "El martes me llamó Luis."
+    },
+    {
+      "glosses": ["AYER", "ELLOS", "VOS", "ROBAR"],
+      "spanish": "Ayer ellos te robaron."
+    },
+    {
+      "glosses": ["AHORA_HOY", "PLAZA", "NOSOTROS", "VER"],
+      "spanish": "Hoy nos vemos en la plaza."
+    },
+    {
+      "glosses": ["YO", "TUYO", "DOCUMENTO", "PASAR"],
+      "spanish": "Te paso tu documento."
+    },
+    {
+      "glosses": ["ELLOS", "YO", "CUCHILLO", "SACAR"],
+      "spanish": "Ellos me sacaron el cuchillo."
+    },
+    {
+      "glosses": ["VOS", "HERMANO_A", "LLAMAR"],
+      "spanish": "Vos llamás a tu hermano o hermana."
+    },
+    {
+      "glosses": ["NOSOTROS", "CARA", "LASTIMAR", "NO"],
+      "spanish": "Nosotros no nos lastimamos la cara."
+    },
+    {
+      "glosses": ["AYER", "EL_ELLA", "ARMA", "LLEVAR"],
+      "spanish": "Ayer él o ella llevaba un arma."
+    },
+    {
+      "glosses": ["PLAZA", "ELLOS", "VIVIR_EN", "NO"],
+      "spanish": "Ellos no viven en la plaza."
+    },
+    {
+      "glosses": ["VOS", "HIJO_A", "GOLPEAR", "NO"],
+      "spanish": "Vos no golpeás a tu hijo o hija."
+    },
+    {
+      "glosses": ["YO", "ESPOSO_A", "LLAMAR", "NO"],
+      "spanish": "Yo no llamo a mi esposo o esposa."
+    },
+    {
+      "glosses": ["CALLE", "M", "I", "T", "R", "E", "VOS", "VIVIR_EN", "DONDE"],
+      "spanish": "¿Dónde vivís vos en la calle Mitre?"
+    },
+    {
+      "glosses": ["DEPARTAMENTO", "QUIENES", "VIVIR_EN"],
+      "spanish": "¿Quiénes viven en el departamento?"
+    },
+    {
+      "glosses": ["AYER", "ELLOS", "VOS", "ROBAR", "DONDE"],
+      "spanish": "¿Dónde te robaron ayer?"
+    },
+    {
+      "glosses": ["HORA", "QUE", "VOS", "LLAMAR"],
+      "spanish": "¿A qué hora llamás vos?"
+    },
+    {
+      "glosses": ["CASA", "FAMILIA", "CUANTOS", "VIVIR"],
+      "spanish": "¿Cuántas familias viven en la casa?"
+    },
+    {
+      "glosses": ["DOMINGO", "QUIENES", "PASAR"],
+      "spanish": "¿Quiénes pasan el domingo?"
+    },
+    {
+      "glosses": ["PLAZA", "NOSOTROS", "VER", "CUANDO"],
+      "spanish": "¿Cuándo nos vemos en la plaza?"
     }
+
   ]
 }
