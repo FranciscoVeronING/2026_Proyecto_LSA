@@ -107,6 +107,7 @@ def evaluate_model(model, tokenizer, system_prompt: str, test_raw) -> dict:
 
     bleu_metric = evaluate.load("bleu")
     rouge_metric = evaluate.load("rouge")
+    meteor_metric = evaluate.load("meteor")
 
     FastLanguageModel.for_inference(model)
 
@@ -147,12 +148,14 @@ def evaluate_model(model, tokenizer, system_prompt: str, test_raw) -> dict:
     total_test = len(test_raw)
     bleu_results = bleu_metric.compute(predictions=predicciones, references=[[r] for r in referencias])
     rouge_results = rouge_metric.compute(predictions=predicciones, references=referencias)
+    meteor_results = meteor_metric.compute(predictions=predicciones, references=referencias)
 
     return {
         "total_test_samples": total_test,
         "accuracy_exact_match_percent": round((exact_matches / total_test) * 100, 2),
         "bleu_score": round(bleu_results["bleu"] * 100, 2),
         "rouge_l_score": round(rouge_results["rougeL"] * 100, 2),
+        "meteor_score": round(meteor_results["meteor"] * 100, 2),
         "ejemplos_evaluados": [
             {"glosas": " ".join(item["glosses"]), "esperado": ref, "predicho": pred}
             for item, ref, pred in zip(test_raw, referencias, predicciones)
@@ -281,6 +284,7 @@ def train_single_model(
     print(f"Accuracy exacta: {metrics['accuracy_exact_match_percent']}%")
     print(f"BLEU: {metrics['bleu_score']}")
     print(f"ROUGE-L: {metrics['rouge_l_score']}")
+    print(f"METEOR: {metrics['meteor_score']}")
     print(f"Métricas: {metrics_path}")
     if plot_path:
         print(f"Gráfico: {plot_path}")

@@ -34,11 +34,6 @@ MODELS = [
         "label": "Llama 3.2 1B (Meta)",
     },
     {
-        "id": "gemma-2-2b",
-        "name": "unsloth/gemma-2-2b-it",
-        "label": "Gemma 2 2B (Google)",
-    },
-    {
         "id": "phi-3-mini-4k",
         "name": "unsloth/Phi-3-mini-4k-instruct",
         "label": "Phi-3 mini 4k (Microsoft)",
@@ -47,6 +42,11 @@ MODELS = [
         "id": "smollm2-1.7b",
         "name": "unsloth/SmolLM2-1.7B-Instruct",
         "label": "SmolLM2 1.7B",
+    },
+    {
+        "id": "deepseek-r1-qwen-1.5b",
+        "name": "unsloth/DeepSeek-R1-Distill-Qwen-1.5B-unsloth-bnb-4bit",
+        "label": "DeepSeek R1 Distill Qwen 1.5B",
     },
 ]
 
@@ -179,6 +179,7 @@ def main() -> int:
                     "accuracy_exact_match_percent": metrics["accuracy_exact_match_percent"],
                     "bleu_score": metrics["bleu_score"],
                     "rouge_l_score": metrics["rouge_l_score"],
+                    "meteor_score": metrics["meteor_score"],
                     "train_loss_final": metrics["train_loss_final"],
                 },
             }
@@ -189,7 +190,8 @@ def main() -> int:
             log_line(
                 log_fp,
                 f"OK {model_cfg['id']} | acc={result['metrics']['accuracy_exact_match_percent']}% "
-                f"bleu={result['metrics']['bleu_score']} rouge={result['metrics']['rouge_l_score']}",
+                f"bleu={result['metrics']['bleu_score']} rouge={result['metrics']['rouge_l_score']} "
+                f"meteor={result['metrics']['meteor_score']}",
             )
 
         batch["finished_at"] = datetime.now(timezone.utc).isoformat()

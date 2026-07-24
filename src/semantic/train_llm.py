@@ -171,6 +171,12 @@ exact_matches_strict = 0
 exact_matches_normalized = 0
 latencies_ms = []
 
+def limpiar_salida_deepseek(texto: str) -> str:
+    """Elimina las etiquetas <think>...</think> y su contenido, dejando solo la respuesta final."""
+    # Elimina todo desde <think> hasta </think> (incluyendo saltos de línea)
+    texto_limpio = re.sub(r"<think>.*?</think>", "", texto, flags=re.DOTALL)
+    return texto_limpio.strip()
+
 # Loop de Evaluación
 for item in test_raw:
     glosas_str = " ".join(item["glosses"])
@@ -194,9 +200,11 @@ for item in test_raw:
 
     latencies_ms.append((end_time - start_time) * 1000)
 
-    prediccion_modelo = tokenizer.decode(
+    prediccion_raw = tokenizer.decode(
         outputs[0][inputs.shape[1] :], skip_special_tokens=True
     ).strip()
+
+    prediccion_modelo = limpiar_salida_deepseek(prediccion_raw)
 
     predicciones.append(prediccion_modelo)
     referencias.append(referencia_real)
