@@ -6,11 +6,11 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from unsloth import FastLanguageModel  # noqa: E402 — importar antes que trl/transformers
+
 import torch
 from datasets import Dataset
-from transformers import TrainingArguments
-from trl import SFTTrainer
-from unsloth import FastLanguageModel
+from trl import SFTConfig, SFTTrainer
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_OUTPUT_BASE = SCRIPT_DIR / "outputs"
@@ -165,7 +165,7 @@ def train_single_model(
     output_base: Path | None = None,
     dataset_path: Path | None = None,
     max_steps: int = 60,
-    max_seq_length: int = 512,
+    max_seq_length: int = 2048,
     verbose_prompt: bool = False,
 ) -> dict:
     output_base = output_base or DEFAULT_OUTPUT_BASE
@@ -221,13 +221,10 @@ def train_single_model(
 
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         train_dataset=train_dataset,
-        dataset_text_field="text",
-        max_seq_length=max_seq_length,
-        dataset_num_proc=2,
-        packing=False,
-        args=TrainingArguments(
+        args=SFTConfig(
+            output_dir=str(output_dir / "checkpoints"),
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
             warmup_steps=5,
@@ -240,8 +237,10 @@ def train_single_model(
             weight_decay=0.01,
             lr_scheduler_type="linear",
             seed=3407,
-            output_dir=str(output_dir / "checkpoints"),
             report_to="none",
+            dataset_text_field="text",
+            max_length=max_seq_length,
+            packing=False,
         ),
     )
 

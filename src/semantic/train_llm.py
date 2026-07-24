@@ -1,11 +1,12 @@
+from unsloth import FastLanguageModel  # noqa: E402 — importar antes que trl/transformers
+
 import json
 import os
+
+import evaluate
 import torch
 from datasets import Dataset
-import evaluate
-from transformers import TrainingArguments
-from trl import SFTTrainer
-from unsloth import FastLanguageModel
+from trl import SFTConfig, SFTTrainer
 
 # ==========================================
 # 1. CONFIGURACIÓN DEL EXPERIMENTO
@@ -55,7 +56,7 @@ print("--- SYSTEM PROMPT CONSTRUIDO ---")
 print(SYSTEM_PROMPT)
 print("--------------------------------\n")
 
-MAX_SEQ_LENGTH = 512
+MAX_SEQ_LENGTH = 2048
 
 # ==========================================
 # 3. CARGAR MODELO Y TOKENIZADOR
@@ -121,13 +122,10 @@ train_dataset = train_raw.map(format_prompts, batched=True)
 # ==========================================
 trainer = SFTTrainer(
     model=model,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,
     train_dataset=train_dataset,
-    dataset_text_field="text",
-    max_seq_length=MAX_SEQ_LENGTH,
-    dataset_num_proc=2,
-    packing=False,
-    args=TrainingArguments(
+    args=SFTConfig(
+        output_dir=OUTPUT_DIR,
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
         warmup_steps=5,
@@ -140,7 +138,9 @@ trainer = SFTTrainer(
         weight_decay=0.01,
         lr_scheduler_type="linear",
         seed=3407,
-        output_dir=OUTPUT_DIR,
+        dataset_text_field="text",
+        max_length=MAX_SEQ_LENGTH,
+        packing=False,
     ),
 )
 

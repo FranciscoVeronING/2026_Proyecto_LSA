@@ -38,7 +38,9 @@ cd C:\Users\franc\Documents\GitHub\2026_Proyecto_LSA\src\semantic
 
 ## 2. Instalar dependencias
 
-### Paso A — PyTorch con CUDA (instalar primero)
+> **Importante (Windows):** si instalás `unsloth` con pip normal, **reemplaza** `torch+cu126` por `torch` CPU (ej. `2.11.0` sin `+cu126`). Siempre seguí los 4 pasos en orden.
+
+### Paso A — PyTorch con CUDA
 
 Reemplazá `cu126` por tu versión de CUDA si es distinta (`cu124`, `cu121`, etc.):
 
@@ -52,19 +54,34 @@ Verificá que detecte la GPU:
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-Debe mostrar algo como `2.10.0+cu126 True`. Si dice `+cpu` o `False`, no instales Unsloth todavía: corregí CUDA/PyTorch primero.
+Debe mostrar algo como `2.13.0+cu126 True`. Si dice `2.11.0+cpu False`, **no sigas**: estás con PyTorch CPU (ver sección 9).
 
-### Paso B — Resto de dependencias del proyecto
+> Pip puede avisar que `unsloth` pide `torch<2.12`; con `2.13.0+cu126` suele funcionar igual. Lo crítico es `+cu126` y `True`, no el warning de pip.
+
+### Paso B — Dependencias del proyecto (sin unsloth)
 
 ```powershell
 pip install -r requirements_train.txt
 ```
 
-### Paso C — Verificar Unsloth
+`requirements_train.txt` **no incluye** unsloth a propósito, para que pip no toque PyTorch.
+
+### Paso C — Unsloth sin reinstalar torch
 
 ```powershell
+pip install unsloth unsloth_zoo --no-deps
+```
+
+`--no-deps` evita que pip baje torch CPU. Las dependencias de unsloth ya están en el paso B.
+
+### Paso D — Verificar que torch sigue con CUDA
+
+```powershell
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 python -c "from unsloth import FastLanguageModel; print('Unsloth OK')"
 ```
+
+Ambos comandos deben funcionar. Si el primero muestra `+cpu`, ver sección 9.
 
 ---
 
@@ -214,7 +231,7 @@ El split train/test es **80/20** con `seed=3407`.
 | Batch size | 2 × 4 acumulación |
 | Learning rate | 2e-4 |
 | Max steps | 60 (configurable en batch) |
-| Max seq length | 512 |
+| Max seq length | 2048 (prompt + few-shot ~1040 tokens) |
 
 ---
 
@@ -231,11 +248,51 @@ pip install -r requirements_train.txt
 
 ### `Unsloth cannot find any torch accelerator? You need a GPU.`
 
-PyTorch quedó en versión CPU. Reinstalá con CUDA **antes** de unsloth:
+PyTorch quedó en versión **CPU** (típico tras `pip install -r requirements_train.txt` con unsloth incluido, o tras instalar unsloth sin `--no-deps`).
+
+1. Confirmá el problema:
+
+   ```powershell
+   python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+   ```
+
+   Si ves `2.11.0+cpu False` (sin `+cu126`), torch es CPU.
+
+2. Reparación completa (desde `src\semantic`):
+
+   ```powershell
+   conda activate lsa-train
+   cd C:\Users\franc\Documents\GitHub\2026_Proyecto_LSA\src\semantic
+
+   pip uninstall torch torchvision -y
+   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+   pip install unsloth unsloth_zoo --no-deps
+
+   python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+   python -c "from unsloth import FastLanguageModel; print('Unsloth OK')"
+   ```
+
+   Resultado esperado:
+
+   ```
+   2.13.0+cu126 True
+   Unsloth OK
+   ```
+
+   **No** vuelvas a ejecutar `pip install -r requirements_train.txt` después de esto, salvo que repitas el paso de torch+cu126 al final.
+
+3. Si `torch.cuda.is_available()` sigue en `False`:
+   - Verificá drivers NVIDIA (`nvidia-smi` en otra terminal).
+   - Reinstalá el driver o probá otro índice CUDA (`cu124`, `cu121`).
+
+### `Expected input batch_size (1024) to match target batch_size (2048)`
+
+Desalineación entre la longitud del modelo (`max_seq_length=512`) y la de TRL (`max_length`, default 1024). El system prompt + few-shot ocupa ~1040 tokens por ejemplo.
+
+Solución ya aplicada en el código: `max_seq_length=2048` y `SFTConfig(max_length=2048)`. Volvé a ejecutar:
 
 ```powershell
-pip uninstall torch torchvision -y
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+python train_all_models.py --continue-on-error
 ```
 
 ### `ValueError: Target modules not found`
@@ -246,9 +303,13 @@ Algunas arquitecturas (Phi-3, SmolLM2) no usan los mismos nombres de capas. `tra
 target_modules="all-linear"
 ```
 
-### Unsloth baja la versión de PyTorch
+### Unsloth reemplaza PyTorch por CPU
 
-Instalá siempre **torch+cu126 primero**, luego `pip install -r requirements_train.txt`. Si unsloth lo reemplaza, repetí el paso A.
+**No** ejecutes `pip install unsloth` sin `--no-deps`. Orden correcto:
+
+1. `torch+cu126`
+2. `pip install -r requirements_train.txt`
+3. `pip install unsloth unsloth_zoo --no-deps`
 
 ---
 
@@ -260,6 +321,8 @@ conda activate lsa-train
 cd src\semantic
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 pip install -r requirements_train.txt
+pip install unsloth unsloth_zoo --no-deps
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 
 # Un modelo
 python train_llm.py
