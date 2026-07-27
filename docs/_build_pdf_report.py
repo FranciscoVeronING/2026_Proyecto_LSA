@@ -10,7 +10,7 @@ from xhtml2pdf import pisa
 
 ROOT = Path(__file__).resolve().parent
 MD_PATH = ROOT / "entregables_mvp_modulo_semantico.md"
-PDF_PATH = ROOT / "Entregables MVP.pdf"
+PDF_PATH = ROOT / "Entregables_MVP_Modulo_Semantico.pdf"
 
 CSS = """
 @page {
