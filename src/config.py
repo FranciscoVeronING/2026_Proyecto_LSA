@@ -152,7 +152,10 @@ AUG_SCALE_RANGE = (0.85, 1.15)
 # ==========================================
 # INFERENCIA EN TIEMPO REAL (WEBCAM)
 # ==========================================
-CONFIDENCE_THRESHOLD = 0.85
+CONFIDENCE_THRESHOLD = 0.75
+
+# Segundos de espera tras una predicción antes de encolar otra inferencia
+INFERENCE_COOLDOWN_SEC = 1.0
 
 # --- Captura dinámica (señas con movimiento) ---
 MOTION_PIXEL_THRESHOLD = 500

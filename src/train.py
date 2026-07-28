@@ -1,6 +1,7 @@
 import os
 import glob
 import json
+from datetime import datetime, timezone
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -333,6 +334,30 @@ if __name__ == "__main__":
     plt.close()
 
     cm = confusion_matrix(all_labels, all_preds)
+    val_acc = float(np.mean(np.array(all_preds) == np.array(all_labels)) * 100)
+
+    metrics = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "best_val_loss": float(best_loss),
+        "val_accuracy_top1_pct": round(val_acc, 2),
+        "num_classes": num_classes_real,
+        "num_train_samples": len(train_archivos),
+        "num_val_samples": len(test_archivos),
+        "max_frames": cfg.MAX_FRAMES,
+        "hidden_dim": cfg.HIDDEN_DIM,
+        "num_heads": cfg.NUM_HEADS,
+        "num_layers": cfg.NUM_LAYERS,
+        "dropout_rate": cfg.DROPOUT_RATE,
+        "use_data_augmentation": cfg.USE_DATA_AUGMENTATION,
+        "samples_per_class": cfg.SAMPLES_PER_CLASS,
+        "epochs_ran": len(train_loss_history),
+        "classes": clases_validas,
+    }
+    metrics_path = os.path.join(cfg.MODEL_SAVE_DIR, "metrics.json")
+    with open(metrics_path, "w", encoding="utf-8") as f:
+        json.dump(metrics, f, ensure_ascii=False, indent=2)
+    print(f"[*] Métricas guardadas en {metrics_path} (val_acc top-1: {val_acc:.2f}%)")
+
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clases_validas)
     fig, ax = plt.subplots(figsize=(15, 12))
     disp.plot(cmap=plt.cm.Blues, ax=ax, xticks_rotation=90)

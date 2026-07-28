@@ -1,26 +1,34 @@
+import argparse
+import csv
 import os
-import cv2
-import numpy as np
-import mediapipe as mp
 import time
 import json
-import torch
+from datetime import datetime
 from threading import Thread, Lock
 from collections import deque
+
+import cv2
+import mediapipe as mp
+import numpy as np
+import torch
 
 import config as cfg
 from model_arch import TinySkeletonClassifier
 from utils import (
     get_anchor_and_scale,
     normalize_spatial_points,
-    uniform_subsampling,
     trim_gesture_buffer,
     compute_landmark_hand_motion,
+    sequence_buffer_to_model_input,
+    mirror_landmarks_for_left_handed,
 )
 
 # =============================================================================
 # UTILIDADES
 # =============================================================================
+UI_FONT = cv2.FONT_HERSHEY_SIMPLEX
+
+
 class LandmarkSmoother:
     def __init__(self, alpha=0.6):
         self.alpha = alpha
@@ -39,44 +47,57 @@ class LandmarkSmoother:
 
 
 def prepare_input_tensor(buffer_list, device):
-    """Convierte la lista temporal a tensor (1, MAX_FRAMES, features)."""
-    if len(buffer_list) < cfg.MIN_CAPTURE_FRAMES:
+    """Convierte buffer temporal a tensor (1, MAX_FRAMES, features)."""
+    matrix = sequence_buffer_to_model_input(buffer_list)
+    if matrix.shape[0] != cfg.MAX_FRAMES:
         return None
-
-    trimmed = trim_gesture_buffer(
-        buffer_list,
-        hand_start=cfg.POSE_DIM,
-        static_motion_threshold=cfg.STATIC_GESTURE_MOTION_THRESHOLD,
-        min_frames=cfg.MIN_CAPTURE_FRAMES,
-    )
-    sampled_matrix = uniform_subsampling(trimmed, target_frames=cfg.MAX_FRAMES)
-    tensor = torch.tensor(sampled_matrix, dtype=torch.float32).unsqueeze(0)
+    tensor = torch.tensor(matrix, dtype=torch.float32).unsqueeze(0)
     return tensor.to(device)
 
 
-def should_start_recording(
-    capture_mode: str,
-    hands_present: bool,
-    is_moving: bool,
-    consecutive_hands_frames: int,
-) -> bool:
+def should_start_recording(capture_mode, hands_present, is_moving, consecutive_hands_frames):
     if not hands_present:
         return False
     if capture_mode == "dynamic":
         return is_moving
     if capture_mode == "static":
         return consecutive_hands_frames >= cfg.STATIC_HANDS_FRAMES_TO_START
-    # auto: dinámico (movimiento) o estático (manos visibles N frames)
     static_ready = consecutive_hands_frames >= cfg.STATIC_HANDS_FRAMES_TO_START
     return is_moving or static_ready
+
+
+def extract_normalized_vector(results, left_handed: bool):
+    """Construye vector (225,) desde resultados MediaPipe; espeja si es zurdo."""
+    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
+    raw_pose = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
+        if results.pose_landmarks
+        else np.zeros(33 * 3)
+    )
+    raw_lh = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
+        if results.left_hand_landmarks
+        else np.zeros(21 * 3)
+    )
+    raw_rh = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
+        if results.right_hand_landmarks
+        else np.zeros(21 * 3)
+    )
+
+    norm_pose = normalize_spatial_points(raw_pose, anchor, scale)
+    norm_lh = normalize_spatial_points(raw_lh, anchor, scale)
+    norm_rh = normalize_spatial_points(raw_rh, anchor, scale)
+    vector = np.concatenate([norm_pose, norm_lh, norm_rh])
+
+    if left_handed:
+        vector = mirror_landmarks_for_left_handed(vector, pose_dim=cfg.POSE_DIM)
+    return vector
 
 
 # =============================================================================
 # UI COMPONENTS
 # =============================================================================
-UI_FONT = cv2.FONT_HERSHEY_SIMPLEX
-
-
 class Button:
     def __init__(self, x, y, w, h, text, callback_func=None):
         self.rect = (x, y, w, h)
@@ -123,28 +144,172 @@ class Slider:
 
     def draw(self, canvas):
         display_val = f"{int(self.val)}" if self.max_val > 1 else f"{self.val:.2f}"
-        cv2.putText(
-            canvas,
-            f"{self.label}: {display_val}",
-            (self.x, self.y - 10),
-            UI_FONT,
-            0.5,
-            (200, 200, 200),
-            1,
-        )
+        cv2.putText(canvas, f"{self.label}: {display_val}", (self.x, self.y - 10), UI_FONT, 0.5, (200, 200, 200), 1)
         cv2.rectangle(canvas, (self.x, self.y), (self.x + self.w, self.y + self.h), (40, 40, 40), -1)
         fill_w = int(self.w * (self.val - self.min_val) / (self.max_val - self.min_val))
         cv2.rectangle(canvas, (self.x, self.y), (self.x + fill_w, self.y + self.h), (0, 165, 255), -1)
         cv2.rectangle(canvas, (self.x, self.y), (self.x + self.w, self.y + self.h), (150, 150, 150), 1)
 
 
+def select_handedness_modal():
+    """
+    Modal inicial: elegir diestro o zurdo antes de abrir la cámara.
+    Retorna 'right' o 'left'.
+    """
+    modal_w, modal_h = 520, 280
+    canvas = np.zeros((modal_h, modal_w, 3), dtype=np.uint8)
+    choice = {"value": None}
+
+    def pick_right():
+        choice["value"] = "right"
+
+    def pick_left():
+        choice["value"] = "left"
+
+    btn_right = Button(70, 160, 160, 50, "DIESTRO", pick_right)
+    btn_left = Button(290, 160, 160, 50, "ZURDO", pick_left)
+    mouse = {"x": 0, "y": 0, "down": False, "clicked": False}
+
+    def on_mouse(event, x, y, flags, param):
+        mouse["x"], mouse["y"] = x, y
+        if event == cv2.EVENT_LBUTTONDOWN:
+            mouse["down"] = True
+        elif event == cv2.EVENT_LBUTTONUP:
+            mouse["down"] = False
+            mouse["clicked"] = True
+
+    cv2.namedWindow("LSA DETECTOR - Configuracion")
+    cv2.setMouseCallback("LSA DETECTOR - Configuracion", on_mouse)
+
+    while choice["value"] is None:
+        canvas[:] = (35, 35, 35)
+        cv2.putText(canvas, "Mano dominante", (130, 60), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 255), 2)
+        cv2.putText(canvas, "Selecciona antes de iniciar la camara", (70, 100), UI_FONT, 0.55, (180, 180, 180), 1)
+        cv2.putText(canvas, "Teclas: D = diestro | Z = zurdo", (110, 130), UI_FONT, 0.5, (140, 140, 140), 1)
+        btn_right.update(mouse["x"], mouse["y"], mouse["clicked"])
+        btn_left.update(mouse["x"], mouse["y"], mouse["clicked"])
+        btn_right.draw(canvas)
+        btn_left.draw(canvas)
+        cv2.imshow("LSA DETECTOR - Configuracion", canvas)
+        mouse["clicked"] = False
+
+        key = cv2.waitKey(30) & 0xFF
+        if key in (ord("d"), ord("D")):
+            choice["value"] = "right"
+        elif key in (ord("z"), ord("Z")):
+            choice["value"] = "left"
+        elif key == 27:
+            cv2.destroyWindow("LSA DETECTOR - Configuracion")
+            return None
+
+    cv2.destroyWindow("LSA DETECTOR - Configuracion")
+    label = "diestro" if choice["value"] == "right" else "zurdo"
+    print(f"[*] Mano dominante: {label}")
+    return choice["value"]
+
+
 # =============================================================================
-# BACKEND E INFERENCIA (PyTorch)
+# EVAL CSV
+# =============================================================================
+class EvalSession:
+    FIELDNAMES = [
+        "timestamp",
+        "eval_index",
+        "expected_sign",
+        "top1",
+        "conf1",
+        "top2",
+        "conf2",
+        "top3",
+        "conf3",
+        "hit_top1",
+        "hit_top3",
+        "handedness",
+        "capture_mode",
+    ]
+
+    def __init__(self, sign_list: list[str], csv_path: str, handedness: str):
+        self.sign_list = sign_list
+        self.csv_path = csv_path
+        self.handedness = handedness
+        self.index = 0
+        self._ensure_header()
+
+    def _ensure_header(self):
+        if not os.path.exists(self.csv_path):
+            with open(self.csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
+                writer.writeheader()
+
+    @property
+    def finished(self):
+        return self.index >= len(self.sign_list)
+
+    @property
+    def expected_sign(self):
+        if self.finished:
+            return None
+        return self.sign_list[self.index]
+
+    def log_prediction(self, top3: list[tuple[str, float]], capture_mode: str):
+        if self.finished:
+            return
+
+        expected = self.expected_sign
+        top_names = [t[0] for t in top3]
+        row = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "eval_index": self.index + 1,
+            "expected_sign": expected,
+            "top1": top3[0][0] if len(top3) > 0 else "",
+            "conf1": f"{top3[0][1]:.4f}" if len(top3) > 0 else "",
+            "top2": top3[1][0] if len(top3) > 1 else "",
+            "conf2": f"{top3[1][1]:.4f}" if len(top3) > 1 else "",
+            "top3": top3[2][0] if len(top3) > 2 else "",
+            "conf3": f"{top3[2][1]:.4f}" if len(top3) > 2 else "",
+            "hit_top1": int(top3[0][0] == expected) if top3 else 0,
+            "hit_top3": int(expected in top_names),
+            "handedness": self.handedness,
+            "capture_mode": capture_mode,
+        }
+        with open(self.csv_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
+            writer.writerow(row)
+        self.index += 1
+
+    def skip_current(self, capture_mode: str):
+        if self.finished:
+            return
+        row = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "eval_index": self.index + 1,
+            "expected_sign": self.expected_sign,
+            "top1": "SKIP",
+            "conf1": "",
+            "top2": "",
+            "conf2": "",
+            "top3": "",
+            "conf3": "",
+            "hit_top1": 0,
+            "hit_top3": 0,
+            "handedness": self.handedness,
+            "capture_mode": capture_mode,
+        }
+        with open(self.csv_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
+            writer.writerow(row)
+        self.index += 1
+
+
+# =============================================================================
+# BACKEND E INFERENCIA
 # =============================================================================
 shared_state = {
     "inference_queue": deque(maxlen=5),
     "prediction": "...",
     "confidence": 0.0,
+    "top3": [],
+    "last_inference_time": 0.0,
     "lock": Lock(),
     "running": True,
 }
@@ -154,6 +319,7 @@ class InferenceWorker:
     def __init__(self, idx_to_class, num_classes, device):
         self.idx_to_class = idx_to_class
         self.device = device
+        self.model = None
 
         try:
             self.model = TinySkeletonClassifier(
@@ -172,10 +338,17 @@ class InferenceWorker:
         except Exception as e:
             print(f"[!] Error cargando modelo: {e}")
             print("[!] Si cambiaste la arquitectura, reentrená con train.py antes de usar la cámara.")
-            self.model = None
 
     def start(self):
         Thread(target=self.loop, args=(), daemon=True).start()
+
+    def _decode_top3(self, probs):
+        values, indices = torch.topk(probs, k=min(3, probs.shape[0]))
+        results = []
+        for conf, idx in zip(values.tolist(), indices.tolist()):
+            name = self.idx_to_class.get(idx, "desconocido")
+            results.append((name, float(conf)))
+        return results
 
     def loop(self):
         while shared_state["running"]:
@@ -193,14 +366,17 @@ class InferenceWorker:
                     with torch.no_grad():
                         logits = self.model(input_tensor)
                         probs = torch.softmax(logits, dim=1)[0]
-                        best_idx = torch.argmax(probs).item()
-                        conf = probs[best_idx].item()
-                        nombre_seña = self.idx_to_class.get(best_idx, "Desconocido")
+                        top3 = self._decode_top3(probs)
 
-                    if conf > cfg.CONFIDENCE_THRESHOLD:
-                        print(f"🧠 {nombre_seña.upper()} ({conf:.1%})")
-                        shared_state["prediction"] = nombre_seña.upper()
-                        shared_state["confidence"] = conf
+                    with shared_state["lock"]:
+                        shared_state["top3"] = top3
+                        shared_state["prediction"] = top3[0][0].upper()
+                        shared_state["confidence"] = top3[0][1]
+                        shared_state["last_inference_time"] = time.time()
+
+                    print(
+                        " | ".join(f"{n.upper()} ({c:.1%})" for n, c in top3)
+                    )
                 except Exception as e:
                     print(f"Error inferencia: {e}")
             else:
@@ -213,7 +389,7 @@ class WebcamStream:
         if not self.stream.isOpened():
             self.stream = cv2.VideoCapture(src, cv2.CAP_DSHOW)
         if not self.stream.isOpened():
-            print("ERROR CRÍTICO: No se puede abrir la cámara.")
+            print("ERROR CRITICO: No se puede abrir la camara.")
             self.stopped = True
             return
 
@@ -230,7 +406,7 @@ class WebcamStream:
 
     def update(self):
         while not self.stopped:
-            (grabbed, frame) = self.stream.read()
+            grabbed, frame = self.stream.read()
             if not grabbed:
                 self.stop()
             else:
@@ -259,19 +435,61 @@ def mouse_callback(event, x, y, flags, param):
         mouse_state["clicked"] = True
 
 
-def enqueue_buffer_for_inference(frames_temp_buffer, device):
+def can_enqueue_inference(last_enqueue_time: float) -> bool:
+    now = time.time()
+    if now - last_enqueue_time < cfg.INFERENCE_COOLDOWN_SEC:
+        return False
+    with shared_state["lock"]:
+        if now - shared_state["last_inference_time"] < cfg.INFERENCE_COOLDOWN_SEC:
+            return False
+    return True
+
+
+def enqueue_buffer_for_inference(frames_temp_buffer, device, last_enqueue_time_ref: list):
+    if not can_enqueue_inference(last_enqueue_time_ref[0]):
+        return False
     tensor = prepare_input_tensor(frames_temp_buffer, device)
     if tensor is not None:
         with shared_state["lock"]:
             shared_state["inference_queue"].append(tensor)
+        last_enqueue_time_ref[0] = time.time()
+        return True
+    return False
+
+
+def draw_top3_panel(canvas, top3, y_start, threshold):
+    for i, (name, conf) in enumerate(top3[:3]):
+        color = (0, 255, 0) if i == 0 and conf >= threshold else (200, 200, 200)
+        cv2.putText(
+            canvas,
+            f"{i + 1}. {name.upper()}  {conf:.0%}",
+            (20, y_start + i * 22),
+            UI_FONT,
+            0.55,
+            color,
+            1,
+        )
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Inferencia LSA en tiempo real.")
+    parser.add_argument(
+        "--eval",
+        action="store_true",
+        help="Modo evaluacion: recorre las 91 senias y guarda CSV.",
+    )
+    parser.add_argument(
+        "--eval-output",
+        default=None,
+        help="Ruta del CSV de evaluacion (default: eval_91senias_<fecha>.csv en src/).",
+    )
+    args = parser.parse_args()
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     ruta_mapeo = os.path.join(cfg.MODEL_SAVE_DIR, "mapeo_clases.json")
     if not os.path.exists(ruta_mapeo):
-        print(f"[!] No se encontró {ruta_mapeo}. Ejecuta el entrenamiento primero.")
+        print(f"[!] No se encontro {ruta_mapeo}. Ejecuta el entrenamiento primero.")
         return
 
     with open(ruta_mapeo, "r", encoding="utf-8") as f:
@@ -279,9 +497,27 @@ def main():
 
     idx_to_class = {v: k for k, v in class_to_idx.items()}
     num_classes = len(idx_to_class)
+    sign_list = sorted(class_to_idx.keys())
+
+    handedness = select_handedness_modal()
+    if handedness is None:
+        print("[!] Configuracion cancelada.")
+        return
+
+    eval_session = None
+    if args.eval:
+        csv_path = args.eval_output or os.path.join(
+            os.path.dirname(__file__),
+            f"eval_91senias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+        )
+        eval_session = EvalSession(sign_list, csv_path, handedness)
+        print(f"[*] Modo eval activo. CSV: {csv_path}")
+        print(f"[*] Senias a probar: {len(sign_list)}. Tecla 'n' = saltar senia.")
 
     print("\n[*] Iniciando camara...")
     print(f"[*] Modo captura: {cfg.CAPTURE_MODE} | MAX_FRAMES: {cfg.MAX_FRAMES}")
+    print(f"[*] Umbral confianza: {cfg.CONFIDENCE_THRESHOLD:.0%} | Cooldown: {cfg.INFERENCE_COOLDOWN_SEC}s")
+
     vs = WebcamStream(0).start()
     time.sleep(2.0)
     if vs.stopped:
@@ -297,7 +533,7 @@ def main():
     mp_drawing = mp.solutions.drawing_utils
 
     VID_W, VID_H = 640, 480
-    TOT_H = VID_H + 150
+    TOT_H = VID_H + 175
 
     btn_view = Button(520, VID_H + 20, 100, 40, "Esqueleto")
     btn_conf = Button(520, VID_H + 80, 100, 40, "Config")
@@ -307,15 +543,14 @@ def main():
     slider_conf = Slider(150, 200, 340, 0.1, 1.0, cfg.CONFIDENCE_THRESHOLD, "Confianza Min")
     slider_still = Slider(150, 250, 340, 5, 40, cfg.STILL_FRAMES_LIMIT, "Corte por Silencio (Frames)")
     slider_static = Slider(150, 300, 340, 2, 15, cfg.STATIC_HANDS_FRAMES_TO_START, "Frames Manos (Estatico)")
-
     btn_save = Button(220, 380, 100, 40, "CERRAR")
 
     show_config = False
     show_landmarks = True
     capture_mode = cfg.CAPTURE_MODE
+    left_handed = handedness == "left"
 
     smoother = LandmarkSmoother(alpha=0.6)
-
     frames_temp_buffer = []
     prev_gray = None
     prev_hand_vector = None
@@ -324,6 +559,8 @@ def main():
     consecutive_still_frames = 0
     consecutive_hands_frames = 0
     missing_hands_frames = 0
+    last_enqueue_time = [0.0]
+    pending_eval_after = [0.0]
 
     with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         while True:
@@ -359,27 +596,7 @@ def main():
 
             current_vector = None
             if hands_present:
-                anchor, scale = get_anchor_and_scale(results.pose_landmarks)
-                raw_pose = (
-                    np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
-                    if results.pose_landmarks
-                    else np.zeros(33 * 3)
-                )
-                raw_lh = (
-                    np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
-                    if results.left_hand_landmarks
-                    else np.zeros(21 * 3)
-                )
-                raw_rh = (
-                    np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
-                    if results.right_hand_landmarks
-                    else np.zeros(21 * 3)
-                )
-
-                norm_pose = normalize_spatial_points(raw_pose, anchor, scale)
-                norm_lh = normalize_spatial_points(raw_lh, anchor, scale)
-                norm_rh = normalize_spatial_points(raw_rh, anchor, scale)
-                current_vector = np.concatenate([norm_pose, norm_lh, norm_rh])
+                current_vector = extract_normalized_vector(results, left_handed=left_handed)
                 landmark_motion_val = compute_landmark_hand_motion(
                     current_vector, prev_hand_vector, cfg.POSE_DIM
                 )
@@ -393,7 +610,8 @@ def main():
 
             if btn_capture.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
                 if len(frames_temp_buffer) >= cfg.MIN_CAPTURE_FRAMES:
-                    enqueue_buffer_for_inference(frames_temp_buffer, device)
+                    if enqueue_buffer_for_inference(frames_temp_buffer, device, last_enqueue_time):
+                        pending_eval_after[0] = last_enqueue_time[0]
                     frames_temp_buffer = []
                     consecutive_still_frames = 0
                     missing_hands_frames = 0
@@ -421,7 +639,8 @@ def main():
                         len(frames_temp_buffer) >= cfg.CAPTURE_BUFFER_SIZE
                         or consecutive_still_frames >= cfg.STILL_FRAMES_LIMIT
                     ):
-                        enqueue_buffer_for_inference(frames_temp_buffer, device)
+                        if enqueue_buffer_for_inference(frames_temp_buffer, device, last_enqueue_time):
+                            pending_eval_after[0] = last_enqueue_time[0]
                         frames_temp_buffer = []
                         consecutive_still_frames = 0
                         smoother.reset()
@@ -434,20 +653,36 @@ def main():
                         frames_temp_buffer.append(frames_temp_buffer[-1])
 
                     if missing_hands_frames >= cfg.MISSING_HANDS_LIMIT:
-                        enqueue_buffer_for_inference(frames_temp_buffer, device)
+                        if enqueue_buffer_for_inference(frames_temp_buffer, device, last_enqueue_time):
+                            pending_eval_after[0] = last_enqueue_time[0]
                         frames_temp_buffer = []
                         consecutive_still_frames = 0
                         missing_hands_frames = 0
                         smoother.reset()
+
+            with shared_state["lock"]:
+                top3 = list(shared_state["top3"])
+                p_txt = shared_state["prediction"]
+                c_val = shared_state["confidence"]
+                last_inf_time = shared_state["last_inference_time"]
+
+            if (
+                pending_eval_after[0] > 0
+                and top3
+                and eval_session
+                and not eval_session.finished
+                and last_inf_time >= pending_eval_after[0]
+            ):
+                eval_session.log_prediction(top3, capture_mode)
+                pending_eval_after[0] = 0.0
+                if eval_session.finished:
+                    print(f"[*] Evaluacion completa. CSV: {eval_session.csv_path}")
 
             canvas = np.zeros((TOT_H, VID_W, 3), dtype="uint8")
             canvas[0:VID_H, 0:VID_W] = image
             cv2.rectangle(canvas, (0, VID_H), (VID_W, TOT_H), (30, 30, 30), -1)
 
             if not show_config:
-                p_txt = shared_state["prediction"]
-                c_val = shared_state["confidence"]
-
                 buf_len = len(frames_temp_buffer)
                 prog = min(buf_len / cfg.CAPTURE_BUFFER_SIZE, 1.0)
                 col_prog = (0, 255, 0) if prog >= 1.0 else (0, 255, 255)
@@ -460,56 +695,56 @@ def main():
                     f"Buffer: {buf_len} | Silencio: {consecutive_still_frames}/{cfg.STILL_FRAMES_LIMIT}",
                     (230, VID_H + 28),
                     UI_FONT,
-                    0.5,
+                    0.45,
                     (150, 150, 150),
                     1,
                 )
 
-                mot_ratio = min(motion_val / (cfg.MOTION_PIXEL_THRESHOLD * 2), 1.0)
-                mot_col = (0, 0, 255) if is_moving else (100, 100, 100)
-                cv2.rectangle(canvas, (20, VID_H + 45), (20 + int(100 * mot_ratio), VID_H + 50), mot_col, -1)
+                hand_label = "ZURDO" if left_handed else "DIESTRO"
                 cv2.putText(
                     canvas,
-                    f"Pix: {motion_val} | LM: {landmark_motion_val:.3f}",
-                    (130, VID_H + 48),
+                    f"Mano: {hand_label} | Modo: {capture_mode.upper()}",
+                    (20, VID_H + 48),
                     UI_FONT,
-                    0.4,
-                    (200, 200, 200),
-                    1,
-                )
-                cv2.putText(
-                    canvas,
-                    f"Modo: {capture_mode.upper()} | Manos: {consecutive_hands_frames}",
-                    (20, VID_H + 65),
-                    UI_FONT,
-                    0.4,
+                    0.42,
                     (180, 180, 180),
                     1,
                 )
 
-                if p_txt != "...":
-                    cv2.putText(canvas, p_txt, (20, VID_H + 90), cv2.FONT_HERSHEY_DUPLEX, 1.2, (0, 255, 0), 2)
+                if eval_session and not eval_session.finished:
+                    expected = eval_session.expected_sign
+                    cv2.putText(
+                        canvas,
+                        f"EVAL {eval_session.index + 1}/{len(sign_list)} -> {expected.upper()}",
+                        (20, 20),
+                        UI_FONT,
+                        0.65,
+                        (0, 200, 255),
+                        2,
+                    )
+                elif eval_session and eval_session.finished:
+                    cv2.putText(canvas, "EVAL COMPLETA", (20, 20), UI_FONT, 0.65, (0, 255, 0), 2)
+
+                threshold = cfg.CONFIDENCE_THRESHOLD
+
+                if top3:
+                    draw_top3_panel(canvas, top3, VID_H + 68, threshold)
+                elif p_txt != "...":
+                    color = (0, 255, 0) if c_val >= threshold else (0, 200, 255)
+                    cv2.putText(canvas, p_txt, (20, VID_H + 90), cv2.FONT_HERSHEY_DUPLEX, 1.0, color, 2)
                     cv2.putText(
                         canvas,
                         f"Confianza: {c_val:.1%}",
-                        (20, VID_H + 120),
+                        (20, VID_H + 118),
                         UI_FONT,
-                        0.6,
+                        0.55,
                         (180, 180, 180),
                         1,
                     )
                 else:
-                    cv2.putText(canvas, "Esperando...", (20, VID_H + 90), UI_FONT, 1, (100, 100, 100), 2)
+                    cv2.putText(canvas, "Esperando...", (20, VID_H + 90), UI_FONT, 0.9, (100, 100, 100), 2)
 
-                cv2.putText(
-                    canvas,
-                    "Presione 'q' para salir",
-                    (VID_W - 200, TOT_H - 10),
-                    UI_FONT,
-                    0.5,
-                    (100, 100, 100),
-                    1,
-                )
+                cv2.putText(canvas, "q=salir | m=modo | n=saltar (eval)", (20, TOT_H - 8), UI_FONT, 0.42, (120, 120, 120), 1)
 
                 if btn_view.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
                     show_landmarks = not show_landmarks
@@ -563,10 +798,16 @@ def main():
             if key == ord("m"):
                 capture_mode = {"auto": "static", "static": "dynamic", "dynamic": "auto"}[capture_mode]
                 print(f"[*] Modo captura cambiado a: {capture_mode}")
+            if key == ord("n") and eval_session and not eval_session.finished:
+                eval_session.skip_current(capture_mode)
+                print(f"[*] Saltada senia. Siguiente: {eval_session.expected_sign}")
 
     shared_state["running"] = False
     vs.stop()
     cv2.destroyAllWindows()
+
+    if eval_session:
+        print(f"[*] Evaluacion: {eval_session.index}/{len(sign_list)} registros en {eval_session.csv_path}")
 
 
 if __name__ == "__main__":
