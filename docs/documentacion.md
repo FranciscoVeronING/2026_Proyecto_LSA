@@ -203,7 +203,9 @@ python train.py
 **Ejecución:**
 ```bash
 cd src
-python camera.py
+python camera.py              # inferencia normal (modal diestro/zurdo al inicio)
+python camera.py --eval       # evaluación 91 señas → CSV
+python preprocessing.py --force  # reprocesar .npy tras cambios de trim/interpolación
 ```
 
 ---
