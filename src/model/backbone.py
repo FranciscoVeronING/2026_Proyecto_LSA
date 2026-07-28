@@ -1,8 +1,10 @@
 # Original code from: 209sontung/sign-language: Real-time Sign Language Gesture Recognition Using 1DCNN + 
 # Transformers on MediaPipe landmarks
 
-from src.config import TARGET_FRAMES, FRAME_FEATURES_DIM, NUM_CLASSES
+from src.config import TARGET_FRAMES, NUM_NODES
 import tensorflow as tf
+
+CHANNELS = NUM_NODES * 6  # 118 landmarks * 3 coordinates (x, y, z) * temporal derivatives (current and previous frame) = 708
 
 
 class ECA(tf.keras.layers.Layer):
@@ -318,7 +320,7 @@ def get_model(max_len=TARGET_FRAMES, dropout_step=0, dim=192):
     Returns:
         A TensorFlow Keras Model object.
     """
-    inp = tf.keras.Input((max_len,FRAME_FEATURES_DIM))
+    inp = tf.keras.Input((max_len,CHANNELS))
     #x = tf.keras.layers.Masking(mask_value=PAD,input_shape=(max_len,CHANNELS))(inp) #we don't need masking layer with inference
     x = inp
     ksize = 17

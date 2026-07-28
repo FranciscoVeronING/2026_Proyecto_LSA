@@ -1,6 +1,9 @@
 import os
+import json
 import numpy as np
 import tensorflow as tf
+import keras
+from keras import layers
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
@@ -46,14 +49,14 @@ base_model.trainable = True
 x = base_model.layers[-2].output
 
 # Add a new Dense layer for our specific classification task (94 classes)
-outputs = tf.keras.layers.Dense(NUM_CLASSES, activation='softmax', name='lsa_classifier_94')(x)
+outputs = layers.Dense(NUM_CLASSES, activation='softmax', name='lsa_classifier_94')(x)
 
 # Create the new model that combines the base model and our custom classifier
-model_lsa = tf.keras.Model(inputs=base_model.input, outputs=outputs)
+model_lsa = keras.Model(inputs=base_model.input, outputs=outputs)
 
 # COMPILE THE MODEL
 model_lsa.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_TRANSFER),
+    optimizer=keras.optimizers.Adam(learning_rate=LEARNING_RATE_TRANSFER),
     loss='sparse_categorical_crossentropy',
     metrics=['accuracy']
 )
@@ -62,10 +65,11 @@ print(model_lsa.summary())
 
 # Callbacks to save the best model and implement early stopping
 os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
+model_path = os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_best.h5')
 callbacks = [
-    tf.keras.callbacks.ModelCheckpoint(os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_best.h5'), save_best_only=True, monitor='val_accuracy', mode='max'),
-    tf.keras.callbacks.EarlyStopping(patience=PATIENCE, monitor='val_loss', restore_best_weights=True),
-    tf.keras.callbacks.ReduceLROnPlateau(
+    keras.callbacks.ModelCheckpoint(model_path, save_best_only=True, monitor='val_accuracy', mode='max'),
+    keras.callbacks.EarlyStopping(patience=PATIENCE, monitor='val_loss', restore_best_weights=True),
+    keras.callbacks.ReduceLROnPlateau(
         monitor='val_loss',
         factor=0.2,       # Multiplies the LR by 0.2 (reduces it by 80%)
         patience=5,        # Waits 5 epochs of "plateau" before acting.             TRY 5 = 3
@@ -83,7 +87,13 @@ history = model_lsa.fit(
     callbacks=callbacks
 )
 
-print("Final model saved at: " + os.path.join(MODEL_SAVE_DIR, 'lsa_transfer_last.h5'))
+model_lsa.save(model_path)
+print("Best model saved at: " + model_path)
+
+mapping_path = os.path.join(MODEL_SAVE_DIR, "mapeo_clases.json")
+with open(mapping_path, "w", encoding="utf-8") as f:
+    json.dump(class_a_index, f, ensure_ascii=False, indent=2)
+print("Class mapping saved at: " + mapping_path)
 
 
 print("Generating reports...")

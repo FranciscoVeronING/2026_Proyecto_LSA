@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from typing import Tuple, List, Any
+from typing import Tuple, List, Any, Optional
 
 def get_anchor_and_scale(pose_landmarks: Any) -> Tuple[np.ndarray, float]:
     """
@@ -70,6 +70,77 @@ def normalize_spatial_points(
     return normalized_points.flatten()
 
 
+def normalize_sequence_to_frames(sequence: np.ndarray, target_frames: int) -> np.ndarray:
+    """
+    Lleva una secuencia (T, F) a exactamente target_frames.
+    Si hay más frames, subsamplea uniformemente (igual que en cámara).
+    Si hay menos, rellena con ceros al final.
+    """
+    if sequence.size == 0:
+        feature_dim = sequence.shape[1] if sequence.ndim == 2 else 225
+        return np.zeros((target_frames, feature_dim), dtype=np.float32)
+
+    frames_actuales, features = sequence.shape
+    if frames_actuales == target_frames:
+        return sequence.astype(np.float32)
+    if frames_actuales < target_frames:
+        padding = np.zeros((target_frames - frames_actuales, features), dtype=np.float32)
+        return np.vstack((sequence, padding)).astype(np.float32)
+
+    indices = np.linspace(0, frames_actuales - 1, target_frames, dtype=int)
+    return sequence[indices].astype(np.float32)
+
+
+def compute_landmark_hand_motion(
+    current_vector: np.ndarray,
+    previous_vector: Optional[np.ndarray],
+    hand_start: int,
+) -> float:
+    """Movimiento L2 entre frames consecutivos, solo en la porción de manos."""
+    if previous_vector is None:
+        return 0.0
+    curr_hands = current_vector[hand_start:]
+    prev_hands = previous_vector[hand_start:]
+    if np.all(curr_hands == 0.0) or np.all(prev_hands == 0.0):
+        return 0.0
+    return float(np.linalg.norm(curr_hands - prev_hands))
+
+
+def trim_gesture_buffer(
+    buffer: List[np.ndarray],
+    hand_start: int,
+    static_motion_threshold: float,
+    min_frames: int = 5,
+) -> List[np.ndarray]:
+    """
+    Recorta silencio al inicio/fin del buffer antes del subsampleo.
+    En gestos estáticos (poco movimiento), conserva los últimos frames (la pose sostenida).
+    """
+    if len(buffer) <= min_frames:
+        return buffer
+
+    motions = [0.0]
+    for idx in range(1, len(buffer)):
+        motions.append(
+            compute_landmark_hand_motion(buffer[idx], buffer[idx - 1], hand_start)
+        )
+
+    peak_motion = max(motions)
+    if peak_motion < static_motion_threshold:
+        keep = max(min_frames, len(buffer) // 2)
+        return buffer[-keep:]
+
+    active_threshold = peak_motion * 0.2
+    active_indices = [i for i, motion in enumerate(motions) if motion >= active_threshold]
+    if not active_indices:
+        return buffer[-min_frames:]
+
+    start = max(0, active_indices[0] - 2)
+    end = min(len(buffer) - 1, active_indices[-1] + 4)
+    trimmed = buffer[start : end + 1]
+    return trimmed if len(trimmed) >= min_frames else buffer[-min_frames:]
+
+
 def uniform_subsampling(sequence_data: List[np.ndarray], target_frames: int = 16) -> np.ndarray:
     """
     Temporally compresses the variable-length frame sequence 
@@ -86,7 +157,8 @@ def uniform_subsampling(sequence_data: List[np.ndarray], target_frames: int = 16
 
     # Exception handling for empty or corrupt video files
     if total_frames == 0:
-        return np.zeros((target_frames, 225), dtype=np.float32)
+        feature_dim = len(sequence_data[0]) if sequence_data else 225
+        return np.zeros((target_frames, feature_dim), dtype=np.float32)
 
     # Generate equally spaced indices distributed throughout the footage
     indices = np.linspace(0, total_frames - 1, target_frames, dtype=int)
