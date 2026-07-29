@@ -1,0 +1,6 @@
+{
+    "batch_size": 32,
+    "use_dense": false,
+    "learning_rate": 0.0013369883518907458,
+    "optimizer": "adam"
+}
