@@ -1,11 +1,10 @@
 # Original code from: 209sontung/sign-language: Real-time Sign Language Gesture Recognition Using 1DCNN + 
 # Transformers on MediaPipe landmarks
 
-from src.config import TARGET_FRAMES, NUM_NODES
+from src.config import TARGET_FRAMES, FRAME_FEATURES_DIM
 import tensorflow as tf
 
-CHANNELS = NUM_NODES * 6  # 118 landmarks * 3 coordinates (x, y, z) * temporal derivatives (current and previous frame) = 708
-
+CHANNELS = FRAME_FEATURES_DIM 
 
 class ECA(tf.keras.layers.Layer):
     """

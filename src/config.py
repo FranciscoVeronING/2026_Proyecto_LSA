@@ -4,7 +4,7 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATASET_VIDEOS_DIR = os.path.join(BASE_DIR, "dataset")
-DATASET_NPY_DIR = os.path.join(BASE_DIR, "dataset_filtered_landmarks")
+DATASET_NPY_DIR = os.path.join(BASE_DIR, "dataset_hand_pose")
 MODEL_SAVE_DIR = os.path.join(BASE_DIR, "src", "model")
 WEIGHTS_PATH = os.path.join(BASE_DIR, "src", "model", "islr-fp16-192-8-seed_all42-foldall-last.h5")
 
@@ -114,14 +114,9 @@ SIGN_CLASSES = [
     "vivir_en"
 ]
 
-USE_POSE = True
-USE_HANDS = True
-USE_FACE = True
-
-POSE_DIM = 33 * 3 if USE_POSE else 0
-HANDS_DIM = (21 * 3) * 2 if USE_HANDS else 0
-FACE_DIM = 468 * 3 if USE_FACE else 0
-FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM + FACE_DIM
+POSE_DIM = 33 * 3
+HANDS_DIM = (21 * 3) * 2
+FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM
 
 FRAME_WIDTH = 1920
 FRAME_HEIGHT = 1080
@@ -137,17 +132,6 @@ LEARNING_RATE_TRANSFER = 1e-3
 LEARNING_RATE_FINE_TUNING = 1e-5
 PATIENCE = 15
 VAL_SIZE = 0.2
-
-LIP = [0, 61, 185, 40, 39, 37, 267, 269, 270, 409, 291, 146, 91, 181, 84, 17, 314, 405, 321, 375, 78, 191, 80, 81, 82, 13, 312, 311, 310, 415, 95, 88, 178, 87, 14, 317, 402, 318, 324, 308]
-LHAND = list(range(468, 489))
-RHAND = list(range(522, 543))
-NOSE = [1, 2, 98, 327]
-REYE = [33, 7, 163, 144, 145, 153, 154, 155, 133, 246, 161, 160, 159, 158, 157, 173]
-LEYE = [263, 249, 390, 373, 374, 380, 381, 382, 362, 466, 388, 387, 386, 385, 384, 398]
-
-# 118 en total
-POINT_LANDMARKS = LIP + LHAND + RHAND + NOSE + REYE + LEYE
-NUM_NODES = len(POINT_LANDMARKS)  # 118
 
 
 

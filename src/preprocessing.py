@@ -11,7 +11,7 @@ from src.config import (
     DATASET_VIDEOS_DIR, 
     DATASET_NPY_DIR, 
     TARGET_FRAMES, 
-    LIP, LHAND, RHAND, NOSE, REYE, LEYE, POINT_LANDMARKS, NUM_NODES
+    FRAME_FEATURES_DIM
 )
 
 
@@ -38,9 +38,6 @@ def process_video_to_landmarks(
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = holistic_model.process(rgb_image)
 
-        # 1. Extraer los 543 landmarks exactamente en el orden del autor
-        face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]) \
-            if results.face_landmarks else np.full((468, 3), np.nan)
         lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]) \
             if results.left_hand_landmarks else np.full((21, 3), np.nan)
         pose = np.array([[res.x, res.y, res.z] for res in results.pose_landmarks.landmark]) \
@@ -48,32 +45,24 @@ def process_video_to_landmarks(
         rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]) \
             if results.right_hand_landmarks else np.full((21, 3), np.nan)
 
-        # Matriz global (543, 3)
-        all_landmarks = np.concatenate([face, lh, pose, rh], axis=0)
+        # Matriz global
+        all_landmarks = np.concatenate([lh, pose, rh], axis=0)
 
         # Reemplazar NaN por 0.0 si es necesario para evitar fallos numéricos en TensorFlow
         all_landmarks = np.nan_to_num(all_landmarks, nan=0.0)
 
-        # 2. Filtrar únicamente los 118 puntos seleccionados
-        selected_landmarks = all_landmarks[POINT_LANDMARKS]  # Shape: (118, 3)
-
-        # 3. Normalización espacial
+        # Normalización espacial
         anchor, scale = get_anchor_and_scale(results.pose_landmarks)
         
-        # Coordenadas brutas aplanadas (118 * 3 = 354)
-        raw_flat = selected_landmarks.flatten()
-        # Coordenadas normalizadas aplanadas (118 * 3 = 354)
+        raw_flat = all_landmarks.flatten()
         normalized_flat = normalize_spatial_points(raw_flat, anchor, scale)
 
-        # Combinar brutas + normalizadas para obtener exactamente 708 características por frame
-        frame_vector = np.concatenate([raw_flat, normalized_flat])  # Shape: (708,)
-
-        sequence_history.append(frame_vector)
+        sequence_history.append(normalized_flat)
 
     capture.release()
 
     if not sequence_history:
-        return np.zeros((target_frames, NUM_NODES * 6))
+        return np.zeros((target_frames, FRAME_FEATURES_DIM))
 
     # Submuestreo temporal uniforme
     return uniform_subsampling(sequence_history, target_frames=target_frames)
@@ -118,9 +107,8 @@ def run_extraction_pipeline(
 
 
 if __name__ == "__main__":
-    EXPECTED_CHANNELS = NUM_NODES * 6  # 118 * 6 = 708
+    EXPECTED_CHANNELS = FRAME_FEATURES_DIM
     print(f"Starting extraction pipeline:")
-    print(f" > Selected Landmarks: {NUM_NODES} points")
     print(f" > Expected features per frame: {EXPECTED_CHANNELS} channels")
     print(f" > Output temporal sequence: {TARGET_FRAMES} frames")
     

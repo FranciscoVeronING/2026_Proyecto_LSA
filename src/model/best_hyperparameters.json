@@ -1,0 +1,6 @@
+{
+    "batch_size": 16,
+    "use_dense": false,
+    "learning_rate": 0.0005639974395199206,
+    "optimizer": "rmsprop"
+}

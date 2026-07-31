@@ -7,7 +7,7 @@ import keras
 from keras import layers
 from sklearn.model_selection import train_test_split
 import optuna
-from optuna.integration import TFKerasPruningCallback
+import matplotlib.pyplot as plt
 
 from src.model.backbone import get_model
 from src.config import (
@@ -19,12 +19,12 @@ from src.config import (
     EPOCHS, 
     PATIENCE, 
     VAL_SIZE,
-    POINT_LANDMARKS
+    FRAME_FEATURES_DIM
 )
 
 
 def load_dataset():
-    """Carga y valida los arrays guardados en formato de 708 canales."""
+    """Carga y valida los arrays guardados."""
     X_data = []
     y_data = []
     class_a_index = {class_name: i for i, class_name in enumerate(SIGN_CLASSES)}
@@ -36,11 +36,6 @@ def load_dataset():
                 file_path = os.path.join(class_path, npy_file)
                 landmarks = np.load(file_path)
 
-                # Si tus .npy vinieran completos con 543 puntos, filtramos a 118 aquí:
-                if landmarks.shape[-1] != 708 and landmarks.ndim == 3 and landmarks.shape[1] == 543:
-                    landmarks = landmarks[:, POINT_LANDMARKS, :]
-                    landmarks = landmarks.reshape(landmarks.shape[0], -1)
-
                 X_data.append(landmarks)
                 y_data.append(class_a_index[class_name])
 
@@ -49,39 +44,31 @@ def load_dataset():
     return X_data, y_data, class_a_index
 
 
-def create_model(trial):
-    """Construye el modelo especificando 708 canales de entrada."""
-    # Instanciamos el backbone especificando los 708 canales
-    base_model = get_model(in_channels=708) if 'in_channels' in get_model.__code__.co_varnames else get_model()
-    
+def create_model_from_params(params, in_channels):
+    """Construye y compila el modelo recibiendo un diccionario de hiperparámetros e in_channels."""
+    if 'in_channels' in get_model.__code__.co_varnames:
+        base_model = get_model(in_channels=in_channels)
+    else:
+        base_model = get_model()
+
     base_model.load_weights(WEIGHTS_PATH, by_name=True, skip_mismatch=True)
     base_model.trainable = True
 
     # Tomamos la salida antes de la última capa del backbone
     x = base_model.layers[-2].output
 
-    # --- HIPERPARÁMETROS A SINTONIZAR ---
-    
-    # 1. Opción de agregar una capa Dense intermedia
-    use_dense_intermedia = trial.suggest_categorical("use_dense", [True, False])
-    if use_dense_intermedia:
-        units = trial.suggest_int("dense_units", 64, 512, step=64)
-        x = layers.Dense(units, activation="relu")(x)
-        
-        # 2. Rate de Dropout
-        dropout_rate = trial.suggest_float("dropout_rate", 0.1, 0.5)
-        x = layers.Dropout(dropout_rate)(x)
+    # Capa Dense intermedia si fue sugerida
+    if params.get("use_dense", False):
+        x = layers.Dense(params["dense_units"], activation="relu")(x)
+        x = layers.Dropout(params["dropout_rate"])(x)
 
     # Capa final de clasificación
     outputs = layers.Dense(NUM_CLASSES, activation='softmax', name='lsa_classifier_94')(x)
-    
     model = keras.Model(inputs=base_model.input, outputs=outputs)
 
-    # 3. Learning Rate (en escala logarítmica)
-    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-2, log=True)
-    
-    # 4. Optimizador (Manejo de compatibilidad tf.keras)
-    optimizer_name = trial.suggest_categorical("optimizer", ["adam", "adamw", "rmsprop"])
+    learning_rate = params["learning_rate"]
+    optimizer_name = params["optimizer"]
+
     if optimizer_name == "adam":
         optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     elif optimizer_name == "adamw":
@@ -97,21 +84,34 @@ def create_model(trial):
         loss='sparse_categorical_crossentropy',
         metrics=['accuracy']
     )
-    
     return model
+
+
+def create_model(trial, in_channels):
+    """Sugiere hiperparámetros desde un Trial de Optuna y construye el modelo."""
+    params = {
+        "use_dense": trial.suggest_categorical("use_dense", [True, False]),
+        "learning_rate": trial.suggest_float("learning_rate", 1e-5, 1e-2, log=True),
+        "optimizer": trial.suggest_categorical("optimizer", ["adam", "adamw", "rmsprop"])
+    }
+
+    if params["use_dense"]:
+        params["dense_units"] = trial.suggest_int("dense_units", 64, 512, step=64)
+        params["dropout_rate"] = trial.suggest_float("dropout_rate", 0.1, 0.5)
+
+    return create_model_from_params(params, in_channels=in_channels)
 
 
 def objective(trial, X_train, y_train, X_val, y_val):
     """Función objetivo que entrena la red y retorna la métrica a optimizar."""
-    
-    # Limpieza previa de memoria GPU/RAM
     keras.backend.clear_session()
     gc.collect()
 
-    # 5. Tamaño de Batch dinámico
+    in_channels = X_train.shape[-1]
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
 
-    model = create_model(trial)
+    model = create_model(trial, in_channels=in_channels)
+
     class CustomOptunaPruningCallback(keras.callbacks.Callback):
         def __init__(self, trial, monitor="val_accuracy"):
             super().__init__()
@@ -129,19 +129,11 @@ def objective(trial, X_train, y_train, X_val, y_val):
                 message = f"Trial suspendido tempranamente en la epoch {epoch} por bajo rendimiento."
                 raise optuna.TrialPruned(message)
 
-    # Callbacks
     callbacks = [
-        # Pruning: cancela trials con mal rendimiento anticipado
         CustomOptunaPruningCallback(trial, monitor="val_accuracy"),
-        # Early Stopping
         keras.callbacks.EarlyStopping(monitor='val_loss', patience=PATIENCE, restore_best_weights=True),
-        # ReduceLROnPlateau
         keras.callbacks.ReduceLROnPlateau(
-            monitor='val_loss',
-            factor=0.2,
-            patience=3,
-            min_lr=1e-6,
-            verbose=0
+            monitor='val_loss', factor=0.2, patience=3, min_lr=1e-6, verbose=0
         )
     ]
 
@@ -154,14 +146,47 @@ def objective(trial, X_train, y_train, X_val, y_val):
             callbacks=callbacks,
             verbose=1
         )
-
         val_accuracy = max(history.history['val_accuracy'])
     finally:
-        # Garantiza liberar la memoria VRAM incluso si el trial falla o es descartado
         keras.backend.clear_session()
         gc.collect()
 
     return val_accuracy
+
+
+def plot_and_save_history(history, save_dir):
+    """Genera y guarda el gráfico de Accuracy y Loss en un archivo PNG para el informe."""
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epochs_range = range(1, len(acc) + 1)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    # Gráfico de Accuracy
+    ax1.plot(epochs_range, acc, label='Entrenamiento', color='tab:blue', linewidth=2)
+    ax1.plot(epochs_range, val_acc, label='Validación', color='tab:orange', linewidth=2)
+    ax1.set_title('Precisión (Accuracy)')
+    ax1.set_xlabel('Épocas')
+    ax1.set_ylabel('Accuracy')
+    ax1.grid(True, linestyle='--', alpha=0.6)
+    ax1.legend()
+
+    # Gráfico de Loss
+    ax2.plot(epochs_range, loss, label='Entrenamiento', color='tab:blue', linewidth=2)
+    ax2.plot(epochs_range, val_loss, label='Validación', color='tab:orange', linewidth=2)
+    ax2.set_title('Función de Pérdida (Loss)')
+    ax2.set_xlabel('Épocas')
+    ax2.set_ylabel('Loss')
+    ax2.grid(True, linestyle='--', alpha=0.6)
+    ax2.legend()
+
+    plt.tight_layout()
+    output_path = os.path.join(save_dir, "best_model_learning_curves.png")
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+    print(f"\n📊 Gráfico de curvas guardado con éxito en: {output_path}")
 
 
 if __name__ == "__main__":
@@ -183,10 +208,11 @@ if __name__ == "__main__":
     db_path = os.path.join(MODEL_SAVE_DIR, "optuna_study.db")
     storage_name = f"sqlite:///{db_path}"
 
+    # Usamos un nombre de estudio específico para el dataset actual
     study = optuna.create_study(
         direction="maximize",
         pruner=pruner,
-        study_name="lsa_transfer_learning",
+        study_name="lsa_pose_hands_no_face",
         storage=storage_name,
         load_if_exists=True
     )
@@ -204,8 +230,35 @@ if __name__ == "__main__":
     for key, value in study.best_params.items():
         print(f"  {key}: {value}")
 
-    # Guardar los mejores hiperparámetros en JSON
+    # 1. Guardar los mejores hiperparámetros en JSON
     best_params_path = os.path.join(MODEL_SAVE_DIR, "best_hyperparameters.json")
     with open(best_params_path, "w", encoding="utf-8") as f:
         json.dump(study.best_params, f, indent=4)
     print(f"\nMejores hiperparámetros guardados en: {best_params_path}")
+
+    # 2. Entrenar el modelo final con la combinación ganadora
+    print("\n🚀 Entrenando el MODELO FINAL con los mejores hiperparámetros...")
+    in_channels = X_train.shape[-1]
+    best_model = create_model_from_params(study.best_params, in_channels=in_channels)
+
+    final_callbacks = [
+        keras.callbacks.EarlyStopping(monitor='val_loss', patience=PATIENCE, restore_best_weights=True),
+        keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=1e-6, verbose=1)
+    ]
+
+    history = best_model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=EPOCHS,
+        batch_size=study.best_params["batch_size"],
+        callbacks=final_callbacks,
+        verbose=1
+    )
+
+    # 3. Generar y guardar el gráfico PNG para el informe
+    plot_and_save_history(history, MODEL_SAVE_DIR)
+
+    # 4. Guardar los pesos finales
+    final_weights_path = os.path.join(MODEL_SAVE_DIR, "best_optuna_model.h5")
+    best_model.save_weights(final_weights_path)
+    print(f"💾 Pesos del modelo mejorado guardados en: {final_weights_path}")
