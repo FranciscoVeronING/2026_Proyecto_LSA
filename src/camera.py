@@ -17,12 +17,19 @@ import mediapipe as mp
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 
-from src.config import CAPTURE_MODE, CONFIDENCE_THRESHOLD, INFERENCE_COOLDOWN_SEC, LANDMARK_MOTION_THRESHOLD, MIN_CAPTURE_FRAMES, MOTION_PIXEL_THRESHOLD, POSE_DIM, STATIC_HANDS_FRAMES_TO_START, STILL_FRAMES_LIMIT, WEIGHTS_PATH, CLASSES_MAP_JSON
+from src.config import (
+    CAPTURE_MODE, 
+    CONFIDENCE_THRESHOLD, 
+    INFERENCE_COOLDOWN_SEC, 
+    MIN_CAPTURE_FRAMES, 
+    POSE_DIM, 
+    WEIGHTS_PATH, 
+    CLASSES_MAP_JSON
+)
 from src.model.backbone import get_model
 from src.utils import (
     get_anchor_and_scale,
     normalize_spatial_points,
-    compute_landmark_hand_motion,
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
 )
@@ -63,7 +70,7 @@ def prepare_input_tensor(buffer_list, target_frames=16):
     """Convierte buffer temporal a array NumPy con forma (1, target_frames, features)."""
     matrix = sequence_buffer_to_model_input(buffer_list)
     
-    # Interpolar o recortar para asegurar exactamente el número de frames deseado
+    # Interpolar o submuestrear para asegurar exactamente los 16 frames deseados
     if matrix.shape[0] != target_frames:
         indices = np.linspace(0, matrix.shape[0] - 1, target_frames).astype(int)
         matrix = matrix[indices]
@@ -72,45 +79,37 @@ def prepare_input_tensor(buffer_list, target_frames=16):
     return tensor
 
 
-def should_start_recording(capture_mode, hands_present, is_moving, consecutive_hands_frames):
-    if not hands_present:
-        return False
-    if capture_mode == "dynamic":
-        return is_moving
-    if capture_mode == "static":
-        return consecutive_hands_frames >= STATIC_HANDS_FRAMES_TO_START
-    static_ready = consecutive_hands_frames >= STATIC_HANDS_FRAMES_TO_START
-    return is_moving or static_ready
-
-
-def extract_normalized_vector(results, left_handed: bool):
-    """Extrae Pose + Manos normalizadas."""
-    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
-    
-    raw_pose = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
-        if results.pose_landmarks
-        else np.zeros(33 * 3)
-    )
-    raw_lh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
+def extract_normalized_vector(results, left_handed: bool = False):
+    """
+    Extrae y normaliza los landmarks de la cámara siguiendo la misma lógica 
+    del script de preprocesamiento.
+    """
+    lh = (
+        np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark])
         if results.left_hand_landmarks
-        else np.zeros(21 * 3)
+        else np.full((21, 3), np.nan)
     )
-    raw_rh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
+    pose = (
+        np.array([[res.x, res.y, res.z] for res in results.pose_landmarks.landmark])
+        if results.pose_landmarks
+        else np.full((33, 3), np.nan)
+    )
+    rh = (
+        np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark])
         if results.right_hand_landmarks
-        else np.zeros(21 * 3)
+        else np.full((21, 3), np.nan)
     )
 
-    norm_pose = normalize_spatial_points(raw_pose, anchor, scale)
-    norm_lh = normalize_spatial_points(raw_lh, anchor, scale)
-    norm_rh = normalize_spatial_points(raw_rh, anchor, scale)
-    
-    vector = np.concatenate([norm_lh, norm_pose, norm_rh])
+    all_landmarks = np.concatenate([lh, pose, rh], axis=0)
+    all_landmarks = np.nan_to_num(all_landmarks, nan=0.0)
+
+    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
+    raw_flat = all_landmarks.flatten()
+    vector = normalize_spatial_points(raw_flat, anchor, scale)
 
     if left_handed:
         vector = mirror_landmarks_for_left_handed(vector, pose_dim=POSE_DIM)
+
     return vector
 
 
@@ -142,32 +141,6 @@ class Button:
         tx = x + (w - text_size[0]) // 2
         ty = y + (h + text_size[1]) // 2
         cv2.putText(canvas, self.text, (tx, ty), UI_FONT, 0.5, (255, 255, 255), 1)
-
-
-class Slider:
-    def __init__(self, x, y, w, min_val, max_val, initial_val, label):
-        self.x, self.y, self.w, self.h = x, y, w, 20
-        self.min_val, self.max_val, self.val = min_val, max_val, initial_val
-        self.label = label
-        self.dragging = False
-
-    def update(self, mouse_x, mouse_y, is_m_down):
-        hover = (self.x <= mouse_x <= self.x + self.w) and (self.y - 5 <= mouse_y <= self.y + self.h + 5)
-        if hover and is_m_down:
-            self.dragging = True
-        if not is_m_down:
-            self.dragging = False
-        if self.dragging:
-            ratio = max(0, min(mouse_x - self.x, self.w)) / self.w
-            self.val = self.min_val + (self.max_val - self.min_val) * ratio
-
-    def draw(self, canvas):
-        display_val = f"{int(self.val)}" if self.max_val > 1 else f"{self.val:.2f}"
-        cv2.putText(canvas, f"{self.label}: {display_val}", (self.x, self.y - 10), UI_FONT, 0.5, (200, 200, 200), 1)
-        cv2.rectangle(canvas, (self.x, self.y), (self.x + self.w, self.y + self.h), (40, 40, 40), -1)
-        fill_w = int(self.w * (self.val - self.min_val) / (self.max_val - self.min_val))
-        cv2.rectangle(canvas, (self.x, self.y), (self.x + fill_w, self.y + self.h), (0, 165, 255), -1)
-        cv2.rectangle(canvas, (self.x, self.y), (self.x + self.w, self.y + self.h), (150, 150, 150), 1)
 
 
 def select_handedness_modal():
@@ -279,7 +252,7 @@ class EvalSession:
 
 
 # =============================================================================
-# WORKER DE INFERENCIA RECONSTRUYENDO EL MODELO
+# WORKER DE INFERENCIA
 # =============================================================================
 shared_state = {
     "inference_queue": deque(maxlen=5),
@@ -311,23 +284,10 @@ class KerasInferenceWorker:
         return results
 
     def _build_and_load_model(self):
-        """
-        Reconstruye la arquitectura exacta que usaste en tu entrenamiento
-        y le carga tus pesos entrenados (.h5).
-        """
-        # Crear el backbone base (250 clases)
         base_model = get_model()
-
-        # Tomar la penúltima capa
         x = base_model.layers[-2].output
-
-        # Agregar el clasificador custom para tus NUM_CLASSES
         outputs = layers.Dense(self.num_classes, activation='softmax', name='lsa_classifier_94')(x)
-
-        # Crear el modelo
         model = keras.Model(inputs=base_model.input, outputs=outputs)
-
-        # Cargar tus pesos guardados
         model.load_weights(self.model_weights_path, by_name=True, skip_mismatch=True)
         print(f"[*] Pesos cargados exitosamente desde {self.model_weights_path}")
         return model
@@ -473,24 +433,14 @@ def main():
     TOT_H = VID_H + 175
 
     btn_view = Button(520, VID_H + 20, 100, 40, "Esqueleto")
-    btn_conf = Button(520, VID_H + 80, 100, 40, "Config")
     btn_capture = Button(400, VID_H + 20, 110, 40, "CAPTURAR")
 
-    slider_sens = Slider(150, 150, 340, 100, 5000, MOTION_PIXEL_THRESHOLD, "Sensibilidad")
-    slider_conf = Slider(150, 200, 340, 0.1, 1.0, CONFIDENCE_THRESHOLD, "Confianza Min")
-    slider_still = Slider(150, 250, 340, 5, 40, STILL_FRAMES_LIMIT, "Corte por Silencio")
-    slider_static = Slider(150, 300, 340, 2, 15, STATIC_HANDS_FRAMES_TO_START, "Frames Manos")
-    btn_save = Button(220, 380, 100, 40, "CERRAR")
-
-    show_config = False
     show_landmarks = True
     capture_mode = CAPTURE_MODE
     left_handed = handedness == "left"
 
     smoother = LandmarkSmoother(alpha=0.6)
     frames_temp_buffer = []
-    prev_gray = None
-    prev_hand_vector = None
     last_enqueue_time = [0.0]
     pending_eval_after = [0.0]
 
@@ -498,17 +448,6 @@ def main():
         while True:
             frame = vs.read()
             if frame is None: break
-
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            gray = cv2.GaussianBlur(gray, (21, 21), 0)
-            is_moving_pixels = False
-
-            if prev_gray is not None:
-                frame_delta = cv2.absdiff(prev_gray, gray)
-                thresh = cv2.threshold(frame_delta, 25, 255, cv2.THRESH_BINARY)[1]
-                if cv2.countNonZero(thresh) > MOTION_PIXEL_THRESHOLD:
-                    is_moving_pixels = True
-            prev_gray = gray
 
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
@@ -522,18 +461,32 @@ def main():
                 mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
 
             hands_present = bool(results.left_hand_landmarks or results.right_hand_landmarks)
-            is_recording = len(frames_temp_buffer) > 0
 
-            current_vector = None
+            # -----------------------------------------------------------------
+            # MÁQUINA DE ESTADOS: DETECCIÓN POR ENTRADA / SALIDA DE MANOS
+            # -----------------------------------------------------------------
             if hands_present:
+                # 1. Manos en pantalla: Grabar vector continuamente
                 current_vector = extract_normalized_vector(results, left_handed=left_handed)
-                landmark_motion_val = compute_landmark_hand_motion(current_vector, prev_hand_vector, POSE_DIM)
-                prev_hand_vector = current_vector.copy()
+                smooth_vector = smoother.update(current_vector)
+                frames_temp_buffer.append(smooth_vector)
+                
+                # Indicador de Grabación Activa (Punto Rojo)
+                cv2.circle(image, (30, 30), 10, (0, 0, 255), -1)
+                cv2.putText(image, f"GRABANDO: {len(frames_temp_buffer)} frames", (50, 35), UI_FONT, 0.6, (0, 0, 255), 2)
             else:
-                landmark_motion_val = 0.0
+                # 2. Manos fuera de pantalla: Evaluar si recién se retiraron
+                if len(frames_temp_buffer) > 0:
+                    # Se terminó la seña -> Verificar si cumple la duración mínima
+                    if len(frames_temp_buffer) >= MIN_CAPTURE_FRAMES:
+                        if enqueue_buffer_for_inference(frames_temp_buffer, last_enqueue_time):
+                            pending_eval_after[0] = last_enqueue_time[0]
+                    
+                    # Limpiar buffer y suavizador para la próxima seña
+                    frames_temp_buffer = []
+                    smoother.reset()
 
-            is_moving = is_moving_pixels or landmark_motion_val > LANDMARK_MOTION_THRESHOLD
-
+            # Disparador manual con botón "CAPTURAR" por si se desea forzar el envío
             if btn_capture.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
                 if len(frames_temp_buffer) >= MIN_CAPTURE_FRAMES:
                     if enqueue_buffer_for_inference(frames_temp_buffer, last_enqueue_time):
@@ -541,24 +494,11 @@ def main():
                     frames_temp_buffer = []
                     smoother.reset()
 
-            if not is_recording and should_start_recording(capture_mode, hands_present, is_moving, 1):
-                is_recording = True
-
-            if is_recording:
-                if hands_present and current_vector is not None:
-                    smooth_vector = smoother.update(current_vector)
-                    frames_temp_buffer.append(smooth_vector)
-
-                    if len(frames_temp_buffer) >= 16:
-                        if enqueue_buffer_for_inference(frames_temp_buffer, last_enqueue_time):
-                            pending_eval_after[0] = last_enqueue_time[0]
-                        frames_temp_buffer = []
-                        smoother.reset()
-
+            # -----------------------------------------------------------------
+            # ACTUALIZACIÓN DE ESTADO Y UI
+            # -----------------------------------------------------------------
             with shared_state["lock"]:
                 top3 = list(shared_state["top3"])
-                p_txt = shared_state["prediction"]
-                c_val = shared_state["confidence"]
                 last_inf_time = shared_state["last_inference_time"]
 
             if (pending_eval_after[0] > 0 and top3 and eval_session and not eval_session.finished and last_inf_time >= pending_eval_after[0]):
@@ -569,16 +509,13 @@ def main():
             canvas[0:VID_H, 0:VID_W] = image
             cv2.rectangle(canvas, (0, VID_H), (VID_W, TOT_H), (30, 30, 30), -1)
 
-            if not show_config:
-                if eval_session and not eval_session.finished:
-                    cv2.putText(canvas, f"EVAL {eval_session.index + 1}/{len(sign_list)} -> {eval_session.expected_sign.upper()}", (20, 20), UI_FONT, 0.65, (0, 200, 255), 2)
-                if top3: draw_top3_panel(canvas, top3, VID_H + 68, CONFIDENCE_THRESHOLD)
+            if eval_session and not eval_session.finished:
+                cv2.putText(canvas, f"EVAL {eval_session.index + 1}/{len(sign_list)} -> {eval_session.expected_sign.upper()}", (20, 20), UI_FONT, 0.65, (0, 200, 255), 2)
+            if top3: draw_top3_panel(canvas, top3, VID_H + 68, CONFIDENCE_THRESHOLD)
 
-                btn_view.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"])
-                btn_view.draw(canvas, active=show_landmarks)
-                btn_conf.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"])
-                btn_conf.draw(canvas)
-                btn_capture.draw(canvas)
+            btn_view.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"])
+            btn_view.draw(canvas, active=show_landmarks)
+            btn_capture.draw(canvas)
 
             cv2.imshow("LSA DETECTOR", canvas)
             mouse_state["clicked"] = False
