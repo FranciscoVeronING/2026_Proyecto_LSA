@@ -56,7 +56,7 @@ model_lsa = keras.Model(inputs=base_model.input, outputs=outputs)
 
 # COMPILE THE MODEL
 model_lsa.compile(
-    optimizer=keras.optimizers.Adam(learning_rate=LEARNING_RATE_TRANSFER),
+    optimizer=keras.optimizers.RMSprop(learning_rate=LEARNING_RATE_TRANSFER),
     loss='sparse_categorical_crossentropy',
     metrics=['accuracy']
 )
