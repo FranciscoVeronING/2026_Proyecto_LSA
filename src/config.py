@@ -1,10 +1,13 @@
 
-DATASET_VIDEOS_DIR = "./dataset"
-DATASET_NPY_DIR = "./dataset_landmarks"
-MODEL_SAVE_DIR = "/src/model"
+import os
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+DATASET_NPY_DIR = os.path.join(BASE_DIR, "dataset_hand_pose")
+MODEL_SAVE_DIR = os.path.join(BASE_DIR, "src", "model")
+WEIGHTS_PATH = os.path.join(BASE_DIR, "src", "model", "lsa_transfer_best.h5")
+CLASSES_MAP_JSON = os.path.join(BASE_DIR, "src", "model", "mapeo_clases.json")
 
 NUM_CLASSES = 94
-SAMPLES_PER_CLASS = 50
 
 SIGN_CLASSES = [
     "como",
@@ -109,24 +112,61 @@ SIGN_CLASSES = [
     "vivir_en"
 ]
 
-USE_POSE = True
-USE_HANDS = True
-USE_FACE = False
+POSE_DIM = 33 * 3
+HANDS_DIM = (21 * 3) * 2
+FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM
 
-POSE_DIM = 33 * 3 if USE_POSE else 0
-HANDS_DIM = (21 * 3) * 2 if USE_HANDS else 0
-FACE_DIM = 468 * 3 if USE_FACE else 0
-FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM + FACE_DIM
-
-FRAME_WIDTH = 1920
-FRAME_HEIGHT = 1080
 TARGET_FRAMES = 16
+MAX_FRAMES = 16
 
 SIGN_TO_INDEX = {sign: idx for idx, sign in enumerate(SIGN_CLASSES)}
 INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 EPOCHS_BASE = 15
-LEARNING_RATE_TRANSFER = 1e-3
-LEARNING_RATE_FINE_TUNING = 1e-5
+EPOCHS = 999
+LEARNING_RATE_TRANSFER = 0.0005639974395199206
 PATIENCE = 15
+VAL_SIZE = 0.2
+
+
+
+# ==========================================
+# INFERENCIA EN TIEMPO REAL (WEBCAM)
+# ==========================================
+CONFIDENCE_THRESHOLD = 0.75
+
+# Segundos de espera tras una predicción antes de encolar otra inferencia
+INFERENCE_COOLDOWN_SEC = 1.0
+
+# --- Captura dinámica (señas con movimiento) ---
+MOTION_PIXEL_THRESHOLD = 500
+LANDMARK_MOTION_THRESHOLD = 0.008
+
+# --- Captura estática (letras, números, poses cortas) ---
+# Arranca a grabar tras N frames consecutivos con manos visibles, sin exigir movimiento de píxeles.
+STATIC_HANDS_FRAMES_TO_START = 4
+# Si el gesto tiene poco movimiento de landmarks, se interpreta como estático.
+STATIC_GESTURE_MOTION_THRESHOLD = 0.012
+
+# --- Corte de secuencia ---
+STILL_FRAMES_LIMIT = 10
+CAPTURE_BUFFER_SIZE = 60
+MISSING_HANDS_LIMIT = 12
+MIN_CAPTURE_FRAMES = 5
+
+# Modos: "auto" (dinámico + estático), "dynamic", "static"
+CAPTURE_MODE = "auto"
+
+# ==========================================
+# DATASET — RECOMENDACIONES PARA SEÑAS ESTÁTICAS
+# ==========================================
+# Clases que suelen ser poses cortas/fijas. Al grabar videos para estas clases:
+#   1) Entrar en la pose → sostener 1–2 s → retirar manos.
+#   2) Evitar movimientos largos de aproximación antes de la pose.
+#   3) Preferir 50+ videos por clase (mismo criterio que train).
+STATIC_SIGN_CLASSES = [
+    "0", "1", "2", "3", "4", "5", "6", "8",
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M",
+    "N", "ñ", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y", "Z",
+]
