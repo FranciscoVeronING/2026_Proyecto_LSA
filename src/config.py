@@ -1,6 +1,6 @@
 
 DATASET_VIDEOS_DIR = "../dataset"
-DATASET_NPY_DIR = "../dataset_landmarks_32"
+DATASET_NPY_DIR = "../dataset_landmarks_32frames"
 MODEL_SAVE_DIR = "../src/model"
 
 NUM_CLASSES = 94
@@ -8,7 +8,7 @@ SAMPLES_PER_CLASS = 50
 
 # Secuencia temporal unificada: preprocessing, entrenamiento e inferencia usan el mismo valor.
 # Si tenés .npy viejos con otra cantidad de frames, train los re-muestrea automáticamente.
-MAX_FRAMES = 16
+MAX_FRAMES = 32
 TARGET_FRAMES = MAX_FRAMES
 
 
@@ -134,19 +134,22 @@ INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 # HIPERPARÁMETROS DEL TINY TRANSFORMER
 # ==========================================
 HIDDEN_DIM = 128
-NUM_HEADS = 4
+NUM_HEADS = 8
 NUM_LAYERS = 2
-DROPOUT_RATE = 0.5
+DROPOUT_RATE = 0.3028748566702939
 
 # ==========================================
 # ENTRENAMIENTO Y DATA AUGMENTATION
 # ==========================================
 USE_DATA_AUGMENTATION = True
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 EPOCHS = 200
 PATIENCE = 15
-VIRTUAL_MULTIPLIER = 10 
-AUG_NOISE_STD = 0.015
+VIRTUAL_MULTIPLIER = 10
+AUG_NOISE_STD = 0.02992555713844365
+LR = 3.772811699894694e-05
+WEIGHT_DECAY = 0.0003168710901337327
+LABEL_SMOOTHING = 0.0014563065114717305
 AUG_SCALE_RANGE = (0.85, 1.15)
 
 # ==========================================

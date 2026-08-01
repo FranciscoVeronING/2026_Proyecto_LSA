@@ -3,7 +3,7 @@ import glob
 import cv2
 import numpy as np
 import mediapipe as mp
-from typing import List, Any
+from typing import List, Any, Optional
 from tqdm import tqdm
 
 from utils import (
@@ -25,7 +25,7 @@ from config import (
 )
 
 
-def _extract_frame_vector(results, use_pose: bool, use_hands: bool, use_face: bool) -> np.ndarray | None:
+def _extract_frame_vector(results, use_pose: bool, use_hands: bool, use_face: bool) -> Optional[np.ndarray]:
     anchor, scale = get_anchor_and_scale(results.pose_landmarks)
     features_to_combine = []
 

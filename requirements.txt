@@ -1,0 +1,31 @@
+# Clasificador LSA — dependencias pinneadas (rama scratch-mediapipe)
+#
+# Python recomendado: 3.11.x
+#   - 3.9: funciona pero sin sintaxis moderna (usamos Optional[] en el código)
+#   - 3.12: compatible con mediapipe 0.10.21
+#   - NO usar mediapipe >= 0.10.30: eliminaron mp.solutions (Holistic)
+#
+# Instalación (entorno nuevo):
+#   python -m venv .venv
+#   .venv\Scripts\activate
+#   pip install -r requirements.txt
+#
+# PyTorch con GPU (Windows, después del pip install base):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+# --- MediaPipe (legacy Solutions API: Holistic) ---
+mediapipe==0.10.21
+protobuf>=4.25.3,<5
+numpy>=1.26.0,<2
+
+# --- Visión / datos ---
+opencv-python>=4.8.0,<5
+
+# --- Entrenamiento / evaluación ---
+torch>=2.1.0
+matplotlib>=3.7.0
+tqdm>=4.65.0
+scikit-learn>=1.3.0
+
+# --- Opcional: búsqueda de hiperparámetros ---
+# optuna>=3.4.0

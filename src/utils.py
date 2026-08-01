@@ -43,7 +43,7 @@ def normalize_spatial_points(
     return normalized_points.flatten()
 
 
-def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: int | None = None) -> np.ndarray:
+def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: Optional[int] = None) -> np.ndarray:
     """
     Espeja landmarks normalizados para usuarios zurdos.
     Flip en X alrededor del origen corporal + swap bloques mano izq/der.
@@ -171,10 +171,10 @@ def uniform_subsampling(sequence_data: List[np.ndarray], target_frames: int = 16
 
 def sequence_buffer_to_model_input(
     buffer: List[np.ndarray],
-    target_frames: int | None = None,
-    hand_start: int | None = None,
-    static_motion_threshold: float | None = None,
-    min_frames: int | None = None,
+    target_frames: Optional[int] = None,
+    hand_start: Optional[int] = None,
+    static_motion_threshold: Optional[float] = None,
+    min_frames: Optional[int] = None,
 ) -> np.ndarray:
     """
     Pipeline compartido cámara/preprocessing: trim → subsampleo uniforme.

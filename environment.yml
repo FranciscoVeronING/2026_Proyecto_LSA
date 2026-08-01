@@ -1,0 +1,36 @@
+# Entorno conda recomendado para el clasificador LSA
+#
+# Crear desde cero:
+#   conda env create -f environment.yml
+#   conda activate lsa_gpu
+#
+# Recrear (si tenés conflictos de protobuf/mediapipe):
+#   conda deactivate
+#   conda env remove -n lsa_gpu
+#   conda env create -f environment.yml
+#
+# Verificar:
+#   cd src
+#   python check_env.py
+
+name: lsa_gpu
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - matplotlib
+  - tqdm
+  - scikit-learn
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - pip:
+      - mediapipe==0.10.21
+      - "protobuf>=4.25.3,<5"
+      - "numpy>=1.26.0,<2"
+      - "opencv-python>=4.8.0,<5"
