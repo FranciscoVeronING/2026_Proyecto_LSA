@@ -27,6 +27,30 @@
     {
       "glosses": ["NOMBRE", "M", "A", "R", "I", "A"],
       "spanish": "Me llamo María."
+    },
+    {
+      "glosses": ["J", "U", "A", "N"],
+      "spanish": "Juan."
+    },
+    {
+      "glosses": ["1", "2", "3", "4", "5"],
+      "spanish": "12345."
+    },
+    {
+      "glosses": ["DOCUMENTO", "1", "2", "O", "4", "5", "6", "7", "8"],
+      "spanish": "Mi documento es 12045678."
+    },
+    {
+      "glosses": ["NOMBRE", "0", "S", "C", "A", "R"],
+      "spanish": "Me llamo Oscar."
+    },
+    {
+      "glosses": ["NOMBRE", "A", "2", "A"],
+      "spanish": "Me llamo Ava."
+    },
+    {
+      "glosses": ["NUMERO", "1", "V", "3"],
+      "spanish": "El número es 123."
     }
   ]
 }

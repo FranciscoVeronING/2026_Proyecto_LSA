@@ -23,6 +23,7 @@ from src.utils import (
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
 )
+from src.repeat_policy import RepeatGate, format_literal_utterance
 
 # OJO: NO importar src.model.semantic.model acá.
 # Unsloth/transformers pueden tumbar el arranque de la cámara.
@@ -49,13 +50,20 @@ class UtteranceBuffer:
     closes the utterance and submits it to the LLM.
     """
 
-    def __init__(self, pause_sec: float, dedup_sec: float, min_confidence: float):
+    def __init__(
+        self,
+        pause_sec: float,
+        dedup_sec: float,
+        min_confidence: float,
+        max_letter_consecutive: int = 2,
+    ):
         self.pause_sec = pause_sec
-        self.dedup_sec = dedup_sec
         self.min_confidence = min_confidence
         self.glosses = []
-        self.last_gloss = None
-        self.last_gloss_at = None
+        self.repeat_gate = RepeatGate(
+            dedup_sec=dedup_sec,
+            max_letter_consecutive=max_letter_consecutive,
+        )
 
     def try_add(self, gloss_raw, confidence, now):
         if confidence < self.min_confidence:
@@ -63,26 +71,19 @@ class UtteranceBuffer:
         gloss = normalize_gloss(gloss_raw)
         if not gloss or gloss == "DESCONOCIDO":
             return False
-        if (
-            self.last_gloss == gloss
-            and self.last_gloss_at is not None
-            and (now - self.last_gloss_at) < self.dedup_sec
-        ):
+        if not self.repeat_gate.allow(gloss, now):
             return False
         self.glosses.append(gloss)
-        self.last_gloss = gloss
-        self.last_gloss_at = now
         return True
 
     def maybe_close(self, now):
-        if not self.glosses or self.last_gloss_at is None:
+        if not self.glosses or self.repeat_gate.last_at is None:
             return None
-        if (now - self.last_gloss_at) < self.pause_sec:
+        if (now - self.repeat_gate.last_at) < self.pause_sec:
             return None
         closed = list(self.glosses)
         self.glosses.clear()
-        self.last_gloss = None
-        self.last_gloss_at = None
+        self.repeat_gate.reset()
         return closed
 
     def pending_text(self) -> str:
@@ -137,14 +138,22 @@ class SemanticWorker:
 
     def _handle(self, glosses):
         joined = " ".join(glosses)
-        print(f"[*] Utterance closed → LLM: {joined}")
+        literal = format_literal_utterance(glosses)
+        if literal is not None:
+            print(f"[*] Utterance closed → literal: {joined} => {literal}")
+        else:
+            print(f"[*] Utterance closed → LLM: {joined}")
+
         with shared_state["lock"]:
             shared_state["semantic_busy"] = True
             shared_state["last_utterance"] = joined
-            shared_state["spanish_text"] = "Translating..."
+            shared_state["spanish_text"] = (
+                literal if literal is not None else "Translating..."
+            )
 
-        text = joined
-        if self._translate_glosses is not None:
+        # Deletreo / solo números: mostrar y decir sin pasar por la LLM
+        text = literal if literal is not None else joined
+        if literal is None and self._translate_glosses is not None:
             try:
                 text = self._translate_glosses(joined) or joined
             except Exception as e:
@@ -171,10 +180,11 @@ class SemanticWorker:
             return
         if not self.enabled:
             joined = " ".join(glosses)
-            print(f"[*] Utterance closed (without LLM): {joined}")
+            text = format_literal_utterance(glosses) or joined
+            print(f"[*] Utterance closed (without LLM): {joined} => {text}")
             with shared_state["lock"]:
                 shared_state["last_utterance"] = joined
-                shared_state["spanish_text"] = joined
+                shared_state["spanish_text"] = text
                 shared_state["utterance_glosses"] = []
             return
         try:
@@ -688,7 +698,8 @@ def main():
     print(f"[*] Umbral confianza: {cfg.CONFIDENCE_THRESHOLD:.0%} | Cooldown: {cfg.INFERENCE_COOLDOWN_SEC}s")
     print(
         f"[*] Pausa enunciado→LLM: {cfg.UTTERANCE_PAUSE_SEC}s | "
-        f"dedup: {cfg.GLOSS_DEDUP_SEC}s"
+        f"dedup other: {cfg.GLOSS_DEDUP_SEC}s | "
+        f"letras max: {cfg.LETTER_MAX_CONSECUTIVE}"
     )
 
     vs = WebcamStream(0).start()
@@ -703,6 +714,7 @@ def main():
         pause_sec=cfg.UTTERANCE_PAUSE_SEC,
         dedup_sec=cfg.GLOSS_DEDUP_SEC,
         min_confidence=cfg.CONFIDENCE_THRESHOLD,
+        max_letter_consecutive=cfg.LETTER_MAX_CONSECUTIVE,
     )
     semantic_worker = SemanticWorker(enabled=not args.no_llm and not args.eval)
     semantic_worker.start()

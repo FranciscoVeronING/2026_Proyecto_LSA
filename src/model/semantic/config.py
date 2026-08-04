@@ -1,7 +1,7 @@
 MODEL_PATH = "src/model/semantic/unsloth_Qwen2.5-3B-Instruct"
 MODEL = "unsloth/Qwen2.5-3B-Instruct"
 SYSTEM_PROMPT_PATH = "src/model/semantic/prompts/sys_prompt.txt"
-FEW_SHOTS_PATH = "src/model/semantic/prompts/few_shot_examples.json"
+FEW_SHOTS_PATH = "src/model/semantic/prompts/few_shots_examples.json"
 
 
 
