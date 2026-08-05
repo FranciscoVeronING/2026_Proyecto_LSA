@@ -1,8 +1,8 @@
 # ==========================================
 # PATHS
 # ==========================================
-MODEL_SAVE_DIR = "src/model/classifier/tinyskeleton_best.pth"
-CLASSES_PATH = "src/model/classifier/mapeo_clases.json"
+MODEL_SAVE_DIR = "model/classifier/tinyskeleton_best.pth"
+CLASSES_PATH = "model/classifier/mapeo_clases.json"
 
 MAX_FRAMES = 32
 

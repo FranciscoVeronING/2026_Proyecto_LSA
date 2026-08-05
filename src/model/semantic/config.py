@@ -1,7 +1,7 @@
-MODEL_PATH = "src/model/semantic/unsloth_Qwen2.5-3B-Instruct"
+MODEL_PATH = "model/semantic/unsloth_Qwen2.5-3B-Instruct"
 MODEL = "unsloth/Qwen2.5-3B-Instruct"
-SYSTEM_PROMPT_PATH = "src/model/semantic/prompts/sys_prompt.txt"
-FEW_SHOTS_PATH = "src/model/semantic/prompts/few_shots_examples.json"
+SYSTEM_PROMPT_PATH = "model/semantic/prompts/sys_prompt.txt"
+FEW_SHOTS_PATH = "model/semantic/prompts/few_shots_examples.json"
 
 
 
@@ -14,3 +14,6 @@ REPETITION_PENALTY = 1.2
 LOAD_IN_4BIT = True
 
 USE_UNSLOTH = False  # True: usar modelo UnsloTH, False: usar modelo Qwen2.5-3B-Instruct
+
+# Últimos N turnos (signer + hearing) inyectados como contexto a la LLM
+CONVERSATION_HISTORY_SIZE = 10

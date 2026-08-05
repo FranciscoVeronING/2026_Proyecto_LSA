@@ -14,16 +14,17 @@ import mediapipe as mp
 import numpy as np
 import torch
 
-import src.model.classifier.config as cfg
-from src.model.classifier.model_arch import TinySkeletonClassifier
-from src.utils import (
+import model.classifier.config as cfg
+from model.classifier.model_arch import TinySkeletonClassifier
+from utils import (
     get_anchor_and_scale,
     normalize_spatial_points,
     compute_landmark_hand_motion,
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
 )
-from src.repeat_policy import RepeatGate, format_literal_utterance
+from repeat_policy import RepeatGate, format_literal_utterance
+from conversation_memory import ConversationMemory
 
 # OJO: NO importar src.model.semantic.model acá.
 # Unsloth/transformers pueden tumbar el arranque de la cámara.
@@ -96,11 +97,12 @@ class SemanticWorker:
     Carga la LLM en un hilo; si falla, la cámara sigue sin traducción.
     """
 
-    def __init__(self, enabled: bool = True):
+    def __init__(self, enabled: bool = True, history_size: int = 10):
         self.enabled = enabled
         self.queue: Queue = Queue(maxsize=8)
         self.ready = False
         self._translate_glosses = None
+        self.memory = ConversationMemory(maxlen=history_size)
         # NO llamar load_model_and_tokenizer() acá (bloquea / puede crashear).
 
     def start(self):
@@ -111,10 +113,17 @@ class SemanticWorker:
 
     def _bootstrap_and_loop(self):
         try:
-            from src.model.semantic.model import (
-                load_model_and_tokenizer,
-                translate_glosses,
-            )
+            # Compat: `python -m camera` (cwd=src) o `python -m src.camera` (raíz)
+            try:
+                from model.semantic.model import (
+                    load_model_and_tokenizer,
+                    translate_glosses,
+                )
+            except ImportError:
+                from src.model.semantic.model import (
+                    load_model_and_tokenizer,
+                    translate_glosses,
+                )
 
             load_model_and_tokenizer()
             self._translate_glosses = translate_glosses
@@ -123,7 +132,8 @@ class SemanticWorker:
         except Exception as e:
             print(f"[!] Could not initialize semantic: {e}")
             print("[!] Camera continues; glosses only (no LLM).")
-            print("[!] Tip: python -m src.camera --no-llm")
+            print("[!] Tip: desde la raiz del repo → python -m src.camera")
+            print("[!]      o desde src/ → python -m camera")
             self._translate_glosses = None
             self.ready = False
 
@@ -155,15 +165,20 @@ class SemanticWorker:
         text = literal if literal is not None else joined
         if literal is None and self._translate_glosses is not None:
             try:
-                text = self._translate_glosses(joined) or joined
+                history = self.memory.as_messages()
+                text = self._translate_glosses(joined, history_messages=history) or joined
             except Exception as e:
                 print(f"[!] Error LLM: {e}")
                 text = joined
+
+        # Contexto cercano: también literales (deletreo / números)
+        self.memory.add_signer(text, glosses=joined)
 
         with shared_state["lock"]:
             shared_state["spanish_text"] = text
             shared_state["semantic_busy"] = False
             shared_state["utterance_glosses"] = []
+            shared_state["conversation_turns"] = len(self.memory.turns)
 
         if cfg.VOICE:
             try:
@@ -174,6 +189,20 @@ class SemanticWorker:
             except Exception as e:
                 print(f"[!] Error in voice synthesis: {e}")
         print(f"[*] Español: {text}")
+        print(f"[*] Memoria conversación: {len(self.memory.turns)}/{self.memory.maxlen} turnos")
+
+    def add_hearing(self, text: str):
+        """API lista para UI/STT del oyente (aún sin captura en cámara)."""
+        self.memory.add_hearing(text)
+        with shared_state["lock"]:
+            shared_state["conversation_turns"] = len(self.memory.turns)
+        print(f"[*] Oyente registrado: {text}")
+
+    def clear_conversation(self):
+        self.memory.clear()
+        with shared_state["lock"]:
+            shared_state["conversation_turns"] = 0
+        print("[*] Conversación reiniciada.")
 
     def submit(self, glosses):
         if not glosses:
@@ -182,10 +211,12 @@ class SemanticWorker:
             joined = " ".join(glosses)
             text = format_literal_utterance(glosses) or joined
             print(f"[*] Utterance closed (without LLM): {joined} => {text}")
+            self.memory.add_signer(text, glosses=joined)
             with shared_state["lock"]:
                 shared_state["last_utterance"] = joined
                 shared_state["spanish_text"] = text
                 shared_state["utterance_glosses"] = []
+                shared_state["conversation_turns"] = len(self.memory.turns)
             return
         try:
             self.queue.put_nowait(list(glosses))
@@ -484,6 +515,7 @@ shared_state = {
     "last_utterance": "",
     "spanish_text": "",
     "semantic_busy": False,
+    "conversation_turns": 0,
     "lock": Lock(),
     "running": True,
 }
@@ -716,8 +748,17 @@ def main():
         min_confidence=cfg.CONFIDENCE_THRESHOLD,
         max_letter_consecutive=cfg.LETTER_MAX_CONSECUTIVE,
     )
-    semantic_worker = SemanticWorker(enabled=not args.no_llm and not args.eval)
+    try:
+        from model.semantic.config import CONVERSATION_HISTORY_SIZE
+    except ImportError:
+        from src.model.semantic.config import CONVERSATION_HISTORY_SIZE
+
+    semantic_worker = SemanticWorker(
+        enabled=not args.no_llm and not args.eval,
+        history_size=CONVERSATION_HISTORY_SIZE,
+    )
     semantic_worker.start()
+    print(f"[*] Memoria conversación: últimos {CONVERSATION_HISTORY_SIZE} turnos (tecla 'c' = limpiar)")
     last_seen_inference_time = 0.0
 
     cv2.namedWindow("LSA DETECTOR")
@@ -1059,6 +1100,8 @@ def main():
             if key == ord("m"):
                 capture_mode = {"auto": "static", "static": "dynamic", "dynamic": "auto"}[capture_mode]
                 print(f"[*] Capture mode changed to: {capture_mode}")
+            if key == ord("c"):
+                semantic_worker.clear_conversation()
             if key == ord("n") and eval_session and not eval_session.finished:
                 eval_session.skip_current(capture_mode)
                 print(f"[*] Skipped sign. Next: {eval_session.expected_sign}")

@@ -13,7 +13,7 @@ import json
 try:
     from src.model.semantic.config import (
         MODEL_PATH,
-        MODEL,
+        MODEL as BASE_MODEL_ID,
         MAX_SEQ_LENGTH,
         SYSTEM_PROMPT_PATH,
         FEW_SHOTS_PATH,
@@ -26,7 +26,7 @@ try:
 except ImportError:
     from .config import (
         MODEL_PATH,
-        MODEL,
+        MODEL as BASE_MODEL_ID,
         MAX_SEQ_LENGTH,
         SYSTEM_PROMPT_PATH,
         FEW_SHOTS_PATH,
@@ -85,12 +85,12 @@ def _load_with_peft():
     from peft import PeftModel
 
     logging.set_verbosity_error()
-    print(f"[semantic] Loading base={MODEL}")
+    print(f"[semantic] Loading base={BASE_MODEL_ID}")
     print(f"[semantic] Adapter={MODEL_PATH}")
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
     base_model = AutoModelForCausalLM.from_pretrained(
-        MODEL,
+        BASE_MODEL_ID,
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
         trust_remote_code=True,
@@ -129,17 +129,18 @@ def load_model_and_tokenizer():
     print("[semantic] Model ready for real-time translation.\n")
 
 
-def translate_glosses(glosses_input):
+def translate_glosses(glosses_input, history_messages=None):
     """
     glosses_input: str, ej. "YO LLAMAR POLICIA"
+    history_messages: lista opcional de dicts {role, content} (ventana conversacional)
     """
     if MODEL is None or TOKENIZER is None:
         raise RuntimeError("LLM no cargada. Llamá load_model_and_tokenizer() primero.")
 
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"Glosas: {glosses_input}"},
-    ]
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    if history_messages:
+        messages.extend(history_messages)
+    messages.append({"role": "user", "content": f"Glosas: {glosses_input}"})
 
     model_inputs = TOKENIZER.apply_chat_template(
         messages,
