@@ -1,8 +1,9 @@
 """
 Traductor semántico LSA → español.
 
-- NO importar Unsloth/transformers a nivel de módulo (rompe `python -m src.camera`).
-- load_model_and_tokenizer() carga en diferido.
+- NO importar Unsloth/transformers a nivel de módulo: tardan segundos y pueden
+  abortar el proceso, y la cámara tiene que arrancar aunque la LLM falle.
+- load_model_and_tokenizer() carga en diferido, desde el hilo semántico.
 - Por defecto usa PEFT (más estable). Unsloth opcional vía config.USE_UNSLOTH.
 """
 
@@ -10,32 +11,18 @@ from __future__ import annotations
 
 import json
 
-try:
-    from src.model.semantic.config import (
-        MODEL_PATH,
-        MODEL as BASE_MODEL_ID,
-        MAX_SEQ_LENGTH,
-        SYSTEM_PROMPT_PATH,
-        FEW_SHOTS_PATH,
-        MAX_NEW_TOKENS,
-        TEMPERATURE,
-        REPETITION_PENALTY,
-        USE_UNSLOTH,
-        LOAD_IN_4BIT,
-    )
-except ImportError:
-    from .config import (
-        MODEL_PATH,
-        MODEL as BASE_MODEL_ID,
-        MAX_SEQ_LENGTH,
-        SYSTEM_PROMPT_PATH,
-        FEW_SHOTS_PATH,
-        MAX_NEW_TOKENS,
-        TEMPERATURE,
-        REPETITION_PENALTY,
-        USE_UNSLOTH,
-        LOAD_IN_4BIT,
-    )
+from semantic.config import (
+    ADAPTER_PATH,
+    BASE_MODEL_ID,
+    MAX_SEQ_LENGTH,
+    SYSTEM_PROMPT_PATH,
+    FEW_SHOTS_PATH,
+    MAX_NEW_TOKENS,
+    TEMPERATURE,
+    REPETITION_PENALTY,
+    USE_UNSLOTH,
+    LOAD_IN_4BIT,
+)
 
 SYSTEM_PROMPT = ""
 MODEL = None
@@ -69,9 +56,9 @@ def _load_with_unsloth():
     from unsloth import FastLanguageModel
 
     logging.set_verbosity_error()
-    print(f"[semantic] Loading with Unsloth from: {MODEL_PATH}...")
+    print(f"[semantic] Loading with Unsloth from: {ADAPTER_PATH}...")
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=MODEL_PATH,
+        model_name=ADAPTER_PATH,
         max_seq_length=MAX_SEQ_LENGTH,
         load_in_4bit=LOAD_IN_4BIT,
     )
@@ -86,16 +73,16 @@ def _load_with_peft():
 
     logging.set_verbosity_error()
     print(f"[semantic] Loading base={BASE_MODEL_ID}")
-    print(f"[semantic] Adapter={MODEL_PATH}")
+    print(f"[semantic] Adapter={ADAPTER_PATH}")
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(ADAPTER_PATH, trust_remote_code=True)
     base_model = AutoModelForCausalLM.from_pretrained(
         BASE_MODEL_ID,
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
         trust_remote_code=True,
     )
-    model = PeftModel.from_pretrained(base_model, MODEL_PATH)
+    model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
     model.eval()
     return model, tokenizer
 

@@ -34,8 +34,9 @@ El clasificador confunde señas casi idénticas. Elegí la lectura coherente con
 
 - O ↔ 0: misma seña visual. En racha de dígitos / documento / número / edad → interpretá como 0. En racha de letras / nombre / apellido → interpretá como O.
 - 2 ↔ V: señas casi idénticas. En racha de dígitos / número → 2. En racha de letras / nombre / apellido → V.
+- I ↔ T ↔ OJO: la configuración de la mano es casi la misma y solo cambia dónde se apoya (I en la mejilla, T debajo de la boca, OJO con el índice cerca del ojo), así que el clasificador las intercambia seguido. Si la glosa está dentro de un deletreo, elegí entre I y T la letra que forme una palabra o nombre real en español. Si aparece suelta o rodeada de glosas léxicas (no de letras), interpretá OJO.
 
-Ejemplos: DOCUMENTO 1 2 O 4 5 → documento 12045; NOMBRE 0 S C A R → Oscar; NOMBRE A 2 A → Ava; NUMERO 1 V 3 → 123.
+Ejemplos: DOCUMENTO 1 2 O 4 5 → documento 12045; NOMBRE 0 S C A R → Oscar; NOMBRE A 2 A → Ava; NUMERO 1 V 3 → 123; NOMBRE S O F T A → Sofía; YO I MAL → me duele el ojo.
 
 ## Restricciones (obligatorias)
 
@@ -51,7 +52,7 @@ Ejemplos: DOCUMENTO 1 2 O 4 5 → documento 12045; NOMBRE 0 S C A R → Oscar; N
 - No tenés acceso a expresión facial, cejas ni marcadores no manuales de la LSA.
 - Inferí preguntas por la presencia de glosas de pregunta.
 - Las glosas pueden contener errores del clasificador automático; ignorá duplicados obvios y glosas incoherentes.
-- Aplicá las ambigüedades O/0 y 2/V antes de armar la oración final.
+- Aplicá las ambigüedades O/0, 2/V e I/T/OJO antes de armar la oración final.
 
 ## Formato de salida
 

@@ -51,6 +51,18 @@
     {
       "glosses": ["NUMERO", "1", "V", "3"],
       "spanish": "El número es 123."
+    },
+    {
+      "glosses": ["NOMBRE", "S", "O", "F", "T", "A"],
+      "spanish": "Me llamo Sofía."
+    },
+    {
+      "glosses": ["YO", "I", "MAL"],
+      "spanish": "Me duele el ojo."
+    },
+    {
+      "glosses": ["YO", "OJO", "MAL"],
+      "spanish": "Me duele el ojo."
     }
   ]
 }

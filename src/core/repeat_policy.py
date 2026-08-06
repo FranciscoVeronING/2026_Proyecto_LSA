@@ -5,6 +5,13 @@ from __future__ import annotations
 from typing import Optional, Sequence
 
 
+# Letras que el clasificador intercambia entre sí o con una seña léxica:
+# I, T y OJO tienen casi la misma configuración de mano y solo se distinguen
+# por dónde se apoya (mejilla / debajo de la boca / junto al ojo).
+# Un deletreo que las contenga necesita el criterio de la LLM.
+AMBIGUOUS_LETTERS = frozenset({"I", "T"})
+
+
 def classify_gloss(gloss: str) -> str:
     """Clasifica una glosa normalizada: digit | letter | other."""
     if not gloss or len(gloss) != 1:
@@ -16,24 +23,40 @@ def classify_gloss(gloss: str) -> str:
     return "other"
 
 
-def format_literal_utterance(glosses: Sequence[str]) -> Optional[str]:
+def format_literal_utterance(
+    glosses: Sequence[str],
+    ambiguous_letters: frozenset = AMBIGUOUS_LETTERS,
+) -> Optional[str]:
     """
     Si el enunciado es solo deletreo o solo dígitos, arma el texto a mostrar/decir.
     Evita depender de la LLM (que a veces responde vacío).
+
+    Devuelve None cuando conviene que decida la LLM con el contexto.
+
+    Nota sobre O/0 y 2/V: no necesitan excepción acá. Si la secuencia quedó toda
+    de un tipo, el carácter ya es del tipo correcto; y si el clasificador eligió
+    el tipo equivocado, la secuencia queda mixta y cae igual en la LLM.
     """
     if not glosses:
         return None
 
     kinds = [classify_gloss(g) for g in glosses]
+
+    if all(k == "digit" for k in kinds):
+        return f"{''.join(glosses)}."
+
     if all(k == "letter" for k in kinds):
+        # Una letra sola puede ser en realidad una seña léxica mal clasificada.
+        if len(glosses) == 1:
+            return None
+        # I y T son intercambiables entre sí: solo el sentido de la palabra decide.
+        if any(g.upper() in ambiguous_letters for g in glosses):
+            return None
         word = "".join(glosses)
         # Título simple: JUAN → Juan.
         if word.isupper():
             word = word.capitalize()
         return f"{word}."
-
-    if all(k == "digit" for k in kinds):
-        return f"{''.join(glosses)}."
 
     return None
 

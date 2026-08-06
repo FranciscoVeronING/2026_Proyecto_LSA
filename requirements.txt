@@ -1,0 +1,31 @@
+# Dependencias del pipeline LSA (cámara → clasificador → glosas → LLM).
+# Probado en Windows 10 + Python 3.9 (conda env `lsa_gpu`) con GPU NVIDIA.
+#
+# IMPORTANTE: PyTorch con CUDA no se instala desde PyPI por defecto.
+# Instalarlo primero, eligiendo la variante que corresponda a tu placa:
+#
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#
+# Luego:  pip install -r requirements.txt
+
+# --- Visión / captura ---
+opencv-python==4.11.0.86
+mediapipe==0.10.21
+numpy==1.26.4
+
+# --- Clasificador de señas ---
+torch==2.6.0
+
+# --- Traductor semántico (LLM Qwen2.5-3B + adapter PEFT) ---
+transformers==4.57.6
+peft==0.17.1
+accelerate==1.10.1
+huggingface-hub==0.36.2
+safetensors==0.7.0
+
+# --- Síntesis de voz ---
+pyttsx3==2.99
+
+# Opcional: solo si USE_UNSLOTH = True en model/semantic/config.py.
+# Requiere GPU con CUDA; no funciona en CPU.
+# unsloth

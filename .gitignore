@@ -6,6 +6,12 @@ __pycache__/
 .venv/
 .env
 
+# Caché autogenerada por Unsloth al importar sus trainers
+unsloth_compiled_cache/
+
+# Salidas del modo --eval
+eval_*.csv
+
 models/
 *.h5
 *.tflite

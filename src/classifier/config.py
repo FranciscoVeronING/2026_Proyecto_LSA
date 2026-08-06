@@ -1,8 +1,15 @@
 # ==========================================
 # PATHS
 # ==========================================
-MODEL_SAVE_DIR = "model/classifier/tinyskeleton_best.pth"
-CLASSES_PATH = "model/classifier/mapeo_clases.json"
+from pathlib import Path
+
+# Absolutos: el proyecto debe poder ejecutarse desde cualquier directorio
+_CLASSIFIER_DIR = Path(__file__).resolve().parent
+_WEIGHTS_DIR = _CLASSIFIER_DIR / "weights"
+
+WEIGHTS_PATH = str(_WEIGHTS_DIR / "tinyskeleton_best.pth")
+CLASSES_PATH = str(_WEIGHTS_DIR / "mapeo_clases.json")
+METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
 MAX_FRAMES = 32
 

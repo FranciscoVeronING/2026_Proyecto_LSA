@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Tuple, List, Any, Optional
 
-import model.classifier.config as cfg
+import classifier.config as cfg
 
 
 def get_anchor_and_scale(pose_landmarks: Any) -> Tuple[np.ndarray, float]:
