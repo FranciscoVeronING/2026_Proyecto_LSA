@@ -174,11 +174,12 @@ CAPTURE_MODE = "auto"
 # ==========================================
 # BUFFER (glosses → LLM)
 # ==========================================
-# Long pause without new glosses → close list and send to the LLM
+# Pausa sin actividad de señado → cerrar la lista y mandarla a la LLM.
+# Cuenta desde la última seña reconocida o desde que las manos dejaron de
+# moverse en cámara, lo que haya pasado último.
 UTTERANCE_PAUSE_SEC = 4.0
-# Dedup temporal para glosas "other" (no dígito/letra de un carácter)
-GLOSS_DEDUP_SEC = 1.0
 # Letras consecutivas iguales permitidas (la 3ª+ se descarta). Dígitos: sin límite.
+# Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
 LETTER_MAX_CONSECUTIVE = 2
 
 # Normalization key mapping_clases.json → token for the LLM

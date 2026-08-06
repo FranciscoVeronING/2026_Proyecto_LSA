@@ -65,51 +65,44 @@ class RepeatGate:
     """
     Decide si una glosa consecutivamente repetida se acepta.
 
-    - digit: siempre aceptar
-    - letter: hasta max_letter_consecutive consecutivas
-    - other: rechazar si llega dentro de dedup_sec
+    - digit: siempre aceptar (un documento puede ser 1 1 2 2 3)
+    - letter: hasta max_letter_consecutive consecutivas (existe ANNA, no ANNNA)
+    - other: nunca dos veces seguidas
+
+    La regla de `other` es por igualdad, no por tiempo. Antes había una ventana
+    de dedup en segundos, pero era inalcanzable: el cooldown entre inferencias
+    (1 s) es igual o mayor que la ventana, así que dos glosas consecutivas
+    siempre llegaban "tarde" y ninguna se descartaba. Además, dos señas léxicas
+    idénticas pegadas no tienen significado propio en un enunciado: si aparecen,
+    es rebote del clasificador. Para volver a decir HOLA hay que cerrar el
+    enunciado, y al cerrarse se llama a reset().
     """
 
-    def __init__(
-        self,
-        dedup_sec: float,
-        max_letter_consecutive: int = 2,
-    ):
-        self.dedup_sec = dedup_sec
+    def __init__(self, max_letter_consecutive: int = 2):
         self.max_letter_consecutive = max_letter_consecutive
         self.last_gloss: Optional[str] = None
-        self.last_at: Optional[float] = None
         self.run_len: int = 0
 
     def reset(self) -> None:
         self.last_gloss = None
-        self.last_at = None
         self.run_len = 0
 
-    def allow(self, gloss: str, now: float) -> bool:
-        kind = classify_gloss(gloss)
-
+    def allow(self, gloss: str) -> bool:
         if self.last_gloss != gloss:
             self.last_gloss = gloss
-            self.last_at = now
             self.run_len = 1
             return True
 
+        kind = classify_gloss(gloss)
+
         if kind == "digit":
             self.run_len += 1
-            self.last_at = now
             return True
 
         if kind == "letter":
             if self.run_len >= self.max_letter_consecutive:
                 return False
             self.run_len += 1
-            self.last_at = now
             return True
 
-        # other: dedup temporal (anti-rebote del clasificador)
-        if self.last_at is not None and (now - self.last_at) < self.dedup_sec:
-            return False
-        self.run_len += 1
-        self.last_at = now
-        return True
+        return False

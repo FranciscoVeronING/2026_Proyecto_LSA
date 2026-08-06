@@ -133,9 +133,9 @@ def main():
         f"Cooldown: {cfg.INFERENCE_COOLDOWN_SEC}s"
     )
     print(
-        f"[*] Pausa enunciado→LLM: {cfg.UTTERANCE_PAUSE_SEC}s | "
-        f"dedup other: {cfg.GLOSS_DEDUP_SEC}s | "
-        f"letras max: {cfg.LETTER_MAX_CONSECUTIVE}"
+        f"[*] Pausa enunciado→LLM: {cfg.UTTERANCE_PAUSE_SEC}s sin actividad | "
+        f"letras max: {cfg.LETTER_MAX_CONSECUTIVE} | "
+        "señas lexicas repetidas: descartadas"
     )
 
     vs = WebcamStream(0).start()
@@ -148,7 +148,6 @@ def main():
 
     utterance_buffer = UtteranceBuffer(
         pause_sec=cfg.UTTERANCE_PAUSE_SEC,
-        dedup_sec=cfg.GLOSS_DEDUP_SEC,
         min_confidence=cfg.CONFIDENCE_THRESHOLD,
         max_letter_consecutive=cfg.LETTER_MAX_CONSECUTIVE,
     )
@@ -247,6 +246,10 @@ def main():
                 consecutive_hands_frames = 0
 
             is_moving = is_moving_pixels or landmark_motion_val > cfg.LANDMARK_MOTION_THRESHOLD
+
+            # Manos en cámara y moviéndose: sigue señando, no cerrar el enunciado.
+            if hands_present and landmark_motion_val > cfg.LANDMARK_MOTION_THRESHOLD:
+                utterance_buffer.note_signing_activity(time.time())
 
             if btn_capture.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
                 if len(frames_temp_buffer) >= cfg.MIN_CAPTURE_FRAMES:

@@ -19,7 +19,7 @@ Este documento describe **qué hace el sistema**, **cómo está armado por dentr
 | **PEFT / adapter** | Ajuste liviano sobre un modelo base ya entrenado. | No cargamos 3B parámetros desde cero; usamos LoRA en `adapter_model.safetensors`. |
 | **Prompt** | Instrucciones que le damos a la LLM para que se comporte como intérprete LSA. | `sys_prompt.txt` + few-shots en JSON. |
 | **Few-shot** | Ejemplos dentro del prompt (“Glosas X → Español Y”). | Mejora consistencia sin reentrenar. |
-| **Dedup / anti-rebote** | Evitar que la misma seña se registre muchas veces por error del clasificador. | Ventana temporal `GLOSS_DEDUP_SEC`. |
+| **Dedup / anti-rebote** | Evitar que la misma seña se registre muchas veces por error del clasificador. | Regla por igualdad en `RepeatGate`, sin ventana temporal. |
 | **Deletreo** | Deletrear con señas de letras: `J U A N` → “Juan”. | Secuencia de glosas de un solo carácter alfabético. |
 | **Turno (conversación)** | Una intervención en el diálogo: alguien “dijo” algo. | Objeto `Turn` con rol `signer` o `hearing`. |
 | **signer** | Persona sorda que señala (LSA). | Turno con glosas + interpretación en español. |
@@ -200,7 +200,7 @@ El clasificador devuelve claves internas (`el_ella`, `vivir_en`…). Antes de mo
 
 | Constante | Valor | Significado |
 |-----------|-------|-------------|
-| `UTTERANCE_PAUSE_SEC` | 4.0 | Segundos de silencio para cerrar frase |
+| `UTTERANCE_PAUSE_SEC` | 4.0 | Segundos sin actividad de señado para cerrar frase |
 | `CONFIDENCE_THRESHOLD` | 0.75 | Confianza mínima del clasificador |
 | `INFERENCE_COOLDOWN_SEC` | 1.0 | Espera entre inferencias (anti-spam) |
 
@@ -225,25 +225,68 @@ Archivo: `src/core/repeat_policy.py`.
 |------|-----------------|-------|---------|
 | **Dígito** | un carácter `0-9` | Siempre aceptar repeticiones | `1 1 1` → `1 1 1` |
 | **Letra** | un carácter alfabético (incl. `Ñ`) | Máximo 2 iguales seguidas; la 3ª se descarta | `A A A` → `A A` |
-| **Other** | todo lo demás (`HOLA`, `VER`…) | Dedup temporal 1 s | rebote filtrado |
+| **Other** | todo lo demás (`HOLA`, `VER`…) | Nunca dos veces seguidas | `HOLA HOLA` → `HOLA` |
 
 ```python
 # Ejemplo de comportamiento (RepeatGate)
-gate = RepeatGate(dedup_sec=1.0, max_letter_consecutive=2)
+gate = RepeatGate(max_letter_consecutive=2)
 
-gate.allow("A", 0.0)    # True  — primera A
-gate.allow("A", 0.5)    # True  — segunda A (válida en deletreo)
-gate.allow("A", 1.0)    # False — tercera A (probable rebote o exceso)
+gate.allow("A")       # True  — primera A
+gate.allow("A")       # True  — segunda A (válida en deletreo)
+gate.allow("A")       # False — tercera A (probable rebote o exceso)
 
-gate.allow("1", 2.0)    # True
-gate.allow("1", 2.1)    # True  — números repetidos OK
-gate.allow("1", 2.2)    # True
+gate.allow("1")       # True
+gate.allow("1")       # True  — números repetidos OK
+gate.allow("1")       # True
 
-gate.allow("hola", 3.0)   # True
-gate.allow("hola", 3.5)   # False — mismo rebote en <1s
+gate.allow("hola")    # True
+gate.allow("hola")    # False — seña léxica repetida: rebote
+gate.allow("ver")     # True
+gate.allow("hola")    # True  — no es consecutiva, hay un VER en el medio
 ```
 
-**Constantes:** `GLOSS_DEDUP_SEC = 1.0`, `LETTER_MAX_CONSECUTIVE = 2`.
+**Constante:** `LETTER_MAX_CONSECUTIVE = 2`.
+
+#### Por qué la regla de `other` dejó de ser temporal
+
+La versión original descartaba una glosa léxica repetida solo si llegaba **dentro de
+`GLOSS_DEDUP_SEC = 1 s`**. En la práctica no descartaba nada, y la razón es aritmética:
+`INFERENCE_COOLDOWN_SEC` también vale 1 s, así que el sistema **garantiza** que dos
+inferencias consecutivas estén separadas por al menos un segundo. La ventana de dedup era
+inalcanzable por construcción: toda glosa repetida llegaba "tarde" y se aceptaba.
+
+Se detectó en uso real: señar `HOLA`, esperar, volver a señar `HOLA`, y ver las dos en el
+buffer. Subir el umbral hubiera sido un parche frágil, porque habría que mantenerlo siempre
+por encima del cooldown.
+
+La regla nueva es por **igualdad, no por tiempo**: dos señas léxicas idénticas pegadas se
+descartan siempre. El fundamento lingüístico es que `HOLA HOLA` no significa nada distinto de
+`HOLA` dentro de un mismo enunciado; si aparece, es rebote. Para volver a decir `HOLA` hay que
+cerrar el enunciado, y al cerrarse se llama a `reset()`. Las repeticiones **no consecutivas**
+(`HOLA VER HOLA`) se conservan intactas.
+
+Esto además simplificó la clase: `RepeatGate` ya no necesita saber la hora. `allow()` perdió
+el parámetro `now` y el atributo `last_at`, y quedó como una máquina de estados de tres reglas
+sin dependencia temporal, mucho más fácil de testear.
+
+### 4.4 Cuándo se cierra el enunciado
+
+El cierre lo decide `UtteranceBuffer` cuando pasan `UTTERANCE_PAUSE_SEC` (4 s) **sin actividad
+de señado**. La sutileza está en qué cuenta como actividad, y son tres cosas:
+
+1. Una glosa aceptada.
+2. Una glosa **reconocida pero descartada** por repetida.
+3. Las manos moviéndose frente a la cámara, aunque el clasificador todavía no haya resuelto nada.
+
+Los puntos 2 y 3 no estaban antes, y su ausencia se volvió un problema al endurecer la regla
+de repeticiones. Si el reloj solo se reiniciara con glosas aceptadas, alguien que repite una
+seña dejaría correr la cuenta regresiva mientras sigue señando, y el enunciado podría cerrarse
+en medio de la frase.
+
+El punto 3 usa **movimiento de manos**, no mera presencia. Es deliberado: si bastara con tener
+las manos en cámara, una persona que apoya las manos en un lugar visible mantendría el
+enunciado abierto para siempre. Con movimiento, las manos quietas o fuera de pantalla dejan
+correr los 4 segundos y el enunciado cierra, que es el comportamiento esperado.
 
 ---
 
@@ -302,9 +345,9 @@ La penalización por repetición estaba en `1.2`. Ese parámetro castiga tokens 
 }
 ```
 
-### 5.4 Ambigüedades del clasificador (O↔0, 2↔V, I↔T↔OJO)
+### 5.4 Ambigüedades del clasificador
 
-A veces dos señas **se ven casi iguales** para la cámara. El clasificador elige una u otra casi al azar, y el contexto es lo único que permite decidir.
+A veces dos señas **se ven casi iguales** para la cámara. El clasificador elige una u otra casi al azar, y el contexto es lo único que permite decidir. Los pares detectados hasta ahora se agrupan en tres familias según qué tipo de contexto los desempata.
 
 **Grupo 1 — letra contra número.** Se resuelve por el tipo de secuencia.
 
@@ -312,8 +355,19 @@ A veces dos señas **se ven casi iguales** para la cámara. El clasificador elig
 |-------------|------------------------|------------------|
 | **O ↔ 0** | Deletreo, nombre, apellido → **O** | Documento, edad, teléfono → **0** |
 | **2 ↔ V** | Deletreo → **V** | Secuencia numérica → **2** |
+| **AÑOS ↔ G** | Dentro de un deletreo → **G** | Después de dígitos, contexto de edad → **AÑOS** |
 
-**Grupo 2 — I ↔ T ↔ OJO.** Más difícil, porque las tres conviven en contexto de letras. La configuración de la mano es prácticamente la misma; lo único que cambia es **dónde se apoya**:
+`AÑOS ↔ G` entra en este grupo porque el desempate es el mismo: `YO 2 5 G` es claramente una edad, mientras que `NOMBRE AÑOS U I D O` es un deletreo donde la seña léxica no tiene lugar y debe leerse como `G`.
+
+**Grupo 2 — seña léxica contra seña léxica.** Acá no hay tipos que ayuden; desempata el campo semántico de las glosas vecinas.
+
+| Par confuso | Cuándo es una | Cuándo es la otra |
+|-------------|---------------|-------------------|
+| **CHAU ↔ MARTES** | Junto a glosas de tiempo (`HOY`, `AYER`, `DIA`, `HORA`, otros días) → **MARTES** | Sola, o cerrando un saludo o despedida → **CHAU** |
+
+Ejemplo del corrimiento: `HOY CHAU` no es un saludo, es *"Hoy es martes"*. La presencia de `HOY` es lo único que lo revela.
+
+**Grupo 3 — I ↔ T ↔ OJO.** El más difícil, porque las tres conviven en contexto de letras. La configuración de la mano es prácticamente la misma; lo único que cambia es **dónde se apoya**:
 
 | Seña | Ubicación de la mano |
 |------|----------------------|
@@ -666,7 +720,7 @@ La cámara **no se cae**: sigue reconociendo señas y mostrando glosas. Revisar 
 La rama `integration` conecta **cámara → reconocimiento de señas → lista de glosas → interpretación en español**, con tres mejoras importantes respecto a una versión ingenua:
 
 1. **Repeticiones inteligentes:** permite deletreo y números reales sin dejar pasar rebotes del clasificador.
-2. **Desambiguación por contexto:** O/0, 2/V e I/T/OJO se resuelven mirando las glosas vecinas.
+2. **Desambiguación por contexto:** O/0, 2/V, AÑOS/G, CHAU/MARTES e I/T/OJO se resuelven mirando las glosas vecinas.
 3. **Memoria conversacional corta:** la LLM entiende mejor frases sucesivas y referencias a lo ya dicho.
 
 El sistema está diseñado para **no bloquearse** si la LLM falla: la cámara y el clasificador siguen. Los números puros y los deletreos sin ambigüedad funcionan **sin** LLM.

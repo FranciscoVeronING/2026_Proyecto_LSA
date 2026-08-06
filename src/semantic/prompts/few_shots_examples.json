@@ -63,6 +63,30 @@
     {
       "glosses": ["YO", "OJO", "MAL"],
       "spanish": "Me duele el ojo."
+    },
+    {
+      "glosses": ["YO", "2", "5", "G"],
+      "spanish": "Tengo 25 años."
+    },
+    {
+      "glosses": ["YO", "3", "0", "AÑOS"],
+      "spanish": "Tengo 30 años."
+    },
+    {
+      "glosses": ["NOMBRE", "AÑOS", "U", "I", "D", "O"],
+      "spanish": "Me llamo Guido."
+    },
+    {
+      "glosses": ["HOY", "CHAU"],
+      "spanish": "Hoy es martes."
+    },
+    {
+      "glosses": ["MARTES", "YO", "CASA"],
+      "spanish": "El martes estoy en casa."
+    },
+    {
+      "glosses": ["CHAU", "VER", "VOS"],
+      "spanish": "Chau, nos vemos."
     }
   ]
 }
