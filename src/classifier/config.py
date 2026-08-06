@@ -129,7 +129,7 @@ VOICE = True
 # TINY SKELETON CLASSIFIER
 # ==========================================
 HIDDEN_DIM = 128
-NUM_HEADS = 8
+NUM_HEADS = 4
 NUM_LAYERS = 2
 DROPOUT_RATE = 0.3028748566702939
 
@@ -195,6 +195,6 @@ GLOSS_NORMALIZER = {
 
 STATIC_SIGN_CLASSES = [
     "0", "1", "2", "3", "4", "5", "6", "8",
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M",
-    "N", "ñ", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "A", "B", "C", "D", "E", "F", "G", "I", "L", "M",
+    "N", "ñ", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y",
 ]
