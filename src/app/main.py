@@ -105,6 +105,7 @@ def load_classes():
 
 def main():
     args = parse_args()
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     idx_to_class, sign_list = load_classes()

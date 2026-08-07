@@ -1,0 +1,85 @@
+{
+  "description": "Conjunto hold-out para evaluar la traducción semántica. Estos ejemplos NO se inyectan como few-shots en el prompt.",
+  "examples": [
+    {
+      "glosses": ["YO", "BIEN"],
+      "spanish": "Estoy bien."
+    },
+    {
+      "glosses": ["YO", "MAL"],
+      "spanish": "Estoy mal."
+    },
+    {
+      "glosses": ["QUIEN", "VOS"],
+      "spanish": "¿Quién sos?"
+    },
+    {
+      "glosses": ["COMO", "VOS", "NOMBRE"],
+      "spanish": "¿Cómo te llamás?"
+    },
+    {
+      "glosses": ["DONDE", "PLAZA"],
+      "spanish": "¿Dónde queda la plaza?"
+    },
+    {
+      "glosses": ["CUANDO", "VOS", "CASA"],
+      "spanish": "¿Cuándo estás en casa?"
+    },
+    {
+      "glosses": ["YO", "VIVIR", "CASA"],
+      "spanish": "Vivo en casa."
+    },
+    {
+      "glosses": ["VOS", "DONDE", "VIVIR"],
+      "spanish": "¿Dónde vivís?"
+    },
+    {
+      "glosses": ["YO", "VER", "ROBAR"],
+      "spanish": "Vi un robo."
+    },
+    {
+      "glosses": ["NO", "VER"],
+      "spanish": "No vi."
+    },
+    {
+      "glosses": ["SI", "PODER"],
+      "spanish": "Sí, puedo."
+    },
+    {
+      "glosses": ["AYER", "YO", "MAL"],
+      "spanish": "Ayer estuve mal."
+    },
+    {
+      "glosses": ["HOY", "YO", "BIEN"],
+      "spanish": "Hoy estoy bien."
+    },
+    {
+      "glosses": ["CUANTOS", "AÑOS", "VOS"],
+      "spanish": "¿Cuántos años tenés?"
+    },
+    {
+      "glosses": ["FAMILIA", "MAMA", "PAPA"],
+      "spanish": "En mi familia están mamá y papá."
+    },
+    {
+      "glosses": ["NOSOTROS", "FAMILIA"],
+      "spanish": "Somos familia."
+    },
+    {
+      "glosses": ["QUE", "HORA"],
+      "spanish": "¿Qué hora es?"
+    },
+    {
+      "glosses": ["YO", "LLAMAR"],
+      "spanish": "Llamo."
+    },
+    {
+      "glosses": ["YO", "NOMBRE", "APELLIDO"],
+      "spanish": "Mi nombre y apellido."
+    },
+    {
+      "glosses": ["EL/ELLA", "DONDE", "CASA"],
+      "spanish": "¿Dónde está su casa?"
+    }
+  ]
+}

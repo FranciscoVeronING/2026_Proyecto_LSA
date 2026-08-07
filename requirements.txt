@@ -26,6 +26,6 @@ safetensors==0.7.0
 # --- Síntesis de voz ---
 pyttsx3==2.99
 
-# Opcional: solo si USE_UNSLOTH = True en model/semantic/config.py.
-# Requiere GPU con CUDA; no funciona en CPU.
-# unsloth
+# Opcional: cuantización 4-bit (~2 GB VRAM vs ~6 GB en float16). Requiere CUDA.
+# pip install bitsandbytes
+# bitsandbytes>=0.45.0

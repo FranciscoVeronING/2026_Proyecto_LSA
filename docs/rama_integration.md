@@ -441,8 +441,49 @@ PyTorch va aparte porque la build con CUDA no vive en PyPI.
 ```bash
 python run.py            # cámara + traducción
 python run.py --no-llm   # solo glosas, sin cargar la LLM
-python run.py --eval     # recorrido de evaluación, salida CSV
+python run.py --eval     # evaluación del clasificador (91 señas → CSV)
+python run.py --eval-semantic   # evaluación offline glosas→español (métricas + CSV)
 ```
+
+### 5.7 Evaluación semántica offline (`--eval-semantic`)
+
+Modo **sin cámara** para medir qué tan fiel es la traducción glosas → español.
+
+```bash
+python run.py --eval-semantic
+python run.py --eval-semantic --eval-semantic-history   # simula conversación encadenada
+python run.py --eval-semantic --eval-semantic-dataset ruta/al/dataset.json
+```
+
+**Dataset por defecto:** `src/semantic/eval_dataset.json` (20 pares hold-out que **no** están en los few-shots del prompt). Evaluar sobre `few_shots_examples.json` infla las métricas porque esos ejemplos ya se inyectan en el system prompt; el script avisa si detecta ese caso.
+
+**Pipeline evaluado:** el mismo de producción — atajo literal (`format_literal_utterance`) si aplica, si no `translate_glosses()`.
+
+**Métricas reportadas** (sin dependencias extra):
+
+| Métrica | Qué mide |
+|---------|----------|
+| Exact match | Igualdad normalizada (sin acentos/mayúsculas) |
+| Token F1 | Solapamiento de palabras |
+| ROUGE-L | Secuencia común más larga |
+| BLEU-4 | n-gramas (implementación propia con suavizado) |
+
+Salida: resumen en consola + CSV `eval_semantic_<fecha>.csv` en la raíz.
+
+**Primera corrida hold-out** (RTX 3060, sin historial, 06/08/2026):
+
+| Métrica | Valor |
+|---------|-------|
+| Exact match | 2/20 (10 %) |
+| Token F1 (prom.) | 0,50 |
+| ROUGE-L (prom.) | 0,49 |
+| BLEU-4 (prom.) | 0,20 |
+
+Muchas respuestas son **parcialmente correctas** (“Me siento bien” vs “Estoy bien”); el exact match es estricto. Para comparar con el paper de entrenamiento (~200 secuencias), apuntar el dataset completo con `--eval-semantic-dataset`.
+
+**Entry point liviano:** `run.py` detecta `--eval-semantic` y llama a `semantic_eval.cli_main()` **sin importar** OpenCV ni MediaPipe, liberando RAM antes de cargar la LLM.
+
+**Carga de la LLM en Windows:** `device_map` directo a CUDA puede crashear el proceso en silencio en `Loading checkpoint shards`. La ruta PEFT carga primero en CPU (~15 s) y luego mueve a GPU (`float16 CPU → GPU`). Opcional: `pip install bitsandbytes` para cuantización 4-bit si `LOAD_IN_4BIT = True`.
 
 Hay un único punto de entrada a propósito. Antes convivían `python -m camera` (parado en `src/`) y `python -m src.camera` (parado en la raíz), y cuál funcionaba dependía del directorio actual. `run.py` agrega `src/` a `sys.path` y delega en `app.main`, así que el comando es siempre el mismo.
 
@@ -608,12 +649,14 @@ Camino sugerido, en orden:
 | `src/app/capture.py` | **Nuevo.** `WebcamStream`, `LandmarkSmoother`, vector de landmarks |
 | `src/app/workers.py` | **Nuevo.** `InferenceWorker`, `SemanticWorker`, `VoiceWorker` |
 | `src/app/utterance.py` | **Nuevo.** `UtteranceBuffer`, `normalize_gloss` |
-| `src/app/eval_session.py` | **Nuevo.** Modo `--eval` y escritura del CSV |
+| `src/app/eval_session.py` | **Nuevo.** Modo `--eval` del clasificador y escritura del CSV |
+| `src/app/semantic_eval.py` | **Nuevo.** Modo `--eval-semantic`: métricas BLEU/ROUGE-L/Token F1 + CSV |
+| `src/semantic/eval_dataset.json` | **Nuevo.** 20 pares hold-out para evaluación semántica |
 | `src/app/state.py` | **Nuevo.** `shared_state` y su lock, aislados de los workers |
 | `src/classifier/config.py` | `LETTER_MAX_CONSECUTIVE`, umbrales utterance, paths a `weights/` |
 | `src/classifier/arch.py` | Ex `model_arch.py`, sin cambios de lógica |
 | `src/semantic/config.py` | Paths absolutos, `CONVERSATION_HISTORY_SIZE`, `REPETITION_PENALTY` |
-| `src/semantic/translator.py` | Ex `model.py`. Fix `BASE_MODEL_ID`, historial en `translate_glosses` |
+| `src/semantic/translator.py` | Ex `model.py`. Carga CPU→GPU en Windows, 4-bit opcional, validación de cache |
 | `src/semantic/prompts/sys_prompt.txt` | Reglas O/0, 2/V, literales, historial |
 | `src/semantic/prompts/few_shots_examples.json` | Ejemplos ampliados |
 | `src/config.py` | **Eliminado.** Importaba un módulo inexistente; nadie lo usaba |
@@ -693,7 +736,15 @@ Resultado buffer: A A N A  (si la 3ª A era rebote del clasificador, se filtró 
 7. Tecla **`c`** → corta el contexto conversacional (el log de sesión se conserva).
 8. Tecla **`q`** → salir.
 
-Teclas útiles: `m` cambia el modo de captura, `n` saltea seña en modo eval.
+Teclas útiles: `m` cambia el modo de captura, `n` saltea seña en modo `--eval`.
+
+### Evaluación semántica (sin cámara)
+
+```bash
+python run.py --eval-semantic
+```
+
+Esperar ~30 s de carga (CPU → GPU) y ~30 s para 20 traducciones. Revisar CSV y métricas en consola.
 
 ### Si la LLM no carga
 
@@ -710,7 +761,7 @@ La cámara **no se cae**: sigue reconociendo señas y mostrando glosas. Revisar 
 5. **Export de sesión** (`session_log` → JSON/CSV) para revisión posterior.
 6. **Eval multi-turno del historial** (ver 6.6): armar diálogos encadenados y comparar BLEU / ROUGE-L con `USE_CONVERSATION_HISTORY` en `True` y `False`. Si baja, agregar ejemplos multi-turno al entrenamiento del adapter.
 7. **Revisar si los few-shots siguen sumando:** con un modelo ya fine-tuneado para esta tarea, los 16 ejemplos del prompt pueden ser redundantes y solo gastar contexto. Medir con y sin ellos sobre el dataset de evaluación.
-8. **Reset por tiempo en `RepeatGate`:** hoy una letra repetida por tercera vez se descarta sin importar cuánto tiempo pasó. Si alguien hace `A`, espera 3 segundos y vuelve a hacer `A` a propósito, se pierde.
+8. **Diálogos encadenados para eval con historial:** el flag `--eval-semantic-history` acumula turnos previos; falta un dataset de diálogos para medir degradación vs entrenamiento single-turn.
 9. **Atacar I/T/OJO desde el clasificador:** la diferencia entre las tres es *dónde se apoya la mano* (mejilla / debajo de la boca / junto al ojo). Es información posicional que los landmarks tienen, pero que se diluye en la normalización. Una feature explícita de distancia mano–rostro resolvería el caso mejor que cualquier regla de prompt, sobre todo cuando las dos lecturas son palabras válidas (`MARIA` vs `MARTA`).
 
 ---

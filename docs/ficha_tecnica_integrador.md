@@ -35,8 +35,9 @@ componente corría aislado:
 
 Alcance funcional entregado: reconocimiento de **91 señas** (abecedario dactilológico,
 dígitos 0–9 y vocabulario de contexto policial/civil), traducción a español con contexto
-conversacional de los últimos 10 turnos, salida por voz, y un modo de evaluación que recorre
-el listado completo de señas y registra los aciertos en un CSV.
+conversacional de los últimos 10 turnos, salida por voz, modo de evaluación del clasificador
+(`--eval`, 91 señas → CSV) y **evaluación offline del traductor** (`--eval-semantic`, glosas
+→ español con métricas Token F1 / ROUGE-L / BLEU-4).
 
 **Fuera de alcance en esta iteración:** captura de la persona oyente (la estructura de datos
 ya contempla sus turnos, pero no hay ni micrófono ni entrada de texto conectados), y el
@@ -138,8 +139,9 @@ así que si viviera en el hilo del traductor la frase siguiente esperaría al pa
 Windows usa COM, que exige crear y usar el motor de voz **en el mismo hilo**.
 
 **Carga diferida de la LLM.** El traductor no se importa al arrancar. Si Transformers no está
-instalado o la GPU no alcanza, la cámara abre igual y funciona en modo "solo glosas". Se
-prefirió degradar la funcionalidad antes que impedir el arranque.
+instalado o la GPU no alcanza, la cámara abre igual y funciona en modo "solo glosas". En Windows,
+los pesos se cargan primero en RAM y luego se mueven a GPU para evitar un crash silencioso de
+`safetensors` al mapear directo a CUDA.
 
 **Organización del código por dependencia.** El proyecto se estructura en cuatro paquetes
 según qué tan pesadas son sus dependencias, no según el tema:
@@ -217,13 +219,47 @@ Verificación de integración: cadena completa de imports, resolución de las se
 artefactos, carga real de los pesos (91 clases) y construcción del prompt con *few-shots*
 (5.220 caracteres). Ejecución en vivo con cámara confirmada de forma manual.
 
+### Traductor semántico (evaluación offline)
+
+Modo `--eval-semantic`: corre el pipeline glosas → español sobre un JSON de pares referencia,
+sin cámara. Dataset hold-out por defecto: `src/semantic/eval_dataset.json` (20 oraciones que
+**no** están en los few-shots del prompt).
+
+```bash
+python run.py --eval-semantic
+python run.py --eval-semantic --eval-semantic-history   # conversación encadenada
+python run.py --eval-semantic --eval-semantic-dataset ruta/dataset.json
+```
+
+Métricas: exact match, Token F1, ROUGE-L, BLEU-4. Salida: consola + CSV `eval_semantic_<fecha>.csv`.
+
+**Primera corrida** (RTX 3060, hold-out, sin historial, 06/08/2026):
+
+| Métrica | Valor |
+|---|---|
+| Exact match | 2/20 (10 %) |
+| Token F1 (promedio) | 0,50 |
+| ROUGE-L (promedio) | 0,49 |
+| BLEU-4 (promedio) | 0,20 |
+
+Interpretación: muchas traducciones son cercanas pero no idénticas a la referencia
+(p. ej. “Me siento bien” vs “Estoy bien”). Token F1 y ROUGE-L capturan mejor esa
+partialidad que el exact match. Para métricas comparables con el entrenamiento (~200 secuencias),
+falta correr el dataset completo de fine-tuning.
+
+**Carga de la LLM en Windows:** se detectó crash silencioso al mapear pesos directo a GPU
+(`Loading checkpoint shards: 0%`). Solución: cargar en CPU y mover a GPU después (~15 s extra
+en el primer arranque). Los prints de consola evitan caracteres Unicode (`→`, `…`) incompatibles
+con `cp1252`.
+
 ### Pendiente de medición
 
 | Métrica | Estado |
 |---|---|
-| BLEU y ROUGE-L del traductor | Dataset de ~200 secuencias construido; falta consolidar los valores en este documento |
+| BLEU/ROUGE-L sobre dataset completo (~200 secuencias) | Modo `--eval-semantic` listo; falta commitear el JSON de evaluación del entrenamiento |
 | Exactitud en vivo (91 señas) | El modo `--eval` genera el CSV, falta ejecutar la corrida completa |
 | Latencia de la LLM por enunciado | Sin instrumentar |
+| Eval con historial conversacional | Flag `--eval-semantic-history` implementado; falta dataset de diálogos encadenados |
 
 ### Hallazgos resueltos durante la iteración
 

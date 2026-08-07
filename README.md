@@ -15,7 +15,8 @@ python run.py
 |---------|----------|
 | `python run.py` | Cámara + traducción + voz |
 | `python run.py --no-llm` | Solo glosas, sin cargar la LLM (arranque rápido) |
-| `python run.py --eval` | Recorre todas las señas y guarda un CSV de aciertos |
+| `python run.py --eval` | Recorre todas las señas y guarda un CSV de aciertos del clasificador |
+| `python run.py --eval-semantic` | Evalúa la traducción glosas→español (20 ejemplos hold-out, métricas + CSV) |
 
 Durante la ejecución: `q` sale, `m` cambia el modo de captura, `c` corta el
 contexto conversacional y `n` saltea una seña en modo evaluación.
