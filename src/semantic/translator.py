@@ -1,10 +1,5 @@
 """
 Traductor semántico LSA → español.
-
-- NO importar Unsloth/transformers a nivel de módulo: tardan segundos y pueden
-  abortar el proceso, y la cámara tiene que arrancar aunque la LLM falle.
-- load_model_and_tokenizer() carga en diferido, desde el hilo semántico.
-- Por defecto usa PEFT (más estable). Unsloth opcional vía config.USE_UNSLOTH.
 """
 
 from __future__ import annotations
@@ -16,13 +11,11 @@ from typing import Optional
 from semantic.config import (
     ADAPTER_PATH,
     BASE_MODEL_ID,
-    MAX_SEQ_LENGTH,
     SYSTEM_PROMPT_PATH,
     FEW_SHOTS_PATH,
     MAX_NEW_TOKENS,
     TEMPERATURE,
     REPETITION_PENALTY,
-    USE_UNSLOTH,
     LOAD_IN_4BIT,
 )
 
@@ -91,21 +84,6 @@ def load_prompt():
             system_prompt_completo += f"\nGlosas: {glosas_str} -> Español: {ex['spanish']}"
 
     return system_prompt_completo
-
-
-def _load_with_unsloth():
-    from transformers import logging
-    from unsloth import FastLanguageModel
-
-    logging.set_verbosity_error()
-    print(f"[semantic] Loading with Unsloth from: {ADAPTER_PATH}...")
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=ADAPTER_PATH,
-        max_seq_length=MAX_SEQ_LENGTH,
-        load_in_4bit=LOAD_IN_4BIT,
-    )
-    FastLanguageModel.for_inference(model)
-    return model, tokenizer
 
 
 def _print_vram_status() -> None:
@@ -198,7 +176,7 @@ def _load_with_peft():
 
 
 def load_model_and_tokenizer():
-    """Carga diferida. Preferí PEFT si USE_UNSLOTH=False (default)."""
+    """Carga con PEFT."""
     global SYSTEM_PROMPT, MODEL, TOKENIZER, _LOADED
 
     if _LOADED and MODEL is not None and TOKENIZER is not None:
@@ -208,18 +186,11 @@ def load_model_and_tokenizer():
     _check_base_model_cache(BASE_MODEL_ID)
 
     try:
-        if USE_UNSLOTH:
-            try:
-                MODEL, TOKENIZER = _load_with_unsloth()
-            except Exception as e:
-                print(f"[semantic] Unsloth falló ({e}). Probando PEFT...")
-                MODEL, TOKENIZER = _load_with_peft()
-        else:
-            try:
-                MODEL, TOKENIZER = _load_with_peft()
-            except Exception as e:
-                print(f"[semantic] PEFT falló ({e}). Probando Unsloth...")
-                MODEL, TOKENIZER = _load_with_unsloth()
+        
+        try:
+            MODEL, TOKENIZER = _load_with_peft()
+        except Exception as e:
+            print(f"[semantic] PEFT falló ({e}).")
     except Exception as e:
         print(f"\n[!] No se pudo cargar la LLM: {e}")
         print(

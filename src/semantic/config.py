@@ -20,8 +20,6 @@ TEMPERATURE = 0.1
 REPETITION_PENALTY = 1.0
 LOAD_IN_4BIT = True
 
-USE_UNSLOTH = False  # True: usar modelo UnsloTH, False: usar modelo Qwen2.5-3B-Instruct
-
 # Últimos N turnos (signer + hearing) que la memoria conserva como contexto
 CONVERSATION_HISTORY_SIZE = 10
 
