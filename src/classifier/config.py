@@ -171,6 +171,9 @@ MIN_CAPTURE_FRAMES = 5
 # Modes: "auto" (dynamic + static), "dynamic", "static"
 CAPTURE_MODE = "auto"
 
+# Espejado para zurdos: "vector" (OpenCV actual) o "image" (espejar frame antes de MediaPipe)
+MIRROR_STRATEGY = "vector"
+
 # ==========================================
 # BUFFER (glosses → LLM)
 # ==========================================

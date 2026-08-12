@@ -1,0 +1,19 @@
+# Cloudflare Tunnel — un hostname para frontend + backend
+# Uso: cloudflared tunnel --config docs/cloudflared.yml run
+#
+# Reemplazar TU-DOMINIO por el hostname del túnel configurado en Cloudflare Zero Trust,
+# o usar los quick tunnels (--url) documentados en webapp_meet.md.
+
+tunnel: lsa-meet
+credentials-file: ~/.cloudflared/lsa-meet.json
+
+ingress:
+  - hostname: TU-DOMINIO.ejemplo.com
+    path: /ws/*
+    service: http://localhost:8000
+  - hostname: TU-DOMINIO.ejemplo.com
+    path: /api/*
+    service: http://localhost:8000
+  - hostname: TU-DOMINIO.ejemplo.com
+    service: http://localhost:3000
+  - service: http_status:404

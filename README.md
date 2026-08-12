@@ -21,6 +21,20 @@ python run.py
 Durante la ejecución: `q` sale, `m` cambia el modo de captura, `c` corta el
 contexto conversacional y `n` saltea una seña en modo evaluación.
 
+## Webapp LSA Meet (videollamada)
+
+Videollamada para 2 personas con interpretación LSA en vivo. Ver [`docs/webapp_meet.md`](docs/webapp_meet.md).
+
+```bash
+# Terminal 1 — backend
+python run_server.py
+
+# Terminal 2 — frontend
+cd web && npm install && npm run dev
+```
+
+Abrir http://localhost:3000, crear sala y compartir el código.
+
 PyTorch con CUDA se instala aparte porque esa build no está en PyPI:
 
 ```bash

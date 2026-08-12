@@ -12,6 +12,11 @@ unsloth_compiled_cache/
 # Salidas del modo --eval
 eval_*.csv
 
+web/node_modules/
+web/.next/
+web/public/mediapipe/holistic/*
+!web/public/mediapipe/holistic/.gitkeep
+
 models/
 *.h5
 *.tflite

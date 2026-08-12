@@ -8,7 +8,6 @@ import torch
 
 import classifier.config as cfg
 from core.landmarks import (
-    get_anchor_and_scale,
     normalize_spatial_points,
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
@@ -73,24 +72,48 @@ class LandmarkSmoother:
         self.prev_vector = None
 
 
-def extract_normalized_vector(results, left_handed: bool):
-    """Arma el vector (225,) desde los resultados de MediaPipe; espeja si es zurdo."""
-    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
-    raw_pose = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
-        if results.pose_landmarks
-        else np.zeros(33 * 3)
-    )
-    raw_lh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
-        if results.left_hand_landmarks
-        else np.zeros(21 * 3)
-    )
-    raw_rh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
-        if results.right_hand_landmarks
-        else np.zeros(21 * 3)
-    )
+def _flat_to_xyz(flat: list, expected_points: int) -> np.ndarray:
+    """Lista plana [x,y,z,...] → array (N*3,) con padding de ceros si falta."""
+    if not flat:
+        return np.zeros(expected_points * 3, dtype=np.float32)
+    arr = np.array(flat, dtype=np.float32)
+    target = expected_points * 3
+    if arr.size < target:
+        padded = np.zeros(target, dtype=np.float32)
+        padded[: arr.size] = arr
+        return padded
+    return arr[:target]
+
+
+def _anchor_scale_from_flat_pose(pose_flat: list) -> tuple[np.ndarray, float]:
+    """Calcula ancla y escala desde hombros (índices 11 y 12) en lista plana."""
+    if not pose_flat or len(pose_flat) < 12 * 3:
+        return np.array([0.0, 0.0, 0.0]), 1.0
+
+    pose = np.array(pose_flat, dtype=np.float32).reshape(-1, 3)
+    if pose.shape[0] < 13:
+        return np.array([0.0, 0.0, 0.0]), 1.0
+
+    left_shoulder = pose[11]
+    right_shoulder = pose[12]
+    anchor = (left_shoulder + right_shoulder) / 2.0
+    scale = float(np.sqrt(np.sum((left_shoulder - right_shoulder) ** 2)))
+    if scale < 1e-5:
+        scale = 1.0
+    return anchor, scale
+
+
+def extract_normalized_vector_from_flat(
+    pose_flat: list,
+    left_hand_flat: list,
+    right_hand_flat: list,
+    left_handed: bool = False,
+) -> np.ndarray:
+    """Arma el vector (225,) desde listas planas de landmarks crudos."""
+    anchor, scale = _anchor_scale_from_flat_pose(pose_flat)
+    raw_pose = _flat_to_xyz(pose_flat, 33)
+    raw_lh = _flat_to_xyz(left_hand_flat, 21)
+    raw_rh = _flat_to_xyz(right_hand_flat, 21)
 
     norm_pose = normalize_spatial_points(raw_pose, anchor, scale)
     norm_lh = normalize_spatial_points(raw_lh, anchor, scale)
@@ -102,6 +125,26 @@ def extract_normalized_vector(results, left_handed: bool):
     return vector
 
 
+def extract_normalized_vector(results, left_handed: bool):
+    """Arma el vector (225,) desde los resultados de MediaPipe; espeja si es zurdo."""
+    raw_pose = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
+        if results.pose_landmarks
+        else []
+    )
+    raw_lh = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
+        if results.left_hand_landmarks
+        else []
+    )
+    raw_rh = (
+        np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
+        if results.right_hand_landmarks
+        else []
+    )
+    return extract_normalized_vector_from_flat(raw_pose, raw_lh, raw_rh, left_handed=left_handed)
+
+
 def prepare_input_tensor(buffer_list, device):
     """Lista de frames → tensor (1, MAX_FRAMES, features). None si no alcanza."""
     matrix = sequence_buffer_to_model_input(buffer_list)
@@ -111,12 +154,19 @@ def prepare_input_tensor(buffer_list, device):
     return tensor.to(device)
 
 
-def should_start_recording(capture_mode, hands_present, is_moving, consecutive_hands_frames):
+def should_start_recording(
+    capture_mode,
+    hands_present,
+    is_moving,
+    consecutive_hands_frames,
+    static_frames_to_start=None,
+):
+    static_frames = static_frames_to_start or cfg.STATIC_HANDS_FRAMES_TO_START
     if not hands_present:
         return False
     if capture_mode == "dynamic":
         return is_moving
     if capture_mode == "static":
-        return consecutive_hands_frames >= cfg.STATIC_HANDS_FRAMES_TO_START
-    static_ready = consecutive_hands_frames >= cfg.STATIC_HANDS_FRAMES_TO_START
+        return consecutive_hands_frames >= static_frames
+    static_ready = consecutive_hands_frames >= static_frames
     return is_moving or static_ready
