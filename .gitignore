@@ -1,11 +1,18 @@
 dataset/
 *.mp4
 
+dataset_landmarks/
+dataset_landmarks_32/
+dataset_landmarks_16frames/
+dataset_landmarks_32frames/
+
 __pycache__/
 *.pyc
 .venv/
 .env
 
-models/
-*.h5
-*.tflite
+src/model/2026-06-16/mapeo_clases.json
+src/model/2026-06-17/mapeo_clases.json
+src/model/entregables_nuevos/32_optuna/optuna_study.db
+src/model/entregables_nuevos/32_optuna/_optuna_tmp.pth
+src/semantic
