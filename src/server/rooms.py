@@ -52,6 +52,12 @@ class RoomManager:
     def get_room(self, room_id: str) -> Optional[Room]:
         return self._rooms.get(room_id)
 
+    def ensure_room(self, room_id: str) -> Room:
+        """Crea la sala si no existe (join por link / tras reinicio del server)."""
+        if room_id not in self._rooms:
+            self._rooms[room_id] = Room(id=room_id)
+        return self._rooms[room_id]
+
     def remove_participant(self, room_id: str, participant_id: str) -> None:
         room = self._rooms.get(room_id)
         if not room:

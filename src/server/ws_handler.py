@@ -110,10 +110,7 @@ class WebSocketHandler:
 
     async def handle_connection(self, websocket, room_id: str) -> None:
         self._loop = asyncio.get_running_loop()
-        room = self.room_manager.get_room(room_id)
-        if not room:
-            await websocket.close(code=4004, reason="Sala no encontrada")
-            return
+        room = self.room_manager.ensure_room(room_id)
 
         if room.is_full():
             await websocket.close(code=4003, reason="Sala llena")
@@ -124,6 +121,7 @@ class WebSocketHandler:
 
         try:
             await websocket.accept()
+            print(f"[ws] conectado sala={room_id} participante={participant_id}", flush=True)
             await websocket.send_json(
                 {
                     "type": "connected",
@@ -172,6 +170,10 @@ class WebSocketHandler:
                     )
 
         finally:
+            print(
+                f"[ws] desconectado sala={room_id} participante={participant_id}",
+                flush=True,
+            )
             self.room_manager.remove_participant(room_id, participant_id)
             if participant:
                 other = room.other_participant(participant_id)

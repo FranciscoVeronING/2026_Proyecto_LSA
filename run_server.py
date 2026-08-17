@@ -20,4 +20,17 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
 
-    uvicorn.run("server.main:app", host=args.host, port=args.port, reload=False)
+    print("[*] LSA Meet — arrancando servidor...", flush=True)
+    print(
+        "[*] La primera vez puede tardar 1–3 min (PyTorch, MediaPipe, clasificador).",
+        flush=True,
+    )
+    print(f"[*] Puerto: {args.port}", flush=True)
+
+    uvicorn.run(
+        "server.main:app",
+        host=args.host,
+        port=args.port,
+        reload=False,
+        log_level="info",
+    )

@@ -75,6 +75,10 @@ export function SettingsPanel({
       {open && (
         <div className="absolute bottom-full right-0 mb-2 w-80 max-h-[70vh] overflow-y-auto rounded-xl bg-surface border border-gray-600 p-4 space-y-4 shadow-xl z-50">
           <h4 className="font-semibold text-sm">Configuración</h4>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Los sliders de captura aplican solo a tu pipeline (si sos señante). Landmarks, STT e
+            interpretación son solo en tu pantalla. &quot;Limpiar contexto&quot; afecta a los dos.
+          </p>
 
           <Slider
             label="Confianza mínima"

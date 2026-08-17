@@ -3,19 +3,27 @@
 import type { Top3Item } from "@/lib/schemas";
 
 type Props = {
+  title?: string;
   top3: Top3Item[];
   pendingGlosses: string;
   threshold?: number;
+  emptyHint?: string;
 };
 
-export function Top3Panel({ top3, pendingGlosses, threshold = 0.75 }: Props) {
+export function Top3Panel({
+  title = "Top 3 señas",
+  top3,
+  pendingGlosses,
+  threshold = 0.75,
+  emptyHint = "Esperando seña…",
+}: Props) {
   return (
-    <div className="rounded-xl bg-surface p-4 space-y-3">
+    <div className="rounded-xl bg-surface p-4 space-y-3 h-full">
       <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">
-        Top 3 señas
+        {title}
       </h3>
       {top3.length === 0 ? (
-        <p className="text-gray-500 text-sm">Esperando seña…</p>
+        <p className="text-gray-500 text-sm">{emptyHint}</p>
       ) : (
         <ul className="space-y-2">
           {top3.map((item, i) => (
@@ -37,8 +45,8 @@ export function Top3Panel({ top3, pendingGlosses, threshold = 0.75 }: Props) {
         </ul>
       )}
       <div className="pt-2 border-t border-gray-700">
-        <p className="text-xs text-gray-400 mb-1">Glosas en construcción</p>
-        <p className="text-cyan-300 text-sm font-mono">
+        <p className="text-xs text-gray-400 mb-1">Buffer de glosas</p>
+        <p className="text-cyan-300 text-sm font-mono min-h-[1.25rem]">
           {pendingGlosses || "(vacío)"}
         </p>
       </div>

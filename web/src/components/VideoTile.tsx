@@ -9,6 +9,10 @@ type Props = {
   mirrored?: boolean;
   showLandmarks?: boolean;
   overlayMirrored?: boolean;
+  muted?: boolean;
+  subtitle?: string;
+  subtitleSub?: string;
+  subtitleKind?: "interpretation" | "speech" | "pending" | "typed";
   pose?: number[];
   leftHand?: number[];
   rightHand?: number[];
@@ -67,6 +71,10 @@ export function VideoTile({
   mirrored = false,
   showLandmarks = false,
   overlayMirrored = false,
+  muted = true,
+  subtitle,
+  subtitleSub,
+  subtitleKind,
   pose = [],
   leftHand = [],
   rightHand = [],
@@ -77,10 +85,24 @@ export function VideoTile({
 
   useEffect(() => {
     const el = activeVideoRef.current;
-    if (el && stream) {
-      el.srcObject = stream;
-    }
-  }, [stream, activeVideoRef]);
+    if (!el || !stream) return;
+    el.srcObject = stream;
+    el.muted = muted;
+    const tryPlay = () => {
+      void el.play().catch(() => {
+        if (!muted) {
+          const onGesture = () => {
+            void el.play().catch(() => {});
+            document.removeEventListener("click", onGesture);
+            document.removeEventListener("keydown", onGesture);
+          };
+          document.addEventListener("click", onGesture, { once: true });
+          document.addEventListener("keydown", onGesture, { once: true });
+        }
+      });
+    };
+    tryPlay();
+  }, [stream, muted, activeVideoRef]);
 
   const drawOverlay = useCallback(() => {
     const canvas = canvasRef.current;
@@ -113,13 +135,25 @@ export function VideoTile({
     drawOverlay();
   }, [drawOverlay]);
 
+  const subtitleAccent =
+    subtitleKind === "interpretation"
+      ? "border-green-500/60"
+      : subtitleKind === "speech"
+        ? "border-blue-500/60"
+        : subtitleKind === "pending"
+          ? "border-cyan-500/60"
+          : "border-gray-500/60";
+
+  const subtitleTextClass =
+    subtitleKind === "pending" ? "text-cyan-200 font-mono text-xs" : "text-white text-sm";
+
   return (
     <div className="relative aspect-video rounded-xl overflow-hidden bg-black border border-gray-700">
       <video
         ref={activeVideoRef as React.RefObject<HTMLVideoElement>}
         autoPlay
         playsInline
-        muted
+        muted={muted}
         className="w-full h-full object-cover"
         style={{ transform: mirrored ? "scaleX(-1)" : undefined }}
       />
@@ -127,7 +161,21 @@ export function VideoTile({
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
       />
-      <span className="absolute bottom-2 left-2 text-xs bg-black/60 px-2 py-0.5 rounded">
+      {subtitle && (
+        <div className="absolute bottom-9 left-2 right-2 flex justify-center pointer-events-none z-10">
+          <div
+            className={`max-w-[95%] rounded-lg border bg-black/80 px-3 py-1.5 text-center shadow-lg ${subtitleAccent}`}
+          >
+            <p className={`${subtitleTextClass} leading-snug break-words`}>{subtitle}</p>
+            {subtitleSub && (
+              <p className="text-cyan-300/80 text-xs font-mono mt-0.5 leading-snug break-words">
+                {subtitleSub}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      <span className="absolute bottom-2 left-2 text-xs bg-black/60 px-2 py-0.5 rounded z-10">
         {label}
       </span>
     </div>

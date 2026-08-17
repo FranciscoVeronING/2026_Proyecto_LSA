@@ -7,7 +7,10 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+print("[*] Importando PyTorch...", flush=True)
 import torch
+
+print("[*] Importando FastAPI y servicios...", flush=True)
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -45,13 +48,18 @@ def _load_classes():
 async def lifespan(app: FastAPI):
     global _inference, _semantic, _ws_handler
 
+    print(f"[*] Dispositivo de inferencia: {device}", flush=True)
+
     idx_to_class, num_classes = _load_classes()
     if idx_to_class is None:
         print("[!] No se encontró mapeo de clases; el clasificador no arrancará.")
 
+    print("[*] Cargando clasificador TinySkeleton...", flush=True)
     _inference = SharedInferenceService(
         idx_to_class or {}, num_classes or 0, device
     )
+
+    print("[*] Iniciando traductor semántico (LLM en segundo plano)...", flush=True)
 
     def on_semantic_result(room_id, participant_id, glosses, text):
         if _ws_handler:
@@ -75,7 +83,7 @@ app = FastAPI(title="LSA Meet", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -117,7 +125,21 @@ async def room_status(room_id: str):
 
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
+    await _handle_websocket(websocket, room_id)
+
+
+# Tailscale Serve (--set-path /ws) reenvía /ws/ROOM → backend /ROOM (sin prefijo).
+@app.websocket("/{room_id}")
+async def websocket_endpoint_tailscale(websocket: WebSocket, room_id: str):
+    if room_id in ("api", "docs", "openapi.json", "redoc"):
+        await websocket.close(code=1008)
+        return
+    await _handle_websocket(websocket, room_id)
+
+
+async def _handle_websocket(websocket: WebSocket, room_id: str) -> None:
     if _ws_handler is None:
         await websocket.close(code=1011)
         return
+    print(f"[ws] intento sala={room_id!r}", flush=True)
     await _ws_handler.handle_connection(websocket, room_id)
