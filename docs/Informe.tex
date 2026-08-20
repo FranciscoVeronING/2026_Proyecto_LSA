@@ -1,6 +1,5 @@
 \documentclass[12pt,a4paper]{report}
 
-% Paquetes esenciales
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish, es-noshorthands]{babel}
@@ -10,12 +9,21 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{booktabs}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber,sortcites=true,language=spanish]{biblatex}
+
+\addbibresource{referencias.bib}
+
 \geometry{
     left=2.5cm,
     right=2.5cm,
     top=2.5cm,
     bottom=2.5cm
 }
+
+\graphicspath{{figuras/}{figuras/clasificador/}{figuras/semantico/}{figuras/integracion/}}
 
 \hypersetup{
     colorlinks=true,
@@ -24,10 +32,9 @@
     citecolor=black
 }
 
-% Datos del informe
-\title{Prototipo de sistema de traducción de Lengua de Señas Argentina con procesamiento en tiempo cuasi real}
-\author{Maite Nigro \\ Francisco Veron \\ \vspace{0.5cm} \small Director: Esp.\ Ing.\ Gonzalo Avalos Ribas \\ Co-director: Ing.\ Bruno Constanzo}
-\date{Julio 2026}
+\title{Prototipo de sistema de traducción de Lengua de Señas Argentina con procesamiento en tiempo pseudo-real}
+\author{Maite Nigro \\ Francisco Veron \\ \vspace{0.5cm} \small Director: Esp.\ Ing.\ Gonzalo Avalos Ribas \\ \vspace{0.5cm} \small Co-director: Ing.\ Bruno Constanzo \\ \vspace{1cm} \small Universidad Nacional de Mar del Plata \\ Facultad de Ingeniería \\ Departamento de Ingeniería en Informática}
+\date{Agosto 2026}
 
 \begin{document}
 
@@ -36,348 +43,466 @@
 \chapter*{Agradecimientos}
 De Maite: Para la Flaqui.\\
 De Francisco: Para el Diego y Baco.\\
-A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulario del dataset.
+A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulario del conjunto de datos.
 
 \tableofcontents
 
-\chapter{Resumen}
-En la actualidad, la interacción virtual entre personas sordas y oyentes se limita casi exclusivamente a la comunicación textual, lo que impide una conversación simétrica en videollamadas. Este Trabajo Final de Grado, clasificado como \textbf{Proyecto y/o Diseño de Ingeniería en Informática} (Tipo 1), desarrolla un prototipo de traducción bidireccional entre la Lengua de Señas Argentina (LSA) y el español oral, orientado inicialmente a contextos de seguridad y asistencia.
+\chapter*{Resumen}
+En la actualidad, la interacción virtual entre personas sordas y oyentes se limita casi exclusivamente a la comunicación escrita, lo que impide una conversación simétrica en videollamadas. Este Trabajo Final de Grado desarrolla un prototipo de traducción entre la Lengua de Señas Argentina (LSA) y el español oral con procesamiento local en el dispositivo del usuario. El producto entregado es una aplicación de escritorio que captura video desde una cámara web, reconoce 100 glosas de LSA en tiempo pseudo-real, acumula enunciados mediante reglas de segmentación y los traduce a español rioplatense con un modelo de lenguaje ajustado por fine tunning; la salida se muestra en pantalla y/o se sintetiza en voz. El objetivo general fue reducir la asimetría comunicacional en escenarios de emergencia o escasa comunicacion, con un vocabulario de 100 señas validadas por una experta. La metodología combinó desarrollo iterativo, construcción de un corpus propio de LSA y validación empírica por módulos. El clasificador desplegado alcanza 96,48\,\% de exactitud top-1 en validación fuera de línea sobre 91 clases. El traductor semántico (Qwen2.5-3B-Instruct con LoRA) obtiene un Token F1 promedio de 0,50 y ROUGE-L de 0,49 en una reserva de evaluación de 20 pares. El procesamiento de video, la clasificación y la traducción se ejecutan en la computadora del usuario, sin enviar flujos crudos a la nube. Las conclusiones indican viabilidad del enfoque basado en puntos de referencia corporales y modelos compactos, aunque persisten limitaciones de generalización frente a la cámara, validación con usuarios sordos y componentes pendientes (avatar, extensión de navegador y captura del turno del oyente).
 
-El sistema propuesto combina visión computacional con \textit{edge computing}: MediaPipe Holistic extrae \textit{landmarks} corporales (pose y manos) a partir del video de la cámara; una red neuronal profunda clasifica secuencias temporales de gestos en glosas de LSA; y un módulo semántico basado en modelos de lenguaje transforma esas glosas en oraciones en español. En sentido inverso, el audio del interlocutor oyente se transcribe y un avatar animado reproduce la seña correspondiente (componente en desarrollo).
-
-\textbf{Cómo se hizo:} se siguió un enfoque iterativo e incremental. Tras investigar arquitecturas (Transformers frente a LSTM; \textit{landmarks} frente a \textit{frames}), se experimentó con datasets de ASL como referencia técnica, se descartó uno de ellos por inconsistencias de etiquetado y, con asesoramiento de una experta en LSA, se definió un vocabulario de 100 señas para escenarios policiales y de viajero. Se grabó un dataset propio de LSA, se implementó un \textit{pipeline} de preprocesamiento, entrenamiento e inferencia en tiempo real, y se reorganizó el código en un repositorio dedicado con ramas por línea de trabajo.
-
-\textbf{Resultados parciales:} se obtuvo un clasificador funcional sobre aproximadamente 94 clases con al menos 50 muestras por categoría, con arquitectura Conv1D + \textit{Tiny Transformer} (128 dimensiones ocultas, 2 capas, 4 cabezas de atención), inferencia en webcam con detección automática de inicio y fin de gesto, y documentación técnica del \textit{pipeline}. En paralelo, se avanza con \textit{transfer learning} y \textit{fine-tuning} sobre otra rama del repositorio, y con el prototipado del módulo semántico mediante agentes con LangChain.
-
-\textbf{Conclusiones preliminares:} la extracción de \textit{landmarks} reduce costos de cómputo y almacenamiento respecto del video crudo, pero la precisión depende críticamente de la calidad y uniformidad del dataset. La disponibilidad de datos etiquetados en LSA constituye el principal cuello de botella; la colaboración con la comunidad sorda y la estandarización de grabaciones son condiciones necesarias para alcanzar el objetivo de al menos 80\,\% de precisión en la clasificación de glosas.
-
-\chapter{Palabras clave}
-Lengua de Señas Argentina (LSA), reconocimiento de señas, visión computacional, MediaPipe, \textit{deep learning}, \textit{edge computing}, traducción automática, accesibilidad, videoconferencia.
+\chapter*{Palabras clave:}
+Lengua de señas Argentina(LSA), reconocimiento de gestos, \textit{edge computing}, accesibilidad
 
 \chapter{Introducción}
 \section{Contexto}
-Tradicionalmente, la sociedad ha abordado a la comunidad sorda desde una perspectiva clínica centrada en la rehabilitación, y omite que este colectivo se identifica primordialmente como una minoría lingüística. En nuestro país, esta comunidad posee una lengua natural, la Lengua de Señas Argentina (LSA), que cuenta con gramática y cultura propias, totalmente independientes del español oral. La Ley 27.710 reconoce la LSA como lengua natural de las personas sordas y de sus derechos lingüísticos, lo que refuerza la necesidad de herramientas tecnológicas que la traten como un sistema de comunicación pleno y no como una variante del español escrito.
+Tradicionalmente, la sociedad abordó a la comunidad sorda desde una perspectiva clínica centrada en la rehabilitación. Ese enfoque omite que la comunidad sorda se identifica, ante todo, como una minoría lingüística con lengua, cultura y gramática propias, independientes del español oral. En la Argentina, la LSA cuenta con reconocimiento legal desde la Ley 27.710 \parencite{argentina2020ley27710}.
 
-En el ámbito digital, aunque las videollamadas son esenciales para la vida moderna, las plataformas carecen de una arquitectura bilingüe integrada que reconozca la LSA como un flujo de datos válido para la comunicación en tiempo cuasi real.
+En el ámbito digital, las videollamadas son centrales en la vida cotidiana y en la atención de situaciones críticas. Sin embargo, las plataformas actuales no ofrecen una arquitectura bilingüe integrada que admita la LSA como flujo de datos válido en tiempo pseudo-real. Los recursos disponibles suelen limitarse a diccionarios estáticos o repositorios de video, sin capacidad de interpretación automática en contexto conversacional \parencite{inju2024diccionario}.
 
-\section{Motivacion}
-La motivación de este proyecto nace de la necesidad de devolver la autonomía a los ciudadanos sordos en sus interacciones cotidianas y críticas. Resulta fundamental transformar el paradigma de ``asistencia'' por uno de ``interoperabilidad lingüística'', donde la tecnología actúe como un puente transparente. La posibilidad de eliminar la dependencia de terceros y garantizar la privacidad en diálogos sensibles es el motor que impulsa el desarrollo de una solución basada en inteligencia artificial con procesamiento local.
+\section{Motivación}
+Este proyecto nace de la necesidad de devolver autonomía a las personas sordas en interacciones cotidianas y sensibles. Resulta fundamental pasar de un paradigma de asistencia a uno de integración lingüística, en el que la tecnología actúe como puente transparente. La posibilidad de reducir la dependencia de intérpretes humanos en situaciones de urgencia o imposibilidad económica, y de garantizar privacidad en diálogos sensibles impulsa una solución basada en inteligencia artificial con procesamiento local (\textit{edge computing}).
 
-\section{Problematica}
-La problemática central es la persistente barrera comunicacional que impide una interacción simétrica y autónoma en entornos digitales. Actualmente, no existen herramientas que traduzcan en tiempo pseudo-real las diferencias entre el español hablado y la LSA. Esto genera una situación de indefensión social, donde la comunidad sorda queda excluida de una comunicación directa y efectiva, viéndose obligada a depender de intérpretes humanos o de sistemas de texto que no siempre dominan, ya que para muchos el español escrito es una segunda lengua.
+\section{Problemática}
+La problemática central es la barrera comunicacional que impide una interacción autónoma en entornos digitales. Hoy no existen herramientas locales que traduzcan, en tiempo pseudo-real, el español hablado y la LSA dentro de un vocabulario acotado y validado.
 
-Además, los modelos de reconocimiento de señas disponibles internacionalmente están sesgados hacia la Lengua de Señas Americana (ASL), lo que los hace inaplicables al contexto argentino sin un dataset y un entrenamiento específicos para LSA.
+Esa brecha genera exclusión social: las personas sordas dependen de intérpretes o del texto escrito, que para muchas constituye una segunda lengua o directamente no son alfabetizados. Además, los modelos internacionales de reconocimiento de señas están sesgados hacia la Lengua de Señas Americana (ASL), lo que hace indispensable un (\textit{dataset}) y un entrenamiento específicos para la LSA.
 
 \section{Alcance y limitaciones}
-El proyecto se enfoca en el desarrollo de un modelo bilingüe que transcriba la LSA a texto o voz para el oyente y genere un avatar que interprete el discurso del oyente para el usuario sordo.
-
-\textbf{Alcance:} el sistema estará optimizado para contextos de seguridad y pedidos de ayuda, utilizando un vocabulario específico de 100 señas validadas por una experta en LSA, orientadas a escenarios policiales y de viajero (saludos, pronombres, lugares, verbos de emergencia, días de la semana, entre otras).
-
-\textbf{Limitaciones:} no se pretende realizar una interpretación de propósito general para conversaciones casuales extensas. El procesamiento se limita, en esta etapa, a un vocabulario acotado de 100 señas. El módulo de avatar y la extensión de navegador se encuentran en fases posteriores del plan de trabajo.
+El producto desarrollado traduce LSA a texto y/o voz para el oyente, e incorpora un avatar animado para la devolución de mensajes en LSA y una extensión de navegador (no publicada) para aplicaciones de videoconferencias. El sistema comprende reconocimiento gestual, traducción semántica y síntesis local.
+No se busca una interpretación de propósito general para conversaciones extensas. El alcance léxico es de 100 señas, validadas por expertos en LSA; seleccionadas para facilitar la recolección de información clave en situaciones de emergencias.
 
 \chapter{Objetivos}
-
 \section{Objetivo general}
-Desarrollar un prototipo de sistema de traducción de Lengua de Señas Argentina (LSA) a lenguaje natural en tiempo cuasi real, diseñado para operar sobre plataformas de videoconferencia, con la finalidad de mitigar la asimetría en la comunicación expresiva y fomentar la autonomía de las personas sordas al interactuar con oyentes no señantes.
+Desarrollar un prototipo de traducción de LSA a español rioplatense en tiempo pseudo-real y viceversa, pensado para operar en plataformas de videoconferencia, con el fin de mitigar la asimetría comunicacional y favorecer la autonomía de las personas sordas al interactuar con oyentes no señantes.
 
-\section{Objetivos especificos}
+\section{Objetivos específicos}
 \begin{itemize}
-    \item Implementar un modelo de visión computacional capaz de reconocer glosas de LSA con alta precisión en entornos locales.
-    \item Integrar un módulo semántico que convierta las glosas reconocidas en oraciones en español gramaticalmente correctas y coherentes.
-    \item Desarrollar un avatar animado que represente visualmente en LSA el discurso capturado desde el audio del interlocutor oyente.
-    \item Proteger la privacidad de los datos mediante el procesamiento local en el dispositivo del usuario.
-    \item Validar la efectividad del sistema en escenarios simulados con un objetivo del 80\,\% de precisión en la clasificación de glosas.
-    \item Desarrollar una extensión de navegador que integre el \textit{pipeline} sobre plataformas de videoconferencia, con subtítulos y/o síntesis de voz.
+    \item Implementar un clasificador local basado en puntos de referencia corporales para reconocer palabras de LSA.
+    \item Integrar un módulo de traducción semántico bidireccional que transforme secuencias de glosas en oraciones coherentes en español rioplatense y, a su vez, convierta oraciones en español rioplatense a señas de la LSA.
+    \item Diseñar mecanismos de segmentación conversacional (acumulación de glosas, memoria de contexto y políticas de repetición).
+    \item Garantizar privacidad mediante procesamiento exclusivo en el dispositivo.
+    \item Desarrollar la arquitectura de la extensión de navegador para videoconferencias, dejándola funcional y lista para su eventual publicación.
 \end{itemize}
 
-\chapter{Estado del Arte}
-\section{Marco teorico}
-\subsection{Arquitectura de software y procesamiento}
-Se ha optado por una arquitectura de \textit{Edge Computing}. Esta decisión de ingeniería se justifica por la necesidad de reducir la latencia en la comunicación y garantizar la privacidad del usuario al procesar los datos localmente, sin depender de servidores externos para el reconocimiento de la LSA. El protocolo del proyecto desacopla explícitamente tres módulos ---extracción de características, clasificación gestual y procesamiento semántico--- lo que permite iterar sobre cada componente sin descartar el trabajo previo de los demás.
+\chapter{Marco teórico, estado del arte y metodología}
+\section{Marco teórico}
+\subsection{Arquitectura de software y procesamiento en el borde}
+Se adoptó una arquitectura de computación en el borde (\textit{edge computing}) para reducir la latencia y evitar el envío de video crudo a servidores externos, en línea con requerimientos de privacidad propios de contextos sensibles. El diseño desacopla cuatro módulos ---extracción de características, clasificación gestual, agregación y procesamiento semántico---, lo que permite evolucionar cada componente sin invalidar el resto \parencite{pressman2014software}.
 
-\subsection{Inteligencia Artificial y Vision Computacional}
-El núcleo de la traducción se fundamenta en dos ramas principales:
+\subsection{Visión computacional y reconocimiento basado en esqueletos}
+MediaPipe Holistic extrae, por cada fotograma, 33 puntos de pose corporal y 21 por mano en coordenadas tridimensionales \parencite{google2020mediapipe}. Esa representación reduce la dimensionalidad respecto del video RGB, aporta cierta invariancia al entorno y habilita inferencia local. En el producto final se conservan pose y manos (225 características por fotograma).
 
-\begin{itemize}
-    \item \textbf{Visión artificial:} se emplea MediaPipe Holistic para detectar, en cada \textit{frame}, 33 \textit{landmarks} de pose corporal y 21 \textit{landmarks} por mano (coordenadas $x$, $y$, $z$ normalizadas). Esta elección se justifica porque: (i) reduce la dimensionalidad respecto de procesar píxeles RGB, disminuyendo requerimientos de almacenamiento y entrenamiento; (ii) aporta invariancia parcial frente a fondo, iluminación y vestimenta; (iii) es coherente con la literatura de \textit{skeleton-based sign language recognition}; y (iv) permite ejecutar la extracción en tiempo cuasi real en el dispositivo del usuario, alineado con el requisito de privacidad del proyecto. Como limitación, MediaPipe es clasificado por Google como solución experimental y su precisión depende de la visibilidad de manos y torso en el encuadre. En la implementación actual se utilizan pose y manos ($225$ características por \textit{frame}), excluyendo la malla facial completa para reducir ruido en el clasificador.
+El clasificador emplea una arquitectura híbrida Conv1D + codificador \textit{Transformer} con \textit{attention pooling}, alineada con la literatura de reconocimiento temporal basado en esqueletos \parencite{vaswani2017attention,wu2020lite}. La secuencia de entrada tiene forma $(32, 225)$: 32 fotogramas submuestreados de manera uniforme.
 
-    \item \textbf{Modelos de lenguaje (LLM):} para convertir secuencias de glosas reconocidas en oraciones en español gramaticalmente correctas, se evalúa un módulo semántico basado en agentes con memoria de conversación (LangChain), utilizando modelos locales \textit{open-source} como Gemma, Llama y Phi. El agente recibe las glosas del clasificador junto con un \textit{buffer} de mensajes previos, lo que permite resolver ambigüedades contextuales propias de la LSA (orden distinto al español oral, ausencia de artículos, etc.). Esta capa se encuentra en fase de prototipado; la ejecución local responde al requisito no funcional de privacidad (RNF-02).
-\end{itemize}
+\subsection{Modelos de lenguaje y adaptación eficiente}
+Para traducir glosas a español se utiliza Qwen2.5-3B-Instruct \parencite{qwen2024qwen25} con adaptadores LoRA \parencite{hu2022lora}, cargados mediante PEFT sobre la librería Transformers \parencite{huggingface2024transformers}. Con el objetivo de permitir la ejecución eficiente en procesadores (CPU) locales sin depender de una placa de video dedicada, la inferencia se optimiza mediante cuantización a 4 bits (NF4) con cómputo en \texttt{float16}. El traductor recibe el enunciado de glosas y hasta diez turnos recientes de conversación para resolver ambigüedades estructurales entre LSA y español oral.
 
-\subsection{Estructura de datos y persistencia}
-Para mantener coherencia semántica en traducciones sucesivas, el sistema mantiene un \textit{buffer} circular de los últimos mensajes intercambiados (glosas reconocidas y transcripciones del oyente). Este historial se inyecta como contexto al módulo semántico en cada inferencia, permitiendo que el LLM resuelva referencias pronominales y continuidad discursiva sin reenviar el \textit{prompt} completo del sistema en cada consulta.
-
-En el módulo de clasificación gestual, los \textit{landmarks} extraídos se persisten como arreglos NumPy (`.npy`) de forma $(T, 225)$, donde $T = 16$ \textit{frames} obtenidos por \textit{subsampleo} uniforme. Esta longitud fija unifica preprocesamiento, entrenamiento e inferencia en cámara. Los videos del dataset LSA se organizan en carpetas por clase, con convención de nombre \texttt{[se\~na]\_[repetici\'on].mp4}.
-
-\subsection{Calidad y estandares}
-En materia de accesibilidad, el diseño de la interfaz prioriza indicadores visuales y un avatar antropomórfico legible, en coherencia con principios de diseño universal. El vocabulario de señas se valida contra criterios de expertos en LSA y referencias institucionales como el Diccionario de Señas del INJU\footnote{\url{https://senas.inju.gob.ar/}}.
-
-Desde el punto de vista normativo, la Ley 27.710 de Lengua de Señas Argentina sustenta la relevancia social del proyecto. En cuanto a calidad de software, el equipo adopta control de versiones con Git, seguimiento de tareas con YouTrack y documentación técnica del \textit{pipeline} en el repositorio del proyecto, como prácticas de trazabilidad y reproducibilidad propias de la ingeniería de software.
+\subsection{Patrones de diseño aplicados}
+La aplicación integrada combina separación por dependencias, productor-consumidor con colas, objeto de política (\texttt{RepeatGate}), estrategia de atajo literal frente a invocación del LLM, ventana deslizante de memoria y carga diferida del modelo semántico \parencite{gamma1994design}.
 
 \section{Estado del arte}
-En Argentina, si bien existen esfuerzos institucionales y aplicaciones móviles orientadas a la comunidad sorda, la mayoría de estas soluciones funcionan como diccionarios estáticos o repositorios de video sin capacidad de procesamiento en tiempo real. No se han identificado plataformas locales que integren de forma nativa la bilingüidad en videollamadas mediante la combinación de reconocimiento gestual y representación por avatar. Las alternativas disponibles en el mercado nacional suelen depender de la mediación humana remota, lo que introduce latencia y limita la autonomía del usuario.
+\subsection{Antecedentes en Argentina}
+En el país existen esfuerzos institucionales y aplicaciones móviles orientadas a la comunidad sorda, aunque la mayoría funciona como diccionario estático o repositorio de video, sin capacidad de procesamiento en tiempo pseudo-real. El Diccionario de Señas del INJU habilita la consulta léxica en línea \parencite{inju2024diccionario}. El Señario de la Confederación Argentina de Sordos reúne recursos bilingües LSA--español con videos y notas culturales, pensados para la enseñanza temprana más que para la interacción conversacional \parencite{cas2024senario}. LSApp, desarrollada por Vanesa Barán con validación de la Asociación Argentina de Sordos, traduce más de 624 entradas del español a LSA mediante un personaje de animación 3D y deletrea las palabras ausentes del léxico; opera como buscador y material de práctica, no como intérprete de videollamada \parencite{lsapp2018}.
+No se identificaron plataformas locales que integren de forma nativa la bilingüidad en videollamadas mediante reconocimiento gestual y representación por avatar. Las alternativas de mercado suelen depender de mediación humana remota: Blessit opera una central de intérpretes por videollamada \parencite{blessit2024interpretes}, y servicios públicos como la Línea 144 habilitan atención por video para personas sordas en franjas horarias acotadas \parencite{argentina2024linea144}. Esa mediación introduce latencia, depende de la disponibilidad del intérprete y limita la autonomía del usuario, en particular en escenarios sensibles como la atención policial.
+En el plano académico, el corpus LSA64 (64 señas, 3.200 videos, 10 señantes con guantes de color) sigue siendo el conjunto público de referencia para reconocimiento de LSA \parencite{ronchetti2016lsa64}. Sobre esa base se desarrollaron prototipos de clasificación con redes convolucionales y recurrentes \parencite{mindlin2021reconocimiento}. Esos trabajos demuestran la viabilidad del reconocimiento de glosas aisladas, pero no cubren traducción semántica a español oral, síntesis de voz ni un canal de devolución en LSA, y el uso de guantes de color restringe su transferencia a condiciones de cámara web cotidianas.
 
-Ante la escasez de antecedentes específicos en LSA que utilicen arquitecturas de inteligencia artificial bidireccional, es necesario remitirse a desarrollos realizados para la Lengua de Señas Americana (ASL). En este ámbito, se registran proyectos académicos y prototipos comerciales que emplean redes neuronales y visión computacional para la transcripción de señas a texto. Sin embargo, muchas de estas soluciones son unidireccionales, enfocándose únicamente en que el oyente entienda al sordo, pero descuidando la devolución del mensaje en la lengua natural del usuario sordo. Además, gran parte de estas plataformas dependen de la capacidad de cómputo en la nube, lo que presenta desafíos en términos de privacidad de datos y estabilidad de la conexión.
+\subsection{Reconocimiento seña--texto: SignAll}
+Ante la escasez de antecedentes comerciales específicos en LSA que empleen arquitecturas de inteligencia artificial bidireccional, resulta necesario remitirse a desarrollos para la ASL. SignAll Technologies, fundada en 2016 en Budapest con operación en Estados Unidos, desarrolla un sistema de visión computacional y procesamiento de lenguaje natural que traduce ASL a inglés \parencite{signall2026linkedin,signall2018techcrunch}.
+Pese a su madurez relativa, SignAll ilustra limitaciones relevantes para este trabajo. Es predominantemente unidireccional: prioriza que el oyente comprenda al señante, sin devolver el mensaje en la lengua natural del usuario sordo.
 
-Este proyecto aporta una innovación necesaria al proponer una solución bilingüe y bidireccional que se ejecuta bajo una lógica de procesamiento en el borde. A diferencia de los antecedentes analizados, este enfoque busca reducir la dependencia de servicios externos y garantizar una baja latencia en la interacción. Mientras que los sistemas tradicionales se limitan a la traducción de palabras aisladas o requieren de una lectoescritura fluida en español, este desarrollo reconoce la identidad de la comunidad sorda como una minoría lingüística y propone el uso de un avatar como el medio más natural y accesible para recibir información.
+\subsection{Representación por avatar: Hand Talk y sistemas afines}
+En la dirección inversa ---texto o voz hacia lengua de señas--- el referente comercial más consolidado en la región es Hand Talk, empresa brasileña fundada en 2013. Su aplicación y su \textit{plugin} web traducen portugués a Libras e inglés a ASL mediante los avatares 3D Hugo y Maya \parencite{handtalk2025}.
+La línea principal de Hand Talk sigue siendo unidireccional (contenido escrito o hablado $\rightarrow$ avatar). La empresa anunció Hand Talk Motion como reconocimiento de señas hacia lengua oral, pero esa capacidad no está consolidada como producto de videollamada de uso general, ni cubre LSA. Sistemas regionales como el avatar de HETAH (Iris/Juan) ilustran el mismo patrón: traducción de frases en español a animación gestual, con deletreo de términos desconocidos y advertencia explícita de que no reemplazan al intérprete humano \parencite{hetah2024avatar}. En Argentina, LSApp adopta un enfoque análogo a escala de diccionario \parencite{lsapp2018}.
 
-\section{Metodologia}
-El proyecto adopta una metodología de \textbf{desarrollo iterativo e incremental}, organizada en cinco fases alineadas con el plan de trabajo del protocolo aprobado:
+\section{Metodología}
+El desarrollo siguió un enfoque iterativo e incremental \parencite{pressman2014software} pensado en cuatro etapas:
 
 \begin{enumerate}
-    \item \textbf{Adquisición y curación de datos} (febrero--julio 2026): definición del vocabulario, contacto con instituciones y expertos en LSA, grabación de videos propios y etiquetado. Se utilizó inicialmente un dataset de ASL con fines de prueba técnica; tras un análisis sistemático que reveló etiquetas incorrectas, dialectos mezclados y videos espejados, se descartó y se construyó un dataset propio de LSA.
-    \item \textbf{Desarrollo iterativo del clasificador gestual} (marzo--julio 2026): extracción de \textit{landmarks}, experimentación con pre-entrenamiento por reconstrucción enmascarada, entrenamiento supervisado con arquitecturas Transformer reducidas, \textit{data augmentation} matemática (ruido gaussiano, escalado aleatorio), regularización (\textit{dropout}, \textit{label smoothing}, \textit{early stopping} con AdamW) y búsqueda de hiperparámetros con Optuna.
-    \item \textbf{Desarrollo del módulo semántico} (abril--en curso): ingeniería de \textit{prompts} y prototipado de agente con memoria conversacional (LangChain) sobre modelos locales.
-    \item \textbf{Integración e inferencia en tiempo real} (junio--en curso): implementación de captura por webcam con máquina de estados (modos \textit{auto}, \textit{static} y \textit{dynamic}), recorte de \textit{buffer} por silencio y \textit{attention pooling} temporal.
-    \item \textbf{Validación y prototipado de extensión} (pendiente): pruebas en escenarios simulados y empaquetado como extensión de navegador sobre plataformas de videoconferencia.
+    \item \textbf{Curación de datos} (febrero--agosto 2026): definición del vocabulario con una experta en LSA, grabación de videos propios y descarte de un corpus ASL inicial por inconsistencias de etiquetado.
+    \item \textbf{Entrenamiento de componentes} (marzo--agosto 2026): clasificador gestual y traductor semántico desarrollados y evaluados en ramas dedicadas del repositorio.
+    \item \textbf{Integración} (junio--agosto 2026): integración de modulos, pruebas funcionales, evaluación fuera de línea y ajustes de configuración.
+    \item \textbf{Validación pendiente} (fase final): pruebas con usuarios sordos, extensión de navegador y avatar.
 \end{enumerate}
 
-El seguimiento de tareas se realiza mediante YouTrack. La gestión de código se realiza con Git y GitHub, con ramas especializadas por línea de experimentación. Las reuniones periódicas con el director orientaron decisiones críticas, como la reducción de \textit{frames} por secuencia (de 100 a 16), la limpieza del dataset y la definición del vocabulario contextual con una experta en LSA (Miriam Rolls, Mar del Plata, mayo 2026).
+El seguimiento de tareas se realizó con YouTrack; el código se versionó en GitHub. Las iteraciones experimentales previas a la integración se documentan en el Anexo~\ref{anexo:experimentos}.
 
-\section{Herramientas y tecnologias empleadas}
-
-\begin{table}[h]
+\section{Herramientas y tecnologías empleadas}
+\begin{table}[H]
 \centering
-\caption{Stack tecnológico del proyecto}
-\begin{tabular}{@{}llp{7.2cm}@{}}
+\caption{Conjunto de tecnologías del producto entregado}
+\label{tab:stack}
+\begin{tabular}{@{}llp{7cm}@{}}
 \toprule
-\textbf{Categoría} & \textbf{Herramienta} & \textbf{Uso en el proyecto} \\
+\textbf{Categoría} & \textbf{Herramienta} & \textbf{Uso} \\
 \midrule
-Lenguaje & Python 3.11 & Entrenamiento, preprocesamiento e inferencia \\
-Deep Learning & PyTorch & Arquitectura Conv1D + Transformer \\
-Visión & MediaPipe Holistic, OpenCV & Extracción de \textit{landmarks} y captura webcam \\
-Optimización & Optuna & Búsqueda de hiperparámetros con validación cruzada \\
-LLM / Agentes & LangChain; Gemma, Llama, Phi & Módulo semántico (prototipo) \\
-Control de versiones & Git, GitHub & Repositorio \url{2026_Proyecto_LSA} \\
-Gestión de proyecto & YouTrack & Seguimiento de tareas e iteraciones \\
-Etiquetado de video & CapCut & Recorte y exportación del dataset LSA \\
-Entorno & Conda & Aislamiento de dependencias (MediaPipe, protobuf) \\
+Lenguaje & Python 3.10 & Coordinación e inferencia \\
+Aprendizaje profundo & PyTorch 2.6 & Clasificador gestual \\
+Visión & MediaPipe Holistic, OpenCV & Puntos corporales e interfaz de cámara \\
+LLM & Transformers, PEFT, Qwen2.5-3B & Traducción glosas $\rightarrow$ español \\
+Voz & pyttsx3 & Síntesis local para el oyente \\
+Concurrencia & \texttt{threading}, \texttt{queue} & Hilos de trabajo desacoplados \\
+Entorno & Conda & Aislamiento de dependencias \\
 Documentación & \LaTeX{} & Informe del Trabajo Final \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\chapter{Analisis de requerimientos}
-
-\section{Requerimientos Funcionales}
+\chapter{Análisis de requerimientos}
+\section{Requerimientos funcionales}
 \begin{itemize}
-    \item \textbf{RF-01:} Captura y procesamiento de video: el sistema debe capturar el flujo de video de la cámara web del usuario en tiempo real para extraer los puntos clave de las manos, el rostro y el cuerpo.
-    \item \textbf{RF-02:} Reconocimiento de glosas de LSA: el sistema debe identificar y clasificar gestos específicos de la Lengua de Señas Argentina, transformándolos en una secuencia de glosas procesables.
-    \item \textbf{RF-03:} Traducción a español argentino: el sistema debe procesar las secuencias de glosas mediante un módulo semántico para generar oraciones en español gramaticalmente correctas y coherentes con el contexto.
-    \item \textbf{RF-04:} Transcripción de salida para el oyente: el sistema debe mostrar en pantalla o emitir mediante síntesis de voz la traducción al español de las señas realizadas por el usuario sordo.
-    \item \textbf{RF-05:} Captura y procesamiento de audio del oyente: el sistema debe capturar el audio proveniente del interlocutor oyente durante la videollamada y convertirlo a texto mediante técnicas de reconocimiento de voz.
-    \item \textbf{RF-06:} Generación de señas mediante avatar: el sistema debe animar un avatar en tiempo real que traduzca el texto capturado del oyente a su representación correspondiente en LSA.
-    \item \textbf{RF-07:} Gestión de contexto de conversación: el sistema debe mantener una memoria de corto plazo de los últimos 10 mensajes intercambiados para asegurar la coherencia semántica durante la traducción bilingüe.
+    \item \textbf{RF-01 --- Captura y extracción:} capturar video de cámara web y extraer puntos de referencia corporales.
+    \item \textbf{RF-02 --- Clasificación de señas:} clasificar secuencias de puntos corporales en tiempo pseudo-real y obtener glosa, confianza y ranking top-3.
+    \item \textbf{RF-03 --- Separación de señas:} lograr diferenciar el fin de una seña con el comienzo de la próxima.
+    \item \textbf{RF-04 --- Traducción semántica:} transformar secuencias de glosas en oraciones en español rioplatense, con contexto conversacional.
+    \item \textbf{RF-05 --- Salida para el oyente:} mostrar texto en pantalla y sintetizarlo en voz de manera local.
+    \item \textbf{RF-06 --- Memoria conversacional:} mantener historial reciente para resolver referencias y ambigüedades.
+    \item \textbf{RF-07 --- Avatar LSA:} representar visualmente señas a partir del texto o voz del oyente
+    \item \textbf{RF-08 --- Captura del oyente:} transcribir audio del interlocutor oyente.
 \end{itemize}
 
-\section{Requerimientos no Funcionales}
+\section{Requerimientos no funcionales}
 \begin{itemize}
-    \item \textbf{RNF-01:} Latencia de procesamiento: el tiempo transcurrido desde la realización de una seña hasta su traducción a texto no debe superar los 2 segundos para mantener la fluidez de la conversación en tiempo cuasi real.
-    \item \textbf{RNF-02:} Privacidad y procesamiento local: todo el procesamiento de imagen, reconocimiento de señas y traducción debe realizarse de manera local en el dispositivo del usuario. No se permite el envío de flujos de video crudo a servidores externos.
-    \item \textbf{RNF-03:} Usabilidad y accesibilidad visual: la interfaz debe ser intuitiva para personas sordas, priorizando el uso de indicadores visuales y un avatar con movimientos fluidos y antropomórficos que faciliten la lectura de señas.
-    \item \textbf{RNF-04:} Portabilidad y compatibilidad: el sistema debe ser capaz de integrarse o funcionar de forma paralela a plataformas estándar de videoconferencia.
-    \item \textbf{RNF-05:} Robustez ante variaciones de iluminación: el módulo de visión computacional debe mantener una precisión de reconocimiento mínima del 80\,\% bajo condiciones de iluminación variables típicas de un entorno hogareño o de oficina, coherente con el objetivo de validación del proyecto.
+    \item \textbf{RNF-01 --- Latencia y delimitación de oraciones:} el sistema detecta el fin de un enunciado cuando las manos se retiran de la cámara durante un intervalo de 4 segundos. Una vez alcanzado este umbral, el tiempo de procesamiento y traducción del bufer no debe superar los 2 segundos en ejecución sobre CPU (estando optimizado a $\approx 1$\,ms en GPU).
+    \item \textbf{RNF-02 --- Privacidad:} procesamiento local; prohibido el envío de video crudo a servidores externos.
+    \item \textbf{RNF-03 --- Usabilidad:} interfaz visual con indicadores de estado
+    \item \textbf{RNF-04 --- Robustez:} objetivo de $\geq$80\,\% de precisión gestual en escenarios simulados
 \end{itemize}
 
 \section{Restricciones}
 \begin{itemize}
-    \item \textbf{RC-01:} Vocabulario acotado a 100 señas de dominio específico (seguridad y viajero), validadas por experta en LSA.
-    \item \textbf{RC-02:} Procesamiento local obligatorio: no se contempla el envío de video crudo a servicios en la nube.
-    \item \textbf{RC-03:} Dependencia de MediaPipe Holistic como solución experimental para extracción de \textit{landmarks}.
-    \item \textbf{RC-04:} Capacidad de cómputo limitada al hardware disponible (GPU de consumo), lo que acota la cantidad de experimentos simultáneos.
-    \item \textbf{RC-05:} Plazo del Trabajo Final: febrero--julio 2026, según protocolo aprobado.
-    \item \textbf{RC-06:} Ausencia de datasets públicos robustos en LSA: obliga a la construcción de un corpus propio de entrenamiento.
+    \item \textbf{RC-01:} vocabulario acotado a 100 señas validadas.
+    \item \textbf{RC-02:} operación sin dependencia de servicios en la nube para inferencia.
+    \item \textbf{RC-03:} dependencia de MediaPipe para seguimiento corporal.
+    \item \textbf{RC-04:} ausencia de conjuntos de datos públicos robustos para LSA; \texttt{dataset} propio obligatorio.
 \end{itemize}
 
 \section{Casos de uso}
-\textbf{CU-01 --- Solicitud de ayuda en videollamada:} un usuario sordo realiza señas de emergencia (por ejemplo, ``ayuda'', ``policía'', ``dónde'') frente a la cámara. El sistema captura el gesto, lo clasifica, lo traduce a texto en español y lo muestra o sintetiza en voz para el interlocutor oyente. El oyente responde oralmente; el sistema transcribe el audio, lo procesa semánticamente y anima un avatar que reproduce la respuesta en LSA.
-
-\textbf{CU-02 --- Identificación en contexto policial:} un usuario sordo comunica datos personales (nombre, apellido, documento, dirección) mediante señas del vocabulario definido. El módulo semántico utiliza el \textit{buffer} conversacional para mantener coherencia entre preguntas y respuestas sucesivas.
-
-\textbf{CU-03 --- Prueba de clasificación local:} un desarrollador ejecuta \texttt{camera.py} para validar el reconocimiento de glosas en tiempo real con la webcam, sin conexión a servicios externos.
+\begin{itemize}
+\item \textbf{CU-01 --- Comunicación con otra persona:} Como usuario señante quiero comunicarme con otra persona (no señante) con el objetivo de poder entablar una conversación.
+\item \textbf{CU-02 --- Selección de mano hábil:} Como usuario señante quiero poder seleccionar mi mano habil para poder usar la aplicación con esa preferencia.
+\item \textbf{CU-03 --- Selección de interpretación:} Como usuario no señante quiero poder elegir la forma de interpretación de la aplicación, sea texto o voz sintetizada, con el objetivo de ajustarlo a mi preferencia.
+\item \textbf{CU-04 --- Repeticion de intepretacion:} Como usuario señante quiero poder repetir la reproduccion de la interpretacion realizada por el avatar.
+\end{itemize}
 
 \chapter{Diseño del sistema}
-\section{Arquitectura}
-El sistema se organiza en un \textit{pipeline} desacoplado de cuatro etapas principales:
+\section{Arquitectura general}
+El producto implementa una canalización de cuatro etapas conectadas por colas y ejecutadas en hilos separados (Figura~\ref{fig:arquitectura}):
 
 \begin{enumerate}
-    \item \textbf{Extracción de características:} video (MP4 o webcam) $\rightarrow$ MediaPipe Holistic $\rightarrow$ secuencia normalizada de \textit{landmarks} $(16, 225)$.
-    \item \textbf{Clasificación gestual:} secuencia de \textit{landmarks} $\rightarrow$ red Conv1D + \textit{Tiny Transformer} $\rightarrow$ glosa reconocida + confianza.
-    \item \textbf{Módulo semántico:} secuencia de glosas + \textit{buffer} conversacional $\rightarrow$ agente LangChain + LLM local $\rightarrow$ oración en español.
-    \item \textbf{Traducción inversa (en desarrollo):} audio del oyente $\rightarrow$ reconocimiento de voz $\rightarrow$ texto $\rightarrow$ avatar animado con \textit{landmarks} de intérpretes del canal Señario (YouTube).
+    \item \textbf{Extracción:} cámara web $\rightarrow$ MediaPipe Holistic $\rightarrow$ secuencia normalizada $(32, 225)$.
+    \item \textbf{Clasificación:} \textit{TinySkeletonClassifier} $\rightarrow$ glosa + confianza + top-3.
+    \item \textbf{Agregación:} \texttt{UtteranceBuffer} + \texttt{RepeatGate} $\rightarrow$ enunciado de glosas.
+    \item \textbf{Semántica y salida:} atajo literal o Qwen2.5-3B + LoRA $\rightarrow$ texto en pantalla + pyttsx3.
 \end{enumerate}
 
-La arquitectura de \textit{edge computing} garantiza que las etapas 1 y 2 (y eventualmente 3) se ejecuten en el dispositivo del usuario, cumpliendo RNF-01 y RNF-02.
+Cuatro hilos evitan bloquear la captura: \texttt{InferenceWorker}, \texttt{SemanticWorker}, \texttt{VoiceWorker} y el bucle de interfaz OpenCV. El estado compartido se protege con \texttt{Lock}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{Untitled.jpg}
+    \caption{Diagrama detallado de los pasos de procesamiento para la interpretación de lenguaje de señas.}
+    \label{fig:placeholder}
+\end{figure}
 
 \section{Diseño de datos}
-El dataset LSA se estructura en carpetas por clase (\texttt{dataset/<clase>/}), con videos MP4 etiquetados como \texttt{[clase]\_[n].mp4}. Tras el preprocesamiento, cada video genera un archivo \texttt{.npy} en \texttt{dataset\_landmarks\_32/<clase>/}. El mapeo de clases se persiste en \texttt{mapeo\_clases.json}. Solo se entrenan clases con al menos 50 muestras (\texttt{SAMPLES\_PER\_CLASS}).
+Videos LSA en \texttt{dataset/<clase>/}; puntos corporales preprocesados en \texttt{dataset\_landmarks\_32/<clase>/} como arreglos NumPy \texttt{.npy}. Mapeo de clases en \texttt{classifier/weights/mapeo\_clases.json}. Pesos del clasificador y adaptador LoRA en \texttt{classifier/weights/} y \texttt{semantic/adapter/}. Evaluación semántica de reserva en \texttt{semantic/eval\_dataset.json} (20 pares).
 
 \section{Patrones utilizados}
-\begin{itemize}
-    \item \textbf{Separación de responsabilidades:} módulos independientes (\texttt{preprocessing.py}, \texttt{train.py}, \texttt{camera.py}, \texttt{model\_arch.py}).
-    \item \textbf{Configuración centralizada:} hiperparámetros y rutas en \texttt{config.py}.
-    \item \textbf{Máquina de estados:} captura de gestos en \texttt{camera.py} (modos \textit{auto}, \textit{static}, \textit{dynamic}).
-    \item \textbf{Worker en hilo separado:} inferencia desacoplada de la captura de video para reducir latencia percibida.
-\end{itemize}
+Separación por dependencias (\texttt{app/}, \texttt{core/}, \texttt{classifier/}, \texttt{semantic/}); productor-consumidor; objeto de política para repeticiones; estrategia literal frente a LLM; ventana deslizante de memoria; carga diferida del traductor.
 
 \section{Modelo de dominio}
-Las entidades principales del dominio son: \textbf{Seña} (gesto de LSA con forma y movimiento definidos), \textbf{Glosa} (unidad léxica reconocida por el clasificador), \textbf{Secuencia} (serie temporal de \textit{landmarks}), \textbf{Mensaje} (glosa o transcripción con timestamp), \textbf{Conversación} (buffer de mensajes recientes) y \textbf{Avatar} (representación visual animada de una seña a partir de \textit{landmarks} de referencia).
+Entidades principales: \textbf{Seña}, \textbf{Glosa}, \textbf{Secuencia}, \textbf{Enunciado}, \textbf{Turno} (\texttt{signer}/\texttt{hearing}), \textbf{Conversación}. El cierre del enunciado se dispara tras 4 segundos de inactividad en el señado (configurable).
 
-\chapter{Implementacion}
-
-\section{Tecnologias empleadas}
-Las tecnologías utilizadas coinciden con las detalladas en la Tabla~1 del capítulo de Estado del Arte. El entorno de desarrollo principal utiliza Python 3.11 en un entorno Conda, con PyTorch para el entrenamiento en GPU y MediaPipe Holistic para la extracción de características.
-
-\section{Organizacion del repositorio}
-Tras las primeras iteraciones en el repositorio \url{https://github.com/FranciscoVeronING/2026---Trabajo-Final-Informatica}, se decidió migrar el desarrollo a un repositorio reorganizado: \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA}. Esta decisión respondió a la necesidad de ordenar el código, separar líneas de experimentación en ramas dedicadas y facilitar la colaboración paralela entre integrantes.
-
-\section{Trabajo en curso por integrante}
-Al momento de redactar este informe, el equipo avanza en \textbf{dos líneas de trabajo paralelas} sobre ramas distintas del repositorio:
-
+\section{Decisiones de diseño relevantes}
 \begin{itemize}
-    \item \textbf{Rama \texttt{scratch-mediapipe}} (Francisco Verón): implementación \textit{from scratch} del \textit{pipeline} completo ---\texttt{preprocessing.py}, \texttt{train.py}, \texttt{camera.py}, \texttt{tune\_optuna.py}--- con arquitectura \texttt{TinySkeletonClassifier} (Conv1D + \textit{Transformer Encoder} de 128 dimensiones, 2 capas, \textit{attention pooling}). Incluye filtrado de clases con $\geq$50 muestras, \textit{data augmentation} 3D sin \textit{mirroring} (preserva semántica de mano dominante) y captura dual para señas estáticas (letras, números) y dinámicas.
-    \item \textbf{\textit{Transfer learning} y \textit{fine-tuning}} (Maite Nigro): exploración de modelos pre-entrenados adaptados al dataset propio de LSA, complementando la línea \textit{from scratch} con técnicas de reutilización de pesos sobre el corpus grabado.
+    \item \textbf{\texttt{RepeatGate}:} repeticiones ilimitadas para dígitos; máximo dos letras consecutivas; una sola glosa léxica consecutiva (evita rebotes del clasificador).
+    \item \textbf{Atajo literal:} deletreo y secuencias numéricas puras se resuelven sin LLM (\texttt{J U A N} $\rightarrow$ ``Juan.'').
+    \item \textbf{Desambiguación con LLM:} pares confundibles (\texttt{O}/\texttt{0}, \texttt{I}/\texttt{T}/\texttt{OJO}) se resuelven por contexto en el \textit{system prompt} y los \textit{few-shots}.
 \end{itemize}
 
-\section{Decisiones tecnicas relevantes}
-\begin{itemize}
-    \item \textbf{\textit{Landmarks} en lugar de píxeles:} reduce parámetros, almacenamiento y tiempo de entrenamiento; coherente con la estrategia del protocolo.
-    \item \textbf{16 \textit{frames} por secuencia} (antes 100): reduce \textit{oversampling} en videos cortos; acordado con el director en reunión del 16/04/2026.
-    \item \textbf{Descarte del dataset ASL de prueba:} análisis manual de decenas de clases evidenció señas mezcladas, dialectos, videos espejados y oraciones completas etiquetadas como señas aisladas. Se optó por dataset propio de LSA.
-    \item \textbf{Vocabulario contextual:} 100 señas orientadas a escenarios policiales y de viajero, validadas por Miriam Rolls (experta en LSA, Mar del Plata). Se acordó que la seña se realiza con la mano dominante; la extensión deberá consultar lateralidad y espejar \textit{landmarks} para usuarios zurdos.
-    \item \textbf{Sin \textit{mirroring} en \textit{data augmentation}:} las señas tienen orientación semántica; el espejado arbitrario confundiría al clasificador.
-    \item \textbf{Regularización progresiva:} ante \textit{overfitting} recurrente, se aplicaron sucesivamente: eliminación de malla facial, interpolación de \textit{frames} perdidos, incremento de \textit{dropout}, \textit{label smoothing}, aumento de \textit{weight decay}, reducción de capacidad del Transformer (256$\rightarrow$128 dim, 8$\rightarrow$4 capas, 4$\rightarrow$2 cabezas) y \textit{data augmentation} matemática.
-    \item \textbf{Detección de fin de oración:} se acordó con la experta que una pausa en la seña puede marcar el fin de una unidad comunicativa; esto se implementará en la extensión mediante detección de silencio en el \textit{buffer} de captura.
-\end{itemize}
+\chapter{Implementación}
+\section{Producto entregado}
 
-\section{Avance del dataset LSA}
-Entre mayo y julio de 2026 se grabaron las 100 señas del vocabulario definido, con entre 5 y 14 repeticiones por seña, variando sujetos, ropa y peinado. Los videos se recortaron y exportaron con CapCut, organizados en carpetas por clase. Se incorporó la colaboración de un tercer sujeto de grabación y se completaron señas adicionales (días de la semana, entre otras). Para el avatar, se decidió utilizar videos de intérpretes del canal Señario (YouTube) como fuente de \textit{landmarks} de referencia.
 
-\section{Estructura del codigo}
-El repositorio \texttt{2026\_Proyecto\_LSA} organiza el código de la siguiente manera:
+\section{Estructura del código}
+run.py                         Punto de entrada único
+src/
+├── app/                       Todo lo que necesita cámara y pantalla
+│   ├── main.py                Loop principal y orquestación
+│   ├── ui.py                  Button, Slider, modal de mano dominante
+│   ├── capture.py             WebcamStream, suavizado, vector de landmarks
+│   ├── workers.py             InferenceWorker, SemanticWorker, VoiceWorker
+│   ├── utterance.py           UtteranceBuffer, normalizacion de glosas
+│   ├── eval_session.py        Modo evaluacion
+│   └── state.py               shared_state + lock
+├── core/
+│   ├── repeat_policy.py       RepeatGate, format_literal_utterance
+│   ├── conversation_memory.py Memoria del historial de la conversación
+│   └── landmarks.py           Normalización espacial y subsampleo
+├── classifier/                Clasificador de señas
+│   ├── config.py              Umbrales, hiperparámetros
+│   ├── arch.py                Arquitectura del clasificador
+│   └── weights/               .pth, mapeo_clases.json, metrics.json
+└── semantic/                  Traductor a español
+    ├── config.py              Rutas, params de generación, tamaño de contexto
+    ├── translator.py          Carga PEFT y funcion de interpretacion
+    ├── prompts/               Prompt del sistema y ejemplos few shots
+    └── adapter/               Adaptador LoRA
 
-\begin{verbatim}
-2026_Proyecto_LSA/
-├── dataset/                    # Videos MP4 por carpeta de clase
-├── dataset_landmarks_32/       # Landmarks extraidos (.npy)
-├── docs/
-│   ├── Informe.tex             # Informe del Trabajo Final
-│   └── documentacion.md        # Documentacion tecnica del pipeline
-└── src/
-    ├── config.py               # Hiperparametros y rutas
-    ├── preprocessing.py        # Extraccion masiva de landmarks
-    ├── utils.py                # Normalizacion espacial/temporal
-    ├── model_arch.py           # Arquitectura TinySkeletonClassifier
-    ├── train.py                # Entrenamiento y evaluacion
-    ├── camera.py               # Inferencia en tiempo real
-    ├── tune_optuna.py          # Busqueda de hiperparametros
-    └── model/                  # Pesos entrenados y mapeo de clases
-\end{verbatim}
+\section{Módulo de captura y clasificación}
+\texttt{WebcamStream} obtiene fotogramas BGR; MediaPipe produce puntos corporales normalizados por hombros e interpolados ante fotogramas perdidos. \texttt{capture.py} implementa modos \textit{auto}, \textit{static} y \textit{dynamic}. \texttt{InferenceWorker} consume secuencias de 32 fotogramas y devuelve predicciones con umbral de confianza 0,75 (configurable).
 
-\chapter{Pruebas y validacion}
+El clasificador desplegado registra 96,48\,\% de exactitud top-1 en validación, 91 clases, 413\,148 parámetros y 19 épocas con parada temprana (\texttt{metrics.json}, 31/07/2026).
+
+\section{Módulo de agregación y traducción}
+\texttt{UtteranceBuffer} acumula glosas aceptadas por \texttt{RepeatGate}. Al cerrar el enunciado, \texttt{SemanticWorker} aplica \texttt{format\_literal\_utterance} o invoca \texttt{translate\_glosses} con historial de \texttt{ConversationMemory} (10 turnos). La síntesis de voz corre en \texttt{VoiceWorker} por restricciones COM de pyttsx3 en Windows.
+
+\section{Corpus LSA}
+Entre mayo y agosto de 2026 se grabaron 100 señas con entre 40 y 50 repeticiones por categoría, validadas por Miriam Rolls. Los videos se recortaron con CapCut. Solo las clases con $\geq$50 muestras integran el clasificador desplegado.
+
+\chapter{Pruebas y validación}
 \section{Plan de pruebas}
-Las pruebas realizadas hasta la fecha se organizan en tres niveles:
-
 \begin{enumerate}
-    \item \textbf{Pruebas de preprocesamiento:} verificación de extracción correcta de \textit{landmarks}, normalización espacial por hombros e interpolación de \textit{frames} perdidos (ceros de MediaPipe).
-    \item \textbf{Pruebas de entrenamiento:} evaluación con split 80/20 por clase, curvas de \textit{loss} de entrenamiento y validación, matrices de confusión por clase, y \textit{early stopping} con paciencia de 15 épocas.
-    \item \textbf{Pruebas de inferencia en vivo:} ejecución de \texttt{camera.py} con modos de captura \textit{auto}, \textit{static} y \textit{dynamic}, umbral de confianza configurable y botón de captura manual.
+    \item \textbf{Funcional:} batería de casos sobre \texttt{RepeatGate}, cierre por inactividad, deletreo literal y memoria conversacional.
+    \item \textbf{Clasificador fuera de línea:} partición 80/20, pérdida, matriz de confusión (\texttt{metrics.json}).
+    \item \textbf{Clasificador en vivo:} \texttt{run.py --eval} sobre 91 señas (CSV top-1/top-3).
+    \item \textbf{Traductor fuera de línea:} \texttt{run.py --eval-semantic} sobre 20 pares de reserva.
+    \item \textbf{Integración manual:} cadena completa cámara web $\rightarrow$ glosas $\rightarrow$ español + voz.
 \end{enumerate}
 
-Las pruebas pendientes incluyen validación en escenarios simulados de emergencia con usuarios sordos, medición de latencia extremo a extremo (RNF-01) e integración del módulo semántico y del avatar.
-
 \section{Resultados}
-Los experimentos iniciales sobre el dataset ASL evidenciaron \textit{overfitting} severo: el \textit{loss} de entrenamiento decayía hacia cero mientras el de validación se estancaba o empeoraba. Tras aplicar las decisiones técnicas descritas (reducción de \textit{frames}, arquitectura \textit{tiny}, regularización y \textit{data augmentation}), se observó una mejora significativa en la estabilidad del entrenamiento, aunque la precisión por clase sigue siendo heterogénea.
-
-El análisis de matrices de confusión sobre el dataset ASL permitió identificar causas de error sistemáticas: dialectos de una misma seña mezclados bajo una etiqueta, videos espejados (mano no dominante), duraciones muy dispares y presencia de oraciones completas en lugar de señas aisladas. Estas observaciones motivaron la construcción del dataset LSA propio.
-
-Sobre el dataset LSA en construcción, el clasificador en la rama \texttt{scratch-mediapipe} alcanza inferencia funcional en webcam para las clases con suficientes muestras ($\geq$50 videos). Las curvas de aprendizaje y matrices de confusión correspondientes se incluirán en los anexos a medida que se consoliden los entrenamientos finales sobre el corpus completo.
-
-\section{Metricas de calidad}
-Las métricas adoptadas son:
-
-\begin{itemize}
-    \item \textbf{Precisión por clase} y \textbf{precisión global} sobre el conjunto de validación (20\,\%).
-    \item \textbf{Matriz de confusión} para identificar pares de señas ambiguas.
-    \item \textbf{Curvas de \textit{loss}} de entrenamiento y validación para detectar \textit{overfitting}.
-    \item \textbf{Umbral de confianza} en inferencia en vivo (\texttt{CONFIDENCE\_THRESHOLD} = 0.85 por defecto).
-    \item \textbf{Objetivo del proyecto:} $\geq$80\,\% de precisión en clasificación de glosas en escenarios simulados (pendiente de validación final).
-\end{itemize}
-
-\chapter{Evaluacion}
-\section{Cumplimiento de objetivos}
-\begin{table}[h]
+\subsection{Clasificador gestual}
+\begin{table}[H]
 \centering
-\caption{Estado de cumplimiento de objetivos específicos (julio 2026)}
-\begin{tabular}{@{}p{8.5cm}cc@{}}
+\caption{Métricas del clasificador desplegado}
+\label{tab:metricas_clf}
+\begin{tabular}{@{}lc@{}}
 \toprule
-\textbf{Objetivo} & \textbf{Estado} & \textbf{Avance} \\
+\textbf{Métrica} & \textbf{Valor} \\
 \midrule
-Modelo de visión computacional local & En curso & Alto \\
-Módulo semántico (glosas $\rightarrow$ español) & Prototipo & Medio \\
-Avatar animado (español $\rightarrow$ LSA) & Pendiente & Bajo \\
-Procesamiento local / privacidad & En curso & Alto \\
-Validación $\geq$80\,\% precisión & Pendiente & Medio \\
-Extensión de navegador & Pendiente & Bajo \\
+Exactitud top-1 (validación fuera de línea) & 96,48\,\% \\
+Mejor pérdida de validación & 1,0427 \\
+Clases & 91 \\
+Muestras entrenamiento / validación & 3.640 / 910 \\
+Latencia de inferencia (GPU RTX 3060) & 1,08 ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En evaluación con cámara web (\texttt{--eval}), el modelo seleccionado alcanza 71,4\,\% top-1 y 87,9\,\% top-3; la variante con mejor cobertura top-3 llega a 90,1\,\% (detalle comparativo en el Anexo~\ref{anexo:iteraciones}).
+
+\subsection{Traductor semántico}
+\begin{table}[H]
+\centering
+\caption{Evaluación semántica de reserva (\texttt{eval\_dataset.json}, 06/08/2026)}
+\label{tab:metricas_sem}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Métrica} & \textbf{Valor} \\
+\midrule
+Coincidencia exacta & 2/20 (10\,\%) \\
+Token F1 (promedio) & 0,50 \\
+ROUGE-L (promedio) & 0,49 \\
+BLEU-4 (promedio) & 0,20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Muchas traducciones son parcialmente correctas (p.\,ej., ``Me siento bien'' frente a ``Estoy bien''); Token F1 y ROUGE-L capturan mejor esa coincidencia parcial que la coincidencia exacta estricta.
+
+\subsection{Validación funcional}
+Los doce casos documentados en \texttt{ficha\_tecnica\_integrador.md} ---dígitos repetidos, rebote de glosa, deletreo literal, secuencias mixtas y memoria conversacional--- finalizaron en estado OK.
+
+\section{Métricas de calidad}
+Indicadores adoptados: exactitud y pérdida fuera de línea; top-1/top-3 en vivo; BLEU-4, ROUGE-L, Token F1 y coincidencia exacta semántica; latencia del clasificador; pausa de cierre de enunciado (4 s). El objetivo de $\geq$80\,\% de precisión gestual se cumple parcialmente vía top-3 (90,1\,\%), pero no vía top-1 (71,4\,\%).
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/clasificador/matriz_32_frames_b.png}{%
+  \includegraphics[width=0.72\textwidth]{clasificador/matriz_32_frames_b.png}%
+}{%
+  \fbox{\parbox{0.72\textwidth}{\centering\vspace{1.5cm}Matriz de confusión del clasificador desplegado\vspace{1.5cm}}}%
+}
+\caption{Matriz de confusión en validación del clasificador desplegado. Fuente: elaboración propia.}
+\label{fig:matriz}
+\end{figure}
+
+\chapter{Evaluación}
+\section{Cumplimiento de objetivos}
+\begin{table}[H]
+\centering
+\caption{Cumplimiento de objetivos específicos (agosto 2026)}
+\label{tab:objetivos}
+\begin{tabular}{@{}p{7.2cm}cc@{}}
+\toprule
+\textbf{Objetivo} & \textbf{Estado} & \textbf{Evidencia} \\
+\midrule
+Clasificador local de glosas & Cumplido & 91 clases, \texttt{--eval} \\
+Traducción semántica integrada & Cumplido (MVP) & \texttt{run.py}, Tabla~\ref{tab:metricas_sem} \\
+Segmentación conversacional & Cumplido & \texttt{UtteranceBuffer}, \texttt{RepeatGate} \\
+Privacidad / computación en el borde & Cumplido & Sin video a la nube \\
+Validación $\geq$80\,\% precisión & Parcial & 90,1\,\% top-3; 71,4\,\% top-1 \\
+Avatar y extensión de navegador & Pendiente & Fase final del protocolo \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Limitaciones}
 \begin{itemize}
-    \item El dataset LSA, aunque propio y validado, tiene un volumen limitado de repeticiones por seña (promedio $\sim$14), insuficiente para generalización plena en arquitecturas Transformer de mayor capacidad.
-    \item MediaPipe puede fallar en condiciones de baja iluminación, fondos complejos o manos fuera de encuadre.
-    \item El módulo semántico y el avatar aún no están integrados al \textit{pipeline} de inferencia en tiempo real.
-    \item La precisión del clasificador depende de la uniformidad de las grabaciones (velocidad, encuadre, mano dominante).
+    \item Brecha entre validación fuera de línea ($\sim$96\,\%) y evaluación con cámara web ($\sim$71\,\% top-1), atribuible a diferencias de dominio entre grabaciones de entrenamiento y uso en vivo.
+    \item Conjunto semántico de entrenamiento ($\sim$202 pares) no validado por experta en LSA; evaluación de reserva de un solo turno.
+    \item Adaptador LoRA entrenado sin diálogos multi-turno; la memoria conversacional puede desalinear el \textit{prompt} respecto de la distribución de entrenamiento a partir del segundo turno.
+    \item Avatar, transcripción del oyente y extensión de navegador pendientes.
+    \item Dependencia de encuadre, iluminación y mano dominante (normalización zurdo/diestro parcial).
 \end{itemize}
 
 \section{Riesgos detectados}
 \begin{itemize}
-    \item \textbf{Riesgo técnico:} \textit{overfitting} por escasez de datos --- mitigado con \textit{data augmentation}, arquitectura reducida y dos líneas de entrenamiento (\textit{scratch} y \textit{fine-tuning}).
-    \item \textbf{Riesgo de datos:} variabilidad dialectal en LSA --- mitigado con validación experta y grabaciones estandarizadas.
-    \item \textbf{Riesgo de hardware:} limitaciones de GPU --- mitigado con \textit{edge computing} y modelos \textit{tiny}.
-    \item \textbf{Riesgo de cronograma:} extensión de navegador y avatar en fase pendiente --- requiere priorización en la fase final del proyecto.
+    \item \textbf{Técnico:} pares de glosas visualmente similares (\texttt{I}/\texttt{T}/\texttt{OJO}) --- mitigado parcialmente por top-3 y contexto del LLM.
+    \item \textbf{Datos:} escasez de corpus LSA público --- mitigado con conjunto propio y validación experta.
+    \item \textbf{Operativo:} consumo de memoria de video por el LLM --- mitigado con modelo 3B y PEFT; cuantización de 4 bits no activa en la ruta por defecto.
+    \item \textbf{Cronograma:} componentes bidireccionales (avatar, extensión) en fase final.
 \end{itemize}
 
 \chapter{Conclusiones y trabajos futuros}
 \section{Conclusiones}
-El proyecto avanza hacia un prototipo funcional de traducción LSA--español con procesamiento local. La decisión de extraer \textit{landmarks} en lugar de procesar video crudo demostró ser acertada en términos de eficiencia computacional y alineación con el protocolo. Sin embargo, los experimentos iniciales con datasets de ASL evidenciaron que la calidad del corpus de entrenamiento es el factor determinante del rendimiento del clasificador, más aún que la complejidad de la arquitectura neuronal.
+Se entregó un prototipo funcional de traducción LSA $\rightarrow$ español con procesamiento local. La arquitectura desacoplada por hilos permitió integrar un clasificador compacto, reglas conversacionales propias de la LSA y un traductor semántico sin bloquear la captura de video.
 
-La construcción de un dataset propio de LSA, validado por una experta y orientado a un contexto de uso concreto (seguridad y viajero), constituye el aporte más significativo del trabajo realizado hasta la fecha. La reorganización del código en un repositorio dedicado y la división del trabajo en ramas paralelas permitieron avanzar simultáneamente en clasificación \textit{from scratch} y en \textit{fine-tuning}.
+Los resultados muestran que la extracción de puntos corporales es eficiente para inferencia en tiempo pseudo-real, pero la calidad y uniformidad del corpus LSA condicionan el desempeño frente a la cámara más que la complejidad del modelo. La traducción semántica es operativa, aunque las métricas estrictas subestiman traducciones parcialmente correctas. El cumplimiento del objetivo de $\geq$80\,\% de precisión gestual es parcial: alcanzable en top-3, no aún en top-1.
 
 \section{Trabajos futuros}
 \begin{itemize}
-    \item Completar la grabación y \textit{data augmentation} del dataset LSA hasta alcanzar volumen suficiente por clase.
-    \item Integrar el módulo semántico (agente LangChain) al \textit{pipeline} de inferencia en tiempo real.
-    \item Desarrollar el avatar animado a partir de \textit{landmarks} del canal Señario.
-    \item Implementar la extensión de navegador con superposición de subtítulos y síntesis de voz.
-    \item Validar el sistema en escenarios simulados con usuarios sordos y medir latencia y precisión extremo a extremo.
-    \item Incorporar consulta de mano dominante en la interfaz y normalización de \textit{landmarks} para usuarios zurdos.
-    \item Explorar \textit{transfer learning} desde corpus de movimiento corporal (Google Corpus) como pre-entrenamiento adicional.
+    \item Validación con personas usuarias sordas en escenarios simulados de emergencia.
+    \item Extensión de navegador con superposición de subtítulos y síntesis de voz.
+    \item Avatar animado a partir de puntos corporales de referencia (canal Señario).
+    \item Captura y procesamiento del turno del oyente (transcripción automática + memoria \texttt{hearing}).
+    \item Ampliación y validación experta del corpus semántico; reentrenamiento con diálogos multi-turno.
+    \item Reducción de la brecha fuera de línea/en vivo mediante mayor variabilidad en grabaciones y aumento de datos orientado a cámara web.
 \end{itemize}
 
-\chapter{Referencias}
-\begin{itemize}
-    \item Google. (2020). \textit{MediaPipe: A Framework for Building Perception Pipelines}. \url{https://google.github.io/mediapipe/}
-    \item Vaswani, A., et al. (2017). \textit{Attention Is All You Need}. arXiv:1706.03762.
-    \item República Argentina. (2020). Ley 27.710 --- Lengua de Señas Argentina. Boletín Oficial.
-    \item INJU. \textit{Diccionario de Señas}. \url{https://senas.inju.gob.ar/}
-    \item Universidad Nacional de Mar del Plata, Facultad de Ingeniería. (2024). \textit{Protocolo de Trabajo Final --- Ingeniería en Informática}.
-    \item Wu, Y., et al. (2020). \textit{Lite Transformer with Long-Short Range Attention}. arXiv:2004.11886.
-\end{itemize}
+\printbibliography[title={Referencias}]
 
-\chapter{Anexos}
-\section{Manual de usuario}
-Pendiente de elaboración junto con la extensión de navegador.
+\appendix
+\chapter{Manual de usuario}
+Ver \texttt{docs/rama\_integration.md}, sección ``Guía rápida de operación'': teclas \texttt{q} (salir), \texttt{m} (mano dominante), \texttt{c} (captura manual), \texttt{n} (nuevo enunciado).
 
-\section{Manual tecnico}
-Ver documentación técnica del \textit{pipeline} en \texttt{docs/documentacion.md} del repositorio del proyecto.
+\chapter{Manual técnico}
+\texttt{docs/ficha\_tecnica\_integrador.md} y \texttt{docs/rama\_integration.md} describen arquitectura, configuración, métricas y procedimientos de evaluación.
 
-\section{Codigo fuente}
-Repositorio principal: \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA} \\
-Repositorio anterior (descartado): \url{https://github.com/FranciscoVeronING/2026---Trabajo-Final-Informatica}
+\chapter{Código fuente}
+Repositorio principal (rama \texttt{integration}): \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA}.\\
+Repositorio anterior descartado: \url{https://github.com/FranciscoVeronING/2026---Trabajo-Final-Informatica}.
 
-\section{Diagramas completos}
-Pendiente: diagrama de arquitectura del \textit{pipeline}, diagrama de la máquina de estados de captura en \texttt{camera.py} y diagramas de casos de uso UML.
+\chapter{Diagramas completos}
+Pendiente: diagrama UML de hilos de trabajo, máquina de estados de \texttt{UtteranceBuffer} y casos de uso CU-01--03 en notación UML.
+
+\chapter{Iteraciones experimentales del clasificador}
+\label{anexo:iteraciones}
+
+Antes de seleccionar el \textit{checkpoint} desplegado, se ejecutaron cuatro iteraciones en la rama \texttt{scratch-mediapipe}. La Tabla~\ref{tab:iteraciones} contrasta métricas fuera de línea con evaluación en vivo (\texttt{camera.py --eval}, 91 señas).
+
+\begin{table}[H]
+\centering
+\caption{Iteraciones experimentales del clasificador}
+\label{tab:iteraciones}
+\small
+\begin{tabular}{@{}clcccc@{}}
+\toprule
+\textbf{Id} & \textbf{Fotogramas} & \textbf{Arq.} & \textbf{Val acc} & \textbf{Top-1 vivo} & \textbf{Top-3 vivo} \\
+\midrule
+A & 16 & 128/4h/2L & 97,36\,\% & 61,5\,\% & 83,5\,\% \\
+B & 32 & 128/4h/2L & 96,48\,\% & \textbf{71,4\,\%} & 87,9\,\% \\
+C & 32 & 64/2h/1L & 97,36\,\% & 67,0\,\% & \textbf{90,1\,\%} \\
+D & 32 & Optuna 8 h & 97,69\,\% & 66,0\,\% & 84,6\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Se seleccionó la iteración B por mejor top-1 frente a la cámara. Optuna (D) mejoró la pérdida fuera de línea pero no superó B/C en evaluación en vivo.
+
+\begin{figure}[H]
+\centering
+\IfFileExists{figuras/clasificador/comparativa_iteraciones.png}{%
+  \includegraphics[width=\textwidth]{clasificador/comparativa_iteraciones.png}%
+}{%
+  \fbox{\parbox{\textwidth}{\centering\vspace{1.5cm}Gráfico recomendado: barras top-1/top-3 por iteración (Tabla~\ref{tab:iteraciones})\vspace{1.5cm}}}%
+}
+\caption{Comparativa de evaluación en vivo por iteración A--D. Fuente: elaboración propia.}
+\label{fig:comparativa}
+\end{figure}
+
+\chapter{Líneas de trabajo alternativas y cronología del repositorio}
+\label{anexo:experimentos}
+
+\section{Ramas del repositorio}
+\begin{table}[H]
+\centering
+\caption{Cronología de ramas en \texttt{2026\_Proyecto\_LSA}}
+\label{tab:ramas}
+\small
+\begin{tabular}{@{}lllp{5cm}@{}}
+\toprule
+\textbf{Rama} & \textbf{Responsable} & \textbf{Estado} & \textbf{Contenido} \\
+\midrule
+\texttt{scratch-mediapipe} & Francisco & Entregado & Clasificador desde cero, Optuna \\
+\texttt{transfer-mediapipe-*} & Maite & Paralelo & Aprendizaje por transferencia con Keras \\
+\texttt{modulo-semantico} & Maite & MVP & Entrenamiento fino LoRA, evaluación BLEU \\
+\texttt{integration} & Ambos & Producto final & \texttt{run.py} \\
+\texttt{camera\_tests} & Francisco & Archivado & Prototipos tempranos \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Aprendizaje por transferencia}
+Línea con TensorFlow/Keras sobre pesos \texttt{209sontung/sign-language} (\texttt{train\_transfer.py}). Las métricas de validación fueron elevadas en entrenamiento, con menor desempeño en inferencia en vivo respecto de la iteración B entrenada desde cero. También se evaluó SlowFast sobre fotogramas crudos: resultados aceptables pero inferiores en precisión y latencia respecto de puntos corporales.
+
+\section{Corpus ASL descartado}
+Los experimentos iniciales con un conjunto ASL evidenciaron sobreajuste y etiquetado inconsistente (dialectos mezclados, videos espejados, oraciones completas etiquetadas como señas aisladas), lo que motivó el corpus LSA propio.
+
+\section{Decisiones técnicas del entrenamiento del clasificador}
+Eliminación de malla facial; 32 fotogramas por secuencia; aumento de datos 3D sin espejado; regularización progresiva (\textit{dropout}, suavizado de etiquetas, reducción de capacidad del Transformer); interpolación de fotogramas perdidos; búsqueda con Optuna (8 h).
+
+\chapter{Desarrollo del módulo semántico (MVP)}
+\label{anexo:semantico}
+
+Entrega MVP: 24/07/2026. Conjunto \texttt{dataset\_glosas.json} ($\sim$202 pares glosa $\rightarrow$ español, no validado por experta). Entrenamiento fino LoRA con Unsloth; despliegue en \texttt{integration} vía PEFT.
+
+\begin{table}[H]
+\centering
+\caption{Comparativa de modelos evaluados en \texttt{modulo-semantico}}
+\label{tab:llm}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Modelo} & \textbf{BLEU} & \textbf{METEOR} & \textbf{ROUGE-L} \\
+\midrule
+Qwen 2.5 0.5B & 9,98 & 37,08 & 38,99 \\
+Qwen 2.5 1.5B & 19,79 & 49,24 & 52,09 \\
+\textbf{Qwen 2.5 3B} & \textbf{48,04} & \textbf{70,87} & \textbf{73,66} \\
+Llama 3.2 1B & 19,62 & 45,46 & 47,71 \\
+Phi-3-mini-4k & 29,21 & 54,13 & 57,96 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Figuras recomendadas}
+\label{anexo:figuras}
+\begin{table}[H]
+\centering
+\caption{Gráficos complementarios (copiar a \texttt{docs/figuras/})}
+\small
+\begin{tabular}{@{}llp{5.5cm}@{}}
+\toprule
+\textbf{Prior.} & \textbf{Archivo} & \textbf{Origen} \\
+\midrule
+Alta & \texttt{integracion/arquitectura\_pipeline.png} & Diagrama de \texttt{rama\_integration.md} \\
+Alta & \texttt{clasificador/matriz\_32\_frames\_b.png} & Iteración B, \texttt{scratch-mediapipe} \\
+Alta & \texttt{clasificador/comparativa\_iteraciones.png} & Crear desde Tabla~\ref{tab:iteraciones} \\
+Media & \texttt{semantico/barras\_bleu\_modelos.png} & Crear desde Tabla~\ref{tab:llm} \\
+Media & \texttt{clasificador/curva\_32\_frames\_b.png} & \texttt{scratch-mediapipe} \\
+Baja & \texttt{transfer/accuracy\_lsa.png} & \texttt{transfer-mediapipe-*} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}

@@ -4,11 +4,12 @@ DATASET_NPY_DIR = "../dataset_landmarks_32frames"
 MODEL_SAVE_DIR = "../src/model"
 
 NUM_CLASSES = 94
-SAMPLES_PER_CLASS = 50
+SAMPLES_PER_CLASS = 60
 
 # Secuencia temporal unificada: preprocessing, entrenamiento e inferencia usan el mismo valor.
 # Si tenés .npy viejos con otra cantidad de frames, train los re-muestrea automáticamente.
-MAX_FRAMES = 32
+# Optuna v2 explora max_frames en {8, 12, 16, 24} subsampleando estos .npy (hace falta T>=24).
+MAX_FRAMES = 16
 TARGET_FRAMES = MAX_FRAMES
 
 
@@ -134,9 +135,9 @@ INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 # HIPERPARÁMETROS DEL TINY TRANSFORMER
 # ==========================================
 HIDDEN_DIM = 128
-NUM_HEADS = 8
+NUM_HEADS = 4
 NUM_LAYERS = 2
-DROPOUT_RATE = 0.3028748566702939
+DROPOUT_RATE = 0.4
 
 # ==========================================
 # ENTRENAMIENTO Y DATA AUGMENTATION
@@ -145,12 +146,30 @@ USE_DATA_AUGMENTATION = True
 BATCH_SIZE = 16
 EPOCHS = 200
 PATIENCE = 15
-VIRTUAL_MULTIPLIER = 10
+VIRTUAL_MULTIPLIER = 25
 AUG_NOISE_STD = 0.02992555713844365
 LR = 3.772811699894694e-05
 WEIGHT_DECAY = 0.0003168710901337327
 LABEL_SMOOTHING = 0.0014563065114717305
 AUG_SCALE_RANGE = (0.85, 1.15)
+
+# Ruido más fuerte en manos (tracker inestable) que en pose.
+AUG_HAND_NOISE_STD = AUG_NOISE_STD
+AUG_POSE_NOISE_STD = 0.012
+
+# Rotación 3D pequeña (grados): yaw=persona de costado, pitch=cámara alta/baja, roll=inclinación.
+AUG_ROT_YAW_DEG = 15.0
+AUG_ROT_PITCH_DEG = 8.0
+AUG_ROT_ROLL_DEG = 8.0
+
+# Velocidad del gesto: >1 más rápido (menos frames), <1 más lento.
+AUG_TIME_WARP_RANGE = (0.80, 1.25)
+
+# Recorte temporal: fracción máxima a tirar de cada extremo antes de resamplear a MAX_FRAMES.
+AUG_TEMPORAL_CROP_FRAC = 0.15
+
+# Frames puestos a cero e interpolados (simula pérdidas de MediaPipe). 0–N por secuencia.
+AUG_FRAME_DROPOUT_MAX = 3
 
 # ==========================================
 # INFERENCIA EN TIEMPO REAL (WEBCAM)
@@ -185,7 +204,7 @@ CAPTURE_MODE = "auto"
 # Clases que suelen ser poses cortas/fijas. Al grabar videos para estas clases:
 #   1) Entrar en la pose → sostener 1–2 s → retirar manos.
 #   2) Evitar movimientos largos de aproximación antes de la pose.
-#   3) Preferir 50+ videos por clase (mismo criterio que train).
+#   3) Preferir 60+ videos por clase (mismo criterio que train).
 STATIC_SIGN_CLASSES = [
     "0", "1", "2", "3", "4", "5", "6", "8",
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M",

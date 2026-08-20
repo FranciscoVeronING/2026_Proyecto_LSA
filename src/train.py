@@ -1,6 +1,7 @@
 import os
 import glob
 import json
+import math
 from datetime import datetime, timezone
 
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ from tqdm import tqdm
 
 import config as cfg
 from model_arch import TinySkeletonClassifier
-from utils import normalize_sequence_to_frames
+from utils import interpolate_zero_frames, normalize_sequence_to_frames
 
 
 class EarlyStopping:
@@ -38,12 +39,107 @@ class EarlyStopping:
                 self.early_stop = True
 
 
+def _rng():
+    return np.random.RandomState(int(torch.randint(0, 2**31 - 1, (1,)).item()))
+
+
+def resample_to_len(seq: np.ndarray, target: int) -> np.ndarray:
+    """Interpolación lineal en el eje temporal hasta `target` frames."""
+    frames_actuales, features = seq.shape
+    if frames_actuales == target:
+        return seq.astype(np.float32)
+    if frames_actuales == 1:
+        return np.repeat(seq.astype(np.float32), target, axis=0)
+    src = np.linspace(0, frames_actuales - 1, target, dtype=np.float32)
+    t0 = np.floor(src).astype(np.int64)
+    t1 = np.minimum(t0 + 1, frames_actuales - 1)
+    w = (src - t0).astype(np.float32)[:, None]
+    return ((1.0 - w) * seq[t0] + w * seq[t1]).astype(np.float32)
+
+
+def time_warp_sequence(seq: np.ndarray, speed_range: tuple, rng: np.random.RandomState) -> np.ndarray:
+    """speed > 1 = seña más rápida (menos frames + pad); < 1 = más lenta (crop)."""
+    lo, hi = speed_range
+    speed = float(rng.uniform(lo, hi))
+    frames_actuales = seq.shape[0]
+    new_t = max(2, int(round(frames_actuales / speed)))
+    warped = resample_to_len(seq, new_t)
+    if new_t == frames_actuales:
+        return warped
+    if new_t > frames_actuales:
+        start = int(rng.randint(0, new_t - frames_actuales + 1))
+        return warped[start : start + frames_actuales]
+    pad = frames_actuales - new_t
+    left = int(rng.randint(0, pad + 1))
+    out = np.empty((frames_actuales, seq.shape[1]), dtype=np.float32)
+    out[:left] = warped[0]
+    out[left : left + new_t] = warped
+    out[left + new_t :] = warped[-1]
+    return out
+
+
+def temporal_crop_sequence(seq: np.ndarray, max_frac: float, rng: np.random.RandomState) -> np.ndarray:
+    frames_actuales = seq.shape[0]
+    max_drop = int(frames_actuales * max_frac)
+    if max_drop < 1:
+        return seq
+    drop_start = int(rng.randint(0, max_drop + 1))
+    drop_end = int(rng.randint(0, max_drop + 1))
+    keep = frames_actuales - drop_start - drop_end
+    if keep < 2:
+        return seq
+    end = frames_actuales - drop_end
+    return seq[drop_start:end]
+
+
+def frame_dropout_sequence(seq: np.ndarray, max_drop: int, rng: np.random.RandomState) -> np.ndarray:
+    frames_actuales = seq.shape[0]
+    if max_drop < 1 or frames_actuales < 4:
+        return seq
+    n_drop = int(rng.randint(0, max_drop + 1))
+    if n_drop == 0:
+        return seq
+    n_drop = min(n_drop, frames_actuales - 2)
+    idx = rng.choice(frames_actuales, size=n_drop, replace=False)
+    out = seq.copy()
+    out[idx] = 0.0
+    filled = interpolate_zero_frames([out[i] for i in range(frames_actuales)])
+    return np.stack(filled, axis=0).astype(np.float32)
+
+
+def apply_temporal_augmentation(seq: np.ndarray, max_frames: int, params: dict) -> np.ndarray:
+    rng = _rng()
+    seq = np.asarray(seq, dtype=np.float32)
+    if seq.ndim != 2 or seq.shape[0] < 2:
+        return normalize_sequence_to_frames(seq, max_frames)
+
+    warp_range = params.get("aug_time_warp_range", cfg.AUG_TIME_WARP_RANGE)
+    crop_frac = params.get("aug_temporal_crop_frac", cfg.AUG_TEMPORAL_CROP_FRAC)
+    drop_max = params.get("aug_frame_dropout_max", cfg.AUG_FRAME_DROPOUT_MAX)
+
+    seq = time_warp_sequence(seq, warp_range, rng)
+    seq = temporal_crop_sequence(seq, crop_frac, rng)
+    seq = resample_to_len(seq, max_frames)
+    seq = frame_dropout_sequence(seq, drop_max, rng)
+    return seq
+
+
 class LabeledSkeletonDataset(Dataset):
-    def __init__(self, archivos: list, etiquetas: list, max_frames: int, multiplier: int = 1):
+    def __init__(
+        self,
+        archivos: list,
+        etiquetas: list,
+        max_frames: int,
+        multiplier: int = 1,
+        augment: bool = False,
+        aug_params: dict = None,
+    ):
         self.archivos = archivos
         self.etiquetas = etiquetas
         self.max_frames = max_frames
         self.multiplier = multiplier
+        self.augment = augment
+        self.aug_params = aug_params or {}
         self.real_length = len(self.archivos)
 
     def __len__(self) -> int:
@@ -52,22 +148,83 @@ class LabeledSkeletonDataset(Dataset):
     def __getitem__(self, idx: int):
         real_idx = idx % self.real_length
         secuencia = np.load(self.archivos[real_idx])
-        secuencia = normalize_sequence_to_frames(secuencia, self.max_frames)
+        if self.augment:
+            secuencia = apply_temporal_augmentation(secuencia, self.max_frames, self.aug_params)
+        else:
+            secuencia = normalize_sequence_to_frames(secuencia, self.max_frames)
         return (
             torch.tensor(secuencia, dtype=torch.float32),
             torch.tensor(self.etiquetas[real_idx], dtype=torch.long),
         )
 
 
-def augment_batch_3d(batch_data: torch.Tensor, noise_std: float, scale_range: tuple) -> torch.Tensor:
+def _euler_rotation_matrices(yaw: torch.Tensor, pitch: torch.Tensor, roll: torch.Tensor) -> torch.Tensor:
+    """R = Rz(roll) @ Ry(yaw) @ Rx(pitch). Ángulos (B,) en radianes → (B, 3, 3)."""
+    cy, sy = torch.cos(yaw), torch.sin(yaw)
+    cp, sp = torch.cos(pitch), torch.sin(pitch)
+    cr, sr = torch.cos(roll), torch.sin(roll)
+    zeros = torch.zeros_like(yaw)
+    ones = torch.ones_like(yaw)
+
+    rx = torch.stack(
+        (
+            torch.stack((ones, zeros, zeros), dim=-1),
+            torch.stack((zeros, cp, -sp), dim=-1),
+            torch.stack((zeros, sp, cp), dim=-1),
+        ),
+        dim=-2,
+    )
+    ry = torch.stack(
+        (
+            torch.stack((cy, zeros, sy), dim=-1),
+            torch.stack((zeros, ones, zeros), dim=-1),
+            torch.stack((-sy, zeros, cy), dim=-1),
+        ),
+        dim=-2,
+    )
+    rz = torch.stack(
+        (
+            torch.stack((cr, -sr, zeros), dim=-1),
+            torch.stack((sr, cr, zeros), dim=-1),
+            torch.stack((zeros, zeros, ones), dim=-1),
+        ),
+        dim=-2,
+    )
+    return rz @ ry @ rx
+
+
+def augment_batch_3d(batch_data: torch.Tensor, hyperparams: dict) -> torch.Tensor:
     b_size, seq_len, features = batch_data.shape
     device = batch_data.device
-
     x_3d = batch_data.view(b_size, seq_len, -1, 3)
+    n_joints = x_3d.size(2)
+
+    yaw_deg = hyperparams.get("aug_rot_yaw_deg", cfg.AUG_ROT_YAW_DEG)
+    pitch_deg = hyperparams.get("aug_rot_pitch_deg", cfg.AUG_ROT_PITCH_DEG)
+    roll_deg = hyperparams.get("aug_rot_roll_deg", cfg.AUG_ROT_ROLL_DEG)
+    if yaw_deg or pitch_deg or roll_deg:
+        deg_to_rad = math.pi / 180.0
+        yaw = torch.empty(b_size, device=device).uniform_(-yaw_deg, yaw_deg) * deg_to_rad
+        pitch = torch.empty(b_size, device=device).uniform_(-pitch_deg, pitch_deg) * deg_to_rad
+        roll = torch.empty(b_size, device=device).uniform_(-roll_deg, roll_deg) * deg_to_rad
+        rotation = _euler_rotation_matrices(yaw, pitch, roll)
+        x_3d = torch.matmul(x_3d, rotation.transpose(-1, -2).unsqueeze(1))
+
+    scale_range = hyperparams.get("aug_scale_range", cfg.AUG_SCALE_RANGE)
     scales = torch.empty(b_size, 1, 1, 1, device=device).uniform_(*scale_range)
     x_augmented = x_3d * scales
-    noise = torch.randn_like(x_augmented, device=device) * noise_std
-    x_augmented = x_augmented + noise
+
+    pose_std = hyperparams.get("aug_pose_noise_std", cfg.AUG_POSE_NOISE_STD)
+    hand_std = hyperparams.get(
+        "aug_hand_noise_std",
+        hyperparams.get("aug_noise_std", cfg.AUG_HAND_NOISE_STD),
+    )
+    n_pose = cfg.POSE_DIM // 3
+    n_pose = min(n_pose, n_joints)
+    stds = x_augmented.new_empty(1, 1, n_joints, 1)
+    stds[..., :n_pose, :] = pose_std
+    stds[..., n_pose:, :] = hand_std
+    x_augmented = x_augmented + torch.randn_like(x_augmented) * stds
 
     return x_augmented.view(b_size, seq_len, features)
 
@@ -131,16 +288,23 @@ def train_one_run(
     """
     max_epochs = max_epochs or cfg.EPOCHS
     patience = patience or cfg.PATIENCE
+    max_frames = int(hyperparams.get("max_frames", cfg.MAX_FRAMES))
 
     multiplier = hyperparams.get("virtual_multiplier", cfg.VIRTUAL_MULTIPLIER)
     if not hyperparams.get("use_data_augmentation", cfg.USE_DATA_AUGMENTATION):
         multiplier = 1
 
+    use_aug = hyperparams.get("use_data_augmentation", cfg.USE_DATA_AUGMENTATION)
     train_dataset = LabeledSkeletonDataset(
-        train_archivos, train_etiquetas, max_frames=cfg.MAX_FRAMES, multiplier=multiplier
+        train_archivos,
+        train_etiquetas,
+        max_frames=max_frames,
+        multiplier=multiplier,
+        augment=use_aug,
+        aug_params=hyperparams,
     )
     val_dataset = LabeledSkeletonDataset(
-        val_archivos, val_etiquetas, max_frames=cfg.MAX_FRAMES, multiplier=1
+        val_archivos, val_etiquetas, max_frames=max_frames, multiplier=1, augment=False
     )
     train_loader = DataLoader(
         train_dataset, batch_size=hyperparams["batch_size"], shuffle=True
@@ -179,11 +343,7 @@ def train_one_run(
             batch_data, batch_labels = batch_data.to(device), batch_labels.to(device)
 
             if hyperparams.get("use_data_augmentation", cfg.USE_DATA_AUGMENTATION):
-                batch_data = augment_batch_3d(
-                    batch_data,
-                    noise_std=hyperparams.get("aug_noise_std", cfg.AUG_NOISE_STD),
-                    scale_range=hyperparams.get("aug_scale_range", cfg.AUG_SCALE_RANGE),
-                )
+                batch_data = augment_batch_3d(batch_data, hyperparams)
 
             optimizer.zero_grad()
             logits = model(batch_data)
@@ -266,7 +426,16 @@ if __name__ == "__main__":
 
     multiplicador_real = cfg.VIRTUAL_MULTIPLIER if cfg.USE_DATA_AUGMENTATION else 1
     print(f"[*] Videos en Entrenamiento: {len(train_archivos)} (Virtualmente x{multiplicador_real})")
-    print(f"[*] Videos en Validación: {len(test_archivos)}\n")
+    print(f"[*] Videos en Validación: {len(test_archivos)}")
+    if cfg.USE_DATA_AUGMENTATION:
+        print(
+            "[*] Augmentation: rotación 3D "
+            f"(yaw±{cfg.AUG_ROT_YAW_DEG:.0f}° pitch±{cfg.AUG_ROT_PITCH_DEG:.0f}° "
+            f"roll±{cfg.AUG_ROT_ROLL_DEG:.0f}°), crop temporal {cfg.AUG_TEMPORAL_CROP_FRAC:.0%}, "
+            f"time warp {cfg.AUG_TIME_WARP_RANGE}, dropout ≤{cfg.AUG_FRAME_DROPOUT_MAX} frames, "
+            f"ruido pose {cfg.AUG_POSE_NOISE_STD} / manos {cfg.AUG_HAND_NOISE_STD}"
+        )
+    print()
 
     hyperparams = {
         "hidden_dim": cfg.HIDDEN_DIM,
@@ -277,10 +446,19 @@ if __name__ == "__main__":
         "lr": cfg.LR,
         "weight_decay": cfg.WEIGHT_DECAY,
         "label_smoothing": cfg.LABEL_SMOOTHING,
+        "max_frames": cfg.MAX_FRAMES,
         "use_data_augmentation": cfg.USE_DATA_AUGMENTATION,
         "virtual_multiplier": cfg.VIRTUAL_MULTIPLIER,
         "aug_noise_std": cfg.AUG_NOISE_STD,
+        "aug_hand_noise_std": cfg.AUG_HAND_NOISE_STD,
+        "aug_pose_noise_std": cfg.AUG_POSE_NOISE_STD,
         "aug_scale_range": cfg.AUG_SCALE_RANGE,
+        "aug_rot_yaw_deg": cfg.AUG_ROT_YAW_DEG,
+        "aug_rot_pitch_deg": cfg.AUG_ROT_PITCH_DEG,
+        "aug_rot_roll_deg": cfg.AUG_ROT_ROLL_DEG,
+        "aug_time_warp_range": cfg.AUG_TIME_WARP_RANGE,
+        "aug_temporal_crop_frac": cfg.AUG_TEMPORAL_CROP_FRAC,
+        "aug_frame_dropout_max": cfg.AUG_FRAME_DROPOUT_MAX,
     }
 
     ruta_mejor_modelo = os.path.join(cfg.MODEL_SAVE_DIR, "tinyskeleton_best.pth")
@@ -349,6 +527,16 @@ if __name__ == "__main__":
         "num_layers": cfg.NUM_LAYERS,
         "dropout_rate": cfg.DROPOUT_RATE,
         "use_data_augmentation": cfg.USE_DATA_AUGMENTATION,
+        "virtual_multiplier": cfg.VIRTUAL_MULTIPLIER,
+        "aug_scale_range": list(cfg.AUG_SCALE_RANGE),
+        "aug_pose_noise_std": cfg.AUG_POSE_NOISE_STD,
+        "aug_hand_noise_std": cfg.AUG_HAND_NOISE_STD,
+        "aug_rot_yaw_deg": cfg.AUG_ROT_YAW_DEG,
+        "aug_rot_pitch_deg": cfg.AUG_ROT_PITCH_DEG,
+        "aug_rot_roll_deg": cfg.AUG_ROT_ROLL_DEG,
+        "aug_time_warp_range": list(cfg.AUG_TIME_WARP_RANGE),
+        "aug_temporal_crop_frac": cfg.AUG_TEMPORAL_CROP_FRAC,
+        "aug_frame_dropout_max": cfg.AUG_FRAME_DROPOUT_MAX,
         "samples_per_class": cfg.SAMPLES_PER_CLASS,
         "epochs_ran": len(train_loss_history),
         "classes": clases_validas,

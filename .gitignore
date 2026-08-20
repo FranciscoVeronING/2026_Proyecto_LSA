@@ -15,4 +15,20 @@ src/model/2026-06-16/mapeo_clases.json
 src/model/2026-06-17/mapeo_clases.json
 src/model/entregables_nuevos/32_optuna/optuna_study.db
 src/model/entregables_nuevos/32_optuna/_optuna_tmp.pth
+src/model/_optuna_tmp.pth
+src/optuna_study.db
+src/optuna_study_v2.db
+src/optuna_v2.log
 src/semantic
+
+# Front de videollamada (vive en webapp-meet; no mezclar en esta rama)
+web/
+web/.env.local
+node_modules/
+.next/
+
+# Caches y artefactos locales
+unsloth_compiled_cache/
+temp_figs/
+temp_figs.zip
+eval_semantic_*.csv
