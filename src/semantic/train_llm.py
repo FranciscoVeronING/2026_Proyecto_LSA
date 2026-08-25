@@ -125,9 +125,9 @@ trainer = SFTTrainer(
     args=SFTConfig(
         output_dir=OUTPUT_DIR,
         per_device_train_batch_size=2,
-        gradient_accumulation_steps=4,
-        warmup_steps=5,
-        num_train_epochs=4, # max_step = 60
+        gradient_accumulation_steps=2,
+        warmup_ratio=0.05,
+        num_train_epochs=10, # max_step = 60
         learning_rate=5e-5,
         fp16=not torch.cuda.is_bf16_supported(),
         bf16=torch.cuda.is_bf16_supported(),
@@ -157,25 +157,36 @@ tokenizer.save_pretrained(OUTPUT_DIR)
 # ==========================================
 # 6. EVALUACIÓN DE PRECISIÓN EN EL TEST SET
 # ==========================================
+from collections import defaultdict
+
 print("\n--- INICIANDO EVALUACIÓN EN EL CONJUNTO DE TEST NO VISTO ---")
 FastLanguageModel.for_inference(model)
 
+# 1. Crear mapeo con todas las traducciones válidas por conjunto de glosas
+glosas_a_referencias = defaultdict(list)
+for item in raw_data:
+    key = " ".join(item["glosses"])
+    texto_ref = item["spanish"].strip()
+    if texto_ref not in glosas_a_referencias[key]:
+        glosas_a_referencias[key].append(texto_ref)
+
 predicciones = []
-referencias = []
+lista_referencias_multiples = []
+referencias_principales = []
 exact_matches_strict = 0
 exact_matches_normalized = 0
 latencies_ms = []
 
 def limpiar_salida_deepseek(texto: str) -> str:
     """Elimina las etiquetas <think>...</think> y su contenido, dejando solo la respuesta final."""
-    # Elimina todo desde <think> hasta </think> (incluyendo saltos de línea)
     texto_limpio = re.sub(r"<think>.*?</think>", "", texto, flags=re.DOTALL)
     return texto_limpio.strip()
 
-# Loop de Evaluación
+# 2. Loop de evaluación con inferencia
 for item in test_raw:
     glosas_str = " ".join(item["glosses"])
     referencia_real = item["spanish"].strip()
+    opciones_validas = glosas_a_referencias[glosas_str]
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -195,7 +206,6 @@ for item in test_raw:
     outputs = model.generate(
         **model_inputs,
         max_new_tokens=64,     
-        early_stopping=True,
         do_sample=False,
         use_cache=True,
         temperature=None,
@@ -205,6 +215,7 @@ for item in test_raw:
 
     latencies_ms.append((end_time - start_time) * 1000)
 
+    # Decodificar salida
     prediccion_raw = tokenizer.decode(
         outputs[0][model_inputs["input_ids"].shape[1] :], skip_special_tokens=True
     ).strip()
@@ -212,14 +223,14 @@ for item in test_raw:
     prediccion_modelo = limpiar_salida_deepseek(prediccion_raw)
 
     predicciones.append(prediccion_modelo)
-    referencias.append(referencia_real)
+    lista_referencias_multiples.append(opciones_validas)
+    referencias_principales.append(referencia_real)
 
-    # 1. Accuracy Estricta
-    if prediccion_modelo == referencia_real:
+    # Coincidencia con CUALQUIERA de las variantes válidas
+    if any(prediccion_modelo == ref for ref in opciones_validas):
         exact_matches_strict += 1
 
-    # 2. Accuracy Normalizada (sin puntuación/mayúsculas)
-    if normalizar_texto(prediccion_modelo) == normalizar_texto(referencia_real):
+    if any(normalizar_texto(prediccion_modelo) == normalizar_texto(ref) for ref in opciones_validas):
         exact_matches_normalized += 1
 
 # ==========================================
@@ -231,21 +242,24 @@ total_test = len(test_raw)
 accuracy_strict = round((exact_matches_strict / total_test) * 100, 2)
 accuracy_normalized = round((exact_matches_normalized / total_test) * 100, 2)
 
-# BLEU Score
+# BLEU Score (soporta múltiples referencias por muestra)
 bleu_results = bleu_metric.compute(
-    predictions=predicciones, references=[[r] for r in referencias]
+    predictions=predicciones, 
+    references=lista_referencias_multiples
 )
 bleu_score = round(bleu_results["bleu"] * 100, 2)
 
 # ROUGE-L Score
 rouge_results = rouge_metric.compute(
-    predictions=predicciones, references=referencias
+    predictions=predicciones, 
+    references=referencias_principales
 )
 rouge_l_score = round(rouge_results["rougeL"] * 100, 2)
 
-# METEOR Score (Flexible a sinónimos)
+# METEOR Score
 meteor_results = meteor_metric.compute(
-    predictions=predicciones, references=referencias
+    predictions=predicciones, 
+    references=referencias_principales
 )
 meteor_score = round(meteor_results["meteor"] * 100, 2)
 
@@ -266,7 +280,7 @@ metrics_accuracy = {
     "avg_latency_ms": avg_latency_ms,
     "ejemplos_evaluados": [
         {"glosas": " ".join(item["glosses"]), "esperado": ref, "predicho": pred}
-        for item, ref, pred in zip(test_raw, referencias, predicciones)
+        for item, ref, pred in zip(test_raw, referencias_principales, predicciones)
     ],
 }
 

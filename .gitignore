@@ -11,5 +11,4 @@ models/
 *.h5
 *.tflite
 
-src/semantic/outputs/
 src/semantic/logs/
