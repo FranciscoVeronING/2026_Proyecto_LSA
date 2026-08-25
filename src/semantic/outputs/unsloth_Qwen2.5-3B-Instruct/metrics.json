@@ -1,0 +1,632 @@
+{
+    "model_name": "unsloth/Qwen2.5-3B-Instruct",
+    "total_test_samples": 124,
+    "accuracy_strict_percent": 95.97,
+    "accuracy_normalized_percent": 95.97,
+    "bleu_score": 98.15,
+    "rouge_l_score": 66.3,
+    "meteor_score": 67.1,
+    "avg_latency_ms": 733.25,
+    "ejemplos_evaluados": [
+        {
+            "glosas": "YO MAMA VER",
+            "esperado": "Yo veo a mi mamá.",
+            "predicho": "Veo a mamá."
+        },
+        {
+            "glosas": "VOS HERMANO_A LLAMAR",
+            "esperado": "Vos llamás a tu hermano.",
+            "predicho": "Llamás a tu hermano o hermana."
+        },
+        {
+            "glosas": "CASA FAMILIA VIVIR CUANTOS",
+            "esperado": "¿Cuántas familias viven en la casa?",
+            "predicho": "¿Cuántas casas vive la familia?"
+        },
+        {
+            "glosas": "LUNES CUANDO",
+            "esperado": "¿Cuándo es el lunes?",
+            "predicho": "¿Cuándo es lunes?"
+        },
+        {
+            "glosas": "YO Ñ VER",
+            "esperado": "Veo la letra Ñ.",
+            "predicho": "Veo ñ."
+        },
+        {
+            "glosas": "EL_ELLA LLAMAR",
+            "esperado": "Él o ella llama.",
+            "predicho": "Él llama."
+        },
+        {
+            "glosas": "ELLOS LLAMAR",
+            "esperado": "Llaman.",
+            "predicho": "Ellas llaman."
+        },
+        {
+            "glosas": "MARTES YO L U I S LLAMAR",
+            "esperado": "El martes yo llamé a Luis.",
+            "predicho": "El martes llamé a Luis."
+        },
+        {
+            "glosas": "EL_ELLA PODER",
+            "esperado": "Ella es capaz.",
+            "predicho": "Él puede."
+        },
+        {
+            "glosas": "YO PODER NO",
+            "esperado": "No soy capaz.",
+            "predicho": "No puedo."
+        },
+        {
+            "glosas": "YO DOCUMENTO NUMERO 3 0 1 1 1 2 2 2",
+            "esperado": "El número de mi documento es 30111222.",
+            "predicho": "Mi DNI es 30111222."
+        },
+        {
+            "glosas": "VOS HERMANO_A LLAMAR",
+            "esperado": "Llamás a tu hermana.",
+            "predicho": "Llamás a tu hermano o hermana."
+        },
+        {
+            "glosas": "YO 6 VER",
+            "esperado": "Veo el número 6.",
+            "predicho": "Yo veo un 6."
+        },
+        {
+            "glosas": "CASA ELLOS VIVIR",
+            "esperado": "Ellas viven en una casa.",
+            "predicho": "Ellos viven en una casa."
+        },
+        {
+            "glosas": "LUGAR DONDE",
+            "esperado": "¿Dónde está el lugar?",
+            "predicho": "¿Dónde queda el lugar?"
+        },
+        {
+            "glosas": "NOSOTROS REPETIR",
+            "esperado": "Nosotros repetimos.",
+            "predicho": "Nosotras repetimos."
+        },
+        {
+            "glosas": "NOMBRE QUE",
+            "esperado": "¿Qué nombre?",
+            "predicho": "¿Qué nombre?"
+        },
+        {
+            "glosas": "LASTIMAR NO",
+            "esperado": "No lastimo.",
+            "predicho": "No me lastimo."
+        },
+        {
+            "glosas": "VOS REPETIR",
+            "esperado": "Vos repetís.",
+            "predicho": "Repetís."
+        },
+        {
+            "glosas": "VOS BRAZO LASTIMAR",
+            "esperado": "Te lastimaste el brazo.",
+            "predicho": "Vos te lastimaste el brazo."
+        },
+        {
+            "glosas": "YO VER",
+            "esperado": "Veo.",
+            "predicho": "Yo veo."
+        },
+        {
+            "glosas": "VOS COMO",
+            "esperado": "¿Cómo estás vos?",
+            "predicho": "¿Cómo?"
+        },
+        {
+            "glosas": "YO PAPA VER",
+            "esperado": "Veo a mi papá.",
+            "predicho": "Veo a papá."
+        },
+        {
+            "glosas": "YO GOLPEAR NO",
+            "esperado": "No golpeo.",
+            "predicho": "Yo no pego."
+        },
+        {
+            "glosas": "YO OJO VER MAL",
+            "esperado": "Yo veo mal con el ojo.",
+            "predicho": "Veo mal de un ojo."
+        },
+        {
+            "glosas": "AYER EL_ELLA ARMA LLEVAR",
+            "esperado": "Él llevaba un arma ayer.",
+            "predicho": "Llevaba un arma ayer."
+        },
+        {
+            "glosas": "CASA ELLOS VIVIR",
+            "esperado": "Viven en la casa.",
+            "predicho": "Ellos viven en una casa."
+        },
+        {
+            "glosas": "NOSOTROS GOLPEAR",
+            "esperado": "Nosotras golpeamos.",
+            "predicho": "Nosotros pegamos."
+        },
+        {
+            "glosas": "ELLOS VOS ROBAR",
+            "esperado": "Te robaron.",
+            "predicho": "Ellos te robaron."
+        },
+        {
+            "glosas": "ELLOS GOLPEAR",
+            "esperado": "Ellos pegan.",
+            "predicho": "Ellas golpean."
+        },
+        {
+            "glosas": "YO DOCUMENTO NUMERO 3 8 9 0 1 2 3 4",
+            "esperado": "Mi documento es 38901234.",
+            "predicho": "Mi DNI es 38901234."
+        },
+        {
+            "glosas": "PLAZA YO VER",
+            "esperado": "Yo veo la plaza.",
+            "predicho": "Yo veo la plaza."
+        },
+        {
+            "glosas": "HIJO_A QUIENES",
+            "esperado": "¿Quiénes son tus hijos o hijas?",
+            "predicho": "¿Quién es tu hijo?"
+        },
+        {
+            "glosas": "AYER ELLOS VOS ROBAR",
+            "esperado": "Ayer te robaron.",
+            "predicho": "Ellos te robaron ayer."
+        },
+        {
+            "glosas": "YO HERMANO_A TENER",
+            "esperado": "Tengo hermana.",
+            "predicho": "Tengo una hermana."
+        },
+        {
+            "glosas": "ELLOS BRAZO LASTIMAR",
+            "esperado": "Ellos se lastimaron el brazo.",
+            "predicho": "Ellas se lastimaron el brazo."
+        },
+        {
+            "glosas": "EL_ELLA GOLPEAR",
+            "esperado": "Pega.",
+            "predicho": "Él pega."
+        },
+        {
+            "glosas": "YO GOLPEAR",
+            "esperado": "Yo pego.",
+            "predicho": "Pego."
+        },
+        {
+            "glosas": "YO GOLPEAR",
+            "esperado": "Yo golpeo.",
+            "predicho": "Pego."
+        },
+        {
+            "glosas": "BIEN SI",
+            "esperado": "Sí, bien.",
+            "predicho": "Sí, todo bien."
+        },
+        {
+            "glosas": "VOS HIJO_A GOLPEAR NO",
+            "esperado": "Vos no golpeás a tu hijo o hija.",
+            "predicho": "Vos no le pegás a tu hijo."
+        },
+        {
+            "glosas": "AYER ELLOS VOS ROBAR",
+            "esperado": "Te robaron ayer.",
+            "predicho": "Ellos te robaron ayer."
+        },
+        {
+            "glosas": "ARMA DONDE",
+            "esperado": "¿Dónde está el arma?",
+            "predicho": "¿Dónde está el arma?"
+        },
+        {
+            "glosas": "MIERCOLES YO VER",
+            "esperado": "Veo el miércoles.",
+            "predicho": "Veo miércoles."
+        },
+        {
+            "glosas": "VOS GOLPEAR",
+            "esperado": "Vos golpeás.",
+            "predicho": "Vos pegás."
+        },
+        {
+            "glosas": "YO PODER NO",
+            "esperado": "Yo no soy capaz.",
+            "predicho": "No puedo."
+        },
+        {
+            "glosas": "ELLOS GOLPEAR",
+            "esperado": "Pegan.",
+            "predicho": "Ellas golpean."
+        },
+        {
+            "glosas": "YO HIJO_A TENER",
+            "esperado": "Tengo un hijo o una hija.",
+            "predicho": "Tengo hijo o hija."
+        },
+        {
+            "glosas": "ROBAR NO",
+            "esperado": "No robo.",
+            "predicho": "No robo."
+        },
+        {
+            "glosas": "MAMA DONDE",
+            "esperado": "¿Dónde está tu mamá?",
+            "predicho": "¿Dónde está mamá?"
+        },
+        {
+            "glosas": "LUGAR QUE",
+            "esperado": "¿Qué lugar?",
+            "predicho": "¿Qué lugar?"
+        },
+        {
+            "glosas": "YO DOCUMENTO NUMERO 3 8 9 0 1 2 3 4",
+            "esperado": "Mi número de documento es 38901234.",
+            "predicho": "Mi DNI es 38901234."
+        },
+        {
+            "glosas": "YO APELLIDO D I A Z",
+            "esperado": "Me apellido Díaz.",
+            "predicho": "Mi apellido es Díaz."
+        },
+        {
+            "glosas": "AHORA_HOY YO BIEN",
+            "esperado": "Hoy estoy bien.",
+            "predicho": "Ahora me siento bien."
+        },
+        {
+            "glosas": "MAMA DONDE",
+            "esperado": "¿Dónde está mi mamá?",
+            "predicho": "¿Dónde está mamá?"
+        },
+        {
+            "glosas": "YO TENER NO",
+            "esperado": "Yo no tengo.",
+            "predicho": "No tengo."
+        },
+        {
+            "glosas": "YO X REPETIR",
+            "esperado": "Digo X de nuevo.",
+            "predicho": "Yo repito X."
+        },
+        {
+            "glosas": "YO DOCUMENTO NUMERO 3 0 1 1 1 2 2 2",
+            "esperado": "Mi número de documento es 30111222.",
+            "predicho": "Mi DNI es 30111222."
+        },
+        {
+            "glosas": "YO ARMA TENER",
+            "esperado": "Estoy armado.",
+            "predicho": "Yo estoy armada."
+        },
+        {
+            "glosas": "YO DOCUMENTO LLEVAR",
+            "esperado": "Llevo el documento.",
+            "predicho": "Yo llevo el documento."
+        },
+        {
+            "glosas": "YO HIJO_A TENER",
+            "esperado": "Yo tengo hija.",
+            "predicho": "Tengo hijo o hija."
+        },
+        {
+            "glosas": "VOS COMO",
+            "esperado": "¿Cómo estás?",
+            "predicho": "¿Cómo?"
+        },
+        {
+            "glosas": "YO LLEVAR NO",
+            "esperado": "Yo no llevo.",
+            "predicho": "No llevo."
+        },
+        {
+            "glosas": "EL_ELLA TENER",
+            "esperado": "Él tiene.",
+            "predicho": "Tiene."
+        },
+        {
+            "glosas": "PAPA DONDE",
+            "esperado": "¿Dónde está tu papá?",
+            "predicho": "¿Dónde está papá?"
+        },
+        {
+            "glosas": "YO FAMILIA VER",
+            "esperado": "Yo veo a mi familia.",
+            "predicho": "Veo a mi familia."
+        },
+        {
+            "glosas": "YO HIJO_A TENER",
+            "esperado": "Tengo un hijo.",
+            "predicho": "Tengo hijo o hija."
+        },
+        {
+            "glosas": "YO LASTIMAR NO",
+            "esperado": "No lastimo.",
+            "predicho": "Yo no me lastimo."
+        },
+        {
+            "glosas": "NOSOTROS FAMILIA VIVIR",
+            "esperado": "Nosotras vivimos con la familia.",
+            "predicho": "Nosotros vivimos en familia."
+        },
+        {
+            "glosas": "ELLOS VIVIR",
+            "esperado": "Ellos viven acá.",
+            "predicho": "Viven acá."
+        },
+        {
+            "glosas": "YO ARMA VER",
+            "esperado": "Veo el arma.",
+            "predicho": "Veo arma."
+        },
+        {
+            "glosas": "CALLE M I T R E YO VIVIR_EN",
+            "esperado": "Vivo en la calle Mitre.",
+            "predicho": "Mi casa está en la calle Mitre."
+        },
+        {
+            "glosas": "ELLOS YO CUCHILLO SACAR",
+            "esperado": "Ellos me sacaron el cuchillo.",
+            "predicho": "Me sacaron el cuchillo."
+        },
+        {
+            "glosas": "YO HERMANO_A TENER",
+            "esperado": "Yo tengo hermano o hermana.",
+            "predicho": "Tengo una hermana."
+        },
+        {
+            "glosas": "PAPA BIEN",
+            "esperado": "Papá está bien.",
+            "predicho": "Mi papá está bien."
+        },
+        {
+            "glosas": "ELLOS YO ROBAR",
+            "esperado": "Me robaron.",
+            "predicho": "Me robaron."
+        },
+        {
+            "glosas": "CASA CALLE B E L G R A N O YO VIVIR_EN",
+            "esperado": "Vivo en la casa de la calle Belgrano.",
+            "predicho": "Yo vivo en la casa de la calle Belgrano."
+        },
+        {
+            "glosas": "YO HERMANO_A TENER",
+            "esperado": "Yo tengo hermana.",
+            "predicho": "Tengo una hermana."
+        },
+        {
+            "glosas": "YO ESPOSO_A LLAMAR NO",
+            "esperado": "Yo no llamo a mi esposo.",
+            "predicho": "Yo no llamo a mi esposo."
+        },
+        {
+            "glosas": "NOSOTROS PODER",
+            "esperado": "Somos capaces.",
+            "predicho": "Nosotras podemos."
+        },
+        {
+            "glosas": "FAMILIA DONDE",
+            "esperado": "¿Dónde está tu familia?",
+            "predicho": "¿Dónde está la familia?"
+        },
+        {
+            "glosas": "HERMANO_A QUIENES",
+            "esperado": "¿Quiénes son tus hermanos?",
+            "predicho": "¿Quiénes son tus hermanas?"
+        },
+        {
+            "glosas": "NOSOTROS CARA LASTIMAR NO",
+            "esperado": "Nosotros no nos lastimamos la cara.",
+            "predicho": "Nosotras no nos lastimamos la cara."
+        },
+        {
+            "glosas": "YO TENER",
+            "esperado": "Yo tengo.",
+            "predicho": "Tengo."
+        },
+        {
+            "glosas": "VOS HIJO_A GOLPEAR NO",
+            "esperado": "Vos no pegás a tu hijo o hija.",
+            "predicho": "Vos no le pegás a tu hijo."
+        },
+        {
+            "glosas": "EL_ELLA CUANTOS",
+            "esperado": "¿Cuántos años tiene él?",
+            "predicho": "¿Cuántos años tiene ella?"
+        },
+        {
+            "glosas": "YO CUCHILLO VER",
+            "esperado": "Yo veo un cuchillo.",
+            "predicho": "Veo el cuchillo."
+        },
+        {
+            "glosas": "ELLOS VER",
+            "esperado": "Ven.",
+            "predicho": "Ellos miran."
+        },
+        {
+            "glosas": "HERMANO_A QUIENES",
+            "esperado": "¿Quién es tu hermano?",
+            "predicho": "¿Quiénes son tus hermanas?"
+        },
+        {
+            "glosas": "NOSOTROS ROBAR",
+            "esperado": "Nosotras robamos.",
+            "predicho": "Nosotros robamos."
+        },
+        {
+            "glosas": "PAPA DONDE",
+            "esperado": "¿Dónde está mi papá?",
+            "predicho": "¿Dónde está papá?"
+        },
+        {
+            "glosas": "ELLOS VOS ROBAR",
+            "esperado": "Ellas te robaron.",
+            "predicho": "Ellos te robaron."
+        },
+        {
+            "glosas": "YO LLEVAR",
+            "esperado": "Llevo.",
+            "predicho": "Yo llevo."
+        },
+        {
+            "glosas": "YO HIJO_A VER",
+            "esperado": "Yo veo a mi hijo.",
+            "predicho": "Veo a mi hijo o hija."
+        },
+        {
+            "glosas": "YO VER NO",
+            "esperado": "Yo no veo.",
+            "predicho": "No veo."
+        },
+        {
+            "glosas": "ELLOS YO CUCHILLO ROBAR",
+            "esperado": "Ellas me robaron el cuchillo.",
+            "predicho": "Me robaron el cuchillo."
+        },
+        {
+            "glosas": "TUYO DOCUMENTO",
+            "esperado": "Tu documento.",
+            "predicho": "Tu DNI."
+        },
+        {
+            "glosas": "AHORA_HOY PLAZA NOSOTROS VER",
+            "esperado": "Ahora nos vemos en la plaza.",
+            "predicho": "Ahora nosotras nos vemos en la plaza."
+        },
+        {
+            "glosas": "YO PAPA TENER",
+            "esperado": "Yo tengo papá.",
+            "predicho": "Tengo papá."
+        },
+        {
+            "glosas": "YO DOCUMENTO NUMERO 3 0 1 1 1 2 2 2",
+            "esperado": "Mi documento es 30111222.",
+            "predicho": "Mi DNI es 30111222."
+        },
+        {
+            "glosas": "DEPARTAMENTO QUE",
+            "esperado": "¿Qué departamento?",
+            "predicho": "¿Qué departamento?"
+        },
+        {
+            "glosas": "NOSOTROS BRAZO LASTIMAR",
+            "esperado": "Nosotros nos lastimamos el brazo.",
+            "predicho": "Nosotras nos lastimamos el brazo."
+        },
+        {
+            "glosas": "YO GOLPEAR NO",
+            "esperado": "No pego.",
+            "predicho": "Yo no pego."
+        },
+        {
+            "glosas": "YO AÑOS 2 5",
+            "esperado": "Tengo veinticinco años.",
+            "predicho": "Yo tengo veinticinco años."
+        },
+        {
+            "glosas": "ELLOS YO ROBAR",
+            "esperado": "Ellos me robaron.",
+            "predicho": "Me robaron."
+        },
+        {
+            "glosas": "AYER YO MAL",
+            "esperado": "Ayer yo estuve mal.",
+            "predicho": "Ayer yo me sentí mal."
+        },
+        {
+            "glosas": "YO VIVIR NO",
+            "esperado": "No vivo acá.",
+            "predicho": "Yo no vivo acá."
+        },
+        {
+            "glosas": "CASA VOS VIVIR DONDE",
+            "esperado": "¿Dónde queda tu casa?",
+            "predicho": "¿Dónde está tu casa?"
+        },
+        {
+            "glosas": "YO PASAR NO",
+            "esperado": "No paso.",
+            "predicho": "Yo no paso."
+        },
+        {
+            "glosas": "ELLOS GOLPEAR",
+            "esperado": "Golpean.",
+            "predicho": "Ellas golpean."
+        },
+        {
+            "glosas": "VOS VER",
+            "esperado": "Ves.",
+            "predicho": "Vos observás."
+        },
+        {
+            "glosas": "ELLOS VER",
+            "esperado": "Ellas ven.",
+            "predicho": "Ellos miran."
+        },
+        {
+            "glosas": "EL_ELLA BRAZO LASTIMAR",
+            "esperado": "Él o ella se lastimó el brazo.",
+            "predicho": "Se lastimó el brazo."
+        },
+        {
+            "glosas": "CUCHILLO DONDE",
+            "esperado": "¿Dónde está el cuchillo?",
+            "predicho": "¿Dónde está el cuchillo?"
+        },
+        {
+            "glosas": "YO ESPOSO_A TENER",
+            "esperado": "Tengo esposa.",
+            "predicho": "Tengo esposo."
+        },
+        {
+            "glosas": "VOS VER",
+            "esperado": "Vos ves.",
+            "predicho": "Vos observás."
+        },
+        {
+            "glosas": "YO HERMANO_A TENER",
+            "esperado": "Tengo hermano.",
+            "predicho": "Tengo una hermana."
+        },
+        {
+            "glosas": "CASA VOS VIVIR DONDE",
+            "esperado": "¿Dónde vivís vos?",
+            "predicho": "¿Dónde está tu casa?"
+        },
+        {
+            "glosas": "ESPOSO_A QUIENES",
+            "esperado": "¿Quién es tu esposo o esposa?",
+            "predicho": "¿Quién es tu esposo?"
+        },
+        {
+            "glosas": "DOCUMENTO DONDE",
+            "esperado": "¿Dónde está el DNI?",
+            "predicho": "¿Dónde está el documento?"
+        },
+        {
+            "glosas": "LUGAR YO VER",
+            "esperado": "Veo el lugar.",
+            "predicho": "Yo veo el lugar."
+        },
+        {
+            "glosas": "ELLOS PODER",
+            "esperado": "Ellas son capaces.",
+            "predicho": "Ellos son capaces."
+        },
+        {
+            "glosas": "NOSOTROS VER",
+            "esperado": "Vemos.",
+            "predicho": "Nosotras vemos."
+        },
+        {
+            "glosas": "NOSOTROS LLEVAR",
+            "esperado": "Nosotros llevamos.",
+            "predicho": "Nosotras llevamos."
+        }
+    ]
+}
