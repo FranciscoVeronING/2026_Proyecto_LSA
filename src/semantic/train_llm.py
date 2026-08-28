@@ -185,6 +185,8 @@ def limpiar_salida_deepseek(texto: str) -> str:
 # 2. Loop de evaluación con inferencia
 for item in test_raw:
     glosas_str = " ".join(item["glosses"])
+    # Limpieza de etiquetas compuestas antes de enviar al modelo
+    glosas_limpias = glosas_str.replace("_A", "").replace("AHORA_HOY", "HOY")
     referencia_real = item["spanish"].strip()
     opciones_validas = glosas_a_referencias[glosas_str]
 
@@ -234,36 +236,41 @@ for item in test_raw:
         exact_matches_normalized += 1
 
 # ==========================================
-# CÁLCULO DE MÉTRICAS
+# CÁLCULO DE MÉTRICAS MULTI-REFERENCIA
 # ==========================================
 total_test = len(test_raw)
 
-# Accuracies
 accuracy_strict = round((exact_matches_strict / total_test) * 100, 2)
 accuracy_normalized = round((exact_matches_normalized / total_test) * 100, 2)
 
-# BLEU Score (soporta múltiples referencias por muestra)
+# BLEU Score nativo multi-referencia
 bleu_results = bleu_metric.compute(
     predictions=predicciones, 
     references=lista_referencias_multiples
 )
 bleu_score = round(bleu_results["bleu"] * 100, 2)
 
-# ROUGE-L Score
-rouge_results = rouge_metric.compute(
-    predictions=predicciones, 
-    references=referencias_principales
-)
-rouge_l_score = round(rouge_results["rougeL"] * 100, 2)
+# ROUGE-L multi-referencia (Max ROUGE por muestra)
+rouge_scores_sample = []
+meteor_scores_sample = []
 
-# METEOR Score
-meteor_results = meteor_metric.compute(
-    predictions=predicciones, 
-    references=referencias_principales
-)
-meteor_score = round(meteor_results["meteor"] * 100, 2)
+for pred, refs in zip(predicciones, lista_referencias_multiples):
+    # Calcular ROUGE contra cada referencia válida y tomar el máximo
+    r_scores = [
+        rouge_metric.compute(predictions=[pred], references=[r])["rougeL"]
+        for r in refs
+    ]
+    rouge_scores_sample.append(max(r_scores))
 
-# Latencia Promedio
+    # Calcular METEOR contra cada referencia válida y tomar el máximo
+    m_scores = [
+        meteor_metric.compute(predictions=[pred], references=[r])["meteor"]
+        for r in refs
+    ]
+    meteor_scores_sample.append(max(m_scores))
+
+rouge_l_score = round((sum(rouge_scores_sample) / total_test) * 100, 2)
+meteor_score = round((sum(meteor_scores_sample) / total_test) * 100, 2)
 avg_latency_ms = round(sum(latencies_ms) / len(latencies_ms), 2)
 
 # ==========================================
