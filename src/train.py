@@ -461,7 +461,7 @@ if __name__ == "__main__":
         "aug_frame_dropout_max": cfg.AUG_FRAME_DROPOUT_MAX,
     }
 
-    ruta_mejor_modelo = os.path.join(cfg.MODEL_SAVE_DIR, "tinyskeleton_best.pth")
+    ruta_mejor_modelo = os.path.join(cfg.MODEL_SAVE_DIR, "tinyskeleton_best_optuna_v2.pth")
     print("--- INICIANDO ENTRENAMIENTO ---")
 
     best_loss, train_loss_history, val_loss_history = train_one_run(
@@ -508,7 +508,7 @@ if __name__ == "__main__":
     plt.title("Curva de Aprendizaje - TinyTransformer")
     plt.legend()
     plt.grid(True)
-    plt.savefig("curva_tinyskeleton.png")
+    plt.savefig("curva_tinyskeleton_optuna_v2.png")
     plt.close()
 
     cm = confusion_matrix(all_labels, all_preds)
@@ -550,6 +550,6 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(figsize=(15, 12))
     disp.plot(cmap=plt.cm.Blues, ax=ax, xticks_rotation=90)
     plt.tight_layout()
-    plt.savefig("matriz_confusion_tinyskeleton.png")
+    plt.savefig("matriz_confusion_tinyskeleton_optuna_v2.png")
     plt.close()
     print("[*] Fin del proceso.")

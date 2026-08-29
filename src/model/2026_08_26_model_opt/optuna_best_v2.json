@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-08-26T20:56:49.474935+00:00",
+  "study_name": "tinyskeleton_lsa_v2",
+  "best_value": 0.1366483494342166,
+  "n_trials_in_study": 40,
+  "npy_temporal_length": 16,
+  "max_frames_candidates": [
+    8,
+    12,
+    16
+  ],
+  "best_params": {
+    "hidden_dim": 256,
+    "num_heads": 2,
+    "max_frames": 12,
+    "num_layers": 2,
+    "dropout_rate": 0.5715233552753011,
+    "batch_size": 32,
+    "lr": 3.2356613600607546e-05,
+    "weight_decay": 0.014480175148028502,
+    "label_smoothing": 0.00025441433429255334,
+    "aug_noise_std": 0.026646077410572046
+  },
+  "fixed": {
+    "use_data_augmentation": true,
+    "virtual_multiplier": 25,
+    "samples_per_class": 60
+  }
+}
