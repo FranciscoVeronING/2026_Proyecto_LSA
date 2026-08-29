@@ -476,12 +476,12 @@ def main():
     parser.add_argument(
         "--eval",
         action="store_true",
-        help="Modo evaluacion: recorre las 91 senias y guarda CSV.",
+        help="Modo evaluacion: recorre las 94 senias y guarda CSV.",
     )
     parser.add_argument(
         "--eval-output",
         default=None,
-        help="Ruta del CSV de evaluacion (default: eval_91senias_<fecha>.csv en src/).",
+        help="Ruta del CSV de evaluacion (default: eval_94senias_<fecha>.csv en src/).",
     )
     args = parser.parse_args()
 
@@ -508,7 +508,7 @@ def main():
     if args.eval:
         csv_path = args.eval_output or os.path.join(
             os.path.dirname(__file__),
-            f"eval_91senias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            f"eval_94senias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
         )
         eval_session = EvalSession(sign_list, csv_path, handedness)
         print(f"[*] Modo eval activo. CSV: {csv_path}")
