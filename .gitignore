@@ -21,6 +21,8 @@ src/optuna_study_v2.db
 src/optuna_v2.log
 src/semantic
 
+dataset_landmarks_*
+
 # Front de videollamada (vive en webapp-meet; no mezclar en esta rama)
 web/
 web/.env.local

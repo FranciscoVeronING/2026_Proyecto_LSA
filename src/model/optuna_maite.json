@@ -1,0 +1,108 @@
+{
+  "timestamp": "2026-08-29T00:26:52.842104+00:00",
+  "study_name": "tinyskeleton_lsa_v2_frames_10",
+  "best_value": 0.20643305847196713,
+  "n_trials_in_study": 5,
+  "max_frames_candidates": [
+    8,
+    10,
+    12,
+    14
+  ],
+  "best_params": {
+    "hidden_dim": 256,
+    "num_heads": 2,
+    "max_frames": 10,
+    "num_layers": 3,
+    "dropout_rate": 0.5999383220818026,
+    "batch_size": 32,
+    "lr": 0.00037921650854277417,
+    "weight_decay": 0.0034397964758762366,
+    "label_smoothing": 0.0042802412265131925,
+    "aug_noise_std": 0.019889925352278202
+  },
+  "best_dataset_npy_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\dataset_landmarks_10frames",
+  "results_by_max_frames": [
+    {
+      "max_frames": 8,
+      "study_name": "tinyskeleton_lsa_v2_frames_8",
+      "best_value": 0.3898870934408607,
+      "n_trials": 5,
+      "best_params": {
+        "hidden_dim": 64,
+        "num_heads": 4,
+        "max_frames": 8,
+        "num_layers": 1,
+        "dropout_rate": 0.4308932620695747,
+        "batch_size": 32,
+        "lr": 1.1572276314941504e-05,
+        "weight_decay": 0.005798459602704552,
+        "label_smoothing": 0.02143172577781824,
+        "aug_noise_std": 0.023511489375274145
+      },
+      "dataset_npy_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\dataset_landmarks_8frames"
+    },
+    {
+      "max_frames": 10,
+      "study_name": "tinyskeleton_lsa_v2_frames_10",
+      "best_value": 0.20643305847196713,
+      "n_trials": 5,
+      "best_params": {
+        "hidden_dim": 256,
+        "num_heads": 2,
+        "max_frames": 10,
+        "num_layers": 3,
+        "dropout_rate": 0.5999383220818026,
+        "batch_size": 32,
+        "lr": 0.00037921650854277417,
+        "weight_decay": 0.0034397964758762366,
+        "label_smoothing": 0.0042802412265131925,
+        "aug_noise_std": 0.019889925352278202
+      },
+      "dataset_npy_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\dataset_landmarks_10frames"
+    },
+    {
+      "max_frames": 12,
+      "study_name": "tinyskeleton_lsa_v2_frames_12",
+      "best_value": 0.3627061171734587,
+      "n_trials": 5,
+      "best_params": {
+        "hidden_dim": 64,
+        "num_heads": 8,
+        "max_frames": 12,
+        "num_layers": 3,
+        "dropout_rate": 0.2101482628974849,
+        "batch_size": 32,
+        "lr": 2.3286555448206646e-05,
+        "weight_decay": 0.05018946424099407,
+        "label_smoothing": 0.02454633545596289,
+        "aug_noise_std": 0.028933102437191997
+      },
+      "dataset_npy_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\dataset_landmarks_12frames"
+    },
+    {
+      "max_frames": 14,
+      "study_name": "tinyskeleton_lsa_v2_frames_14",
+      "best_value": 0.5390065772102234,
+      "n_trials": 6,
+      "best_params": {
+        "hidden_dim": 256,
+        "num_heads": 4,
+        "max_frames": 14,
+        "num_layers": 1,
+        "dropout_rate": 0.4890224443491307,
+        "batch_size": 16,
+        "lr": 1.9627753422058323e-05,
+        "weight_decay": 0.011805782366114488,
+        "label_smoothing": 0.042839491678025594,
+        "aug_noise_std": 0.012779078331281085
+      },
+      "dataset_npy_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\dataset_landmarks_14frames"
+    }
+  ],
+  "fixed": {
+    "use_data_augmentation": true,
+    "virtual_multiplier": 25,
+    "samples_per_class": 60
+  }
+}
