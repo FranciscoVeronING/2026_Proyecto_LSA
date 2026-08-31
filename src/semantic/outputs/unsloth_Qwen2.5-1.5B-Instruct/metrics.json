@@ -1,13 +1,13 @@
 {
-    "model_name": "unsloth/Qwen2.5-3B-Instruct",
+    "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
     "total_test_samples": 115,
-    "train_loss_final": 0.17883497097650947,
-    "accuracy_strict_percent": 93.04,
-    "accuracy_normalized_percent": 93.04,
-    "bleu_score": 95.22,
-    "rouge_l_score": 97.06,
-    "meteor_score": 95.79,
-    "avg_latency_ms": 551.64,
+    "train_loss_final": 0.18817049899745894,
+    "accuracy_strict_percent": 87.83,
+    "accuracy_normalized_percent": 87.83,
+    "bleu_score": 87.77,
+    "rouge_l_score": 93.17,
+    "meteor_score": 92.42,
+    "avg_latency_ms": 349.94,
     "ejemplos_evaluados": [
         {
             "glosas": "HERMANO MUJER QUIÉN",
@@ -27,7 +27,7 @@
         {
             "glosas": "YO NOMBRE REPETIR",
             "esperado": "Yo repito mi nombre.",
-            "predicho": "Yo repito el nombre."
+            "predicho": "Repito mi nombre."
         },
         {
             "glosas": "HOLA",
@@ -67,7 +67,7 @@
         {
             "glosas": "CASA FAMILIA VIVIR CUANTOS",
             "esperado": "¿Cuántas familias viven en la casa?",
-            "predicho": "¿Cuántas casas tiene tu familia?"
+            "predicho": "¿Cuántos años tiene tu familia viviendo en la casa?"
         },
         {
             "glosas": "NOSOTROS HOMBRE LLEVAR",
@@ -82,7 +82,7 @@
         {
             "glosas": "AYER ELLOS MUJER VOS ROBAR DÓNDE",
             "esperado": "¿Dónde te robaron ellas ayer?",
-            "predicho": "¿Dónde te robaron ellas?"
+            "predicho": "¿Dónde te robaron ellas ayer?"
         },
         {
             "glosas": "CALLE DÓNDE",
@@ -172,7 +172,7 @@
         {
             "glosas": "CASA CALLE B E L G R A N O YO VIVIR_EN",
             "esperado": "Vivo en la casa de la calle Belgrano.",
-            "predicho": "Yo vivo en la calle Belgrano."
+            "predicho": "Mi casa está en Belgrano."
         },
         {
             "glosas": "ELLOS MUJER YO ROBAR",
@@ -237,7 +237,7 @@
         {
             "glosas": "NOSOTROS ROBAR",
             "esperado": "Robamos.",
-            "predicho": "Robamos."
+            "predicho": "Le robaron."
         },
         {
             "glosas": "YO ESPOSO TENER",
@@ -272,7 +272,7 @@
         {
             "glosas": "EL VER",
             "esperado": "Ve.",
-            "predicho": "Veo."
+            "predicho": "Vi."
         },
         {
             "glosas": "MAMA DÓNDE",
@@ -297,12 +297,12 @@
         {
             "glosas": "YO APELLIDO D I A Z",
             "esperado": "Yo me apellido Díaz.",
-            "predicho": "Me apellido Díaz."
+            "predicho": "Mi apellido es Díaz."
         },
         {
             "glosas": "HOY_AHORA BIEN",
             "esperado": "Ahora estoy bien.",
-            "predicho": "Hoy estoy bien."
+            "predicho": "Ahora estoy bien."
         },
         {
             "glosas": "FAMILIA BIEN",
@@ -332,7 +332,7 @@
         {
             "glosas": "YO HIJO MUJER TENER",
             "esperado": "Yo tengo hija.",
-            "predicho": "Tengo hija."
+            "predicho": "Yo tengo hija."
         },
         {
             "glosas": "AYER ELLOS VOS ROBAR",
@@ -352,12 +352,12 @@
         {
             "glosas": "PLAZA NOSOTROS VER CUÁNDO",
             "esperado": "¿Cuándo nos vemos en la plaza?",
-            "predicho": "¿Cuándo nos vemos en la plaza?"
+            "predicho": "Nosotros nos vamos a la plaza cuando?."
         },
         {
             "glosas": "YO LLEVAR",
             "esperado": "Yo llevo.",
-            "predicho": "Llevo."
+            "predicho": "Yo llevo."
         },
         {
             "glosas": "NOSOTROS BRAZO LASTIMAR",
@@ -367,7 +367,7 @@
         {
             "glosas": "HOY_AHORA YO BIEN",
             "esperado": "Ahora me siento bien.",
-            "predicho": "Hoy estoy bien."
+            "predicho": "Ahora estoy bien."
         },
         {
             "glosas": "DOCUMENTO DÓNDE",
@@ -382,7 +382,7 @@
         {
             "glosas": "EL BRAZO LASTIMAR",
             "esperado": "Se lastimó el brazo.",
-            "predicho": "Se lastimó el brazo."
+            "predicho": "Me lastimé el brazo."
         },
         {
             "glosas": "CALLE B E L G R A N O YO VIVIR_EN",
@@ -442,22 +442,22 @@
         {
             "glosas": "NOSOTROS ROSTRO LASTIMAR NO",
             "esperado": "No nos lastimamos la cara.",
-            "predicho": "Nosotros no nos lastimamos la cara."
+            "predicho": "Nosotros nos lastimamos la cara."
         },
         {
             "glosas": "DIA QUÉ",
             "esperado": "¿Qué día?",
-            "predicho": "¿Qué día?"
+            "predicho": "¿Qué día es?"
         },
         {
             "glosas": "HOY_AHORA PLAZA NOSOTROS MUJER VER",
             "esperado": "Ahora nosotras nos vemos en la plaza.",
-            "predicho": "Ahora nosotras nos vemos en la plaza."
+            "predicho": "Ahora nosotras nos vamos a la plaza."
         },
         {
             "glosas": "CASA CALLE B E L G R A N O YO VIVIR_EN",
             "esperado": "Yo vivo en la casa de la calle Belgrano.",
-            "predicho": "Yo vivo en la calle Belgrano."
+            "predicho": "Mi casa está en Belgrano."
         },
         {
             "glosas": "YO DOCUMENTO NUMERO 3 0 1 1 1 2 2 2",
@@ -517,17 +517,17 @@
         {
             "glosas": "YO HIJO MUJER TENER",
             "esperado": "Tengo una hija.",
-            "predicho": "Tengo hija."
+            "predicho": "Yo tengo hija."
         },
         {
             "glosas": "DIA QUÉ",
             "esperado": "¿Qué día es?",
-            "predicho": "¿Qué día?"
+            "predicho": "¿Qué día es?"
         },
         {
             "glosas": "PASADO EL LLAMAR",
             "esperado": "Llamó.",
-            "predicho": "Llamó."
+            "predicho": "Llamé."
         },
         {
             "glosas": "MARTES YO L U I S LLAMAR",
@@ -552,12 +552,12 @@
         {
             "glosas": "EL VIVIR",
             "esperado": "Vive acá.",
-            "predicho": "Vive acá."
+            "predicho": "Vivimos acá."
         },
         {
             "glosas": "VOS TENER",
             "esperado": "Vos tenés.",
-            "predicho": "Tenés."
+            "predicho": "Tienes."
         },
         {
             "glosas": "MIO MAMA",

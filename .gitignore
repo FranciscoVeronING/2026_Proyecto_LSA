@@ -19,3 +19,5 @@ src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/*
 
 !src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/metrics.json
 !src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/README.md
+
+src/semantic/outputs/*/checkpoint*

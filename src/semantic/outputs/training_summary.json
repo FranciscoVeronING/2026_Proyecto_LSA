@@ -1,0 +1,118 @@
+{
+  "runs": [
+    {
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "started_at": "2026-08-31T17:16:40.115651+00:00",
+      "finished_at": "2026-08-31T17:28:52.131408+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 86.09,
+        "accuracy_normalized_percent": 86.09,
+        "bleu_score": 88.6,
+        "rouge_l_score": 92.52,
+        "meteor_score": 92.74,
+        "avg_latency_ms": 309.09,
+        "train_loss_final": 0.22874255803697136
+      }
+    },
+    {
+      "id": "qwen2.5-1.5b",
+      "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
+      "label": "Qwen2.5 1.5B",
+      "started_at": "2026-08-31T17:28:52.131910+00:00",
+      "finished_at": "2026-08-31T17:50:47.259651+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 87.83,
+        "accuracy_normalized_percent": 87.83,
+        "bleu_score": 87.77,
+        "rouge_l_score": 93.17,
+        "meteor_score": 92.42,
+        "avg_latency_ms": 349.94,
+        "train_loss_final": 0.18817049899745894
+      }
+    },
+    {
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "started_at": "2026-08-31T17:50:47.261155+00:00",
+      "finished_at": "2026-08-31T18:29:49.773343+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 93.04,
+        "accuracy_normalized_percent": 93.04,
+        "bleu_score": 95.22,
+        "rouge_l_score": 97.06,
+        "meteor_score": 95.79,
+        "avg_latency_ms": 551.64,
+        "train_loss_final": 0.17883497097650947
+      }
+    },
+    {
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "started_at": "2026-08-31T18:29:49.774343+00:00",
+      "finished_at": "2026-08-31T18:48:44.875450+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 88.7,
+        "accuracy_normalized_percent": 88.7,
+        "bleu_score": 88.35,
+        "rouge_l_score": 95.56,
+        "meteor_score": 94.61,
+        "avg_latency_ms": 247.38,
+        "train_loss_final": 0.2436991549016017
+      }
+    },
+    {
+      "id": "phi-3-mini-4k",
+      "model_name": "unsloth/Phi-3-mini-4k-instruct",
+      "label": "Phi-3 mini 4k (Microsoft)",
+      "started_at": "2026-08-31T18:48:44.876451+00:00",
+      "finished_at": "2026-08-31T19:26:24.715124+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Phi-3-mini-4k-instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Phi-3-mini-4k-instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 93.04,
+        "accuracy_normalized_percent": 93.04,
+        "bleu_score": 92.36,
+        "rouge_l_score": 97.03,
+        "meteor_score": 95.42,
+        "avg_latency_ms": 481.47,
+        "train_loss_final": 0.1832535772005339
+      }
+    },
+    {
+      "id": "smollm2-1.7b",
+      "model_name": "unsloth/SmolLM2-1.7B-Instruct",
+      "label": "SmolLM2 1.7B",
+      "started_at": "2026-08-31T19:26:24.716124+00:00",
+      "finished_at": "2026-08-31T19:47:14.687138+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 87.83,
+        "accuracy_normalized_percent": 87.83,
+        "bleu_score": 92.35,
+        "rouge_l_score": 94.53,
+        "meteor_score": 93.32,
+        "avg_latency_ms": 340.46,
+        "train_loss_final": 0.20389006336503054
+      }
+    }
+  ]
+}
