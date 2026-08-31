@@ -7,7 +7,8 @@
 > **Eval baseline, luz ambiente:** `src/model/2026_08_18_model_no_opt/eval_91senias_20260818_202845.csv` (18/08)  
 > **Eval Optuna v2, mejor luz:** `src/model/2026_08_26_model_opt/eval_94senias_20260828_202929_opt.csv` (28/08 20:29)  
 > **Eval baseline, mejor luz:** `src/model/2026_08_18_model_no_opt/eval_94senias_20260828_222229_no_opt.csv` (28/08 22:22)  
-> **Eval 10f/3L (Maite), 31/08:** `src/eval_94senias_20260831_091857.csv` (09:18–09:26)  
+> **Eval 10f/3L (Maite), 31/08 mañana:** `src/eval_94senias_20260831_091857.csv` (09:18–09:26)  
+> **Eval apareada 3 modelos, 31/08 tarde:** `src/eval_94senias_20260831_151057.csv` (15:11–15:17; misma captura para las tres redes)  
 > **Bitácora de la rama:** `docs/cambios_scratch-mediapipe-v2.md`  
 > **Autores:** Francisco Veron, Maite Nigro
 
@@ -513,3 +514,66 @@ Criterio de producto: glosa al módulo semántico + (eventual) deletreo, en webc
 **Decisión:** copiar `2026_08_18_model_no_opt/tinyskeleton_best.pth` → `src/model/tinyskeleton_best.pth` y dejar `config.py` en `MAX_FRAMES=16`, `HIDDEN_DIM=128`, `NUM_HEADS=4`, `NUM_LAYERS=2`, `DROPOUT_RATE=0.4`. En el mapeo post-clasificador, colapsar los cuatro pares homógrafos (O/0, G/años, L/lunes, F/donde) para no mandar al semántico dos “clases” que son la misma seña.
 
 No hace falta otro Optuna de capacidad (3 capas / 10 frames) antes de integrar: el offline de 99% no se traduce a cámara, y la red queda menos segura para un pipeline que consume top-1/top-3.
+
+La eval apareada del 31/08 15:11 (§14) **confirma** esta decisión: misma seña, mismos landmarks, las tres redes a la vez. El baseline sigue primero; Optuna v2 ya no gana ni el top-3.
+
+---
+
+## 14. Eval apareada — tres modelos a la vez (31/08 15:11)
+
+`camera.py --eval` ahora deja **elegir varios checkpoints en la misma corrida**. Cada take se recorta una sola vez y se infiere en paralelo; el CSV tiene una fila por (seña, modelo). Eso saca de la comparación la luz, la ejecución y el jitter de MediaPipe.
+
+Fuente: `src/eval_94senias_20260831_151057.csv`.  
+31/08, 15:11–15:17 (~6 min), mano derecha, captura `auto`, 94 señas × 3 modelos = 282 filas.
+
+| `model` en el CSV | Red |
+|-------------------|-----|
+| `2026_08_18_model_no_opt` | Baseline 16f / 128 / 4h / 2L |
+| `2026_08_26_model_opt` | Optuna v2 12f / 256 / 2h / 2L |
+| `2026_08_29_model_opt` | 10f / 256 / 2h / 3L (Maite) |
+
+### 14.1 Métricas (mismo take)
+
+Protocolo: O ≡ 0, G ≡ años, L ≡ lunes, F ≡ donde.
+
+| Criterio | Baseline 16f | Optuna 12f | 10f / 3L |
+|----------|--------------|------------|----------|
+| Top-1 crudo | **81/94 (86,2%)** | 78/94 (83,0%) | 72/94 (76,6%) |
+| Top-1 equivalencias | **83/94 (88,3%)** | 80/94 (85,1%) | 75/94 (79,8%) |
+| Top-3 equivalencias | **92/94 (97,9%)** | 90/94 (95,7%) | 88/94 (93,6%) |
+| Fuera del top-3 | **2** | 4 | 6 |
+| Dígitos (equiv.) | **10/10 (100%)** | 9/10 (90%) | 9/10 (90%) |
+| Letras (equiv.) | **25/27 (92,6%)** | 23/27 (85,2%) | 23/27 (85,2%) |
+| Léxico (equiv.) | **48/57 (84,2%)** | **48/57 (84,2%)** | 43/57 (75,4%) |
+| Acierta si conf ≥ 0,90 | 95,9% (70/73) | **98,6% (71/72)** | 87,1% (74/85) |
+
+Δ vs baseline (equivalencias): Optuna **−3,2 pp** top-1 y **−2,2 pp** top-3. 10f/3L **−8,5 pp** top-1 y **−4,3 pp** top-3.
+
+Los pares suman poco en esta sesión: baseline +2 (`O`→`0`, `años`→`G`); Optuna +2 (`L`→`lunes`, `años`→`G`; `O` fue a `robar` y `0` no estaba en el ranking); 10f/3L +3 (`O`, `L`, `años`).
+
+Fuera del top-3:
+
+- Baseline: `repetir`, `tener`
+- Optuna 12f: `I`, `repetir`, `tener`, `vos`
+- 10f/3L: `I`, `R`, `T`, `nombre`, `repetir`, `tener`
+
+### 14.2 Pareo seña a seña (top-1 con equivalencias)
+
+Las tres aciertan **69** señas. Las tres fallan **6**: `I`, `ellos`, `papa`, `repetir`, `tener`, `vos`.
+
+| | n | Señas |
+|--|---|--------|
+| Solo el baseline acierta | **5** | `R`, `bien`, `casa`, `cuando`, `llamar` |
+| Solo Optuna 12f | 2 | `T`, `que` |
+| Solo 10f/3L | **0** | — |
+
+Baseline → Optuna: Optuna gana 5 (`T hijo_a llevar que vivir`) y pierde 8 (`6 O R Y bien casa cuando llamar`).  
+Baseline → 10f/3L: gana 3 (`hijo_a llevar vivir`) y pierde **11**. Ninguna seña es exclusiva del 10f/3L.
+
+Calibración: el 10f/3L sigue disparando confianza ~1,0 cuando se equivoca (`R`→`ver`, `ellos`→`ahora_hoy`, `lugar`→`mal`, `nombre`→`hola`, `papa`→`quien`, `repetir`→`cuchillo`, `4`→`5`). El umbral 0,75 no lo salva.
+
+### 14.3 Lectura para integrar
+
+En sesiones separadas Optuna parecía mejor en top-3 (97,9% vs 95,7%). **Con el mismo take no:** el baseline cubre 92/94 y Optuna 90/94. El argumento de “reservar Optuna para el módulo semántico” se debilita.
+
+Sigue valiendo el §13: **integrar el baseline 16f / 128 / 4h / 2L**. Las evals viejas (una red por CSV) sirven de histórico; para decidir checkpoint, esta corrida es la que cuenta.
