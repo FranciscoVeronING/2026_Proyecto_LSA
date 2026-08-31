@@ -9,7 +9,7 @@ SAMPLES_PER_CLASS = 60
 # Secuencia temporal unificada: preprocessing, entrenamiento e inferencia usan el mismo valor.
 # Si tenés .npy viejos con otra cantidad de frames, train los re-muestrea automáticamente.
 # Optuna v2 explora max_frames en {8, 12, 16, 24} subsampleando estos .npy (hace falta T>=24).
-MAX_FRAMES = 16
+MAX_FRAMES = 10
 TARGET_FRAMES = MAX_FRAMES
 
 
@@ -134,10 +134,10 @@ INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 # ==========================================
 # HIPERPARÁMETROS DEL TINY TRANSFORMER
 # ==========================================
-HIDDEN_DIM = 128
-NUM_HEADS = 4
-NUM_LAYERS = 2
-DROPOUT_RATE = 0.4
+HIDDEN_DIM = 256
+NUM_HEADS = 2
+NUM_LAYERS = 3
+DROPOUT_RATE = 0.6
 
 # ==========================================
 # ENTRENAMIENTO Y DATA AUGMENTATION

@@ -31,11 +31,12 @@ Con **buena luz**, el checkpoint que conviene para el prototipo es el **baseline
 |--|--------------------|----------------------------|-------|
 | Baseline 16f, luz buena | **86,2%** | **90,4%** | 95,7% |
 | Optuna 12f, luz buena | 80,9% | 86,2% | **97,9%** |
+| 10f / 3 capas (31/08) | 77,7% | 80,9% | 87,2% |
 | Baseline 16f, luz mala (18/08) | 67,0% | 69,1% | 89,4% |
 
-A igual iluminación Optuna **pierde ~4 pp** en top-1 (sobre todo letras) y gana ~2 pp en top-3. El salto 67% → 86% del 18/08 al 28/08 fue **luz**, no el search. Offline no anticipa el vivo (98,4% vs 97,8% val).
+A igual iluminación Optuna **pierde ~4 pp** en top-1 (sobre todo letras) y gana ~2 pp en top-3. La red de 10 frames / 3 capas gana offline (99%) y **pierde en cámara** (peor top-1, peor top-3, muy mal calibrada). El salto 67% → 86% del 18/08 al 28/08 fue **luz**, no el search.
 
-Números, pareos y protocolo: [docs/Relevamiento_clasificador_agosto_2026.md](docs/Relevamiento_clasificador_agosto_2026.md).
+**Integrar el baseline 16f / 128 / 4 heads.** Detalle: [docs/Relevamiento_clasificador_agosto_2026.md](docs/Relevamiento_clasificador_agosto_2026.md) (§13).
 
 ---
 

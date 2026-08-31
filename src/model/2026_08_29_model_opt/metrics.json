@@ -1,5 +1,4 @@
 {
-<<<<<<<< HEAD:src/model/2026_08_29_model_opt/metrics.json
   "timestamp": "2026-08-29T23:42:36.852235+00:00",
   "best_val_loss": 0.16335669056408936,
   "val_accuracy_top1_pct": 99.02,
@@ -11,19 +10,6 @@
   "num_heads": 2,
   "num_layers": 3,
   "dropout_rate": 0.6,
-========
-  "timestamp": "2026-08-27T00:23:43.851867+00:00",
-  "best_val_loss": 0.07952477781671202,
-  "val_accuracy_top1_pct": 97.78,
-  "num_classes": 94,
-  "num_train_samples": 4512,
-  "num_val_samples": 1128,
-  "max_frames": 12,
-  "hidden_dim": 256,
-  "num_heads": 2,
-  "num_layers": 2,
-  "dropout_rate": 0.5715233552753011,
->>>>>>>> f7c58410738775316369b9f4d4fe602a9b525f57:src/model/2026_08_18_model_no_opt/metrics.json
   "use_data_augmentation": true,
   "virtual_multiplier": 25,
   "aug_scale_range": [
@@ -31,11 +17,7 @@
     1.15
   ],
   "aug_pose_noise_std": 0.012,
-<<<<<<<< HEAD:src/model/2026_08_29_model_opt/metrics.json
   "aug_hand_noise_std": 0.0199,
-========
-  "aug_hand_noise_std": 0.026646077410572046,
->>>>>>>> f7c58410738775316369b9f4d4fe602a9b525f57:src/model/2026_08_18_model_no_opt/metrics.json
   "aug_rot_yaw_deg": 15.0,
   "aug_rot_pitch_deg": 8.0,
   "aug_rot_roll_deg": 8.0,
@@ -46,11 +28,7 @@
   "aug_temporal_crop_frac": 0.15,
   "aug_frame_dropout_max": 3,
   "samples_per_class": 60,
-<<<<<<<< HEAD:src/model/2026_08_29_model_opt/metrics.json
   "epochs_ran": 44,
-========
-  "epochs_ran": 22,
->>>>>>>> f7c58410738775316369b9f4d4fe602a9b525f57:src/model/2026_08_18_model_no_opt/metrics.json
   "classes": [
     "como",
     "cuando",

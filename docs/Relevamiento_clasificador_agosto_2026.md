@@ -1,11 +1,13 @@
 # Relevamiento — clasificador TinySkeleton (agosto 2026)
 
 > **Rama:** `scratch-mediapipe-v2`  
-> **Entrenamiento baseline (sin Optuna):** 18/08/2026 — 16 frames, 128/4h/2L (`src/model/metrics.json` de esa fecha)  
-> **Entrenamiento Optuna v2:** 27/08/2026 — 12 frames, 256/2h/2L (`src/model/metrics.json`, `optuna_best_v2.json`)  
-> **Eval en vivo baseline (luz ambiente):** `src/eval_91senias_20260818_202845.csv` (18/08)  
-> **Eval en vivo Optuna (mejor luz):** `src/eval_94senias_20260828_202929_opt.csv` (28/08 20:29)  
-> **Eval en vivo baseline (mejor luz):** `src/eval_94senias_20260828_222229_no_opt.csv` (28/08 22:22; mismo modelo 16f/128/4, no Optuna)  
+> **Entrenamiento baseline (Francisco, sin Optuna):** 18/08/2026 — 16 frames, 128/4h/2L  
+> **Entrenamiento Optuna v2 (Francisco):** 27/08/2026 — 12 frames, 256/2h/2L  
+> **Entrenamiento 10f / 3 capas (Maite):** 29/08/2026 — 10 frames, 256/2h/**3L**, dropout 0,6 (`src/model/2026_08_29_model_opt/metrics.json`)  
+> **Eval baseline, luz ambiente:** `src/model/2026_08_18_model_no_opt/eval_91senias_20260818_202845.csv` (18/08)  
+> **Eval Optuna v2, mejor luz:** `src/model/2026_08_26_model_opt/eval_94senias_20260828_202929_opt.csv` (28/08 20:29)  
+> **Eval baseline, mejor luz:** `src/model/2026_08_18_model_no_opt/eval_94senias_20260828_222229_no_opt.csv` (28/08 22:22)  
+> **Eval 10f/3L (Maite), 31/08:** `src/eval_94senias_20260831_091857.csv` (09:18–09:26)  
 > **Bitácora de la rama:** `docs/cambios_scratch-mediapipe-v2.md`  
 > **Autores:** Francisco Veron, Maite Nigro
 
@@ -401,4 +403,113 @@ Pendiente, ya no es “falta de dato genérico” ni “hay que atribuir 14 pp a
 1. **Fronteras que no resuelve ninguna de las dos redes** — `D`, `ellos`/`nosotros`/`ahora_hoy`, `repetir`, `vos`, `nombre`.
 2. **Pares homógrafos** — O ≡ 0, G ≡ años, y letra estática / seña en movimiento (L ≡ lunes, F ≡ donde). Tratarlos como una sola clase en eval y, si hace falta, en el mapeo.
 3. **Calibración** — umbral 0,75 no salva `repetir`→`documento` a 0,997 ni `nosotros`→`ahora_hoy`/`P`.
-4. **Qué checkpoint usar en el prototipo** — 16f/128/4 si importa deletreo y top-1; Optuna 12f/256/2 si importa cubrir top-3 para el módulo semántico.
+4. **Qué checkpoint usar en el prototipo** — 16f/128/4 si importa deletreo y top-1; Optuna 12f/256/2 si importa cubrir top-3 para el módulo semántico. La corrida de 10 frames / 3 capas (§11–13) **no** cambia esta lectura: empeora webcam.
+
+---
+
+## 11. Eval 31/08 — red 10 frames / 3 capas (Maite)
+
+Fuente: `src/eval_94senias_20260831_091857.csv`.  
+Entrenamiento: 29/08 (`src/model/2026_08_29_model_opt/metrics.json`).  
+Eval: 31/08, 09:18–09:26 (~8 min), mano derecha, captura `auto`, 94 señas. Francisco corrió el `--eval` sobre el checkpoint de Maite.
+
+| Hiperparámetro | Baseline 18/08 | Optuna v2 27/08 | Esta red 29/08 |
+|----------------|----------------|-----------------|----------------|
+| `MAX_FRAMES` | 16 | 12 | **10** |
+| `HIDDEN_DIM` | 128 | 256 | 256 |
+| `NUM_HEADS` | 4 | 2 | 2 |
+| `NUM_LAYERS` | 2 | 2 | **3** |
+| `DROPOUT_RATE` | 0,40 | 0,57 | **0,60** |
+| Val acc offline | 98,40% | 97,78% | **99,02%** |
+| Val loss | 0,095 | **0,080** | 0,163 |
+| Épocas | 29 | 22 | **44** |
+
+Offline es el **mejor top-1** de agosto y, otra vez, el vivo no lo sigue. Val loss peor que Optuna v2 (0,163 vs 0,080) con una capa extra y más épocas: huele a overfit del split, no a un modelo más usable en cámara.
+
+### 11.1 Números crudos y equivalencias
+
+| Métrica | Crudo | O ≡ 0 + G ≡ años + L ≡ lunes + F ≡ donde |
+|---------|-------|------------------------------------------|
+| Top-1 | 73/94 (**77,7%**) | **76/94 (80,9%)** |
+| Top-3 | 81/94 (**86,2%**) | **82/94 (87,2%)** |
+| Fuera del top-3 | 13 | **12** |
+| Confianza media aciertos / errores | 0,99 / **0,92** | — |
+
+Los pares solo suman **+3** top-1 (`O`, `años`, `F`). El protocolo **no alcanza** cuando el equivalente ni entra al ranking:
+
+- `0` → `hola` (1,000); `0`/`O` no están en el top-3 → el dígito queda fuera.
+- `G` → `R` (1,000); `años` no está en el ranking → G ≡ años no salva esta fila.
+- `O` sí se recupera (`0` en top-2). `años` sí (`G` top-1). `F` sí (`donde` top-1, `F` top-2). `L`/`lunes` ya eran acierto.
+
+Fuera del top-3 (con equivalencias): `0`, `G`, `K`, `N`, `T`, `ayer`, `ellos`, `lugar`, `nombre`, `nosotros`, `repetir`, `vos`.
+
+Por familia:
+
+| Familia | n | Top-1 crudo | Top-1 equivalencias | Top-3 equivalencias |
+|---------|---|-------------|---------------------|---------------------|
+| Dígitos | 10 | 9/10 (90,0%) | 9/10 (90,0%) | 9/10 |
+| Letras | 27 | 20/27 (74,1%) | **22/27 (81,5%)** | 23/27 (85,2%) |
+| Léxico | 57 | 44/57 (77,2%) | 45/57 (78,9%) | 50/57 (87,7%) |
+
+**Calibración (el problema grave):** por encima de 0,90 acierta solo **83,9%** (73/87). Errores a ≥0,99: catorce, entre ellos `0`→`hola`, `G`→`R`, `N`→`P`, `T`→`I`, `ayer`→`5`, `nosotros`→`ahora_hoy`, `repetir`→`hola`, `vos`→`quien`, todos a ~1,0. Un umbral 0,75 **no filtra nada**. El módulo semántico recibiría glosas falsas con cara de certeza.
+
+Único plus claro: `D` sale top-1 (en las otras tres evals de agosto fallaba). No compensa las 12 señas fuera del ranking.
+
+---
+
+## 12. Comparativa a cuatro evals
+
+Protocolo: O ≡ 0, G ≡ años, L ≡ lunes, F ≡ donde. Las tres del 28/08 y 31/08 son sesiones distintas; la del 31/08 es de mañana. No hay un control de luz apareado con el 28/08, pero la brecha y la calibración no se explican solo con eso.
+
+| Criterio | 18/08 baseline, luz mala | 28/08 baseline, luz buena | 28/08 Optuna 12f | 31/08 10f/3L |
+|----------|--------------------------|---------------------------|------------------|--------------|
+| Top-1 crudo | 67,0% | **86,2%** | 80,9% | 77,7% |
+| Top-1 equivalencias | 69,1% | **90,4%** | 86,2% | 80,9% |
+| Top-3 equivalencias | 89,4% | 95,7% | **97,9%** | 87,2% |
+| Fuera del top-3 | 10 | 4 | **2** | **12** |
+| Dígitos (equiv.) | 50% | **100%** | **100%** | 90% |
+| Letras (equiv.) | 81,5% | **96,3%** | 81,5% | 81,5% |
+| Léxico (equiv.) | 66,7% | **86,0%** | **86,0%** | 78,9% |
+| Acierta si conf ≥ 0,90 | 81,8% | 96,2% | **98,6%** | 83,9% |
+
+### 12.1 Contra el baseline 16f (luz buena)
+
+Pareo top-1 con equivalencias (28/08 22:22 vs 31/08):
+
+| | n | Señas |
+|--|---|--------|
+| Acierto en ambas | 73 | — |
+| Error en ambas | **6** | `ellos`, `martes`, `nombre`, `nosotros`, `repetir`, `vos` |
+| Ganó 10f/3L | **3** | `D`, `mal`, `miercoles` |
+| Perdió 10f/3L | **12** | `0 G K N T X ayer calle casa cuando lugar papa` |
+
+El 10f/3L pierde **12** y gana 3. Letras 96,3% → 81,5%. Top-3 95,7% → 87,2% (12 fuera vs 4). El colchón del módulo semántico se achica.
+
+### 12.2 Contra Optuna v2 12f
+
+Pareo 28/08 20:29 vs 31/08:
+
+| | n | Señas |
+|--|---|--------|
+| Acierto en ambas | 70 | — |
+| Error en ambas | **7** | `N`, `cuando`, `ellos`, `nombre`, `nosotros`, `repetir`, `vos` |
+| Ganó 10f/3L | **6** | `A D V Y brazo ojo` |
+| Perdió 10f/3L | **11** | `0 G K T X ayer calle casa lugar martes papa` |
+
+Recupera algunas letras que Optuna v2 rompía (`A V Y`) y `D`, pero tira dígitos (`0`), `G`, y más léxico. Top-3: 97,9% → 87,2%. No es un recambio de Optuna; es peor en las dos métricas que importan al prototipo (top-1 vs baseline, top-3 vs Optuna).
+
+---
+
+## 13. Qué red integrar
+
+Criterio de producto: glosa al módulo semántico + (eventual) deletreo, en webcam, con umbral de confianza.
+
+| Checkpoint | Integrar | Por qué |
+|------------|----------|---------|
+| **Baseline 16f / 128 / 4h / 2L** (18/08, pesos en `src/model/2026_08_18_model_no_opt/`) | **Sí — es la red a integrar** | Mejor top-1 (90,4% equiv.), letras 96,3%, dígitos 100%, 4 fuera del top-3, calibración usable |
+| Optuna v2 12f / 256 / 2h / 2L | Reserva | Mejor top-3 (97,9%) si el semántico vive del ranking; pierde ~15 pp en letras |
+| 10f / 256 / 2h / **3L** (29/08) | **No** | Peor top-1 y peor top-3; 12 señas fuera del ranking; 14 errores a confianza ≥0,99 |
+
+**Decisión:** copiar `2026_08_18_model_no_opt/tinyskeleton_best.pth` → `src/model/tinyskeleton_best.pth` y dejar `config.py` en `MAX_FRAMES=16`, `HIDDEN_DIM=128`, `NUM_HEADS=4`, `NUM_LAYERS=2`, `DROPOUT_RATE=0.4`. En el mapeo post-clasificador, colapsar los cuatro pares homógrafos (O/0, G/años, L/lunes, F/donde) para no mandar al semántico dos “clases” que son la misma seña.
+
+No hace falta otro Optuna de capacidad (3 capas / 10 frames) antes de integrar: el offline de 99% no se traduce a cámara, y la red queda menos segura para un pipeline que consume top-1/top-3.
