@@ -151,6 +151,8 @@ class SemanticWorker:
         self._translate_glosses = None
         self.memory = ConversationMemory(maxlen=history_size)
         self.voice = voice
+        self._switch_queue: Queue = Queue(maxsize=4)
+        self._current_model_id = None
 
     def start(self):
         if not self.enabled:
@@ -158,14 +160,63 @@ class SemanticWorker:
             return
         Thread(target=self._bootstrap_and_loop, args=(), daemon=True).start()
 
-    def _bootstrap_and_loop(self):
+    def switch_model(self, model_id: str):
+        """Pide cambio de GGUF al hilo de la LLM (sin reiniciar la cámara)."""
+        if not self.enabled or not model_id:
+            return
         try:
-            from semantic.translator import load_model_and_tokenizer, translate_glosses
+            while True:
+                self._switch_queue.get_nowait()
+        except Empty:
+            pass
+        try:
+            self._switch_queue.put_nowait(model_id)
+            print(f"[*] Cambio de modelo semántico pedido: {model_id}")
+        except Exception:
+            print(f"[!] No se pudo encolar el cambio a {model_id}")
 
+    def _apply_model_switch(self, model_id: str):
+        from semantic.translator import switch_model, translate_glosses, get_active_model_id
+
+        with shared_state["lock"]:
+            shared_state["semantic_busy"] = True
+            shared_state["spanish_text"] = f"Cargando {model_id}..."
+            shared_state["semantic_model"] = model_id
+
+        try:
+            switch_model(model_id)
+            self._translate_glosses = translate_glosses
+            self._current_model_id = get_active_model_id() or model_id
+            self.ready = True
+            print(f"[*] Traductor semántico listo ({self._current_model_id}).")
+            status = f"Modelo: {self._current_model_id}"
+        except Exception as e:
+            print(f"[!] No se pudo cargar {model_id}: {e}")
+            self._translate_glosses = None
+            self.ready = False
+            status = f"Error al cargar {model_id}"
+
+        with shared_state["lock"]:
+            shared_state["spanish_text"] = status
+            shared_state["semantic_busy"] = False
+            shared_state["semantic_model"] = self._current_model_id or ""
+
+    def _bootstrap_and_loop(self):
+        from semantic.config import DEFAULT_MODEL_ID
+        from semantic.translator import (
+            get_active_model_id,
+            load_model_and_tokenizer,
+            translate_glosses,
+        )
+
+        try:
             load_model_and_tokenizer()
             self._translate_glosses = translate_glosses
+            self._current_model_id = get_active_model_id() or DEFAULT_MODEL_ID
             self.ready = True
-            print("[*] Traductor semántico listo.")
+            with shared_state["lock"]:
+                shared_state["semantic_model"] = self._current_model_id
+            print(f"[*] Traductor semántico listo ({self._current_model_id}).")
         except Exception as e:
             print(f"[!] No se pudo iniciar el traductor: {e}")
             print("[!] La cámara sigue; solo glosas, sin LLM.")
@@ -174,6 +225,14 @@ class SemanticWorker:
             self.ready = False
 
         while is_running():
+            try:
+                pending_model = self._switch_queue.get_nowait()
+            except Empty:
+                pending_model = None
+            if pending_model:
+                if pending_model != self._current_model_id or not self.ready:
+                    self._apply_model_switch(pending_model)
+                continue
             try:
                 glosses = self.queue.get(timeout=0.2)
             except Empty:

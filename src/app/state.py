@@ -20,6 +20,7 @@ shared_state = {
     "last_utterance": "",
     "spanish_text": "",
     "semantic_busy": False,
+    "semantic_model": "",
     "conversation_turns": 0,
     "lock": Lock(),
     "running": True,

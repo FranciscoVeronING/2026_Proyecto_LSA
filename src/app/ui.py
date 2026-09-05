@@ -81,6 +81,154 @@ class Slider:
         cv2.rectangle(canvas, (self.x, self.y), (self.x + self.w, self.y + self.h), (150, 150, 150), 1)
 
 
+class Dropdown:
+    """Selector de una opción. El menú se dibuja encima del resto del panel."""
+
+    OPTION_H = 26
+
+    def __init__(self, x, y, w, h, options, selected_id, label):
+        self.x, self.y, self.w, self.h = x, y, w, h
+        self.options = list(options or [])
+        self.selected_id = selected_id
+        self.label = label
+        self.open = False
+
+    def set_options(self, options, selected_id=None):
+        self.options = list(options or [])
+        if selected_id is not None:
+            self.selected_id = selected_id
+
+    def _header_hit(self, mx, my):
+        return self.x <= mx <= self.x + self.w and self.y <= my <= self.y + self.h
+
+    def _selected_label(self):
+        for opt in self.options:
+            if opt["id"] == self.selected_id:
+                suffix = "" if opt.get("available", True) else " (sin .gguf)"
+                return opt.get("label", opt["id"]) + suffix
+        return str(self.selected_id or "-")
+
+    def update(self, mouse_x, mouse_y, clicked_event):
+        """
+        Devuelve (nuevo_id o None, click_consumido).
+        Si el menú está abierto, el click no debe llegar a sliders/botones.
+        """
+        if not clicked_event:
+            return None, False
+
+        if self._header_hit(mouse_x, mouse_y):
+            self.open = not self.open
+            return None, True
+
+        if self.open:
+            for i, opt in enumerate(self.options):
+                oy = self.y + self.h + i * self.OPTION_H
+                hit = (
+                    self.x <= mouse_x <= self.x + self.w
+                    and oy <= mouse_y <= oy + self.OPTION_H
+                )
+                if hit:
+                    self.open = False
+                    if not opt.get("available", True):
+                        print(f"[!] {opt['id']}: no hay archivo .gguf en outputs/")
+                        return None, True
+                    if opt["id"] != self.selected_id:
+                        self.selected_id = opt["id"]
+                        return opt["id"], True
+                    return None, True
+            self.open = False
+            return None, True
+
+        return None, False
+
+    def draw(self, canvas):
+        cv2.putText(
+            canvas,
+            self.label,
+            (self.x, self.y - 8),
+            UI_FONT,
+            0.5,
+            (200, 200, 200),
+            1,
+        )
+        header_bg = (80, 80, 80) if self.open else (50, 50, 50)
+        cv2.rectangle(
+            canvas,
+            (self.x, self.y),
+            (self.x + self.w, self.y + self.h),
+            header_bg,
+            -1,
+        )
+        cv2.rectangle(
+            canvas,
+            (self.x, self.y),
+            (self.x + self.w, self.y + self.h),
+            (0, 165, 255),
+            1,
+        )
+        label = self._selected_label()
+        cv2.putText(
+            canvas,
+            label[:28],
+            (self.x + 8, self.y + self.h - 8),
+            UI_FONT,
+            0.5,
+            (255, 255, 255),
+            1,
+        )
+        arrow = "^" if self.open else "v"
+        cv2.putText(
+            canvas,
+            arrow,
+            (self.x + self.w - 22, self.y + self.h - 8),
+            UI_FONT,
+            0.5,
+            (200, 200, 200),
+            1,
+        )
+        if not self.open:
+            return
+        for i, opt in enumerate(self.options):
+            oy = self.y + self.h + i * self.OPTION_H
+            selected = opt["id"] == self.selected_id
+            available = opt.get("available", True)
+            if selected:
+                bg = (0, 120, 80)
+            elif available:
+                bg = (45, 45, 45)
+            else:
+                bg = (30, 30, 30)
+            cv2.rectangle(
+                canvas,
+                (self.x, oy),
+                (self.x + self.w, oy + self.OPTION_H),
+                bg,
+                -1,
+            )
+            cv2.rectangle(
+                canvas,
+                (self.x, oy),
+                (self.x + self.w, oy + self.OPTION_H),
+                (120, 120, 120),
+                1,
+            )
+            text = opt.get("label", opt["id"])
+            if not available:
+                text = f"{text} (sin .gguf)"
+                color = (120, 120, 120)
+            else:
+                color = (255, 255, 255)
+            cv2.putText(
+                canvas,
+                text[:32],
+                (self.x + 8, oy + self.OPTION_H - 8),
+                UI_FONT,
+                0.48,
+                color,
+                1,
+            )
+
+
 def draw_top3_panel(canvas, top3, y_start, threshold):
     for i, (name, conf) in enumerate(top3[:3]):
         color = (0, 255, 0) if i == 0 and conf >= threshold else (200, 200, 200)

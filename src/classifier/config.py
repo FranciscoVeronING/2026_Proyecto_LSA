@@ -11,7 +11,7 @@ WEIGHTS_PATH = str(_WEIGHTS_DIR / "tinyskeleton_best.pth")
 CLASSES_PATH = str(_WEIGHTS_DIR / "mapeo_clases.json")
 METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
-MAX_FRAMES = 32
+MAX_FRAMES = 16
 
 SIGN_CLASSES = [
     "como",
@@ -131,7 +131,7 @@ VOICE = True
 HIDDEN_DIM = 128
 NUM_HEADS = 4
 NUM_LAYERS = 2
-DROPOUT_RATE = 0.3028748566702939
+DROPOUT_RATE = 0.4
 
 # ==========================================
 # DATA AUGMENTATION AND TRAINING

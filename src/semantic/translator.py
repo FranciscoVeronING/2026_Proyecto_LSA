@@ -1,252 +1,274 @@
 """
-Traductor semántico LSA → español.
+Traductor semántico LSA → español usando exclusivamente el binario GGUF (llama-cpp-python).
 """
 
 from __future__ import annotations
 
-import json
+import gc
+import os
+import sys
+import time
 from pathlib import Path
 from typing import Optional
 
-from semantic.config import (
-    ADAPTER_PATH,
-    BASE_MODEL_ID,
-    SYSTEM_PROMPT_PATH,
-    FEW_SHOTS_PATH,
-    MAX_NEW_TOKENS,
-    TEMPERATURE,
-    REPETITION_PENALTY,
-    LOAD_IN_4BIT,
-)
 
-SYSTEM_PROMPT = ""
-MODEL = None
-TOKENIZER = None
-_LOADED = False
-
-# Qwen2.5-3B en safetensors ≈ 6 GB repartidos en 2 shards. Menos de 1 GB total
-# indica descarga truncada (común en Windows sin symlinks en el cache de HF).
-_MIN_BASE_MODEL_BYTES = 1_000_000_000
+def _add_dll_dir(path: Path) -> None:
+    if not path.is_dir():
+        return
+    path_str = str(path.resolve())
+    os.environ["PATH"] = path_str + os.pathsep + os.environ.get("PATH", "")
+    if hasattr(os, "add_dll_directory"):
+        try:
+            os.add_dll_directory(path_str)
+        except OSError:
+            pass
 
 
-def _hub_cache_dir(model_id: str) -> Optional[Path]:
-    try:
-        from huggingface_hub.constants import HF_HUB_CACHE
-    except ImportError:
-        return None
-    slug = model_id.replace("/", "--")
-    return Path(HF_HUB_CACHE) / f"models--{slug}"
-
-
-def _check_base_model_cache(model_id: str) -> None:
-    """Detecta descargas truncadas antes de que safetensors crashee el proceso."""
-    cache = _hub_cache_dir(model_id)
-    if cache is None or not cache.exists():
+def _prepare_llama_native_libs() -> None:
+    """
+    En Windows llama.dll suele existir pero falla al cargar porque no encuentra
+    CUDA / MSVC. La cámara ya importó torch antes; el probe no, y entonces
+    ctypes no resuelve las dependencias.
+    """
+    if sys.platform != "win32":
         return
 
-    shards = list(cache.rglob("*.safetensors"))
-    if not shards:
-        return
-
-    total = sum(p.stat().st_size for p in shards)
-    if total >= _MIN_BASE_MODEL_BYTES:
-        return
-
-    mb = total / 1e6
-    print(
-        f"\n[!] Cache de {model_id} parece CORRUPTO ({mb:.0f} MB; "
-        f"esperado ~6000 MB).\n"
-        f"    Esto provoca crash silencioso en 'Loading checkpoint shards'.\n\n"
-        f"    Borrá el cache y volvé a descargar:\n"
-        f"      Remove-Item -Recurse -Force \"{cache}\"\n"
-        f"      python run.py --eval-semantic\n\n"
-        f"    Tip Windows: activá Modo Desarrollador para symlinks en el cache HF.\n"
-    )
-    raise RuntimeError(f"Modelo base incompleto en cache ({mb:.0f} MB)")
-
-
-def load_prompt():
-    with open(SYSTEM_PROMPT_PATH, "r", encoding="utf-8") as f:
-        system_prompt_base = f.read().strip()
+    conda_prefix = os.environ.get("CONDA_PREFIX")
+    if conda_prefix:
+        prefix = Path(conda_prefix)
+        _add_dll_dir(prefix / "Library" / "bin")
+        _add_dll_dir(prefix / "bin")
 
     try:
-        with open(FEW_SHOTS_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            few_shots = data.get("examples", [])
-    except FileNotFoundError:
-        few_shots = []
+        import torch
 
-    system_prompt_completo = system_prompt_base
-    if few_shots:
-        system_prompt_completo += "\n\nEjemplos de traducción:"
-        for ex in few_shots:
-            glosas_str = " ".join(ex["glosses"])
-            system_prompt_completo += f"\nGlosas: {glosas_str} -> Español: {ex['spanish']}"
+        torch_root = Path(torch.__file__).resolve().parent
+        _add_dll_dir(torch_root / "lib")
+        _add_dll_dir(torch_root / "bin")
+    except Exception:
+        pass
 
-    return system_prompt_completo
-
-
-def _print_vram_status() -> None:
-    import torch
-
-    if not torch.cuda.is_available():
-        print("[semantic] CUDA no disponible -> se cargara en CPU (lento).")
-        return
     try:
-        free, total = torch.cuda.mem_get_info(0)
-        print(f"[semantic] VRAM libre: {free / 1e9:.1f} / {total / 1e9:.1f} GB")
-        if free < 3e9:
-            print(
-                "[!] Poca VRAM libre. Cerrá otros procesos que usen la GPU "
-                "(otra instancia de Python, juegos, Chrome con aceleración HW)."
-            )
+        import importlib.util
+
+        spec = importlib.util.find_spec("llama_cpp")
+        origin = Path(spec.origin).resolve().parent if spec and spec.origin else None
+        if origin is not None:
+            _add_dll_dir(origin / "lib")
     except Exception:
         pass
 
 
-def _load_with_peft():
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer, logging
-    from peft import PeftModel
+_prepare_llama_native_libs()
+from llama_cpp import Llama
 
-    logging.set_verbosity_error()
-    print(f"[semantic] Loading base={BASE_MODEL_ID}")
-    print(f"[semantic] Adapter={ADAPTER_PATH}")
-    _print_vram_status()
+from semantic.config import (
+    DEFAULT_MODEL_ID,
+    SYSTEM_PROMPT_PATH,
+    MAX_NEW_TOKENS,
+    N_CTX,
+    N_GPU_LAYERS,
+    TEMPERATURE,
+    REPETITION_PENALTY,
+)
 
-    tokenizer = AutoTokenizer.from_pretrained(ADAPTER_PATH, trust_remote_code=True)
+from semantic.models import (
+    list_semantic_models,
+    resolve_gguf_path,
+    spec_by_id,
+)
 
-    load_kwargs = {
-        "trust_remote_code": True,
-        "low_cpu_mem_usage": True,
-    }
+SYSTEM_PROMPT = ""
+GGUF_MODEL: Optional[Llama] = None
+_LOADED = False
+_ACTIVE_MODEL_ID: Optional[str] = None
+_ACTIVE_CHAT_FORMAT = "chatml"
 
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-        if LOAD_IN_4BIT:
-            try:
-                from transformers import BitsAndBytesConfig
+_CHATML_STOP = ["<|im_end|>", "<|endoftext|>", "<|im_start|>"]
+_LLAMA3_STOP = ["<|eot_id|>", "<|eom_id|>", "<|start_header_id|>"]
 
-                load_kwargs["quantization_config"] = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_compute_dtype=torch.float16,
-                    bnb_4bit_use_double_quant=True,
-                    bnb_4bit_quant_type="nf4",
-                )
-                load_kwargs["device_map"] = "auto"
-                print("[semantic] Modo: 4-bit (BitsAndBytes)")
-            except ImportError:
-                print(
-                    "[semantic] LOAD_IN_4BIT=True pero falta bitsandbytes; "
-                    "usando float16. Instala: pip install bitsandbytes"
-                )
-                load_kwargs["dtype"] = torch.float16
-                load_kwargs["device_map"] = "cpu"
-                print("[semantic] Modo: float16 (CPU -> GPU)")
-        else:
-            load_kwargs["dtype"] = torch.float16
-            load_kwargs["device_map"] = "cpu"
-            print("[semantic] Modo: float16 (CPU -> GPU)")
-    else:
-        load_kwargs["dtype"] = torch.float32
-        load_kwargs["device_map"] = "cpu"
-        print("[semantic] Modo: CPU float32")
 
-    print("[semantic] Descargando/cargando pesos base (puede tardar 1-3 min)...", flush=True)
+def get_active_model_id() -> Optional[str]:
+    return _ACTIVE_MODEL_ID
+
+
+def load_prompt() -> str:
+    prompt_path = Path(SYSTEM_PROMPT_PATH)
+    if not prompt_path.exists():
+        return "Sos un traductor estricto de Lengua de Señas Argentina (LSA) a español rioplatense natural."
+    return prompt_path.read_text(encoding="utf-8").strip()
+
+
+def _gpu_layers() -> int:
+    """Evita dos runtimes CUDA a la vez: el clasificador PyTorch ya usa la GPU."""
+    if N_GPU_LAYERS is not None:
+        return int(N_GPU_LAYERS)
     try:
-        base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID, **load_kwargs)
-    except Exception as exc:
-        if "quantization_config" in load_kwargs:
-            print(f"[semantic] Carga 4-bit fallo ({exc}). Reintentando float16...")
-            load_kwargs.pop("quantization_config", None)
-            load_kwargs["dtype"] = torch.float16
-            load_kwargs["device_map"] = "cpu"
-            base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID, **load_kwargs)
-        else:
-            raise
+        import torch
 
-    if torch.cuda.is_available() and load_kwargs.get("device_map") == "cpu":
-        print("[semantic] Pesos en RAM OK. Moviendo a GPU...", flush=True)
-        base_model = base_model.to("cuda:0")
-
-    print("[semantic] Pesos base OK. Aplicando adapter LoRA...", flush=True)
-    model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
-    model.eval()
-    return model, tokenizer
+        if torch.cuda.is_available():
+            print(
+                "[semantic] PyTorch está usando CUDA: la LLM corre en CPU "
+                "(n_gpu_layers=0) para no colgar la inferencia."
+            )
+            return 0
+    except Exception:
+        pass
+    return -1
 
 
-def load_model_and_tokenizer():
-    """Carga con PEFT."""
-    global SYSTEM_PROMPT, MODEL, TOKENIZER, _LOADED
+def _to_chatml(messages: list[dict]) -> str:
+    chunks = []
+    for msg in messages:
+        role = msg.get("role") or "user"
+        content = msg.get("content") or ""
+        chunks.append(f"<|im_start|>{role}\n{content}<|im_end|>\n")
+    chunks.append("<|im_start|>assistant\n")
+    return "".join(chunks)
 
-    if _LOADED and MODEL is not None and TOKENIZER is not None:
+
+def _to_llama3(messages: list[dict]) -> str:
+    chunks = ["<|begin_of_text|>"]
+    for msg in messages:
+        role = msg.get("role") or "user"
+        content = msg.get("content") or ""
+        chunks.append(
+            f"<|start_header_id|>{role}<|end_header_id|>\n\n{content}<|eot_id|>"
+        )
+    chunks.append("<|start_header_id|>assistant<|end_header_id|>\n\n")
+    return "".join(chunks)
+
+
+def _format_prompt(messages: list[dict]) -> str:
+    if _ACTIVE_CHAT_FORMAT == "llama3":
+        return _to_llama3(messages)
+    return _to_chatml(messages)
+
+
+def _stop_tokens() -> list[str]:
+    if _ACTIVE_CHAT_FORMAT == "llama3":
+        return _LLAMA3_STOP
+    return _CHATML_STOP
+
+
+def unload_model() -> None:
+    global GGUF_MODEL, _LOADED, _ACTIVE_MODEL_ID
+
+    if GGUF_MODEL is not None:
+        try:
+            if hasattr(GGUF_MODEL, "close"):
+                GGUF_MODEL.close()
+        except Exception as e:
+            print(f"[semantic] Error al liberar el modelo: {e}")
+        GGUF_MODEL = None
+    _LOADED = False
+    _ACTIVE_MODEL_ID = None
+    gc.collect()
+
+
+def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False):
+    """Carga el modelo GGUF en memoria (GPU/CPU) usando llama-cpp-python."""
+    global SYSTEM_PROMPT, GGUF_MODEL, _LOADED, _ACTIVE_MODEL_ID, _ACTIVE_CHAT_FORMAT
+
+    target_id = model_id or _ACTIVE_MODEL_ID or DEFAULT_MODEL_ID
+    if _LOADED and GGUF_MODEL is not None and not force and _ACTIVE_MODEL_ID == target_id:
         return
 
-    SYSTEM_PROMPT = load_prompt()
-    _check_base_model_cache(BASE_MODEL_ID)
-
-    try:
-        
-        try:
-            MODEL, TOKENIZER = _load_with_peft()
-        except Exception as e:
-            print(f"[semantic] PEFT falló ({e}).")
-    except Exception as e:
-        print(f"\n[!] No se pudo cargar la LLM: {e}")
-        print(
-            "[!] Si el proceso murió sin mensaje de error, suele ser falta de VRAM.\n"
-            "    Probá: cerrar otras apps GPU, pip install bitsandbytes, o\n"
-            "    set LOAD_IN_4BIT = True en src/semantic/config.py"
+    spec = spec_by_id(target_id)
+    gguf_file = resolve_gguf_path(spec)
+    if gguf_file is None:
+        raise FileNotFoundError(
+            f"[semantic] No se encontró ningún archivo .gguf para '{target_id}'. "
+            f"Esperaba un .gguf en outputs/{spec.folder}_gguf o outputs/{spec.folder}."
         )
-        raise
 
-    if TOKENIZER.pad_token is None or TOKENIZER.pad_token == TOKENIZER.eos_token:
-        TOKENIZER.pad_token = TOKENIZER.unk_token or "<|endoftext|>"
+    if _LOADED or GGUF_MODEL is not None:
+        print(f"[semantic] Liberando modelo {_ACTIVE_MODEL_ID}...")
+        unload_model()
+
+    SYSTEM_PROMPT = load_prompt()
+    _ACTIVE_CHAT_FORMAT = spec.chat_format
+    n_threads = max(1, min(8, (os.cpu_count() or 4) // 2))
+    n_gpu_layers = _gpu_layers()
+    print(f"[semantic] Cargando binario GGUF ({target_id}): {gguf_file}")
+    print(
+        f"[semantic] n_gpu_layers={n_gpu_layers} | n_ctx={N_CTX} | "
+        f"n_threads={n_threads} | chat={spec.chat_format}"
+    )
+    GGUF_MODEL = Llama(
+        model_path=str(gguf_file),
+        n_gpu_layers=n_gpu_layers,
+        n_ctx=int(N_CTX),
+        n_batch=256,
+        n_threads=n_threads,
+        n_threads_batch=n_threads,
+        verbose=False,
+    )
 
     _LOADED = True
-    print("[semantic] Model ready for real-time translation.\n")
+    _ACTIVE_MODEL_ID = target_id
+    print("[semantic] Calentando primera inferencia (puede tardar un poco)...")
+    t0 = time.perf_counter()
+    try:
+        warmup_prompt = _format_prompt(
+            [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": "Glosas: HOLA"},
+            ]
+        )
+        GGUF_MODEL.create_completion(
+            warmup_prompt,
+            max_tokens=1,
+            temperature=0.0,
+            stop=_stop_tokens(),
+        )
+    except Exception as e:
+        print(f"[semantic] Warmup omitido: {e}")
+    else:
+        print(f"[semantic] Warmup listo en {time.perf_counter() - t0:.1f}s")
+    print(f"[semantic] Modelo {target_id} listo para inferencia en tiempo real.\n")
 
 
-def translate_glosses(glosses_input, history_messages=None):
+def switch_model(model_id: str) -> str:
+    """Cambia el GGUF activo. Debe llamarse desde el hilo que usa la LLM."""
+    load_model_and_tokenizer(model_id=model_id, force=True)
+    return _ACTIVE_MODEL_ID or model_id
+
+
+def translate_glosses(glosses_input: str, history_messages: Optional[list[dict]] = None) -> str:
     """
     glosses_input: str, ej. "YO LLAMAR POLICIA"
-    history_messages: lista opcional de dicts {role, content} (ventana conversacional)
+    history_messages: lista opcional de dicts {role, content}
     """
-    if MODEL is None or TOKENIZER is None:
-        raise RuntimeError("LLM no cargada. Llamá load_model_and_tokenizer() primero.")
+    if not _LOADED or GGUF_MODEL is None:
+        load_model_and_tokenizer()
 
+    raw = glosses_input.strip()
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     if history_messages:
         messages.extend(history_messages)
-    messages.append({"role": "user", "content": f"Glosas: {glosses_input}"})
+    messages.append({"role": "user", "content": f"Glosas: {raw}"})
 
-    model_inputs = TOKENIZER.apply_chat_template(
-        messages,
-        tokenize=True,
-        add_generation_prompt=True,
-        return_tensors="pt",
-        return_dict=True,
+    prompt = _format_prompt(messages)
+    print(f"[semantic] Generando traducción para: {raw!r}")
+    t0 = time.perf_counter()
+    response = GGUF_MODEL.create_completion(
+        prompt,
+        max_tokens=int(MAX_NEW_TOKENS),
+        temperature=float(TEMPERATURE),
+        repeat_penalty=float(REPETITION_PENALTY),
+        stop=_stop_tokens(),
     )
+    text = (response["choices"][0].get("text") or "").strip()
+    print(f"[semantic] Inferencia en {time.perf_counter() - t0:.1f}s → {text!r}")
+    return text
 
-    # device del modelo (evita .to("cuda") hardcodeado si cae a CPU)
-    try:
-        device = next(MODEL.parameters()).device
-    except StopIteration:
-        device = "cpu"
-    model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
 
-    outputs = MODEL.generate(
-        **model_inputs,
-        max_new_tokens=MAX_NEW_TOKENS,
-        use_cache=True,
-        temperature=TEMPERATURE,
-        repetition_penalty=REPETITION_PENALTY,
-        pad_token_id=TOKENIZER.pad_token_id,
-        eos_token_id=TOKENIZER.eos_token_id,
-    )
-
-    prompt_len = model_inputs["input_ids"].shape[1]
-    return TOKENIZER.decode(
-        outputs[0][prompt_len:],
-        skip_special_tokens=True,
-    ).strip()
+__all__ = [
+    "get_active_model_id",
+    "list_semantic_models",
+    "load_model_and_tokenizer",
+    "switch_model",
+    "translate_glosses",
+    "unload_model",
+]

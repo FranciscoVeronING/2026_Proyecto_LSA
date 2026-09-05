@@ -15,3 +15,5 @@ eval_*.csv
 models/
 *.h5
 *.tflite
+
+src/semantic/outputs/*Instruct

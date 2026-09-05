@@ -36,6 +36,7 @@ from app.state import shared_state, stop
 from app.ui import (
     UI_FONT,
     Button,
+    Dropdown,
     Slider,
     draw_top3_panel,
     mouse_callback,
@@ -45,7 +46,8 @@ from app.ui import (
 from app.utterance import UtteranceBuffer, normalize_gloss
 from app.workers import InferenceWorker, SemanticWorker, VoiceWorker
 from core.landmarks import compute_landmark_hand_motion
-from semantic.config import CONVERSATION_HISTORY_SIZE
+from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID
+from semantic.models import list_semantic_models
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -181,11 +183,20 @@ def main():
     btn_capture = Button(400, VID_H + 20, 110, 40, "CAPTURAR")
     btn_voice = Button(520, VID_H + 140, 100, 40, "VOICE")
 
-    slider_sens = Slider(150, 150, 340, 100, 5000, cfg.MOTION_PIXEL_THRESHOLD, "Sensibilidad (Pixeles)")
-    slider_conf = Slider(150, 200, 340, 0.1, 1.0, cfg.CONFIDENCE_THRESHOLD, "Confianza Min")
-    slider_still = Slider(150, 250, 340, 5, 40, cfg.STILL_FRAMES_LIMIT, "Corte por Silencio (Frames)")
-    slider_static = Slider(150, 300, 340, 2, 15, cfg.STATIC_HANDS_FRAMES_TO_START, "Frames Manos (Estatico)")
-    btn_save = Button(220, 380, 100, 40, "CERRAR")
+    slider_sens = Slider(150, 185, 340, 100, 5000, cfg.MOTION_PIXEL_THRESHOLD, "Sensibilidad (Pixeles)")
+    slider_conf = Slider(150, 235, 340, 0.1, 1.0, cfg.CONFIDENCE_THRESHOLD, "Confianza Min")
+    slider_still = Slider(150, 285, 340, 5, 40, cfg.STILL_FRAMES_LIMIT, "Corte por Silencio (Frames)")
+    slider_static = Slider(150, 335, 340, 2, 15, cfg.STATIC_HANDS_FRAMES_TO_START, "Frames Manos (Estatico)")
+    btn_save = Button(220, 400, 100, 40, "CERRAR")
+    dropdown_model = Dropdown(
+        150,
+        128,
+        340,
+        28,
+        list_semantic_models(),
+        DEFAULT_MODEL_ID,
+        "Modelo semantico",
+    )
 
     show_config = False
     show_landmarks = True
@@ -310,6 +321,7 @@ def main():
                 spanish_text = shared_state["spanish_text"]
                 semantic_busy = shared_state["semantic_busy"]
                 conv_turns = shared_state["conversation_turns"]
+                semantic_model = shared_state.get("semantic_model") or DEFAULT_MODEL_ID
 
             if not args.eval and last_inf_time > last_seen_inference_time and top3:
                 last_seen_inference_time = last_inf_time
@@ -435,6 +447,16 @@ def main():
 
                 cv2.putText(
                     canvas,
+                    f"LLM: {semantic_model or '-'}",
+                    (20, VID_H + 196),
+                    UI_FONT,
+                    0.42,
+                    (160, 160, 200),
+                    1,
+                )
+
+                cv2.putText(
+                    canvas,
                     "q=salir | m=modo | c=limpiar contexto | n=saltar (eval)",
                     (20, TOT_H - 8),
                     UI_FONT,
@@ -449,6 +471,11 @@ def main():
 
                 if btn_conf.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
                     show_config = True
+                    dropdown_model.set_options(
+                        list_semantic_models(),
+                        semantic_model or DEFAULT_MODEL_ID,
+                    )
+                    dropdown_model.open = False
                 btn_conf.draw(canvas)
 
                 btn_voice.text = "VOICE ON" if voice_enabled else "VOICE OFF"
@@ -463,12 +490,32 @@ def main():
                 overlay = canvas.copy()
                 cv2.rectangle(overlay, (0, 0), (VID_W, TOT_H), (0, 0, 0), -1)
                 cv2.addWeighted(overlay, 0.7, canvas, 0.3, 0, canvas)
-                mx, my, mw, mh = 100, 100, 440, 340
+                mx, my, mw, mh = 90, 70, 460, 430
                 cv2.rectangle(canvas, (mx, my), (mx + mw, my + mh), (50, 50, 50), -1)
                 cv2.rectangle(canvas, (mx, my), (mx + mw, my + mh), (0, 165, 255), 2)
+                cv2.putText(
+                    canvas,
+                    "Configuracion",
+                    (mx + 20, my + 28),
+                    UI_FONT,
+                    0.7,
+                    (255, 255, 255),
+                    2,
+                )
+
+                changed_model, dropdown_consumed = dropdown_model.update(
+                    mouse_state["x"], mouse_state["y"], mouse_state["clicked"]
+                )
+                if changed_model:
+                    semantic_worker.switch_model(changed_model)
+                elif not dropdown_model.open and semantic_model:
+                    dropdown_model.selected_id = semantic_model
+
+                if not dropdown_model.open:
+                    for slider in (slider_sens, slider_conf, slider_still, slider_static):
+                        slider.update(mouse_state["x"], mouse_state["y"], mouse_state["down"])
 
                 for slider in (slider_sens, slider_conf, slider_still, slider_static):
-                    slider.update(mouse_state["x"], mouse_state["y"], mouse_state["down"])
                     slider.draw(canvas)
 
                 cv2.putText(
@@ -481,14 +528,17 @@ def main():
                     1,
                 )
 
-                if btn_save.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
-                    cfg.MOTION_PIXEL_THRESHOLD = int(slider_sens.val)
-                    cfg.CONFIDENCE_THRESHOLD = slider_conf.val
-                    cfg.STILL_FRAMES_LIMIT = int(slider_still.val)
-                    cfg.STATIC_HANDS_FRAMES_TO_START = int(slider_static.val)
-                    utterance_buffer.min_confidence = cfg.CONFIDENCE_THRESHOLD
-                    show_config = False
+                if not dropdown_consumed:
+                    if btn_save.update(mouse_state["x"], mouse_state["y"], mouse_state["clicked"]):
+                        cfg.MOTION_PIXEL_THRESHOLD = int(slider_sens.val)
+                        cfg.CONFIDENCE_THRESHOLD = slider_conf.val
+                        cfg.STILL_FRAMES_LIMIT = int(slider_still.val)
+                        cfg.STATIC_HANDS_FRAMES_TO_START = int(slider_static.val)
+                        utterance_buffer.min_confidence = cfg.CONFIDENCE_THRESHOLD
+                        show_config = False
+                        dropdown_model.open = False
                 btn_save.draw(canvas)
+                dropdown_model.draw(canvas)
 
             cv2.imshow("LSA DETECTOR", canvas)
             mouse_state["clicked"] = False
