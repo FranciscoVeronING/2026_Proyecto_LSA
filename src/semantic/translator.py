@@ -1,5 +1,5 @@
 """
-Traductor semántico LSA → español usando exclusivamente el binario GGUF (llama-cpp-python).
+Traductor semántico LSA → español vía GGUF (llama-cpp-python o llama-server.exe).
 """
 
 from __future__ import annotations
@@ -60,7 +60,6 @@ def _prepare_llama_native_libs() -> None:
 
 
 _prepare_llama_native_libs()
-from llama_cpp import Llama
 
 from semantic.config import (
     DEFAULT_MODEL_ID,
@@ -79,7 +78,7 @@ from semantic.models import (
 )
 
 SYSTEM_PROMPT = ""
-GGUF_MODEL: Optional[Llama] = None
+GGUF_MODEL = None
 _LOADED = False
 _ACTIVE_MODEL_ID: Optional[str] = None
 _ACTIVE_CHAT_FORMAT = "chatml"
@@ -99,22 +98,42 @@ def load_prompt() -> str:
     return prompt_path.read_text(encoding="utf-8").strip()
 
 
+def _make_engine(model_path: str, n_gpu_layers: int, n_threads: int):
+    """llama-cpp-python si está instalado; si no, llama-server.exe (Windows)."""
+    try:
+        from llama_cpp import Llama
+
+        return Llama(
+            model_path=model_path,
+            n_gpu_layers=n_gpu_layers,
+            n_ctx=int(N_CTX),
+            n_batch=256,
+            n_threads=n_threads,
+            n_threads_batch=n_threads,
+            verbose=False,
+        )
+    except ImportError:
+        print(
+            "[semantic] llama-cpp-python no está instalado "
+            "(típico en Python 3.13/3.14 en Windows). Uso llama-server.exe."
+        )
+        from semantic.native_llama import LlamaServerEngine
+
+        return LlamaServerEngine(
+            model_path=model_path,
+            n_ctx=int(N_CTX),
+            n_gpu_layers=n_gpu_layers,
+            n_threads=n_threads,
+        )
+
+
 def _gpu_layers() -> int:
-    """Evita dos runtimes CUDA a la vez: el clasificador PyTorch ya usa la GPU."""
+    """CPU por defecto. GPU solo si se pide explícito (LSA_USE_GPU o N_GPU_LAYERS)."""
+    if os.environ.get("LSA_USE_GPU", "").strip() in {"1", "true", "True", "yes"}:
+        return -1
     if N_GPU_LAYERS is not None:
         return int(N_GPU_LAYERS)
-    try:
-        import torch
-
-        if torch.cuda.is_available():
-            print(
-                "[semantic] PyTorch está usando CUDA: la LLM corre en CPU "
-                "(n_gpu_layers=0) para no colgar la inferencia."
-            )
-            return 0
-    except Exception:
-        pass
-    return -1
+    return 0
 
 
 def _to_chatml(messages: list[dict]) -> str:
@@ -195,14 +214,10 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
         f"[semantic] n_gpu_layers={n_gpu_layers} | n_ctx={N_CTX} | "
         f"n_threads={n_threads} | chat={spec.chat_format}"
     )
-    GGUF_MODEL = Llama(
-        model_path=str(gguf_file),
+    GGUF_MODEL = _make_engine(
+        str(gguf_file),
         n_gpu_layers=n_gpu_layers,
-        n_ctx=int(N_CTX),
-        n_batch=256,
         n_threads=n_threads,
-        n_threads_batch=n_threads,
-        verbose=False,
     )
 
     _LOADED = True

@@ -16,16 +16,17 @@ numpy==1.26.4
 # --- Clasificador de señas ---
 torch==2.6.0
 
-# --- Traductor semántico (LLM Qwen2.5-3B + adapter PEFT) ---
-transformers==4.57.6
-peft==0.17.1
-accelerate==1.10.1
-huggingface-hub==0.36.2
-safetensors==0.7.0
+# --- Traductor semántico (GGUF) ---
+# En Windows + Python 3.14 NO instales llama-cpp-python: no hay rueda y
+# hay que compilar con Visual Studio. El backend baja llama-server.exe solo.
+# Si tenés Python 3.10–3.12:
+#   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 
 # --- Síntesis de voz ---
 pyttsx3==2.99
 
-# Opcional: cuantización 4-bit (~2 GB VRAM vs ~6 GB en float16). Requiere CUDA.
-# pip install bitsandbytes
-# bitsandbytes>=0.45.0
+# --- Backend local para la extensión Chrome ---
+fastapi==0.115.12
+uvicorn==0.32.1
+
+# Opcional: rueda precompilada de llama-cpp-python (solo Python 3.10–3.12).

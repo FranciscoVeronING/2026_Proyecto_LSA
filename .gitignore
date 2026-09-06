@@ -17,3 +17,20 @@ models/
 *.tflite
 
 src/semantic/outputs/*Instruct
+
+# llama-server.exe descargado en runtime (Windows / Python 3.14)
+src/semantic/bin/
+
+# Diccionario visual opcional (no forma parte del runtime)
+señario1/
+señario2/
+
+# Empaquetado del backend para la extensión
+build/
+dist/
+*.spec.bak
+
+# Binarios pesados de MediaPipe (regenerar con packaging/fetch_extension_assets.py)
+extension/vendor/mediapipe/*.data
+extension/vendor/mediapipe/*.wasm
+extension/vendor/mediapipe/*.tflite

@@ -17,8 +17,10 @@ FEW_SHOTS_PATH = str(_SEMANTIC_DIR / "prompts" / "few_shots_examples.json")
 
 MAX_SEQ_LENGTH = 4096
 N_CTX = 4096
-# None = automático: 0 si PyTorch ya usa CUDA (evita cuelgues), si no -1.
-N_GPU_LAYERS = None
+# 0 = CPU (default: la extensión no depende de una placa de video).
+# -1 = offload completo a GPU si llama-cpp-python / Vulkan están disponibles.
+# Override: variable de entorno LSA_USE_GPU=1
+N_GPU_LAYERS = 0
 
 # Params de generación 
 MAX_NEW_TOKENS = 64

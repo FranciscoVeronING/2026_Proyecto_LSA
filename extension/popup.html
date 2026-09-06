@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>LSA</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="popup">
+  <h1>LSA Intérprete</h1>
+  <div class="status">
+    <span class="dot" id="dot"></span>
+    <span id="health-text">Comprobando motor…</span>
+  </div>
+  <p class="hint" id="page-hint"></p>
+  <div class="row" style="margin-top: 14px">
+    <button id="btn-meet" type="button" hidden>Subtítulos en Meet</button>
+    <button id="btn-open" type="button" disabled>Intérprete</button>
+    <button class="ghost" id="btn-setup" type="button">Instalar motor</button>
+  </div>
+  <script src="lib/api.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
