@@ -1,7 +1,9 @@
-# Dependencias para entrenamiento LoRA (train_llm.py / train_all_models.py)
+# Dependencias de entrenamiento (train_llm.py / train_all_models.py)
 #
-# NO incluye unsloth: su instalador reemplaza torch+cu126 por torch CPU en Windows.
-# Ver docs/entrenamiento_llm.md — instalar unsloth con --no-deps al final.
+# train_llm.py: seq2seq T5/mT5 con transformers (no usa unsloth).
+# train_all_models.py: instruct + LoRA. Unsloth NO va acá: su instalador
+# reemplaza torch+cu126 por torch CPU en Windows. Ver docs/entrenamiento_llm.md
+# — instalar unsloth con --no-deps al final, solo si vas a correr train_all_models.
 
 datasets>=3.4,<4.4
 evaluate>=0.4
@@ -14,4 +16,5 @@ accelerate>=0.30
 bitsandbytes>=0.45
 matplotlib>=3.8
 sentencepiece>=0.2
+protobuf>=4.0
 peft>=0.18

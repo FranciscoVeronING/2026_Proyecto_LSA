@@ -12,12 +12,11 @@ models/
 *.tflite
 
 src/semantic/logs/
-src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/checkpoint*
 src/unsloth_compiled_cache/*
 _unsloth_temporary_saved_buffers/unsloth/qwen2.5-3b-instruct-unsloth-bnb-4bit/input_embeddings.pt
-src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/*
 
-!src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/metrics.json
-!src/semantic/outputs/unsloth_Qwen2.5-3B-Instruct/README.md
+src/semantic/outputs/
+src/semantic/outputs_con_deletreo/
 
-src/semantic/outputs/*/checkpoint*
+!src/semantic/outputs/eval_trial/
+!src/semantic/outputs/training_summary.json
