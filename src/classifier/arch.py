@@ -1,3 +1,9 @@
+"""
+TinySkeleton: Conv1D + Transformer encoder + attention pooling.
+
+Entrada de inferencia: tensor (N, T, F) con T=MAX_FRAMES (16) y F=225.
+"""
+
 import math
 
 import numpy as np
@@ -17,6 +23,7 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Suma encoding sinusoidal. ``x``: (batch, seq, d_model)."""
         return x + self.pe[:, : x.size(1), :]
 
 
@@ -60,6 +67,13 @@ class TinySkeletonClassifier(nn.Module):
         self.classification_head = nn.Linear(hidden_dim, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x: ``(batch, frames, features)`` — en vivo ``(1, 16, 225)``.
+
+        Returns:
+            Logits ``(batch, num_classes)``.
+        """
         x = x.permute(0, 2, 1)
         x = self.conv_extractor(x)
         x = x.permute(0, 2, 1)

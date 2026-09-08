@@ -5,7 +5,12 @@ from core.repeat_policy import RepeatGate
 
 
 def normalize_gloss(raw_name: str) -> str:
-    """Clave del clasificador → glosa normalizada en mayúsculas."""
+    """
+    Nombre de clase del ``.pth`` → token que ve la LLM.
+
+    ``GLOSS_NORMALIZER`` solo tiene **alias** (``el_ella`` → ``EL``).
+    El resto se pasa a MAYÚSCULAS (``hola`` → ``HOLA``).
+    """
     key = (raw_name or "").strip()
     mapped = cfg.GLOSS_NORMALIZER.get(key)
     if mapped:
@@ -43,6 +48,17 @@ class UtteranceBuffer:
         self.repeat_gate = RepeatGate(max_letter_consecutive=max_letter_consecutive)
 
     def try_add(self, gloss_raw, confidence, now):
+        """
+        Intenta encolar una predicción del clasificador.
+
+        Args:
+            gloss_raw: Nombre de clase crudo (``el_ella``, ``A``, …).
+            confidence: Softmax de la top-1.
+            now: Timestamp Unix (segundos).
+
+        Returns:
+            True si la glosa quedó en ``self.glosses``.
+        """
         if confidence < self.min_confidence:
             return False
         gloss = normalize_gloss(gloss_raw)
@@ -64,6 +80,12 @@ class UtteranceBuffer:
             self.last_activity_at = now
 
     def maybe_close(self, now):
+        """
+        Si pasó ``pause_sec`` sin actividad, devuelve las glosas y vacía el buffer.
+
+        Returns:
+            Lista de glosas o None si todavía no cierra.
+        """
         if not self.glosses or self.last_activity_at is None:
             return None
         if (now - self.last_activity_at) < self.pause_sec:
@@ -75,4 +97,5 @@ class UtteranceBuffer:
         return closed
 
     def pending_text(self) -> str:
+        """Glosas actuales unidas con espacio, o cadena vacía."""
         return " ".join(self.glosses) if self.glosses else ""

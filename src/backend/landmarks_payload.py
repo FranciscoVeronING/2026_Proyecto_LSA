@@ -1,4 +1,8 @@
-"""Convierte landmarks JSON de la extensión al vector 225 del clasificador."""
+"""
+JSON de landmarks (ya extraídos en el navegador) → vector 225 del clasificador.
+
+No corre MediaPipe. ``POST /sign`` trae ``{pose, left_hand, right_hand}``.
+"""
 
 from types import SimpleNamespace
 
@@ -14,11 +18,34 @@ from core.landmarks import (
 
 
 class LandmarkSmoother:
+    """
+    Media móvil exponencial (EMA) sobre el vector 225 de una misma seña.
+
+    EMA = mezcla el frame actual con el suavizado anterior para que el
+    esqueleto no tiemble::
+
+        suavizado = alpha * ahora + (1 - alpha) * suavizado_previo
+
+    ``alpha=0.6`` da 60 % al frame nuevo. No extrae landmarks: solo filtra
+    puntos que ya vinieron de Holistic.
+    """
+
     def __init__(self, alpha=0.6):
+        """
+        Args:
+            alpha: Peso del frame nuevo (0.6 = 60 % actual, 40 % suavizado previo).
+        """
         self.alpha = alpha
         self.prev_vector = None
 
     def update(self, new_vector):
+        """
+        Args:
+            new_vector: ``np.ndarray`` (225,) ya extraído en la extensión.
+
+        Returns:
+            Vector suavizado de la misma forma.
+        """
         if self.prev_vector is None:
             self.prev_vector = new_vector
             return new_vector
@@ -47,7 +74,19 @@ def _flat_or_zeros(bag, n_points: int) -> np.ndarray:
 
 
 def vector_from_frame(frame: dict, left_handed: bool) -> np.ndarray:
-    """Un frame {pose, left_hand, right_hand} → vector (225,) normalizado."""
+    """
+    Un frame JSON ``{pose, left_hand, right_hand}`` → vector (225,) normalizado.
+
+    Los puntos los calculó MediaPipe en Chrome. Acá solo se anclan a los
+    hombros y se aplanan. ``None`` / ausente → ceros (el modelo lo espera).
+
+    Args:
+        frame: Listas de ``{x,y,z}``. No es un frame de video.
+        left_handed: Espeja X (el modelo se entrenó diestro).
+
+    Returns:
+        ``np.ndarray`` float32 de longitud ``FRAME_FEATURES_DIM``.
+    """
     pose = _landmark_bag(frame.get("pose"))
     left_hand = _landmark_bag(frame.get("left_hand"))
     right_hand = _landmark_bag(frame.get("right_hand"))
@@ -65,4 +104,5 @@ def vector_from_frame(frame: dict, left_handed: bool) -> np.ndarray:
 
 
 def frames_to_matrix(vectors):
+    """Lista de vectores 225 → matriz ``(MAX_FRAMES, 225)`` (trim + subsampleo)."""
     return sequence_buffer_to_model_input(vectors)

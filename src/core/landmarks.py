@@ -114,7 +114,15 @@ def compute_landmark_hand_motion(
     previous_vector: Optional[np.ndarray],
     hand_start: int,
 ) -> float:
-    """Movimiento L2 entre frames consecutivos, solo en la porción de manos."""
+    """
+    Distancia euclídea (norma L2) entre las manos de dos frames consecutivos::
+
+        sqrt(sum((mano_ahora - mano_antes)^2))
+
+    Mide cuánto se movió el **esqueleto**, no los píxeles de la cámara.
+    En la extensión el equivalente es ``handMotion``; no abre la seña en modo
+    ``auto`` (eso es “hay mano”).
+    """
     if previous_vector is None:
         return 0.0
     curr_hands = current_vector[hand_start:]
@@ -177,7 +185,17 @@ def sequence_buffer_to_model_input(
     min_frames: Optional[int] = None,
 ) -> np.ndarray:
     """
-    Pipeline compartido cámara/preprocessing: trim → subsampleo uniforme.
+    Pipeline compartido: recorta silencio → subsampleo uniforme a T frames.
+
+    Args:
+        buffer: Vectores (225,) en orden temporal.
+        target_frames: Por defecto ``MAX_FRAMES`` (16).
+        hand_start: Índice donde empiezan las manos en el vector (99 = pose).
+        static_motion_threshold: Si no hay pico de movimiento, se quedan los últimos frames.
+        min_frames: Debajo de esto se devuelve una matriz de ceros.
+
+    Returns:
+        ``np.ndarray`` shape ``(target_frames, FRAME_FEATURES_DIM)``.
     """
     target_frames = target_frames or cfg.MAX_FRAMES
     hand_start = hand_start if hand_start is not None else cfg.POSE_DIM

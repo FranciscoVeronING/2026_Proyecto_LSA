@@ -1,9 +1,8 @@
 """
 Sesión de interpretación: clasificador + buffer de glosas + traductor.
 
-Misma lógica que la rama integration, sin cámara ni ventana OpenCV.
-La extensión recorta señas y manda el fin de enunciado; acá se clasifica,
-se acumula y se traduce.
+La extensión recorta señas (Holistic + capture.js) y manda el fin de
+enunciado. Acá no se extraen landmarks: se clasifica, se acumula y se traduce.
 """
 
 from __future__ import annotations
@@ -26,6 +25,13 @@ from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CON
 
 class LSASession:
     def __init__(self, enable_llm: bool = True):
+        """
+        Carga TinySkeleton en CPU o CUDA. La LLM arranca en un hilo daemon
+        para no bloquear `/health`.
+
+        Args:
+            enable_llm: False muestra glosas sin interpretacion.
+        """
         self.lock = threading.RLock()
         self.enable_llm = enable_llm
         self.left_handed = False
@@ -58,11 +64,13 @@ class LSASession:
 
     @staticmethod
     def _load_classes() -> dict:
+        """Lee ``mapeo_clases.json`` y lo invierte a ``{idx: nombre}``."""
         with open(cfg.CLASSES_PATH, "r", encoding="utf-8") as f:
             class_to_idx = json.load(f)
         return {v: k for k, v in class_to_idx.items()}
 
     def _load_classifier(self):
+        """Instancia TinySkeleton, carga ``tinyskeleton_best.pth`` y pasa a eval()."""
         model = TinySkeletonClassifier(
             cfg.FRAME_FEATURES_DIM,
             cfg.HIDDEN_DIM,
@@ -79,6 +87,7 @@ class LSASession:
         return model
 
     def _bootstrap_llm(self):
+        """Hilo: importa el traductor GGUF. Si falla, ``semantic_ready`` queda False."""
         try:
             from semantic.translator import (
                 get_active_model_id,
@@ -99,6 +108,7 @@ class LSASession:
             print(f"[backend] LLM no disponible: {e}")
 
     def reset_session(self, left_handed: bool):
+        """Nueva sesión de trabajo: buffer vacío, memoria de chat limpia, mano dominante."""
         with self.lock:
             self.left_handed = bool(left_handed)
             self.buffer = UtteranceBuffer(
@@ -114,6 +124,7 @@ class LSASession:
             self.last_enqueue_time = 0.0
 
     def snapshot(self) -> dict[str, Any]:
+        """Estado serializable para la extensión (glosas, español, top-3, flags)."""
         with self.lock:
             return {
                 "left_handed": self.left_handed,
@@ -132,10 +143,25 @@ class LSASession:
             }
 
     def note_activity(self):
+        """``POST /activity``: las manos se mueven; no cierra el enunciado."""
         with self.lock:
             self.buffer.note_signing_activity(time.time())
 
     def ingest_sign(self, frames: list[dict]) -> dict[str, Any]:
+        """
+        Clasifica una seña **ya recortada y con landmarks**.
+
+        No extrae esqueleto ni decide si hubo “suficiente movimiento”: eso
+        lo hizo la extensión (Holistic + ``capture.js``). Acá: suavizado EMA,
+        tensor (16, 225), TinySkeleton, buffer de glosas.
+
+        Args:
+            frames: ``{pose, left_hand, right_hand}`` (típicamente 16). No es video.
+
+        Returns:
+            Snapshot más ``accepted``, ``added``, ``activity``, ``gloss``.
+            ``accepted=False`` con ``reason`` ``cooldown`` / ``too_short`` / ``bad_tensor``.
+        """
         now = time.time()
         n = len(frames or [])
         with_pose = sum(1 for f in frames or [] if f.get("pose"))
@@ -216,6 +242,12 @@ class LSASession:
         return snap
 
     def close_utterance(self) -> dict[str, Any]:
+        """
+        Vacía el buffer de glosas y traduce.
+
+        Returns:
+            Snapshot con ``closed`` y ``spanish``. Si no había glosas, ``closed=False``.
+        """
         with self.lock:
             closed = list(self.buffer.glosses)
             self.buffer.glosses.clear()
@@ -243,6 +275,7 @@ class LSASession:
         return snap
 
     def _translate(self, glosses: list[str]) -> str:
+        """Literal (solo letras/dígitos) o LLM. Si la LLM no está, concatena glosas."""
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
@@ -261,10 +294,12 @@ class LSASession:
             return joined
 
     def clear_conversation(self):
+        """Olvida el historial que ve la LLM (el log de sesión puede conservarse)."""
         with self.lock:
             self.memory.clear()
 
     def capture_config(self) -> dict[str, Any]:
+        """Umbrales para que la extensión recorte igual que el escritorio."""
         return {
             "max_frames": cfg.MAX_FRAMES,
             "confidence_threshold": cfg.CONFIDENCE_THRESHOLD,

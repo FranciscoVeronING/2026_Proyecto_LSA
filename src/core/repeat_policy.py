@@ -88,6 +88,13 @@ class RepeatGate:
         self.run_len = 0
 
     def allow(self, gloss: str) -> bool:
+        """
+        Args:
+            gloss: Ya normalizada (mayúsculas, ``EL/ELLA``, …).
+
+        Returns:
+            False si es repetición prohibida (letra 3ª+, léxica duplicada).
+        """
         if self.last_gloss != gloss:
             self.last_gloss = gloss
             self.run_len = 1
