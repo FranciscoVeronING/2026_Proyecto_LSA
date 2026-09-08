@@ -158,11 +158,13 @@ STATIC_HANDS_FRAMES_TO_START = 4
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
-# Holgados: entre señas las manos bajan o Holistic pierde el tracking un instante.
-STILL_FRAMES_LIMIT = 16
+# Fin de seña por manos quietas (no la pausa del enunciado hacia la LLM).
+STILL_FRAMES_LIMIT = 28
 CAPTURE_BUFFER_SIZE = 60
-MISSING_HANDS_LIMIT = 24
-MIN_CAPTURE_FRAMES = 5
+MISSING_HANDS_LIMIT = 12
+# Frames seguidos con mano usable para abrir una seña (evita fantasmas de Holistic).
+HANDS_FRAMES_TO_START = 6
+MIN_CAPTURE_FRAMES = 8
 
 # Modes: "auto" (dynamic + static), "dynamic", "static"
 CAPTURE_MODE = "auto"
@@ -173,7 +175,7 @@ CAPTURE_MODE = "auto"
 # Pausa sin actividad de señado → cerrar la lista y mandarla a la LLM.
 # Cuenta desde la última seña reconocida o desde que las manos dejaron de
 # moverse en cámara, lo que haya pasado último.
-UTTERANCE_PAUSE_SEC = 5.5
+UTTERANCE_PAUSE_SEC = 4.0
 # Letras consecutivas iguales permitidas (la 3ª+ se descarta). Dígitos: sin límite.
 # Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
 LETTER_MAX_CONSECUTIVE = 2

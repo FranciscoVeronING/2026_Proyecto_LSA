@@ -307,6 +307,7 @@ class LSASession:
             "motion_pixel_threshold": cfg.MOTION_PIXEL_THRESHOLD,
             "landmark_motion_threshold": cfg.LANDMARK_MOTION_THRESHOLD,
             "static_hands_frames_to_start": cfg.STATIC_HANDS_FRAMES_TO_START,
+            "hands_frames_to_start": cfg.HANDS_FRAMES_TO_START,
             "still_frames_limit": cfg.STILL_FRAMES_LIMIT,
             "capture_buffer_size": cfg.CAPTURE_BUFFER_SIZE,
             "missing_hands_limit": cfg.MISSING_HANDS_LIMIT,
@@ -314,4 +315,5 @@ class LSASession:
             "capture_mode": cfg.CAPTURE_MODE,
             "utterance_pause_sec": cfg.UTTERANCE_PAUSE_SEC,
             "pose_dim": cfg.POSE_DIM,
+            "mode": "signer",
         }

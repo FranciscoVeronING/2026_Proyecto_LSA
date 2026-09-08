@@ -33,48 +33,85 @@ function lmList(landmarks) {
 function packFrame(results) {
   return {
     pose: lmList(results.poseLandmarks),
-    left_hand: lmList(results.leftHandLandmarks),
-    right_hand: lmList(results.rightHandLandmarks),
+    left_hand: handIsPresent(results.leftHandLandmarks, poseWrist(results.poseLandmarks, "left"))
+      ? lmList(results.leftHandLandmarks)
+      : null,
+    right_hand: handIsPresent(results.rightHandLandmarks, poseWrist(results.poseLandmarks, "right"))
+      ? lmList(results.rightHandLandmarks)
+      : null,
   };
 }
 
 /**
- * ¿Esta mano es usable? No alcanza con “el array no está vacío”: Holistic a
- * veces devuelve puntos en (0,0) o fuera de cuadro.
+ * ¿Esta mano es usable? Holistic inventa manos al mover el torso:
+ * puntos en (0,0), bbox minúsculo o lejos de la muñeca de la pose.
  *
- * @param {Array<{x:number,y:number}>|null|undefined} lms 21 puntos o menos.
- * @returns {boolean} true si hay ≥12 puntos razonables y un bbox mínimo.
+ * @param {Array<{x:number,y:number,visibility?:number}>|number[][]|null|undefined} lms
+ * @param {{x:number,y:number,visibility?:number}|number[]|null|undefined} [wrist]
+ * @returns {boolean}
  */
-function handIsPresent(lms) {
-  if (!lms || lms.length < 15) return false;
+function xyOf(p) {
+  if (!p) return null;
+  if (Array.isArray(p)) return { x: +p[0], y: +p[1], visibility: p[3] };
+  return { x: p.x, y: p.y, visibility: p.visibility };
+}
+
+function handIsPresent(lms, wrist) {
+  if (!lms || lms.length < 18) return false;
   let minX = 1;
   let maxX = 0;
   let minY = 1;
   let maxY = 0;
   let usable = 0;
+  let visSum = 0;
+  let visN = 0;
   for (let i = 0; i < lms.length; i++) {
-    const p = lms[i];
+    const p = xyOf(lms[i]);
     if (!p) continue;
     const x = p.x;
     const y = p.y;
-    if (x < -0.2 || x > 1.2 || y < -0.2 || y > 1.2) continue;
+    if (x < -0.15 || x > 1.15 || y < -0.15 || y > 1.15) continue;
     if (Math.abs(x) < 1e-5 && Math.abs(y) < 1e-5) continue;
     usable += 1;
+    if (typeof p.visibility === "number") {
+      visSum += p.visibility;
+      visN += 1;
+    }
     if (x < minX) minX = x;
     if (x > maxX) maxX = x;
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
-  if (usable < 12) return false;
-  return maxX - minX > 0.04 || maxY - minY > 0.04;
+  if (usable < 16) return false;
+  if (visN >= 8 && visSum / visN < 0.45) return false;
+  const bw = maxX - minX;
+  const bh = maxY - minY;
+  if (bw < 0.07 && bh < 0.07) return false;
+  if (bw > 0.7 || bh > 0.7) return false;
+  if (wrist) {
+    const w = xyOf(wrist);
+    const hw = xyOf(lms[0]);
+    if (!w || !hw) return false;
+    if (typeof w.visibility === "number" && w.visibility < 0.4) return false;
+    if (Math.hypot(hw.x - w.x, hw.y - w.y) > 0.2) return false;
+  }
+  return true;
+}
+
+function poseWrist(pose, side) {
+  if (!pose || pose.length < 17) return null;
+  return pose[side === "left" ? 15 : 16] || null;
 }
 
 /**
- * @param {{ leftHandLandmarks?: object[], rightHandLandmarks?: object[] }} results
+ * @param {{ poseLandmarks?: object[], leftHandLandmarks?: object[], rightHandLandmarks?: object[] }} results
  * @returns {boolean}
  */
 function anyHandPresent(results) {
-  return handIsPresent(results.leftHandLandmarks) || handIsPresent(results.rightHandLandmarks);
+  const pose = results.poseLandmarks;
+  const leftOk = handIsPresent(results.leftHandLandmarks, poseWrist(pose, "left"));
+  const rightOk = handIsPresent(results.rightHandLandmarks, poseWrist(pose, "right"));
+  return leftOk || rightOk;
 }
 
 /**
