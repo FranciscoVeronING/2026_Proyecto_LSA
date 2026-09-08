@@ -1,5 +1,8 @@
 # Intérprete de Lengua de Señas Argentina (LSA)
 
+Interpretación de LSA en tiempo real. **Empezá a leer el código por**
+[`docs/ORDEN_DE_LECTURA.md`](docs/ORDEN_DE_LECTURA.md).
+
 Este repositorio traduce **señas LSA a español** en tiempo real.
 
 La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
@@ -85,24 +88,20 @@ py -3 packaging/fetch_extension_assets.py
 
 Eso llena `extension/vendor/mediapipe/` y, si faltan, los íconos.
 
-### 2. Arrancar el motor
+### 2. Motor IRIS (usuarias)
+
+En la extensión: **Instalar motor → Descargar IRIS**. Eso baja `IRIS.zip`
+(lo genera `packaging\build_exe.bat` y queda en `extension/bin/`). La persona
+descomprime, abre **IRIS.exe** y deja esa ventana abierta.
+
+Quien desarrolla, para generar ese zip una vez:
 
 ```bash
-python run_backend.py
+packaging\build_exe.bat
 ```
 
-Otras variantes:
-
-```bash
-python run_backend.py --no-llm
-python run_backend.py --gpu          # LLM con Vulkan si está disponible
-python run_backend.py --port 8765
-```
-
-La primera vez en Python 3.14 baja `llama-server.exe` a `src/semantic/bin/`
-(carpeta ignorada por git).
-
-También podés usar `LSABackend.bat` en la raíz, que llama al mismo script.
+Después recargar la extensión. En la máquina de desarrollo también sirve
+`python run_backend.py` (misma ventana, sin empaquetar).
 
 ### 3. Cargar la extensión
 
@@ -112,12 +111,12 @@ También podés usar `LSABackend.bat` en la raíz, que llama al mismo script.
 4. Tras cambiar `manifest.json` o content scripts, **recargar la extensión**.
    Tras cambiar el hook de cámara de Meet, **recargar la pestaña de Meet**.
 
-Al instalar se abre una guía (`welcome.html`). El popup de la extensión abre
-el traductor a pantalla completa (`translator.html`) o activa Meet.
+Al instalar se abre una guía (`welcome.html`). El popup activa los subtítulos
+en la pestaña de Google Meet.
 
 ### Google Meet
 
-1. Motor en marcha (`run_backend.py`).
+1. IRIS abierto (ventana del exe, punto verde en la guía).
 2. Entrá a `https://meet.google.com/...` y permití la cámara.
 3. Activá LSA desde el popup (o el flujo de Meet de la extensión).
 
@@ -131,8 +130,8 @@ Qué ocurre:
 - Los frames JPEG van al *service worker* → documento offscreen → iframe
   sandbox con MediaPipe → `POST /sign`.
 
-El español **desaparece solo a los 8 segundos** (video quemado, HUD y
-traductor). Si llega una oración nueva, el reloj se reinicia.
+El español **desaparece solo a los 8 segundos** (video quemado y HUD). Si
+llega una oración nueva, el reloj se reinicia.
 
 ---
 

@@ -3,6 +3,9 @@
 Documento para alguien que abre el repo por primera vez. Complementa el
 [README](../README.md) con el *por qué* de cada pieza.
 
+**Orden de lectura del código** (qué archivo abrir primero):
+[`ORDEN_DE_LECTURA.md`](ORDEN_DE_LECTURA.md).
+
 ## 1. Vocabulario
 
 | Término | Significado aquí |
@@ -67,8 +70,8 @@ MediaPipe Holistic **necesita** crear workers desde blobs.
 Solución:
 
 - `sandbox.html` + `sandbox.js` corren Holistic con CSP relajado.
-- `translator.html` y `offscreen.html` mandan un frame (canvas / ImageData /
-  JPEG) al iframe y reciben `{ pose, left_hand, right_hand }`.
+- `offscreen.html` manda un JPEG al iframe y recibe
+  `{ pose, left_hand, right_hand }`.
 - Los `.wasm` / `.tflite` viven en `extension/vendor/mediapipe/` (gitignored;
   se bajan con `packaging/fetch_extension_assets.py`).
 
@@ -173,8 +176,7 @@ fuerte (si no, se rompen DNI y números).
 
 El español no debe quedar pegado en la videollamada.
 
-- Constante `SUBTITLE_HOLD_MS = 8000` en `inject-gum.js`, `meet.js` y
-  `translator.js`.
+- Constante `SUBTITLE_HOLD_MS = 8000` en `inject-gum.js` y `meet.js`.
 - Un texto nuevo **reinicia** el temporizador.
 - El offscreen **no** reenvía el último español en cada tick de debug (eso
   reseteaba el reloj para siempre). Solo lo manda cuando el backend devuelve
@@ -186,9 +188,8 @@ El español no debe quedar pegado en la videollamada.
 |---------|-----|
 | `manifest.json` | MV3, permisos Meet, sandbox, CSP |
 | `background.js` | Service worker: offscreen, reenvío de frames y captions |
-| `popup.html` / `popup.js` | Arranque, Meet ON/OFF, abrir traductor |
+| `popup.html` / `popup.js` | Estado del motor y Meet ON/OFF |
 | `welcome.html` | Guía post-instalación |
-| `translator.html` / `translator.js` | Traductor a pantalla completa (cámara propia) |
 | `sandbox.html` / `sandbox.js` | Holistic WASM |
 | `offscreen.html` / `offscreen.js` | Mismo motor de captura para Meet (sin pestaña visible) |
 | `lib/api.js` | Cliente HTTP `127.0.0.1:8765` |
@@ -203,7 +204,8 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 
 | Archivo | Rol |
 |---------|-----|
-| `run_backend.py` | Entry point |
+| `run_backend.py` | Entry point (ventana IRIS o `--headless`) |
+| `src/backend/iris_app.py` | Ventana mínima: encender / apagar / reiniciar / registros |
 | `src/backend/server.py` | Rutas FastAPI, CORS, assets MediaPipe |
 | `src/backend/session.py` | Carga del modelo, ingestión, cierre de enunciado |
 | `src/backend/landmarks_payload.py` | JSON de frames → tensores |
@@ -217,8 +219,8 @@ cierre de enunciado.
   existen en el disco, **no las usa el código**.
 - No hay servidor en la nube: todo es localhost.
 - No hay entrenamiento aquí. Los `.pth` y `.gguf` se asumen ya exportados.
-- `packaging/build_exe.bat` puede generar `LSABackend.exe` (PyInstaller). En
-  desarrollo alcanza `python run_backend.py`.
+- `packaging/build_exe.bat` puede generar `IRIS.exe` (PyInstaller, sin consola).
+  En desarrollo: `python run_backend.py` (ventana) o `--headless`.
 
 ## 12. Orden mental para debuggear
 
