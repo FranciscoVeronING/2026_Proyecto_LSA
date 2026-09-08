@@ -100,6 +100,7 @@ class LlamaServerEngine:
         raise RuntimeError(f"No pude arrancar llama-server en CPU. Último error: {last_error}")
 
     def _start(self, backend: str, n_gpu_layers: int) -> None:
+        """Lanza ``llama-server.exe`` (CPU o Vulkan) y espera ``/health``."""
         exe = ensure_llama_server(backend)
         self.backend = backend
         ngl = 99 if backend == "vulkan" and n_gpu_layers != 0 else 0
@@ -158,6 +159,17 @@ class LlamaServerEngine:
         raise TimeoutError(f"llama-server no respondió en {timeout:.0f}s ({last})")
 
     def create_completion(self, prompt: str, max_tokens: int = 64, temperature: float = 0.1, stop=None, **kwargs):
+        """
+        Compatible con ``llama_cpp.Llama.create_completion``.
+
+        Args:
+            prompt: Chat ya formateado (ChatML / Llama3).
+            max_tokens: ``n_predict`` del server.
+            stop: Tokens de corte.
+
+        Returns:
+            ``{"choices": [{"text": str}]}``.
+        """
         payload = {
             "prompt": prompt,
             "n_predict": int(max_tokens),
@@ -182,6 +194,7 @@ class LlamaServerEngine:
         return {"choices": [{"text": text}]}
 
     def close(self) -> None:
+        """Mata el proceso llama-server si sigue vivo."""
         proc = self.proc
         if proc is not None and proc.poll() is None:
             proc.terminate()

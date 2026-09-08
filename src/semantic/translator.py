@@ -112,10 +112,10 @@ def _make_engine(model_path: str, n_gpu_layers: int, n_threads: int):
             n_threads_batch=n_threads,
             verbose=False,
         )
-    except ImportError:
+    except (ImportError, OSError, RuntimeError) as exc:
         print(
-            "[semantic] llama-cpp-python no está instalado "
-            "(típico en Python 3.13/3.14 en Windows). Uso llama-server.exe."
+            f"[semantic] llama-cpp-python no carga ({exc}). "
+            "Uso llama-server.exe."
         )
         from semantic.native_llama import LlamaServerEngine
 
@@ -186,7 +186,13 @@ def unload_model() -> None:
 
 
 def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False):
-    """Carga el modelo GGUF en memoria (GPU/CPU) usando llama-cpp-python."""
+    """
+    Carga el GGUF activo (llama-cpp o llama-server). Idempotente salvo ``force``.
+
+    Args:
+        model_id: Clave de ``semantic.models`` (default ``qwen2.5-3b``).
+        force: Recarga aunque ya esté en memoria.
+    """
     global SYSTEM_PROMPT, GGUF_MODEL, _LOADED, _ACTIVE_MODEL_ID, _ACTIVE_CHAT_FORMAT
 
     target_id = model_id or _ACTIVE_MODEL_ID or DEFAULT_MODEL_ID
@@ -252,8 +258,14 @@ def switch_model(model_id: str) -> str:
 
 def translate_glosses(glosses_input: str, history_messages: Optional[list[dict]] = None) -> str:
     """
-    glosses_input: str, ej. "YO LLAMAR POLICIA"
-    history_messages: lista opcional de dicts {role, content}
+    Glosas en una línea → oración en español (prompt + few-shot + GGUF).
+
+    Args:
+        glosses_input: Ej. ``"YO LLAMAR ESPOSO"``.
+        history_messages: Turnos previos ``{role, content}`` o None.
+
+    Returns:
+        Texto generado (strip). Vacío o error → cadena vacía / lo que devuelva el engine.
     """
     if not _LOADED or GGUF_MODEL is None:
         load_model_and_tokenizer()
