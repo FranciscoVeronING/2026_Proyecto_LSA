@@ -17,6 +17,7 @@ models/
 *.tflite
 
 src/semantic/outputs/*Instruct
+*.gguf
 
 # llama-server.exe descargado en runtime (Windows / Python 3.14)
 src/semantic/bin/
@@ -25,7 +26,11 @@ src/semantic/bin/
 señario1/
 señario2/
 
-# Empaquetado del backend para la extensión
+# Paquete IRIS que descarga la extensión (lo genera packaging/build_exe.bat)
+extension/bin/*.zip
+extension/bin/*.exe
+
+# Empaquetado PyInstaller
 build/
 dist/
 *.spec.bak
