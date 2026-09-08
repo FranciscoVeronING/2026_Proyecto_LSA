@@ -65,11 +65,12 @@ LsaApi.health()
     if (!h.ok) throw new Error("no listo");
     motorOk = true;
     dot.classList.add("on");
-    healthText.textContent = "Motor conectado";
+    const mode = h.mode === "hearing" ? "oyente (voz)" : "sordo (LSA)";
+    healthText.textContent = `Motor conectado · ${mode}`;
     if (meetTab) btnMeet.disabled = false;
   })
   .catch(() => {
-    healthText.textContent = "Motor apagado — descargá IRIS en Instalar motor";
+    healthText.textContent = "Motor apagado — descargá ILSA en Instalar motor";
     btnMeet.disabled = true;
   });
 

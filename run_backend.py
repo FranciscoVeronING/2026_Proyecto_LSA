@@ -1,5 +1,5 @@
 """
-Arranca el motor IRIS (ventana) o solo la API.
+Arranca el motor ILSA (ventana) o solo la API.
 
     python run_backend.py
     python run_backend.py --headless

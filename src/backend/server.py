@@ -21,10 +21,13 @@ if getattr(sys, "frozen", False):
 else:
     REPO_ROOT = Path(__file__).resolve().parents[2]
 EXE_CANDIDATES = [
+    REPO_ROOT / "dist" / "LSABackend" / "ILSA.exe",
     REPO_ROOT / "dist" / "LSABackend" / "IRIS.exe",
     REPO_ROOT / "dist" / "LSABackend" / "LSABackend.exe",
+    REPO_ROOT / "dist" / "ILSA.exe",
     REPO_ROOT / "dist" / "IRIS.exe",
     REPO_ROOT / "dist" / "LSABackend.exe",
+    REPO_ROOT / "packaging" / "dist" / "LSABackend" / "ILSA.exe",
     REPO_ROOT / "packaging" / "dist" / "LSABackend" / "IRIS.exe",
     REPO_ROOT / "packaging" / "dist" / "LSABackend" / "LSABackend.exe",
 ]
@@ -61,6 +64,9 @@ class SignIn(BaseModel):
     frames: list[dict] = Field(default_factory=list)
 
 
+_mode = "signer"
+
+
 def get_session():
     """Sesión global. 503 si ``main()`` todavía no llamó ``init_session``."""
     global _session
@@ -75,10 +81,11 @@ def health():
     session = _session
     return {
         "ok": session is not None,
-        "classifier_ready": bool(session and session.model is not None),
-        "semantic_ready": bool(session and session.semantic_ready),
-        "semantic_error": session.semantic_error if session else "",
-        "device": str(session.device) if session else "",
+        "mode": _mode,
+        "classifier_ready": bool(session and getattr(session, "model", None) is not None),
+        "semantic_ready": bool(session and getattr(session, "semantic_ready", False)),
+        "semantic_error": getattr(session, "semantic_error", "") if session else "",
+        "device": str(getattr(session, "device", "")) if session else "",
     }
 
 
@@ -108,6 +115,8 @@ def ingest_sign(body: SignIn):
 
     MediaPipe corre en la extensión. Este endpoint solo clasifica.
     """
+    if _mode == "hearing":
+        raise HTTPException(status_code=400, detail="Modo oyente: no se clasifican señas.")
     if not body.frames:
         print("[backend] POST /sign: body vacío")
         raise HTTPException(status_code=400, detail="Falta el conjunto de frames de la seña.")
@@ -171,7 +180,7 @@ def download_exe():
         if path.is_file():
             return FileResponse(
                 path,
-                filename="LSABackend.exe",
+                filename="ILSA.exe",
                 media_type="application/octet-stream",
             )
     bat = REPO_ROOT / "LSABackend.bat"
@@ -201,27 +210,39 @@ def parse_args(argv=None):
     parser.add_argument(
         "--headless",
         action="store_true",
-        help="Sin ventana IRIS: solo uvicorn en consola (desarrollo / scripts).",
+        help="Sin ventana ILSA: solo uvicorn en consola (desarrollo / scripts).",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=("signer", "hearing"),
+        default="signer",
+        help="signer = LSA→español; hearing = voz→subtítulos. Solo aplica con --headless.",
     )
     return parser.parse_args(argv)
 
 
-def init_session(enable_llm: bool = True):
-    """Construye el ``LSASession`` global (carga pesos; LLM en background)."""
-    global _session
+def init_session(enable_llm: bool = True, mode: str = "signer"):
+    """Construye la sesión global. En modo oyente no carga CUDA ni GGUF."""
+    global _session, _mode
+    _mode = "hearing" if mode == "hearing" else "signer"
+    if _mode == "hearing":
+        from backend.hearing_session import HearingSession
+
+        _session = HearingSession()
+        return
     from backend.session import LSASession
 
     _session = LSASession(enable_llm=enable_llm)
 
 
 def main(argv=None):
-    """Punto de entrada: ventana IRIS, o uvicorn solo con ``--headless``."""
+    """Punto de entrada: ventana ILSA, o uvicorn solo con ``--headless``."""
     args = parse_args(argv)
     os.environ.setdefault("LSA_BACKEND", "1")
     if args.gpu:
         os.environ["LSA_USE_GPU"] = "1"
     if args.headless:
-        init_session(enable_llm=not args.no_llm)
+        init_session(enable_llm=not args.no_llm, mode=args.mode)
         import uvicorn
 
         uvicorn.run(app, host=args.host, port=args.port, log_level="info")

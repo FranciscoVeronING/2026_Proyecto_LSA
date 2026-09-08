@@ -1,13 +1,14 @@
 :root {
-  --bg: #0f1419;
-  --bg-2: #1a2330;
-  --card: #243044;
-  --text: #e8eef6;
-  --muted: #9aa8b8;
-  --accent: #ff9f1c;
-  --ok: #3ddc97;
-  --bad: #ff6b6b;
-  --line: #334155;
+  --bg: #1D3E53;
+  --bg-2: #26516D;
+  --card: #26516D;
+  --text: #FFFFFF;
+  --muted: #EAF4FA;
+  --accent: #5BCBE8;
+  --accent-fg: #1D3E53;
+  --ok: #5BCBE8;
+  --bad: #E89A94;
+  --line: #1A4A63;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
@@ -87,24 +88,30 @@ button, .btn {
   border: 0;
   border-radius: 10px;
   padding: 10px 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #111;
+  color: var(--accent-fg);
   background: var(--accent);
+  box-shadow: 0 3px 0 #1A4A63;
 }
 
 button.ghost, .btn.ghost {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--line);
+  background: #1D3E53;
+  color: #FFFFFF;
+  border: 2px solid #5BCBE8;
+  box-shadow: none;
 }
 
-button:disabled {
-  opacity: 0.45;
+button:disabled, .btn:disabled {
+  opacity: 1;
+  background: #152A38;
+  color: #7A9BB0;
+  border: 2px solid #1A4A63;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
@@ -125,7 +132,7 @@ button:disabled {
 
 code, .cmd {
   font-family: ui-monospace, Consolas, monospace;
-  background: #0b1016;
+  background: #163040;
   border: 1px solid var(--line);
   padding: 2px 6px;
   border-radius: 6px;

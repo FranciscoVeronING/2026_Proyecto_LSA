@@ -204,7 +204,7 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 
 | Archivo | Rol |
 |---------|-----|
-| `run_backend.py` | Entry point (ventana IRIS o `--headless`) |
+| `run_backend.py` | Entry point (ventana ILSA o `--headless`) |
 | `src/backend/iris_app.py` | Ventana mínima: encender / apagar / reiniciar / registros |
 | `src/backend/server.py` | Rutas FastAPI, CORS, assets MediaPipe |
 | `src/backend/session.py` | Carga del modelo, ingestión, cierre de enunciado |
@@ -219,7 +219,7 @@ cierre de enunciado.
   existen en el disco, **no las usa el código**.
 - No hay servidor en la nube: todo es localhost.
 - No hay entrenamiento aquí. Los `.pth` y `.gguf` se asumen ya exportados.
-- `packaging/build_exe.bat` puede generar `IRIS.exe` (PyInstaller, sin consola).
+- `packaging/build_exe.bat` puede generar `ILSA.exe` (PyInstaller, sin consola).
   En desarrollo: `python run_backend.py` (ventana) o `--headless`.
 
 ## 12. Orden mental para debuggear

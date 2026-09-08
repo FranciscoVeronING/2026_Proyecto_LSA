@@ -9,11 +9,11 @@
 
 #lsa-meet-root .lsa-card {
   pointer-events: auto;
-  background: rgba(8, 12, 18, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(29, 62, 83, 0.94);
+  border: 1px solid #1A4A63;
   border-radius: 16px;
   padding: 8px 12px 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(22, 48, 64, 0.5);
   min-width: 280px;
 }
 
@@ -25,22 +25,22 @@
   padding: 2px 8px;
 }
 #lsa-meet-root .lsa-cap.on {
-  background: #22c55e;
-  color: #052e16;
+  background: #5BCBE8;
+  color: #1D3E53;
 }
 #lsa-meet-root .lsa-cap.off {
-  background: #334155;
-  color: #cbd5e1;
+  background: #1D3E53;
+  color: #EAF4FA;
 }
 
 #lsa-meet-root .lsa-gloss {
-  color: #7dd3fc;
+  color: #EAF4FA;
   font-size: 12px;
   margin-top: 4px;
 }
 
 #lsa-meet-root .lsa-spanish {
-  color: #fff;
+  color: #FFFFFF;
   font-size: 14px;
   font-weight: 650;
   margin-top: 4px;
@@ -57,14 +57,14 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: #ff9f1c;
-  color: #111;
+  background: #5BCBE8;
+  color: #1D3E53;
   border-radius: 999px;
   padding: 2px 8px;
 }
 
 #lsa-meet-root .lsa-status {
-  color: #c9d4e2;
+  color: #EAF4FA;
   font-size: 12px;
 }
 
@@ -72,7 +72,7 @@
   appearance: none;
   border: 0;
   background: transparent;
-  color: #e8eef6;
+  color: #FFFFFF;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;

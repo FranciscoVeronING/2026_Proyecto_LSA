@@ -88,11 +88,11 @@ py -3 packaging/fetch_extension_assets.py
 
 Eso llena `extension/vendor/mediapipe/` y, si faltan, los íconos.
 
-### 2. Motor IRIS (usuarias)
+### 2. Motor ILSA (usuarias)
 
-En la extensión: **Instalar motor → Descargar IRIS**. Eso baja `IRIS.zip`
+En la extensión: **Instalar motor → Descargar ILSA**. Eso baja `ILSA.zip`
 (lo genera `packaging\build_exe.bat` y queda en `extension/bin/`). La persona
-descomprime, abre **IRIS.exe** y deja esa ventana abierta.
+descomprime, abre **ILSA.exe** y deja esa ventana abierta.
 
 Quien desarrolla, para generar ese zip una vez:
 
@@ -116,7 +116,7 @@ en la pestaña de Google Meet.
 
 ### Google Meet
 
-1. IRIS abierto (ventana del exe, punto verde en la guía).
+1. ILSA abierto (ventana del exe, punto verde en la guía).
 2. Entrá a `https://meet.google.com/...` y permití la cámara.
 3. Activá LSA desde el popup (o el flujo de Meet de la extensión).
 

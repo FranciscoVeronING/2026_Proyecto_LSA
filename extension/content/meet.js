@@ -8,6 +8,8 @@
 const SUBTITLE_HOLD_MS = 8000;
 
 let running = false;
+let meetMode = "signer";
+let recognizer = null;
 let framesSeen = 0;
 let pending = false;
 let rafId = 0;
@@ -151,8 +153,9 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-/** Activa LSA en la página y empieza a mandar frames. */
-function startBridge() {
+/** Activa el puente en Meet. `mode`: signer (LSA) o hearing (voz → subtítulos). */
+function startBridge(mode) {
+  meetMode = mode === "hearing" ? "hearing" : "signer";
   running = true;
   framesSeen = 0;
   pending = false;
@@ -160,14 +163,71 @@ function startBridge() {
   hudState.lastGloss = "—";
   ensureHud();
   postToPage({ type: "LSA_SET_ENABLED", enabled: true });
-  setHud({ status: "escuchando", capturing: false });
   cancelAnimationFrame(rafId);
+  if (meetMode === "hearing") {
+    setHud({ debug: "Hablá: el texto se pinta en tu cámara", capturing: false });
+    startSpeech();
+    return;
+  }
+  setHud({ status: "escuchando", capturing: false });
   loop();
   setTimeout(() => {
-    if (running && !framesSeen) {
+    if (running && meetMode === "signer" && !framesSeen) {
       setHud({ debug: "Sin video. Apagá y prendé la cámara de Meet." });
     }
   }, 5000);
+}
+
+function startSpeech() {
+  stopSpeech();
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Rec) {
+    setHud({ debug: "Este Chrome no tiene reconocimiento de voz", capturing: false });
+    return;
+  }
+  recognizer = new Rec();
+  recognizer.lang = "es-AR";
+  recognizer.continuous = true;
+  recognizer.interimResults = true;
+  recognizer.onresult = (event) => {
+    if (!running || meetMode !== "hearing") return;
+    let interim = "";
+    let finalText = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const piece = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalText += piece;
+      else interim += piece;
+    }
+    const spanish = (finalText || interim).trim();
+    if (!spanish) return;
+    setHud({ spanish, debug: "Transcribiendo…", capturing: true, lastGloss: "voz" });
+    postToPage({ type: "LSA_CAPTION", spanish, glosses: "" });
+  };
+  recognizer.onerror = (event) => {
+    if (event.error === "no-speech" || event.error === "aborted") return;
+    setHud({ debug: "Voz: " + (event.error || "error"), capturing: false });
+  };
+  recognizer.onend = () => {
+    if (running && meetMode === "hearing" && recognizer) {
+      try {
+        recognizer.start();
+      } catch (_) {}
+    }
+  };
+  try {
+    recognizer.start();
+  } catch (err) {
+    setHud({ debug: "No se pudo iniciar el micrófono de transcripción", capturing: false });
+  }
+}
+
+function stopSpeech() {
+  if (!recognizer) return;
+  recognizer.onend = null;
+  try {
+    recognizer.stop();
+  } catch (_) {}
+  recognizer = null;
 }
 
 /** Apaga el gancho de gUM (Meet vuelve a la cámara nativa en el próximo pedido). */
@@ -175,6 +235,7 @@ function stopBridge() {
   running = false;
   pending = false;
   cancelAnimationFrame(rafId);
+  stopSpeech();
   postToPage({ type: "LSA_SET_ENABLED", enabled: false });
   hideHud();
 }
@@ -190,7 +251,7 @@ window.addEventListener("message", (event) => {
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (!msg || !msg.type) return;
-  if (msg.type === "lsa-meet-content-start") startBridge();
+  if (msg.type === "lsa-meet-content-start") startBridge(msg.mode);
   if (msg.type === "lsa-meet-content-stop") stopBridge();
   if (msg.type === "lsa-caption") {
     setHud(msg);

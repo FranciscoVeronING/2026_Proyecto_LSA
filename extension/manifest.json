@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "LSA Intérprete",
-  "version": "1.4.7",
-  "description": "Detecta señas LSA en la cámara y las traduce a español con el motor local.",
+  "version": "1.4.8",
+  "description": "LSA o voz a subtítulos en Meet, con el motor local ILSA.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

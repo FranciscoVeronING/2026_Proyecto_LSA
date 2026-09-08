@@ -124,18 +124,30 @@ async function startMeet(tabId, leftHanded) {
   if (!tab.url || !tab.url.startsWith("https://meet.google.com/")) {
     throw new Error("Abrí una llamada de Google Meet y volvé a intentar.");
   }
-  meetTabId = tabId;
-  await ensureOffscreen();
-  await waitOffscreenReady();
-  const started = await sendToOffscreen({
-    type: "lsa-meet-start",
-    tabId,
-    leftHanded: Boolean(leftHanded),
-  });
-  if (started && started.ok === false) {
-    throw new Error(started.error || "No se pudo iniciar el intérprete.");
+  let mode = "signer";
+  try {
+    const res = await fetch("http://127.0.0.1:8765/health");
+    if (!res.ok) throw new Error("ILSA no está encendido.");
+    const h = await res.json();
+    if (!h || !h.ok) throw new Error("ILSA no está encendido. Elegí un modo y dale a Encender.");
+    mode = h.mode === "hearing" ? "hearing" : "signer";
+  } catch (err) {
+    throw new Error(err.message || "ILSA no está encendido. Elegí un modo y dale a Encender.");
   }
-  await chrome.tabs.sendMessage(tabId, { type: "lsa-meet-content-start" });
+  meetTabId = tabId;
+  if (mode === "signer") {
+    await ensureOffscreen();
+    await waitOffscreenReady();
+    const started = await sendToOffscreen({
+      type: "lsa-meet-start",
+      tabId,
+      leftHanded: Boolean(leftHanded),
+    });
+    if (started && started.ok === false) {
+      throw new Error(started.error || "No se pudo iniciar el intérprete.");
+    }
+  }
+  await chrome.tabs.sendMessage(tabId, { type: "lsa-meet-content-start", mode });
 }
 
 /** Para captura y HUD; no corta los tracks de la cámara de Meet. */

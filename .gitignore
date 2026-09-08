@@ -26,7 +26,7 @@ src/semantic/bin/
 señario1/
 señario2/
 
-# Paquete IRIS que descarga la extensión (lo genera packaging/build_exe.bat)
+# Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip
 extension/bin/*.exe
 
