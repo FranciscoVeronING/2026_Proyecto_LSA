@@ -29,7 +29,7 @@ a = Analysis(
     pathex=[str(src), str(repo)],
     binaries=[],
     datas=datas + collect_data_files("llama_cpp"),
-    hiddenimports=hidden,
+    hiddenimports=hidden + ["tkinter", "tkinter.ttk", "tkinter.font"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -47,12 +47,12 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="LSABackend",
+    name="IRIS",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     icon=None,
 )
 

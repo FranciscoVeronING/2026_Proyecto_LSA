@@ -1,7 +1,8 @@
 """
-Arranca el backend FastAPI para la extensión Chrome.
+Arranca el motor IRIS (ventana) o solo la API.
 
     python run_backend.py
+    python run_backend.py --headless
     python run_backend.py --no-llm
     python run_backend.py --port 8765
 """
