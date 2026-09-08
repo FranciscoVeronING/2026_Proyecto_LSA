@@ -1,3 +1,10 @@
+"""
+Hiperparámetros del clasificador y de la captura en vivo.
+
+La extensión pide un subconjunto vía ``GET /config``. Cambiar ``MAX_FRAMES``
+obliga a reentrenar: el ``.pth`` espera T=16.
+"""
+
 # ==========================================
 # PATHS
 # ==========================================
@@ -13,6 +20,8 @@ METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
 MAX_FRAMES = 16
 
+# Etiquetas del clasificador (lo que predice TinySkeleton). No es el texto
+# que consume la LLM tal cual: eso pasa por ``normalize_gloss``.
 SIGN_CLASSES = [
     "como",
     "cuando",
@@ -134,20 +143,6 @@ NUM_LAYERS = 2
 DROPOUT_RATE = 0.4
 
 # ==========================================
-# DATA AUGMENTATION AND TRAINING
-# ==========================================
-USE_DATA_AUGMENTATION = True
-BATCH_SIZE = 16
-EPOCHS = 200
-PATIENCE = 15
-VIRTUAL_MULTIPLIER = 10
-AUG_NOISE_STD = 0.02992555713844365
-LR = 3.772811699894694e-05
-WEIGHT_DECAY = 0.0003168710901337327
-LABEL_SMOOTHING = 0.0014563065114717305
-AUG_SCALE_RANGE = (0.85, 1.15)
-
-# ==========================================
 # REAL-TIME INFERENCE
 # ==========================================
 CONFIDENCE_THRESHOLD = 0.75
@@ -163,9 +158,10 @@ STATIC_HANDS_FRAMES_TO_START = 4
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
-STILL_FRAMES_LIMIT = 10
+# Holgados: entre señas las manos bajan o Holistic pierde el tracking un instante.
+STILL_FRAMES_LIMIT = 16
 CAPTURE_BUFFER_SIZE = 60
-MISSING_HANDS_LIMIT = 12
+MISSING_HANDS_LIMIT = 24
 MIN_CAPTURE_FRAMES = 5
 
 # Modes: "auto" (dynamic + static), "dynamic", "static"
@@ -177,19 +173,21 @@ CAPTURE_MODE = "auto"
 # Pausa sin actividad de señado → cerrar la lista y mandarla a la LLM.
 # Cuenta desde la última seña reconocida o desde que las manos dejaron de
 # moverse en cámara, lo que haya pasado último.
-UTTERANCE_PAUSE_SEC = 4.0
+UTTERANCE_PAUSE_SEC = 5.5
 # Letras consecutivas iguales permitidas (la 3ª+ se descarta). Dígitos: sin límite.
 # Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
 LETTER_MAX_CONSECUTIVE = 2
 
-# Normalization key mapping_clases.json → token for the LLM
+# Alias clasificador → token que ve la LLM. **No** es el vocabulario completo
+# (eso es ``SIGN_CLASSES`` + mayúsculas). **No** unificar a masculino:
+# en LSA hermano/hermana es un signo; ``HERMANO/A`` deja el género a la LLM.
 GLOSS_NORMALIZER = {
-    "el_ella": "EL/ELLA",
-    "esposo a": "ESPOSO/A",
+    "el_ella": "EL",
+    "esposo a": "ESPOSO",
     "ahora_hoy": "HOY",
-    "vivir_en": "VIVIR-EN",
-    "hermano_a": "HERMANO/A",
-    "hijo_a": "HIJO/A",
+    "vivir_en": "VIVIR_EN",
+    "hermano_a": "HERMANO",
+    "hijo_a": "HIJO",
     "años": "AÑOS",
     "ñ": "Ñ",
 }

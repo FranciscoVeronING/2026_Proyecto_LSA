@@ -1,16 +1,45 @@
+/**
+ * Recorte temporal de una seña. Corre **en la extensión**, con landmarks
+ * que ya trajo Holistic. El backend no participa hasta `onSign` → `POST /sign`.
+ *
+ * No se usa movimiento de píxeles (gente detrás de cámara en Meet). En `auto`,
+ * empieza al ver una mano usable; termina a los 60 frames o ~0,8 s sin manos.
+ */
+
+/**
+ * Umbrales por si `/config` todavía no respondió.
+ * Los nombres coinciden con `src/classifier/config.py`.
+ *
+ * @typedef {object} CaptureConfig
+ * @property {number} landmark_motion_threshold Movimiento minimo L2 de manos para “está señando”.
+ * @property {number} capture_buffer_size Máximo de frames crudos de una seña.
+ * @property {number} missing_hands_limit Frames @30fps equivalentes a la gracia sin manos.
+ * @property {number} min_capture_frames Por debajo se descarta el buffer.
+ * @property {number} max_frames Tamaño que consume TinySkeleton.
+ * @property {"auto"|"dynamic"|"static"} capture_mode
+ * @property {number} utterance_pause_sec Silencio → cerrar enunciado.
+ * @property {number} static_hands_frames_to_start Solo modo `static`.
+ */
 const FALLBACK_CFG = {
   motion_pixel_threshold: 500,
   landmark_motion_threshold: 0.008,
   static_hands_frames_to_start: 4,
-  still_frames_limit: 10,
+  still_frames_limit: 16,
   capture_buffer_size: 60,
-  missing_hands_limit: 12,
+  missing_hands_limit: 24,
   min_capture_frames: 5,
   max_frames: 16,
   capture_mode: "auto",
-  utterance_pause_sec: 4.0,
+  utterance_pause_sec: 5.5,
 };
 
+/**
+ * Submuestreo uniforme (índices `floor`, mismo criterio que un linspace entero).
+ *
+ * @param {object[]} frames Buffer crudo de `packFrame`.
+ * @param {number} target Cantidad deseada (16).
+ * @returns {object[]} `frames` si ya es corto; si no, `target` muestras.
+ */
 function uniformSampleFrames(frames, target) {
   const n = frames.length;
   if (n === 0 || n <= target) return frames;
@@ -23,6 +52,20 @@ function uniformSampleFrames(frames, target) {
   return out;
 }
 
+/**
+ * ¿Hay que empezar a grabar este frame?
+ *
+ * Meet usa `capture_mode: "auto"`: con una mano usable devuelve true.
+ * No hace falta “movimiento suficiente” de píxeles ni de L2 para abrir.
+ * `dynamic` sí exige L2 de manos; `static` exige N frames con manos.
+ *
+ * @param {string} mode `auto` | `dynamic` | `static`.
+ * @param {boolean} handsPresent Al menos una mano usable (`anyHandPresent`).
+ * @param {boolean} isMoving L2 de manos > umbral (solo modo dynamic).
+ * @param {number} consecutiveHands Frames seguidos con manos (modo static).
+ * @param {number} staticFrames Umbral de frames estáticos.
+ * @returns {boolean}
+ */
 function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, staticFrames) {
   if (!handsPresent) return false;
   if (mode === "dynamic") return isMoving;
@@ -30,6 +73,21 @@ function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, st
   return true;
 }
 
+/**
+ * Crea el motor de captura. Un `step` por cada resultado de Holistic.
+ *
+ * @param {() => Partial<CaptureConfig>|null|undefined} getCfg Config viva (p. ej. la de `/config`).
+ * @param {object} callbacks
+ * @param {(frames: object[]) => void} callbacks.onSign Seña lista (ya submuestreada).
+ * @param {() => void} callbacks.onSigningActivity Manos en movimiento con glosas pendientes.
+ * @param {() => (void|Promise<void>)} callbacks.onUtterancePause Pausa larga: pedir español.
+ * @returns {{
+ *   markPending: (hasGlosses: boolean) => void,
+ *   noteInferenceActivity: () => void,
+ *   step: (args: { results: object, video?: HTMLVideoElement, motionCtx?: CanvasRenderingContext2D, leftHanded: boolean }) => object,
+ *   reset: () => void
+ * }}
+ */
 function createCaptureEngine(getCfg, callbacks) {
   let frames = [];
   let prevHand = null;
@@ -41,16 +99,25 @@ function createCaptureEngine(getCfg, callbacks) {
   let pendingGlosses = false;
   let closing = false;
 
+  /** @returns {CaptureConfig} */
   function cfg() {
     return { ...FALLBACK_CFG, ...(getCfg() || {}) };
   }
 
+  /**
+   * Marca actividad para el reloj de enunciado.
+   * @param {boolean} fromHands Si viene de movimiento real, avisa al backend (`/activity`).
+   */
   function bumpActivity(fromHands) {
     const now = Date.now() / 1000;
     lastActivity = now;
     if (fromHands && pendingGlosses) callbacks.onSigningActivity();
   }
 
+  /**
+   * Cierra la seña actual: descarta si es corta; si no, submuestrea y llama `onSign`.
+   * @returns {void}
+   */
   function flushSign() {
     const c = cfg();
     if (frames.length < c.min_capture_frames) {
@@ -69,13 +136,25 @@ function createCaptureEngine(getCfg, callbacks) {
   }
 
   return {
+    /**
+     * @param {boolean} hasGlosses Hay glosas en el buffer del backend.
+     */
     markPending(hasGlosses) {
       pendingGlosses = Boolean(hasGlosses);
     },
+    /** Tras un `/sign` aceptado: el enunciado sigue vivo. */
     noteInferenceActivity() {
       bumpActivity(false);
       pendingGlosses = true;
     },
+    /**
+     * Un tick de Holistic.
+     *
+     * @param {object} args
+     * @param {object} args.results `poseLandmarks` / `leftHandLandmarks` / `rightHandLandmarks`.
+     * @param {boolean} args.leftHanded Espeja el vector si el usuario es zurdo.
+     * @returns {{ recording: boolean, bufferLen: number, still: number, handsPresent: boolean, moving: boolean }}
+     */
     step({ results, video, motionCtx, leftHanded }) {
       const c = cfg();
       const handsPresent = anyHandPresent(results);
@@ -116,7 +195,7 @@ function createCaptureEngine(getCfg, callbacks) {
           if (!missingSince) missingSince = t;
           missingHands += 1;
           frames.push(frames[frames.length - 1]);
-          const graceSec = Math.max(0.35, (c.missing_hands_limit || 12) / 30);
+          const graceSec = Math.max(0.75, (c.missing_hands_limit || 24) / 30);
           if (t - missingSince >= graceSec) flushSign();
         }
       }
@@ -146,6 +225,7 @@ function createCaptureEngine(getCfg, callbacks) {
         moving: isMoving,
       };
     },
+    /** Limpia buffer y relojes (stop de Meet / nueva sesión). */
     reset() {
       frames = [];
       prevHand = null;
