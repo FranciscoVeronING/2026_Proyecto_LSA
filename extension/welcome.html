@@ -2,57 +2,51 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>LSA Intérprete — instalar motor</title>
+  <title>IRIS — instalar motor</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="wrap">
     <div class="brand">
-      <h1>LSA Intérprete</h1>
+      <h1>IRIS</h1>
       <span class="badge">Extensión + motor local</span>
     </div>
     <p class="lede">
-      La extensión captura las señas en el navegador. El reconocimiento y la
-      traducción a español corren en un programa en tu PC (FastAPI + modelos)
+      La extensión captura las señas en Meet. El reconocimiento vive en un
+      programa en tu PC: la ventana IRIS. Descargala, abrila y deja esa
+      ventana abierta mientras estás en la llamada.
     </p>
 
     <div class="card">
-      <h2>1. Descargá y ejecutá el motor</h2>
+      <h2>1. Descargá e iniciá IRIS</h2>
       <p class="lede" style="margin-bottom: 0">
-        Sin ese programa la cámara no tiene a quién enviarle las señas.
-        Tiene que quedar abierto mientras uses el intérprete.
+        Es un solo programa. Si viene en un zip, descomprimilo y abrí
+        <strong>IRIS.exe</strong>. No hace falta instalar Python.
       </p>
       <div class="row">
-        <a class="btn" id="btn-exe" href="http://127.0.0.1:8765/download/exe">Descargar iniciador (.bat / .exe)</a>
-        <button class="ghost" id="btn-check" type="button">Comprobar conexión</button>
+        <button type="button" id="btn-exe">Descargar IRIS</button>
+        <button class="ghost" type="button" id="btn-check">Comprobar si está en marcha</button>
       </div>
       <p class="hint" id="exe-hint" style="margin-top: 12px">
-        Si el botón de descarga falla, el exe todavía no está empaquetado.
-        En la carpeta del proyecto corré <code>packaging\build_exe.bat</code>
-        o, para desarrollo, el comando de abajo. Si al abrir el intérprete
-        falta MediaPipe: <code>py -3 packaging\fetch_extension_assets.py</code>.
+        Windows puede pedir “más información → ejecutar de todos modos”
+        (el exe no está firmado). Dejá la ventana IRIS abierta.
       </p>
-      <code class="cmd cmd-block">python run_backend.py</code>
     </div>
 
     <div class="card">
       <h2>2. Estado del motor</h2>
       <div class="status">
         <span class="dot" id="dot"></span>
-        <span id="health-text">Buscando http://127.0.0.1:8765 …</span>
+        <span id="health-text">Todavía no se ve IRIS en este equipo…</span>
       </div>
     </div>
 
     <div class="card">
-      <h2>3. Abrí el intérprete</h2>
+      <h2>3. Entrá a Google Meet</h2>
       <p class="lede" style="margin-bottom: 0">
-        Cuando el motor esté en verde, permití la cámara y señá. Cada seña
-        (conjunto de frames) se manda a la API; al pausar ~4 segundos se cierra
-        el enunciado y vuelve la oración en español.
+        Con IRIS en verde, abrí Meet, el popup de la extensión y
+        <strong>Subtítulos en Meet</strong>.
       </p>
-      <div class="row">
-        <button id="btn-open" type="button" disabled>Abrir intérprete</button>
-      </div>
     </div>
   </div>
   <script src="lib/api.js"></script>
