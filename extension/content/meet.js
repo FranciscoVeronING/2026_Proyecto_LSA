@@ -1,3 +1,10 @@
+/**
+ * Content script aislado en Meet: HUD + muestreo JPEG hacia el service worker.
+ *
+ * No puede tocar `getUserMedia` (eso vive en MAIN / inject-gum.js). Se comunican
+ * con `postMessage` y con `chrome.runtime` (frames, captions, start/stop).
+ */
+
 const SUBTITLE_HOLD_MS = 8000;
 
 let running = false;
@@ -13,10 +20,18 @@ const hudState = {
   statusText: "Mostrá las manos para capturar",
 };
 
+/**
+ * Mensaje al mundo MAIN (inject-gum).
+ * @param {object} payload Campos extra (`type`, `enabled`, `spanish`, …).
+ */
 function postToPage(payload) {
   window.postMessage({ source: "lsa-ext", ...payload }, "*");
 }
 
+/**
+ * Crea el chip LSA arriba a la derecha si no existe.
+ * @returns {HTMLElement}
+ */
 function ensureHud() {
   let root = document.getElementById("lsa-meet-root");
   if (root) return root;
@@ -42,6 +57,7 @@ function ensureHud() {
   return root;
 }
 
+/** Pinta `hudState` en el DOM. No-op si el puente está detenido. */
 function paintHud() {
   const root = ensureHud();
   if (!running) return;
@@ -55,6 +71,11 @@ function paintHud() {
   if (sp) sp.textContent = hudState.spanish || "";
 }
 
+/**
+ * Fusiona un parche de estado (captions / debug) y refresca el HUD.
+ * El español se borra solo a los {@link SUBTITLE_HOLD_MS} ms.
+ * @param {object} partial
+ */
 function setHud(partial) {
   if (typeof partial.capturing === "boolean") hudState.capturing = partial.capturing;
   if (partial.lastGloss) hudState.lastGloss = partial.lastGloss;
@@ -82,11 +103,16 @@ function setHud(partial) {
   paintHud();
 }
 
+/** Oculta el HUD sin destruirlo. */
 function hideHud() {
   const root = document.getElementById("lsa-meet-root");
   if (root) root.classList.add("lsa-hidden");
 }
 
+/**
+ * JPEG chico del video real (no del canvas de Meet) para Holistic.
+ * @returns {{ width: number, height: number, dataUrl: string }|null}
+ */
 function grabJpeg() {
   const video = document.getElementById("lsa-real-cam");
   if (!video || video.readyState < 2 || !video.videoWidth) return null;
@@ -106,6 +132,7 @@ function grabJpeg() {
 }
 
 let lastSendAt = 0;
+/** Loop rAF: como máximo un JPEG cada ~70 ms, espera ACK implícito de `pending`. */
 function loop() {
   if (!running) return;
   const now = performance.now();
@@ -124,6 +151,7 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
+/** Activa LSA en la página y empieza a mandar frames. */
 function startBridge() {
   running = true;
   framesSeen = 0;
@@ -142,6 +170,7 @@ function startBridge() {
   }, 5000);
 }
 
+/** Apaga el gancho de gUM (Meet vuelve a la cámara nativa en el próximo pedido). */
 function stopBridge() {
   running = false;
   pending = false;

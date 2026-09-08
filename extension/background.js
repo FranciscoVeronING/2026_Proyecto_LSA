@@ -1,7 +1,19 @@
+/**
+ * Service worker MV3: única pieza que habla con popup, Meet y el documento offscreen.
+ *
+ * Mensajes:
+ * - `lsa-meet-start-request` / `stop-request` — popup o botón del HUD.
+ * - `lsa-frame` — JPEG desde meet.js → reenvío `lsa-offscreen-frame`.
+ * - `lsa-caption` — estado desde offscreen → meet.js.
+ */
+
 const OFFSCREEN_URL = "offscreen.html";
 
 let meetTabId = null;
 
+/**
+ * @returns {Promise<boolean>} true si ya hay un documento offscreen de esta extensión.
+ */
 async function hasOffscreen() {
   if (chrome.offscreen.hasDocument) {
     return chrome.offscreen.hasDocument();
@@ -12,6 +24,10 @@ async function hasOffscreen() {
   return ctxs.length > 0;
 }
 
+/**
+ * Crea `offscreen.html` (Holistic no puede correr en el service worker).
+ * @returns {Promise<void>}
+ */
 async function ensureOffscreen() {
   if (await hasOffscreen()) return;
   await chrome.offscreen.createDocument({
@@ -21,6 +37,11 @@ async function ensureOffscreen() {
   });
 }
 
+/**
+ * Espera a que el documento offscreen exista (el grafo WASM tarda).
+ * @param {number} [timeoutMs=8000]
+ * @returns {Promise<void>}
+ */
 async function waitOffscreenReady(timeoutMs = 8000) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
@@ -72,6 +93,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+/**
+ * Manda un mensaje al offscreen; reintenta porque el SW puede despertar antes.
+ * @param {object} message
+ * @param {number} [tries=12]
+ * @returns {Promise<any>}
+ */
 async function sendToOffscreen(message, tries = 12) {
   let lastErr = null;
   for (let i = 0; i < tries; i++) {
@@ -86,6 +113,12 @@ async function sendToOffscreen(message, tries = 12) {
   throw lastErr || new Error("El procesador de video no respondió.");
 }
 
+/**
+ * Arranque Meet: offscreen + content script.
+ * @param {number} tabId Pestaña `https://meet.google.com/…`.
+ * @param {boolean} leftHanded
+ * @returns {Promise<void>}
+ */
 async function startMeet(tabId, leftHanded) {
   const tab = await chrome.tabs.get(tabId);
   if (!tab.url || !tab.url.startsWith("https://meet.google.com/")) {
@@ -105,6 +138,7 @@ async function startMeet(tabId, leftHanded) {
   await chrome.tabs.sendMessage(tabId, { type: "lsa-meet-content-start" });
 }
 
+/** Para captura y HUD; no corta los tracks de la cámara de Meet. */
 async function stopMeet() {
   const tabId = meetTabId;
   meetTabId = null;

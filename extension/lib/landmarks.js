@@ -1,11 +1,35 @@
+/**
+ * Empaquetado y vectorización de landmarks **ya extraídos** por Holistic.
+ *
+ * Este archivo no mira píxeles. El esqueleto sale de `sandbox.js` (MediaPipe).
+ * Acá se decide si una mano es usable, se arma el JSON de `POST /sign` y el
+ * vector 225 para medir movimiento L2 en `capture.js`.
+ *
+ * Un frame para el clasificador:
+ *   pose 33×3  +  mano izq. 21×3  +  mano der. 21×3  =  225 floats.
+ */
+
+/** Dimensión del bloque de pose en el vector plano. */
 const POSE_DIM = 33 * 3;
+/** Dimensión de una mano. */
 const HAND_DIM = 21 * 3;
 
+/**
+ * Serializa una lista de puntos MediaPipe a arrays `[x,y,z]`.
+ * @param {Array<{x:number,y:number,z?:number}>|null|undefined} landmarks
+ * @returns {number[][]|null} `null` si no hay puntos (el backend interpreta ceros).
+ */
 function lmList(landmarks) {
   if (!landmarks || !landmarks.length) return null;
   return landmarks.map((p) => [p.x, p.y, p.z || 0]);
 }
 
+/**
+ * Empaqueta un resultado Holistic para `POST /sign`.
+ * El backend recibe estos puntos, no el video.
+ * @param {{ poseLandmarks?: object[], leftHandLandmarks?: object[], rightHandLandmarks?: object[] }} results
+ * @returns {{ pose: number[][]|null, left_hand: number[][]|null, right_hand: number[][]|null }}
+ */
 function packFrame(results) {
   return {
     pose: lmList(results.poseLandmarks),
@@ -14,6 +38,13 @@ function packFrame(results) {
   };
 }
 
+/**
+ * ¿Esta mano es usable? No alcanza con “el array no está vacío”: Holistic a
+ * veces devuelve puntos en (0,0) o fuera de cuadro.
+ *
+ * @param {Array<{x:number,y:number}>|null|undefined} lms 21 puntos o menos.
+ * @returns {boolean} true si hay ≥12 puntos razonables y un bbox mínimo.
+ */
 function handIsPresent(lms) {
   if (!lms || lms.length < 15) return false;
   let minX = 1;
@@ -38,66 +69,24 @@ function handIsPresent(lms) {
   return maxX - minX > 0.04 || maxY - minY > 0.04;
 }
 
+/**
+ * @param {{ leftHandLandmarks?: object[], rightHandLandmarks?: object[] }} results
+ * @returns {boolean}
+ */
 function anyHandPresent(results) {
   return handIsPresent(results.leftHandLandmarks) || handIsPresent(results.rightHandLandmarks);
 }
 
-function createLandmarkSmoother(alpha) {
-  const a = alpha == null ? 0.6 : alpha;
-  const prev = { pose: null, left: null, right: null };
-
-  function blend(key, lms) {
-    if (!lms || !lms.length) {
-      prev[key] = null;
-      return lms;
-    }
-    const last = prev[key];
-    const out = [];
-    const stored = new Float32Array(lms.length * 3);
-    for (let i = 0; i < lms.length; i++) {
-      const p = lms[i];
-      const x = p.x;
-      const y = p.y;
-      const z = p.z || 0;
-      let sx = x;
-      let sy = y;
-      let sz = z;
-      if (last && last.length === stored.length) {
-        sx = a * x + (1 - a) * last[i * 3];
-        sy = a * y + (1 - a) * last[i * 3 + 1];
-        sz = a * z + (1 - a) * last[i * 3 + 2];
-      }
-      stored[i * 3] = sx;
-      stored[i * 3 + 1] = sy;
-      stored[i * 3 + 2] = sz;
-      out.push({ x: sx, y: sy, z: sz, visibility: p.visibility });
-    }
-    prev[key] = stored;
-    return out;
-  }
-
-  return {
-    reset() {
-      prev.pose = null;
-      prev.left = null;
-      prev.right = null;
-    },
-    apply(results) {
-      return {
-        poseLandmarks: blend("pose", results.poseLandmarks),
-        leftHandLandmarks: blend("left", results.leftHandLandmarks),
-        rightHandLandmarks: blend("right", results.rightHandLandmarks),
-      };
-    },
-  };
-}
-
-function zeros(n) {
-  return new Float32Array(n);
-}
-
+/**
+ * Lista de puntos → vector plano `expected * 3`.
+ * `new Float32Array(n)` ya nace lleno de ceros; no hace falta un helper extra.
+ *
+ * @param {Array<{x:number,y:number,z?:number}>|null|undefined} landmarks
+ * @param {number} expected 33 (pose) o 21 (mano).
+ * @returns {Float32Array}
+ */
 function flattenLandmarks(landmarks, expected) {
-  const out = zeros(expected * 3);
+  const out = new Float32Array(expected * 3);
   if (!landmarks || !landmarks.length) return out;
   for (let i = 0; i < expected; i++) {
     const p = landmarks[i];
@@ -109,6 +98,13 @@ function flattenLandmarks(landmarks, expected) {
   return out;
 }
 
+/**
+ * Invarianza a posición/tamaño: (punto - ancla) / distancia entre hombros.
+ * @param {Float32Array} flat
+ * @param {number[]} anchor `[x,y,z]` punto medio de hombros.
+ * @param {number} scale Distancia inter-hombros.
+ * @returns {Float32Array}
+ */
 function normalizeSpatial(flat, anchor, scale) {
   const out = new Float32Array(flat.length);
   let allZero = true;
@@ -124,6 +120,14 @@ function normalizeSpatial(flat, anchor, scale) {
   return out;
 }
 
+/**
+ * Un frame Holistic → vector 225 alineado con el clasificador.
+ * Si `leftHanded`, espeja X y cruza bloques de manos (el modelo se entrenó diestro).
+ *
+ * @param {object} results Landmarks Holistic.
+ * @param {boolean} leftHanded
+ * @returns {Float32Array} Longitud `POSE_DIM + 2 * HAND_DIM`.
+ */
 function extractNormalizedVector(results, leftHanded) {
   const pose = results.poseLandmarks;
   let anchor = [0, 0, 0];
@@ -152,6 +156,18 @@ function extractNormalizedVector(results, leftHanded) {
   return vector;
 }
 
+/**
+ * Distancia euclídea (norma L2) entre las manos de dos frames:
+ * √(Σ (actual − anterior)²) sobre las coordenadas de ambas manos.
+ *
+ * No mira píxeles de la cámara. En modo `auto` (Meet) **no** abre la seña:
+ * el arranque es “hay mano usable” (`shouldStartRecording`). Este valor
+ * alimenta `/activity` y el modo `dynamic`.
+ *
+ * @param {Float32Array} current
+ * @param {Float32Array|null} previous
+ * @returns {number} 0 si falta previo o algún vector es todo ceros.
+ */
 function handMotion(current, previous) {
   if (!previous) return 0;
   let sum = 0;
@@ -165,80 +181,4 @@ function handMotion(current, previous) {
   }
   if (currZero || prevZero) return 0;
   return Math.sqrt(sum);
-}
-
-function countPixelMotion(prevGray, gray, threshold) {
-  if (!prevGray || prevGray.length !== gray.length) return false;
-  let changed = 0;
-  for (let i = 0; i < gray.length; i++) {
-    if (Math.abs(gray[i] - prevGray[i]) > 25) changed += 1;
-  }
-  return changed > threshold;
-}
-
-function videoToGray(ctx, video, w, h) {
-  ctx.drawImage(video, 0, 0, w, h);
-  const img = ctx.getImageData(0, 0, w, h);
-  const gray = new Uint8Array(w * h);
-  for (let i = 0, p = 0; i < gray.length; i++, p += 4) {
-    gray[i] = (img.data[p] + img.data[p + 1] + img.data[p + 2]) / 3;
-  }
-  return gray;
-}
-
-const POSE_CONNECTIONS = [
-  [11, 12], [11, 13], [13, 15], [12, 14], [14, 16],
-  [11, 23], [12, 24], [23, 24], [23, 25], [25, 27],
-  [24, 26], [26, 28], [15, 17], [15, 19], [15, 21],
-  [16, 18], [16, 20], [16, 22],
-];
-const HAND_CONNECTIONS = [
-  [0, 1], [1, 2], [2, 3], [3, 4],
-  [0, 5], [5, 6], [6, 7], [7, 8],
-  [0, 9], [9, 10], [10, 11], [11, 12],
-  [0, 13], [13, 14], [14, 15], [15, 16],
-  [0, 17], [17, 18], [18, 19], [19, 20],
-  [5, 9], [9, 13], [13, 17],
-];
-
-function _pt(lm, i, w, h) {
-  const p = lm && lm[i];
-  if (!p) return null;
-  return [p.x * w, p.y * h];
-}
-
-function _strokeGroup(ctx, lm, connections, color, w, h) {
-  if (!lm || !lm.length) return;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  for (const [a, b] of connections) {
-    const pa = _pt(lm, a, w, h);
-    const pb = _pt(lm, b, w, h);
-    if (!pa || !pb) continue;
-    ctx.moveTo(pa[0], pa[1]);
-    ctx.lineTo(pb[0], pb[1]);
-  }
-  ctx.stroke();
-  ctx.fillStyle = color;
-  for (const p of lm) {
-    ctx.beginPath();
-    ctx.arc(p.x * w, p.y * h, 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-function drawCameraAndLandmarks(ctx, source, results) {
-  const w = source.videoWidth || source.width;
-  const h = source.videoHeight || source.height;
-  if (!w || !h) return;
-  const canvas = ctx.canvas;
-  if (canvas.width !== w) canvas.width = w;
-  if (canvas.height !== h) canvas.height = h;
-  ctx.clearRect(0, 0, w, h);
-  ctx.drawImage(source, 0, 0, w, h);
-  if (!results) return;
-  _strokeGroup(ctx, results.poseLandmarks, POSE_CONNECTIONS, "rgba(34,211,238,0.9)", w, h);
-  _strokeGroup(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, "rgba(74,222,128,0.95)", w, h);
-  _strokeGroup(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, "rgba(250,204,21,0.95)", w, h);
 }

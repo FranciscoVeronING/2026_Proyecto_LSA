@@ -1,3 +1,8 @@
+/**
+ * Offscreen: JPEG de Meet → sandbox (Holistic extrae landmarks) →
+ * `capture.js` recorta la seña → `LsaApi.sign` (solo puntos, no video).
+ */
+
 const work = document.getElementById("work");
 const workCtx = work.getContext("2d", { willReadFrequently: true });
 const motionCanvas = document.getElementById("motion");
@@ -43,6 +48,10 @@ const engine = createCaptureEngine(
   }
 );
 
+/**
+ * Reenvía estado al service worker (HUD + subtítulos).
+ * @param {object} payload
+ */
 function emit(payload) {
   if (!meetTabId) return;
   chrome.runtime.sendMessage({
@@ -54,6 +63,11 @@ function emit(payload) {
 
 let lastSpanish = "";
 
+/**
+ * Aplica un snapshot del backend al HUD. Solo incluye `spanish` si vino en este tick
+ * (si no, el subtítulo de Meet nunca caducaría).
+ * @param {object|null|undefined} s Respuesta de `/sign`, `/session` o `/utterance/end`.
+ */
 function applyState(s) {
   if (!s) return;
   engine.markPending(Boolean(s.glosses && s.glosses.length));
@@ -92,6 +106,10 @@ window.addEventListener("message", (event) => {
 });
 
 let lastDebugEmit = 0;
+/**
+ * Texto de estado del HUD, como máximo cada 350 ms.
+ * @param {{ recording: boolean, bufferLen: number, handsPresent: boolean }} info
+ */
 function emitDebug(info) {
   const now = Date.now();
   if (now - lastDebugEmit < 350) return;
@@ -113,6 +131,10 @@ function emitDebug(info) {
   });
 }
 
+/**
+ * @param {number} timeoutMs
+ * @returns {Promise<void>}
+ */
 function waitSandboxReady(timeoutMs) {
   if (sandboxReady && sandbox.contentWindow) return Promise.resolve();
   return new Promise((resolve, reject) => {
@@ -129,6 +151,7 @@ function waitSandboxReady(timeoutMs) {
   });
 }
 
+/** Recarga `sandbox.html` si el iframe todavía no dijo `ready`. */
 async function ensureSandbox() {
   if (sandboxReady && sandbox.contentWindow) return;
   sandboxReady = false;
@@ -136,6 +159,12 @@ async function ensureSandbox() {
   await waitSandboxReady(20000);
 }
 
+/**
+ * Health + config + sesión HTTP + WASM.
+ * @param {number} tabId
+ * @param {boolean} handed
+ * @returns {Promise<void>}
+ */
 async function startSession(tabId, handed) {
   meetTabId = tabId;
   leftHanded = Boolean(handed);
@@ -148,6 +177,7 @@ async function startSession(tabId, handed) {
   emit({ status: "escuchando", glosses: "", spanish: "" });
 }
 
+/** Resetea el recortador; no cierra Holistic (recargar WASM es caro). */
 function stopSession() {
   engine.reset();
   meetTabId = null;
@@ -161,6 +191,10 @@ let frameBusy = false;
 let latestDataUrl = null;
 const decodeImg = new Image();
 
+/**
+ * Decodifica un dataURL JPEG y se lo manda al sandbox (transferible ImageData).
+ * Serializa con `frameBusy` para no saturar Holistic.
+ */
 function pumpFrame() {
   if (frameBusy || !sandboxReady || !sandbox.contentWindow || !latestDataUrl) return;
   const url = latestDataUrl;
@@ -199,6 +233,9 @@ function pumpFrame() {
   decodeImg.src = url;
 }
 
+/**
+ * @param {{ dataUrl?: string, buffer?: ArrayBuffer, width?: number, height?: number }} msg
+ */
 function handleFrame(msg) {
   if (msg.dataUrl) {
     latestDataUrl = msg.dataUrl;

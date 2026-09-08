@@ -1,6 +1,9 @@
+/**
+ * Popup de la extensión: health del motor y ON/OFF de subtítulos en Meet.
+ */
+
 const dot = document.getElementById("dot");
 const healthText = document.getElementById("health-text");
-const btnOpen = document.getElementById("btn-open");
 const btnMeet = document.getElementById("btn-meet");
 const pageHint = document.getElementById("page-hint");
 
@@ -10,10 +13,6 @@ let meetRunning = false;
 
 document.getElementById("btn-setup").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("welcome.html") });
-});
-
-document.getElementById("btn-open").addEventListener("click", () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL("translator.html") });
 });
 
 btnMeet.addEventListener("click", async () => {
@@ -44,6 +43,10 @@ btnMeet.addEventListener("click", async () => {
   }
 });
 
+/**
+ * Detecta si la pestaña activa es Meet para mostrar el botón de subtítulos.
+ * @returns {Promise<void>}
+ */
 async function inspectTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   meetTab = tab && tab.url && tab.url.startsWith("https://meet.google.com/") ? tab : null;
@@ -63,11 +66,10 @@ LsaApi.health()
     motorOk = true;
     dot.classList.add("on");
     healthText.textContent = "Motor conectado";
-    btnOpen.disabled = false;
     if (meetTab) btnMeet.disabled = false;
   })
   .catch(() => {
-    healthText.textContent = "Motor apagado — instalo primero";
+    healthText.textContent = "Motor apagado — descargá IRIS en Instalar motor";
     btnMeet.disabled = true;
   });
 

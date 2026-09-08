@@ -1,3 +1,16 @@
+/**
+ * Iframe sandbox: **acá se extraen los landmarks** (MediaPipe Holistic WASM).
+ *
+ * El padre manda píxeles `{ type: "frame", width, height, buffer }`.
+ * Holistic devuelve esqueleto; este script postea
+ * `{ type: "landmarks", pose, left_hand, right_hand }` al offscreen.
+ * El backend nunca ve el JPEG.
+ */
+
+/**
+ * @param {Array<{x:number,y:number,z?:number,visibility?:number}>|null|undefined} lms
+ * @returns {object[]|null}
+ */
 function packLandmarks(lms) {
   if (!lms || !lms.length) return null;
   const out = [];
@@ -8,6 +21,11 @@ function packLandmarks(lms) {
   return out;
 }
 
+/**
+ * Resuelve un asset WASM/tflite vendored. Fuerza el modelo *lite* de pose.
+ * @param {string} file Nombre que pide Holistic.
+ * @returns {string} URL absoluta chrome-extension://…/vendor/mediapipe/…
+ */
 function locateFile(file) {
   const raw = String(file).split("/").pop();
   const name =
@@ -17,6 +35,11 @@ function locateFile(file) {
   return new URL("vendor/mediapipe/" + name, location.href).href;
 }
 
+/**
+ * Logs internos de MediaPipe (I0000 / OpenGL) no aportan al debug de LSA.
+ * @param {any[]} args
+ * @returns {boolean}
+ */
 function isMediaPipeLog(args) {
   const s = args.map((a) => (typeof a === "string" ? a : String(a))).join(" ");
   return /^(I|W)0000\s/.test(s) || s.includes("gl_context") || s.includes("OpenGL error checking");
@@ -35,10 +58,14 @@ let busy = false;
 const input = () => document.getElementById("input");
 let inputCtx = null;
 
+/**
+ * @param {object} msg
+ */
 function post(msg) {
   parent.postMessage(msg, "*");
 }
 
+/** @returns {CanvasRenderingContext2D|null} */
 function ensureCtx() {
   const canvas = input();
   if (!canvas) return null;
@@ -46,6 +73,11 @@ function ensureCtx() {
   return inputCtx;
 }
 
+/**
+ * Instancia Holistic (complexity 0 = lite). `onResults` es la extracción
+ * de pose + manos a partir del canvas `#input`.
+ * @returns {Promise<void>}
+ */
 async function init() {
   if (typeof Holistic !== "function") {
     throw new Error("No cargó holistic.js en el sandbox");
@@ -75,6 +107,10 @@ async function init() {
   post({ type: "ready" });
 }
 
+/**
+ * Pinta el frame en `#input` y corre `holistic.send`.
+ * @param {{ buffer?: ArrayBuffer, width?: number, height?: number, bitmap?: ImageBitmap }} data
+ */
 async function sendFrame(data) {
   const canvas = input();
   const ctx = ensureCtx();
