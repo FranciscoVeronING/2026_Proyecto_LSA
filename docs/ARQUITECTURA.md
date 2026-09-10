@@ -161,8 +161,9 @@ seguidas.
 
 - Prompt de sistema: `src/semantic/prompts/sys_prompt.txt`.
 - Few-shots: `few_shots_examples.json`.
-- Modelos: carpetas `src/semantic/outputs/*_gguf/*.gguf` (catálogo en
-  `src/semantic/models.py`). Default: `qwen2.5-3b`.
+- Modelos: solo Qwen 0.5B, Llama 3.2 1B y Qwen 3B (catálogo en
+  `src/semantic/models.py`). Default: `qwen2.5-3b`. Se eligen en la ventana
+  ILSA (dropdown Traductor) o vía `POST /semantic/model`.
 - Memoria de conversación: `src/core/conversation_memory.py` (últimos N
   turnos). Se puede apagar con `USE_CONVERSATION_HISTORY` para eval.
 
@@ -188,7 +189,7 @@ El español no debe quedar pegado en la videollamada.
 |---------|-----|
 | `manifest.json` | MV3, permisos Meet, sandbox, CSP |
 | `background.js` | Service worker: offscreen, reenvío de frames y captions |
-| `popup.html` / `popup.js` | Estado del motor y Meet ON/OFF |
+| `popup.html` / `popup.js` | Estado del motor, modo y (sordo) nombre del traductor |
 | `welcome.html` | Guía post-instalación |
 | `sandbox.html` / `sandbox.js` | Holistic WASM |
 | `offscreen.html` / `offscreen.js` | Mismo motor de captura para Meet (sin pestaña visible) |
@@ -205,8 +206,10 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 | Archivo | Rol |
 |---------|-----|
 | `run_backend.py` | Entry point (ventana ILSA o `--headless`) |
-| `src/backend/iris_app.py` | Ventana mínima: encender / apagar / reiniciar / registros |
-| `src/backend/server.py` | Rutas FastAPI, CORS, assets MediaPipe |
+| `src/backend/iris_app.py` | Ventana ILSA: modo, traductor GGUF, encender/apagar |
+| `src/backend/uvicorn_handle.py` | Hilo uvicorn (sin colgar Tk) |
+| `src/backend/http_schemas.py` | Límites de JSON (`POST /sign`, etc.) |
+| `src/backend/server.py` | Rutas FastAPI, CORS loopback + Meet |
 | `src/backend/session.py` | Carga del modelo, ingestión, cierre de enunciado |
 | `src/backend/landmarks_payload.py` | JSON de frames → tensores |
 
