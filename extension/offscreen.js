@@ -13,25 +13,56 @@ let cfg = { ...FALLBACK_CFG };
 let leftHanded = false;
 let sandboxReady = false;
 let busySign = false;
+let signQueue = null;
+
+function enqueueSign(frames) {
+  if (busySign) {
+    signQueue = frames;
+    return;
+  }
+  busySign = true;
+  emit({ status: "enviando", capturing: true });
+  LsaApi.sign(frames)
+    .then((s) => {
+      if (s && s.accepted === false) {
+        emit({
+          debug: s.reason === "cooldown" ? "Esperá un segundo…" : "Seña corta, repetí",
+          capturing: false,
+        });
+        return;
+      }
+      applyState(s);
+      if (s && s.activity) engine.noteInferenceActivity();
+    })
+    .catch((err) => emit({ status: "error", error: err.message }))
+    .finally(() => {
+      busySign = false;
+      const next = signQueue;
+      signQueue = null;
+      if (next) enqueueSign(next);
+    });
+}
 let meetTabId = null;
 let lastActivityPost = 0;
+let prefs = { showLandmarks: false, outputMode: "subtitles" };
+let lastLandmarkEmit = 0;
+let lastDebugEmit = 0;
+
+connectBackground();
+LsaPrefs.get()
+  .then((p) => {
+    prefs = p;
+  })
+  .catch(() => {});
+LsaPrefs.onChange((p) => {
+  prefs = p;
+});
 
 const engine = createCaptureEngine(
   () => cfg,
   {
     onSign(frames) {
-      if (busySign) return;
-      busySign = true;
-      emit({ status: "enviando", capturing: false });
-      LsaApi.sign(frames)
-        .then((s) => {
-          applyState(s);
-          if (s.activity) engine.noteInferenceActivity();
-        })
-        .catch((err) => emit({ status: "error", error: err.message }))
-        .finally(() => {
-          busySign = false;
-        });
+      enqueueSign(frames);
     },
     onSigningActivity() {
       const now = Date.now();
@@ -77,10 +108,9 @@ function applyState(s) {
     status: s.semantic_busy ? "traduciendo" : lastSpanish ? "listo" : "escuchando",
     glosses: s.pending_text || "",
     lastGloss,
-    capturing: false,
     top3: s.top3 || [],
   };
-  if (s.spanish) payload.spanish = s.spanish;
+  if (s.closed && s.spanish) payload.spanish = s.spanish;
   emit(payload);
 }
 
@@ -88,8 +118,14 @@ window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data || !data.type) return;
   if (data.type === "ready") sandboxReady = true;
-  if (data.type === "error") emit({ status: "error", error: data.message });
+  if (data.type === "need-frame" || data.type === "error") {
+    frameBusy = false;
+    if (data.type === "error") emit({ status: "error", error: data.message });
+    pumpFrame();
+  }
   if (data.type === "landmarks") {
+    frameBusy = false;
+    pumpFrame();
     const results = {
       poseLandmarks: data.pose,
       leftHandLandmarks: data.left_hand,
@@ -102,10 +138,25 @@ window.addEventListener("message", (event) => {
       leftHanded,
     });
     emitDebug(info);
+    emitLandmarks(data);
   }
 });
 
-let lastDebugEmit = 0;
+function emitLandmarks(data) {
+  if (!meetTabId || !prefs.showLandmarks) return;
+  const now = Date.now();
+  if (now - lastLandmarkEmit < 80) return;
+  lastLandmarkEmit = now;
+  chrome.runtime.sendMessage({
+    type: "lsa-landmarks",
+    tabId: meetTabId,
+    landmarks: {
+      pose: data.pose,
+      left_hand: data.left_hand,
+      right_hand: data.right_hand,
+    },
+  }).catch(() => {});
+}
 /**
  * Texto de estado del HUD, como máximo cada 350 ms.
  * @param {{ recording: boolean, bufferLen: number, handsPresent: boolean }} info
@@ -127,7 +178,7 @@ function emitDebug(info) {
   emit({
     status: info.recording ? "grabando" : "escuchando",
     debug,
-    capturing: Boolean(info.recording),
+    capturing: Boolean(info.recording || info.handsPresent),
   });
 }
 
@@ -166,11 +217,17 @@ async function ensureSandbox() {
  * @returns {Promise<void>}
  */
 async function startSession(tabId, handed) {
-  meetTabId = tabId;
   leftHanded = Boolean(handed);
+  if (meetTabId === tabId && sandboxReady) {
+    meetTabId = tabId;
+    return;
+  }
+  meetTabId = tabId;
   const h = await LsaApi.health();
   if (!h.ok) throw new Error("El motor LSA no está encendido.");
   cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
+  cfg.hands_frames_to_start = Math.min(3, Number(cfg.hands_frames_to_start) || 3);
+  cfg.min_capture_frames = Math.min(6, Number(cfg.min_capture_frames) || 6);
   applyState(await LsaApi.session(leftHanded));
   await ensureSandbox();
   engine.reset();
@@ -220,7 +277,6 @@ function pumpFrame() {
       );
     } catch (err) {
       emit({ status: "error", error: String(err && err.message ? err.message : err) });
-    } finally {
       frameBusy = false;
       pumpFrame();
     }
@@ -262,21 +318,44 @@ function handleFrame(msg) {
   );
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (!msg || !msg.type) return;
+function handleControlMessage(msg, reply) {
+  if (!msg || !msg.type) return false;
+  if (msg.type === "lsa-prefs" && msg.prefs) {
+    prefs = normalizeLsaPrefs(msg.prefs);
+    return true;
+  }
   if (msg.type === "lsa-meet-start") {
     startSession(msg.tabId, msg.leftHanded)
-      .then(() => sendResponse({ ok: true }))
-      .catch((err) => sendResponse({ ok: false, error: err.message }));
+      .then(() => reply({ ok: true }))
+      .catch((err) => reply({ ok: false, error: err.message }));
     return true;
   }
   if (msg.type === "lsa-meet-stop") {
     stopSession();
-    sendResponse({ ok: true });
-    return;
+    reply({ ok: true });
+    return true;
   }
   if (msg.type === "lsa-frame" || msg.type === "lsa-offscreen-frame") {
     handleFrame(msg);
-    sendResponse({ ok: true });
+    reply({ ok: true });
+    return true;
   }
+  return false;
+}
+
+function connectBackground() {
+  const port = chrome.runtime.connect({ name: "lsa-offscreen" });
+  port.onMessage.addListener((msg) => {
+    handleControlMessage(msg, (res) => {
+      if (msg && msg.id) port.postMessage({ type: "lsa-ack", id: msg.id, ...res });
+    });
+  });
+  port.onDisconnect.addListener(() => {
+    setTimeout(connectBackground, 250);
+  });
+}
+
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  const handled = handleControlMessage(msg, (res) => sendResponse(res));
+  if (handled) return true;
 });

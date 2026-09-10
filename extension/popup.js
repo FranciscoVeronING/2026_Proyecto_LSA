@@ -1,79 +1,171 @@
 /**
- * Popup de la extensión: health del motor y ON/OFF de subtítulos en Meet.
+ * Popup: estado del motor, salida Meet, landmarks (debug) y reporte.
  */
+
+const REPO_ISSUES =
+  "https://github.com/FranciscoVeronING/2026_Proyecto_LSA/issues/new";
 
 const dot = document.getElementById("dot");
 const healthText = document.getElementById("health-text");
-const btnMeet = document.getElementById("btn-meet");
 const pageHint = document.getElementById("page-hint");
+const metaMode = document.getElementById("meta-mode");
+const metaTranslatorRow = document.getElementById("meta-translator-row");
+const metaTranslator = document.getElementById("meta-translator");
+const debugBlock = document.getElementById("debug-block");
+const chkLandmarks = document.getElementById("chk-landmarks");
+const reportBox = document.getElementById("report-box");
+const reportText = document.getElementById("report-text");
+const reportHint = document.getElementById("report-hint");
+const outputHint = document.getElementById("output-hint");
 
-let motorOk = false;
-let meetTab = null;
-let meetRunning = false;
+let lastHealth = null;
+let inMeet = false;
 
 document.getElementById("btn-setup").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("welcome.html") });
 });
 
-btnMeet.addEventListener("click", async () => {
-  if (!meetTab) return;
-  btnMeet.disabled = true;
-  try {
-    if (meetRunning) {
-      await chrome.runtime.sendMessage({ type: "lsa-meet-stop-request" });
-      meetRunning = false;
-      btnMeet.textContent = "Subtítulos en Meet";
-      pageHint.textContent = "Subtítulos detenidos.";
-    } else {
-      const res = await chrome.runtime.sendMessage({
-        type: "lsa-meet-start-request",
-        tabId: meetTab.id,
-        leftHanded: false,
-      });
-      if (!res || !res.ok) throw new Error((res && res.error) || "No se pudo iniciar");
-      meetRunning = true;
-      btnMeet.textContent = "Detener subtítulos";
-      pageHint.textContent =
-        "Activá subtítulos, recargá Meet si hace falta, y apagá/prendé la cámara. Con LSA off, Meet usa tu cámara normal.";
-    }
-  } catch (err) {
-    pageHint.textContent = err.message || String(err);
-  } finally {
-    btnMeet.disabled = false;
-  }
+document.getElementById("btn-report").addEventListener("click", () => {
+  reportBox.hidden = !reportBox.hidden;
+  if (!reportBox.hidden) reportText.focus();
+});
+
+document.getElementById("btn-report-send").addEventListener("click", () => {
+  openReport();
+});
+
+chkLandmarks.addEventListener("change", () => {
+  LsaPrefs.set({ showLandmarks: chkLandmarks.checked });
+});
+
+document.querySelectorAll(".seg-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const outputMode = btn.getAttribute("data-output");
+    paintOutput(outputMode);
+    LsaPrefs.set({ outputMode });
+  });
 });
 
 /**
- * Detecta si la pestaña activa es Meet para mostrar el botón de subtítulos.
- * @returns {Promise<void>}
+ * @param {string} outputMode
  */
-async function inspectTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  meetTab = tab && tab.url && tab.url.startsWith("https://meet.google.com/") ? tab : null;
-  if (meetTab) {
-    btnMeet.hidden = false;
-    pageHint.textContent =
-      "Esta pestaña es Meet. El subtítulo se pinta en tu cámara; los demás lo ven en tu video.";
+function paintOutput(outputMode) {
+  document.querySelectorAll(".seg-btn").forEach((btn) => {
+    btn.classList.toggle("on", btn.getAttribute("data-output") === outputMode);
+  });
+  if (outputMode === "audio") {
+    outputHint.textContent =
+      "Lee la traducción en voz alta en esta PC. Los demás no ven texto en tu cámara.";
+  } else if (outputMode === "both") {
+    outputHint.textContent =
+      "Subtítulo en tu video y voz en esta PC.";
   } else {
-    btnMeet.hidden = true;
-    pageHint.textContent = "Para subtítulos, abrí este popup desde una pestaña de Meet.";
+    outputHint.textContent = "El español se pinta en tu cámara; los demás lo leen en tu video.";
   }
 }
+
+/**
+ * @param {boolean} motorOk
+ * @returns {Promise<void>}
+ */
+async function inspectTab(motorOk) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  inMeet = Boolean(tab && tab.url && tab.url.startsWith("https://meet.google.com/"));
+  if (!motorOk) {
+    pageHint.textContent =
+      "Para traducir, Encendé ILSA. Si no lo querés, dejalo apagado: Meet funciona normal.";
+    return;
+  }
+  if (inMeet) {
+    chrome.runtime.sendMessage({ type: "lsa-meet-sync", tabId: tab.id }).catch(() => {});
+    pageHint.textContent =
+      "Estás en Meet: la traducción ya está activa. Para pararla, Apagá ILSA en el exe.";
+  } else {
+    pageHint.textContent =
+      "Abrí Google Meet: con ILSA encendido se traduce solo. Para parar, Apagá el exe.";
+  }
+}
+
+function openReport() {
+  const user = (reportText.value || "").trim();
+  if (!user) {
+    reportHint.textContent = "Escribí qué pasó, aunque sea en una línea.";
+    return;
+  }
+  const manifest = chrome.runtime.getManifest();
+  const h = lastHealth;
+  const mode =
+    h && h.mode === "hearing" ? "Oyente" : h && h.ok ? "Sordo" : "Motor apagado";
+  const translator = (h && h.semantic_label) || "—";
+  const body = [
+    "## Qué pasó",
+    user,
+    "",
+    "## Contexto",
+    `- Extensión: ${manifest.version}`,
+    `- Motor: ${h && h.ok ? "encendido" : "apagado"}`,
+    `- Modo: ${mode}`,
+    `- Traductor: ${translator}`,
+    `- En Meet: ${inMeet ? "sí" : "no"}`,
+  ].join("\n");
+  const url =
+    REPO_ISSUES +
+    "?title=" +
+    encodeURIComponent("Fallo en ILSA / Meet") +
+    "&body=" +
+    encodeURIComponent(body);
+  chrome.tabs.create({ url });
+}
+
+/**
+ * @param {object} h
+ * @returns {string}
+ */
+function translatorLine(h) {
+  const name =
+    h.semantic_label ||
+    (h.semantic_ready ? "Traducción precisa" : "Cargando el traductor…");
+  const load = h.semantic_load;
+  if (!load) return name;
+  const hint =
+    load === "pesado"
+      ? "cómputo pesado"
+      : load === "liviano"
+        ? "cómputo liviano"
+        : "cómputo medio";
+  return `${name} · ${hint}`;
+}
+
+LsaPrefs.get().then((prefs) => {
+  chkLandmarks.checked = prefs.showLandmarks;
+  paintOutput(prefs.outputMode);
+});
 
 LsaApi.health()
   .then((h) => {
     if (!h.ok) throw new Error("no listo");
-    motorOk = true;
+    lastHealth = h;
     dot.classList.add("on");
-    const mode = h.mode === "hearing" ? "oyente (voz)" : "sordo (LSA)";
-    healthText.textContent = `Motor conectado · ${mode}`;
-    if (meetTab) btnMeet.disabled = false;
+    const signer = h.mode !== "hearing";
+    metaMode.textContent = signer ? "Sordo (LSA → español)" : "Oyente (voz → subtítulos)";
+    healthText.textContent = "Motor conectado";
+    if (signer) {
+      metaTranslatorRow.hidden = false;
+      metaTranslator.textContent = translatorLine(h);
+      debugBlock.hidden = false;
+      document.getElementById("output-field").hidden = false;
+    } else {
+      metaTranslatorRow.hidden = true;
+      debugBlock.hidden = true;
+      document.getElementById("output-field").hidden = true;
+    }
+    return inspectTab(true);
   })
   .catch(() => {
+    lastHealth = null;
     healthText.textContent = "Motor apagado — descargá ILSA en Instalar motor";
-    btnMeet.disabled = true;
+    metaMode.textContent = "—";
+    metaTranslatorRow.hidden = true;
+    document.getElementById("output-field").hidden = true;
+    return inspectTab(false);
   });
-
-inspectTab().then(() => {
-  btnMeet.disabled = !motorOk;
-});

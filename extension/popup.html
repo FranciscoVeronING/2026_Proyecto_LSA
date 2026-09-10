@@ -12,10 +12,49 @@
     <span id="health-text">Comprobando motor…</span>
   </div>
   <p class="hint" id="page-hint"></p>
-  <div class="row" style="margin-top: 14px">
-    <button id="btn-meet" type="button" hidden>Subtítulos en Meet</button>
-    <button class="ghost" id="btn-setup" type="button">Instalar motor</button>
+
+  <dl class="meta" id="meta-block">
+    <div>
+      <dt>Modo</dt>
+      <dd id="meta-mode">—</dd>
+    </div>
+    <div id="meta-translator-row" hidden>
+      <dt>Traductor</dt>
+      <dd id="meta-translator">—</dd>
+    </div>
+  </dl>
+
+  <div class="field" id="output-field">
+    <span class="field-label">Salida en Meet</span>
+    <div class="seg" role="group" aria-label="Salida en Meet">
+      <button type="button" class="seg-btn" data-output="subtitles">Subtítulo</button>
+      <button type="button" class="seg-btn" data-output="audio">Audio</button>
+      <button type="button" class="seg-btn" data-output="both">Ambos</button>
+    </div>
+    <p class="hint" id="output-hint"></p>
   </div>
+
+  <div id="debug-block">
+  <label class="toggle" id="landmarks-row">
+    <input type="checkbox" id="chk-landmarks" />
+    <span>Mostrar landmarks</span>
+  </label>
+  <p class="hint debug-hint">Solo para desarrollo: esqueleto sobre tu cámara.</p>
+  </div>
+
+  <div class="row" style="margin-top: 12px">
+    <button class="ghost" id="btn-setup" type="button">Instalar motor</button>
+    <button class="ghost" id="btn-report" type="button">Reportar un problema</button>
+  </div>
+
+  <div class="report" id="report-box" hidden>
+    <label class="field-label" for="report-text">¿Qué falló?</label>
+    <textarea id="report-text" rows="4" placeholder="Contá qué estabas haciendo y qué viste (Meet, ILSA, subtítulos…)."></textarea>
+    <button type="button" id="btn-report-send">Abrir reporte</button>
+    <p class="hint" id="report-hint"></p>
+  </div>
+
+  <script src="lib/prefs.js"></script>
   <script src="lib/api.js"></script>
   <script src="popup.js"></script>
 </body>

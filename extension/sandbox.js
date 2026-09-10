@@ -90,8 +90,8 @@ async function init() {
     refineFaceLandmarks: false,
     enableSegmentation: false,
     enableFaceGeometry: false,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
+    minDetectionConfidence: 0.4,
+    minTrackingConfidence: 0.4,
   });
   holistic.onResults((results) => {
     post({

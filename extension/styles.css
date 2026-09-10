@@ -147,10 +147,109 @@ code, .cmd {
 }
 
 .popup {
-  width: 320px;
+  width: 360px;
   padding: 14px;
 }
 
 .popup h1 { font-size: 1.05rem; margin: 0 0 8px; }
 
 .hint { color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
+
+.popup .meta {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.popup .meta > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.popup .meta dt {
+  color: var(--muted);
+  margin: 0;
+}
+
+.popup .meta dd {
+  margin: 0;
+  font-weight: 650;
+  text-align: right;
+}
+
+.popup .field {
+  margin-top: 14px;
+}
+
+.popup .field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.popup .seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.popup .seg-btn {
+  appearance: none;
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  background: #152A38;
+  color: #EAF4FA;
+  border: 2px solid #1A4A63;
+  box-shadow: none;
+  justify-content: center;
+}
+
+.popup .seg-btn.on {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.popup .toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.popup .toggle input {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+.popup .debug-hint { margin: 4px 0 0; }
+
+.popup .report {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.popup textarea {
+  width: 100%;
+  margin: 6px 0 8px;
+  resize: vertical;
+  min-height: 72px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #163040;
+  color: var(--text);
+  padding: 8px 10px;
+  font: inherit;
+}

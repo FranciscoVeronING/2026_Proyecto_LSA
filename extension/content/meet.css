@@ -68,17 +68,6 @@
   font-size: 12px;
 }
 
-#lsa-meet-root .lsa-stop {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: #FFFFFF;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
 #lsa-meet-root.lsa-hidden {
   display: none;
 }

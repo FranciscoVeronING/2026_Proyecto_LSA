@@ -27,11 +27,11 @@ const FALLBACK_CFG = {
   motion_pixel_threshold: 500,
   landmark_motion_threshold: 0.008,
   static_hands_frames_to_start: 4,
-  hands_frames_to_start: 6,
+  hands_frames_to_start: 3,
   still_frames_limit: 28,
   capture_buffer_size: 60,
   missing_hands_limit: 12,
-  min_capture_frames: 8,
+  min_capture_frames: 6,
   max_frames: 16,
   capture_mode: "auto",
   utterance_pause_sec: 4.0,
@@ -72,7 +72,7 @@ function uniformSampleFrames(frames, target) {
  */
 function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, startFrames) {
   if (!handsPresent) return false;
-  const need = Math.max(3, startFrames || 6);
+  const need = Math.max(2, Math.min(3, startFrames || 3));
   if (mode === "dynamic") return isMoving && consecutiveHands >= need;
   if (mode === "static") return consecutiveHands >= Math.max(2, startFrames || 4);
   return consecutiveHands >= need;
@@ -208,19 +208,12 @@ function createCaptureEngine(getCfg, callbacks) {
             flushSign();
           }
         } else if (frames.length > 0) {
-          if (countHandFrames(frames) < c.min_capture_frames) {
-            frames = [];
-            consecutiveStill = 0;
-            missingHands = 0;
-            missingSince = 0;
-          } else {
-            const t = Date.now() / 1000;
-            if (!missingSince) missingSince = t;
-            missingHands += 1;
-            frames.push(frames[frames.length - 1]);
-            const graceSec = Math.max(0.35, (c.missing_hands_limit || 12) / 30);
-            if (t - missingSince >= graceSec) flushSign();
-          }
+          const t = Date.now() / 1000;
+          if (!missingSince) missingSince = t;
+          missingHands += 1;
+          frames.push(frames[frames.length - 1]);
+          const graceSec = Math.max(0.45, (c.missing_hands_limit || 12) / 30);
+          if (t - missingSince >= graceSec) flushSign();
         }
       }
 

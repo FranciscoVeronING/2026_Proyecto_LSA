@@ -82,18 +82,20 @@ function handIsPresent(lms, wrist) {
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
-  if (usable < 16) return false;
-  if (visN >= 8 && visSum / visN < 0.45) return false;
+  if (usable < 14) return false;
+  if (visN >= 8 && visSum / visN < 0.28) return false;
   const bw = maxX - minX;
   const bh = maxY - minY;
-  if (bw < 0.07 && bh < 0.07) return false;
-  if (bw > 0.7 || bh > 0.7) return false;
+  if (bw < 0.035 && bh < 0.035) return false;
+  if (bw > 0.85 || bh > 0.85) return false;
   if (wrist) {
     const w = xyOf(wrist);
     const hw = xyOf(lms[0]);
-    if (!w || !hw) return false;
-    if (typeof w.visibility === "number" && w.visibility < 0.4) return false;
-    if (Math.hypot(hw.x - w.x, hw.y - w.y) > 0.2) return false;
+    if (w && hw) {
+      const wristVisOk = typeof w.visibility !== "number" || w.visibility >= 0.2;
+      const dist = Math.hypot(hw.x - w.x, hw.y - w.y);
+      if (wristVisOk && dist > 0.42) return false;
+    }
   }
   return true;
 }
