@@ -1,4 +1,8 @@
-"""API local para la extensión Chrome: señas → glosas → español."""
+"""API local para la extensión.
+
+Meet hace fetch con origin meet.google.com (content script), no chrome-extension://.
+Por eso CORS incluye Meet. No bindear 0.0.0.0: queda el modelo en la LAN.
+"""
 
 from __future__ import annotations
 
@@ -10,35 +14,36 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
 
 _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
+from backend.http_schemas import SemanticModelIn, SessionIn, SignIn
+
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
 else:
     REPO_ROOT = Path(__file__).resolve().parents[2]
-EXE_CANDIDATES = [
-    REPO_ROOT / "dist" / "LSABackend" / "ILSA.exe",
-    REPO_ROOT / "dist" / "LSABackend" / "IRIS.exe",
-    REPO_ROOT / "dist" / "LSABackend" / "LSABackend.exe",
-    REPO_ROOT / "dist" / "ILSA.exe",
-    REPO_ROOT / "dist" / "IRIS.exe",
-    REPO_ROOT / "dist" / "LSABackend.exe",
-    REPO_ROOT / "packaging" / "dist" / "LSABackend" / "ILSA.exe",
-    REPO_ROOT / "packaging" / "dist" / "LSABackend" / "IRIS.exe",
-    REPO_ROOT / "packaging" / "dist" / "LSABackend" / "LSABackend.exe",
-]
+_EXE_NAMES = ("ILSA.exe", "IRIS.exe", "LSABackend.exe")
+_EXE_DIRS = (
+    REPO_ROOT / "dist" / "LSABackend",
+    REPO_ROOT / "dist",
+    REPO_ROOT / "packaging" / "dist" / "LSABackend",
+)
+EXE_CANDIDATES = [d / n for d in _EXE_DIRS for n in _EXE_NAMES]
 
 app = FastAPI(title="LSA Backend", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_origin_regex=r"chrome-extension://.*",
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[
+        "https://meet.google.com",
+        "http://127.0.0.1:8765",
+        "http://localhost:8765",
+    ],
+    allow_origin_regex=r"^chrome-extension://[a-p]{32}$",
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 
@@ -52,23 +57,10 @@ async def allow_private_network(request, call_next):
     return response
 
 _session = None
-
-
-class SessionIn(BaseModel):
-    left_handed: bool = False
-
-
-class SignIn(BaseModel):
-    """Cuerpo de ``POST /sign``: landmarks por frame, no imagen."""
-
-    frames: list[dict] = Field(default_factory=list)
-
-
 _mode = "signer"
 
 
 def get_session():
-    """Sesión global. 503 si ``main()`` todavía no llamó ``init_session``."""
     global _session
     if _session is None:
         raise HTTPException(status_code=503, detail="Backend aún no inicializó el pipeline.")
@@ -77,44 +69,88 @@ def get_session():
 
 @app.get("/health")
 def health():
-    """Liveness: pipeline creado, clasificador y LLM."""
     session = _session
+    model_id = ""
+    if session and _mode == "signer":
+        model_id = getattr(session, "_current_model_id", "") or ""
+    semantic_label = ""
+    semantic_load = ""
+    if _mode == "signer":
+        from semantic.models import compute_label, friendly_label
+
+        if session and getattr(session, "semantic_error", ""):
+            semantic_label = "Traductor no disponible"
+            semantic_load = ""
+        elif session and not getattr(session, "semantic_ready", False):
+            semantic_label = "Cargando el traductor…"
+            semantic_load = ""
+        else:
+            semantic_label = friendly_label(model_id)
+            semantic_load = compute_label(model_id)
     return {
         "ok": session is not None,
         "mode": _mode,
         "classifier_ready": bool(session and getattr(session, "model", None) is not None),
         "semantic_ready": bool(session and getattr(session, "semantic_ready", False)),
         "semantic_error": getattr(session, "semantic_error", "") if session else "",
+        "semantic_model": model_id,
+        "semantic_label": semantic_label,
+        "semantic_load": semantic_load,
         "device": str(getattr(session, "device", "")) if session else "",
     }
 
 
+@app.get("/semantic/models")
+def semantic_models():
+    from semantic.models import list_semantic_models
+
+    session = _session
+    active = ""
+    if session and _mode == "signer":
+        active = getattr(session, "_current_model_id", "") or ""
+    return {"models": list_semantic_models(), "active": active}
+
+
+@app.post("/semantic/model")
+def set_semantic_model(body: SemanticModelIn):
+    if _mode == "hearing":
+        raise HTTPException(status_code=400, detail="El traductor solo se usa en modo sordo.")
+    model_id = (body.id or "").strip()
+    if not model_id:
+        raise HTTPException(status_code=400, detail="Falta el id del modelo.")
+    from semantic.models import spec_by_id
+
+    try:
+        spec_by_id(model_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    session = get_session()
+    switch = getattr(session, "switch_semantic_model", None)
+    if switch is None:
+        raise HTTPException(status_code=400, detail="Esta sesión no carga traductor.")
+    switch(model_id)
+    return {"ok": True, "requested": model_id}
+
+
 @app.get("/config")
 def capture_config():
-    """Umbrales de recorte para la extensión."""
     return get_session().capture_config()
 
 
 @app.get("/state")
 def state():
-    """Snapshot sin mutar el buffer."""
     return get_session().snapshot()
 
 
 @app.post("/session")
 def open_session(body: SessionIn):
-    """Reinicia glosas, español y mano dominante."""
     get_session().reset_session(left_handed=body.left_handed)
     return get_session().snapshot()
 
 
 @app.post("/sign")
 def ingest_sign(body: SignIn):
-    """
-    Una seña = lista de frames de **landmarks** (no JPEG) → glosa + snapshot.
-
-    MediaPipe corre en la extensión. Este endpoint solo clasifica.
-    """
+    # Landmarks, no JPEG. Holistic corre en la extensión.
     if _mode == "hearing":
         raise HTTPException(status_code=400, detail="Modo oyente: no se clasifican señas.")
     if not body.frames:
@@ -126,28 +162,29 @@ def ingest_sign(body: SignIn):
 
 @app.post("/activity")
 def activity():
-    """Retrasa el cierre de enunciado mientras la persona sigue señando."""
     get_session().note_activity()
     return {"ok": True}
 
 
 @app.post("/utterance/end")
 def utterance_end():
-    """Cierra la lista de glosas y traduce a español."""
     return get_session().close_utterance()
 
 
 @app.post("/conversation/clear")
 def conversation_clear():
-    """Vacía el contexto conversacional de la LLM."""
     get_session().clear_conversation()
     return get_session().snapshot()
 
 
 @app.get("/mediapipe/{name}")
 def mediapipe_asset(name: str):
-    """Modelos WASM/tflite para la extensión (evita fetch chrome-extension://)."""
     safe = Path(name).name
+    if safe != name or ".." in name or not safe:
+        raise HTTPException(status_code=400, detail="Nombre inválido")
+    allowed = {".wasm", ".js", ".data", ".tflite", ".binarypb"}
+    if Path(safe).suffix.lower() not in allowed:
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido")
     path = (REPO_ROOT / "extension" / "vendor" / "mediapipe" / safe).resolve()
     root = (REPO_ROOT / "extension" / "vendor" / "mediapipe").resolve()
     if root not in path.parents and path.parent != root:
@@ -175,7 +212,6 @@ def mediapipe_asset(name: str):
 
 @app.get("/download/exe")
 def download_exe():
-    """Sirve LSABackend.exe o, en desarrollo, LSABackend.bat."""
     for path in EXE_CANDIDATES:
         if path.is_file():
             return FileResponse(
@@ -197,7 +233,6 @@ def download_exe():
 
 
 def parse_args(argv=None):
-    """CLI de ``run_backend.py``: host, puerto, --no-llm, --gpu."""
     parser = argparse.ArgumentParser(description="Backend LSA para la extensión Chrome.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
@@ -221,8 +256,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def init_session(enable_llm: bool = True, mode: str = "signer"):
-    """Construye la sesión global. En modo oyente no carga CUDA ni GGUF."""
+def init_session(enable_llm: bool = True, mode: str = "signer", semantic_model_id: str | None = None):
     global _session, _mode
     _mode = "hearing" if mode == "hearing" else "signer"
     if _mode == "hearing":
@@ -232,12 +266,16 @@ def init_session(enable_llm: bool = True, mode: str = "signer"):
         return
     from backend.session import LSASession
 
-    _session = LSASession(enable_llm=enable_llm)
+    _session = LSASession(enable_llm=enable_llm, semantic_model_id=semantic_model_id)
 
 
 def main(argv=None):
-    """Punto de entrada: ventana ILSA, o uvicorn solo con ``--headless``."""
     args = parse_args(argv)
+    if args.host not in ("127.0.0.1", "localhost", "::1"):
+        print(
+            "[ilsa] Advertencia: el API debería escuchar solo en localhost. "
+            f"host={args.host!r} expone clasificador y LLM en la red."
+        )
     os.environ.setdefault("LSA_BACKEND", "1")
     if args.gpu:
         os.environ["LSA_USE_GPU"] = "1"

@@ -1,4 +1,4 @@
-"""Sesión liviana del modo oyente: la extensión transcribe voz a subtítulos."""
+"""Modo oyente: la voz se transcribe en Chrome; acá no hay clasificador ni GGUF."""
 
 from __future__ import annotations
 
@@ -6,10 +6,6 @@ from typing import Any
 
 
 class HearingSession:
-    """
-    No carga clasificador ni LLM. El reconocimiento de voz corre en Chrome.
-    Más adelante acá irá la LLM audio → glosas LSA.
-    """
 
     def __init__(self):
         self.device = "cpu"

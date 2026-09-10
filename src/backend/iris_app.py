@@ -1,9 +1,4 @@
-"""
-Ventana mínima del motor ILSA (Tkinter).
-
-No es la extensión: solo enciende, apaga y reinicia FastAPI en localhost.
-Los registros van a un panel discreto (útil si llama-server no arranca).
-"""
+"""Ventana ILSA: modo, GGUF y el switch de uvicorn. La seña se clasifica en session."""
 
 from __future__ import annotations
 
@@ -11,172 +6,33 @@ import logging
 import os
 import queue
 import sys
-import threading
-import time
 import tkinter as tk
 import webbrowser
 from collections import deque
 from tkinter import font as tkfont
 
+from backend.log_bridge import QueueLogHandler, QueueWriter
+from backend.tk_popup import ChoiceRow, attach_select, destroy_popup, open_choice_popup, widget_under
+from backend.ui_theme import (
+    ACCENT,
+    BAD,
+    BG,
+    BG2,
+    BTN_DEAD,
+    BTN_LIVE,
+    LINE,
+    LOG_BG,
+    MUTED,
+    OK,
+    TEXT,
+    WARN,
+)
+from backend.uvicorn_handle import BackendHandle
+from semantic.config import DEFAULT_MODEL_ID
+from semantic.models import compute_label, friendly_label, list_semantic_models
+
 REPO_URL = "https://github.com/FranciscoVeronING/2026_Proyecto_LSA"
 AUTHORS = "Maite Nigro · Francisco Veron"
-
-BG = "#1D3E53"
-BG2 = "#26516D"
-TEXT = "#FFFFFF"
-MUTED = "#EAF4FA"
-ACCENT = "#5BCBE8"
-ACCENT_FG = "#1D3E53"
-BTN2 = "#1D3E53"
-BTN2_FG = "#FFFFFF"
-OK = "#5BCBE8"
-BAD = "#E89A94"
-WARN = "#5BCBE8"
-LINE = "#1A4A63"
-LOG_BG = "#163040"
-DISABLED_BG = "#152A38"
-DISABLED_FG = "#7A9BB0"
-
-
-class _QueueWriter:
-    """Redirige stdout/stderr a una cola para el panel de registros."""
-
-    def __init__(self, q: queue.Queue):
-        self.q = q
-        self._orig = sys.__stdout__
-
-    encoding = "utf-8"
-    errors = "replace"
-    closed = False
-
-    def write(self, msg: str) -> int:
-        if not msg:
-            return 0
-        self.q.put(msg)
-        if self._orig:
-            try:
-                self._orig.write(msg)
-            except Exception:
-                pass
-        return len(msg)
-
-    def flush(self) -> None:
-        if self._orig:
-            try:
-                self._orig.flush()
-            except Exception:
-                pass
-
-    def isatty(self) -> bool:
-        return False
-
-    def fileno(self) -> int:
-        if self._orig and hasattr(self._orig, "fileno"):
-            return self._orig.fileno()
-        raise OSError("no fileno")
-
-
-class _QueueLogHandler(logging.Handler):
-    def __init__(self, q: queue.Queue):
-        super().__init__()
-        self.q = q
-
-    def emit(self, record: logging.LogRecord) -> None:
-        try:
-            self.q.put(self.format(record) + "\n")
-        except Exception:
-            pass
-
-
-class BackendHandle:
-    """Uvicorn en un hilo, con arranque / corte / reinicio."""
-
-    def __init__(self, host: str, port: int, enable_llm: bool):
-        self.host = host
-        self.port = port
-        self.enable_llm = enable_llm
-        self.mode = "signer"
-        self.server = None
-        self.thread = None
-        self.starting = False
-
-    @property
-    def running(self) -> bool:
-        return bool(self.thread and self.thread.is_alive() and self.server and not self.server.should_exit)
-
-    def _port_free(self) -> None:
-        import socket
-
-        try:
-            with socket.create_connection((self.host, self.port), timeout=0.4):
-                pass
-        except OSError:
-            return
-        raise RuntimeError(
-            f"El puerto {self.port} está ocupado. Cerrá otra ventana ILSA "
-            "o el python run_backend.py que ya esté corriendo."
-        )
-
-    def _run_uvicorn(self) -> None:
-        """Hilo de uvicorn. CUDA/Tk quedan en el hilo principal (si no, Windows se cuelga)."""
-        try:
-            import asyncio
-
-            if sys.platform == "win32":
-                asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            self.server.run()
-        except Exception as exc:
-            print(f"[ilsa] uvicorn no arrancó: {exc}")
-
-    def start(self) -> None:
-        if self.running or self.starting:
-            return
-        self.starting = True
-        import uvicorn
-        from backend import server as srv
-
-        try:
-            self._port_free()
-            os.environ.setdefault("LSA_BACKEND", "1")
-            llm = self.enable_llm and self.mode == "signer"
-            srv.init_session(enable_llm=llm, mode=self.mode)
-            config = uvicorn.Config(
-                srv.app,
-                host=self.host,
-                port=self.port,
-                log_level="info",
-                access_log=False,
-                log_config=None,
-                loop="asyncio",
-            )
-            self.server = uvicorn.Server(config)
-            self.server.install_signal_handlers = lambda: None
-            self.thread = threading.Thread(
-                target=self._run_uvicorn, name="ilsa-uvicorn", daemon=True
-            )
-            self.thread.start()
-        finally:
-            self.starting = False
-
-    def stop(self, join_sec: float = 6.0) -> None:
-        if self.server is not None:
-            self.server.should_exit = True
-        if self.thread is not None:
-            self.thread.join(timeout=join_sec)
-        self.thread = None
-        self.server = None
-        from backend import server as srv
-
-        srv._session = None
-        srv._mode = "signer"
-
-    def restart(self) -> None:
-        mode = self.mode
-        self.stop()
-        time.sleep(0.25)
-        self.mode = mode
-        self.start()
 
 
 class IlsaWindow:
@@ -190,6 +46,7 @@ class IlsaWindow:
         self._hook_logs()
 
         self.backend = BackendHandle(args.host, args.port, enable_llm=not args.no_llm)
+        self.backend.semantic_model_id = DEFAULT_MODEL_ID
         self.log_win: tk.Toplevel | None = None
         self.log_text: tk.Text | None = None
 
@@ -199,15 +56,17 @@ class IlsaWindow:
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
+        self._mode_menu: tk.Toplevel | None = None
+        self._model_menu: tk.Toplevel | None = None
         self._build()
         self.root.after(400, self._drain_logs)
         self.root.after(800, self._poll_health)
 
     def _hook_logs(self) -> None:
-        writer = _QueueWriter(self.log_q)
+        writer = QueueWriter(self.log_q)
         sys.stdout = writer
         sys.stderr = writer
-        handler = _QueueLogHandler(self.log_q)
+        handler = QueueLogHandler(self.log_q)
         handler.setFormatter(logging.Formatter("%(levelname)s %(name)s: %(message)s"))
         logging.getLogger("uvicorn").addHandler(handler)
         logging.getLogger("uvicorn.error").addHandler(handler)
@@ -230,10 +89,12 @@ class IlsaWindow:
             bg=BG,
         ).pack(anchor="w", pady=(0, 12))
 
+        self.body_f = body_f
+        self.tiny_f = tiny_f
+
         tk.Label(
             pad,
-            text="Elegí el modo y después encendé el motor.\n"
-            "Sordo: señas LSA → español. Oyente: tu voz → subtítulos en cámara.",
+            text="Elegí el modo y después encendé el motor.",
             font=body_f,
             fg=TEXT,
             bg=BG,
@@ -243,44 +104,38 @@ class IlsaWindow:
         modes = tk.Frame(pad, bg=BG)
         modes.pack(fill="x", pady=(14, 0))
         self.mode_var = tk.StringVar(value="")
-
-        def mode_row(parent, value, title, subtitle):
-            wrap = tk.Frame(parent, bg=BG2, highlightbackground=LINE, highlightthickness=1)
-            wrap.pack(fill="x", pady=(0, 8))
-            inner = tk.Frame(wrap, bg=BG2, padx=12, pady=10)
-            inner.pack(fill="x")
-            tk.Radiobutton(
-                inner,
-                text=title,
-                variable=self.mode_var,
-                value=value,
-                font=body_f,
-                fg=TEXT,
-                bg=BG2,
-                activebackground=BG2,
-                activeforeground=TEXT,
-                selectcolor=BG,
-                highlightthickness=0,
-                command=self._on_mode_change,
-            ).pack(anchor="w")
-            tk.Label(inner, text=subtitle, font=tiny_f, fg=MUTED, bg=BG2, justify="left").pack(
-                anchor="w", padx=(22, 0)
-            )
-            return wrap
-
-        self.mode_signer = mode_row(
+        self.modes_box = modes
+        mode_sel = attach_select(
             modes,
-            "signer",
-            "Sordo · LSA → español",
-            "La cámara lee las señas y las traduce. Es el flujo actual.",
+            caption="Modo",
+            hint="Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet.",
+            body_font=body_f,
+            tiny_font=tiny_f,
+            on_click=self._toggle_mode_menu,
+            title="Elegí un modo",
+            title_fg=MUTED,
         )
-        self.mode_hearing = mode_row(
-            modes,
-            "hearing",
-            "Oyente · voz → subtítulos",
-            "Transcribe lo que decís y lo pinta en tu video de Meet.\n"
-            "Más adelante: audio → glosas LSA.",
+        mode_sel.box.pack(fill="x")
+        self.mode_shell = mode_sel.shell
+        self.mode_title = mode_sel.title
+        self.mode_hint = mode_sel.hint
+
+        self.model_var = tk.StringVar(value=DEFAULT_MODEL_ID)
+        model_sel = attach_select(
+            pad,
+            caption="Traductor",
+            hint="Cuanto más preciso, más tarda en traducir.",
+            body_font=body_f,
+            tiny_font=tiny_f,
+            on_click=self._toggle_model_menu,
+            title=friendly_label(DEFAULT_MODEL_ID),
+            title_fg=TEXT,
         )
+        self.model_box = model_sel.box
+        self.model_shell = model_sel.shell
+        self.model_title = model_sel.title
+        self.model_hint = model_sel.hint
+        self.root.bind_all("<Button-1>", self._on_global_click_close_menus, add="+")
 
         card = tk.Frame(pad, bg=BG2, highlightbackground=LINE, highlightthickness=1, padx=16, pady=14)
         card.pack(fill="x", pady=(18, 12))
@@ -355,86 +210,210 @@ class IlsaWindow:
             anchor="w", pady=(6, 0)
         )
 
-    def _on_mode_change(self) -> None:
-        if self.backend.running:
-            return
-        mode = self.mode_var.get()
+    def _mode_choice(self, mode: str) -> tuple[str, str]:
         if mode == "signer":
-            self.status_var.set("Listo · modo sordo")
-        elif mode == "hearing":
-            self.status_var.set("Listo · modo oyente")
+            return "Sordo", "La cámara lee las señas y las traduce a español."
+        if mode == "hearing":
+            return "Oyente", "Transcribe lo que decís y lo pinta en tu video de Meet."
+        return "Elegí un modo", "Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet."
+
+    def _mode_pending(self) -> bool:
+        live = self.backend.mode
+        chosen = self.mode_var.get()
+        return bool(
+            self.backend.running
+            and chosen in ("signer", "hearing")
+            and chosen != live
+        )
+
+    def _paint_mode_control(self) -> None:
+        mode = self.mode_var.get()
+        title, hint = self._mode_choice(mode)
+        if self._mode_pending():
+            hint = "Cambio pendiente: dale a Reiniciar modo para aplicarlo."
+        self.mode_title.configure(text=title, fg=TEXT if mode else MUTED)
+        self.mode_hint.configure(text=hint)
+        self.mode_shell.configure(highlightbackground=ACCENT if mode else LINE)
+
+    def _show_translator(self) -> bool:
+        return self.mode_var.get() == "signer" and not self.args.no_llm
+
+    def _semantic_choices(self) -> list[dict]:
+        try:
+            return list_semantic_models()
+        except Exception:
+            return []
+
+    def _paint_model_control(self) -> None:
+        if not hasattr(self, "model_box"):
+            return
+        if not self._show_translator():
+            self._close_model_menu()
+            self.model_box.pack_forget()
+            return
+        if not self.model_box.winfo_ismapped():
+            self.model_box.pack(fill="x", pady=(12, 0), after=self.modes_box)
+        model_id = self.model_var.get() or DEFAULT_MODEL_ID
+        items = {item["id"]: item for item in self._semantic_choices()}
+        item = items.get(model_id)
+        title = friendly_label(model_id)
+        load = compute_label(model_id)
+        if item and not item.get("available", True):
+            hint = "Este traductor no está instalado (falta el archivo .gguf)."
+            title = f"{title} (no está)"
+        elif self.backend.running and self.backend.mode == "signer":
+            live = self.backend.semantic_model_id
+            if live and live != model_id:
+                hint = "Cargando este traductor…"
+            else:
+                hint = f"Carga {load}. Un modelo más preciso tarda más."
+        else:
+            hint = f"Carga {load}. Se usa al encender el motor."
+        self.model_title.configure(text=title, fg=TEXT)
+        self.model_hint.configure(text=hint)
+        self.model_shell.configure(highlightbackground=ACCENT)
+
+    def _open_menu(self, attr: str, shell, items, selected, on_pick) -> None:
+        other = "_model_menu" if attr == "_mode_menu" else "_mode_menu"
+        self._close_menu(other)
+        if getattr(self, attr) is not None:
+            self._close_menu(attr)
+            return
+        setattr(
+            self,
+            attr,
+            open_choice_popup(
+                root=self.root,
+                shell=shell,
+                items=items,
+                selected_id=selected,
+                on_pick=on_pick,
+                body_font=self.body_f,
+                tiny_font=self.tiny_f,
+                on_escape=lambda: self._close_menu(attr),
+            ),
+        )
+
+    def _close_menu(self, attr: str) -> None:
+        destroy_popup(getattr(self, attr, None))
+        setattr(self, attr, None)
+
+    def _close_model_menu(self) -> None:
+        self._close_menu("_model_menu")
+
+    def _close_mode_menu(self) -> None:
+        self._close_menu("_mode_menu")
+
+    def _toggle_model_menu(self) -> None:
+        if not self._show_translator():
+            return
+        choices = self._semantic_choices()
+        if not choices:
+            return
+        items = [
+            ChoiceRow(
+                item["id"],
+                friendly_label(item["id"]),
+                "No está descargado" if not item.get("available", True) else f"Carga {compute_label(item['id'])}",
+                bool(item.get("available", True)),
+            )
+            for item in choices
+        ]
+        self._open_menu("_model_menu", self.model_shell, items, self.model_var.get(), self._pick_model)
+
+    def _toggle_mode_menu(self) -> None:
+        items = [
+            ChoiceRow("signer", "Sordo", "Señas LSA → español"),
+            ChoiceRow("hearing", "Oyente", "Voz → subtítulos en la cámara"),
+        ]
+        self._open_menu("_mode_menu", self.mode_shell, items, self.mode_var.get(), self._pick_mode)
+
+    def _on_global_click_close_menus(self, event: tk.Event) -> None:
+        pairs = (
+            ("_mode_menu", self.mode_shell),
+            ("_model_menu", self.model_shell),
+        )
+        for attr, shell in pairs:
+            menu = getattr(self, attr)
+            if menu is None:
+                continue
+            if not widget_under(event.widget, shell) and not widget_under(event.widget, menu):
+                self._close_menu(attr)
+
+    def _pick_model(self, model_id: str) -> None:
+        self._close_model_menu()
+        self.model_var.set(model_id)
+        self.backend.semantic_model_id = model_id
+        if (
+            self.backend.running
+            and self.backend.mode == "signer"
+            and self.mode_var.get() == "signer"
+        ):
+            try:
+                from backend import server as srv
+
+                switch = getattr(srv._session, "switch_semantic_model", None)
+                if switch:
+                    switch(model_id)
+                    self.status_var.set("Cargando traductor…")
+                    self._set_dot(WARN)
+            except Exception as exc:
+                print(f"[ilsa] No se pudo cambiar el traductor: {exc}")
+        self._sync_actions()
+
+    def _pick_mode(self, mode: str) -> None:
+        self._close_mode_menu()
+        self.mode_var.set(mode)
+        self._on_mode_change()
+
+    def _on_mode_change(self) -> None:
+        mode = self.mode_var.get()
+        if self._mode_pending():
+            self.status_var.set("Modo cambiado · Reiniciá para aplicar")
+        elif not self.backend.running:
+            if mode == "signer":
+                self.status_var.set("Listo · modo sordo")
+            elif mode == "hearing":
+                self.status_var.set("Listo · modo oyente")
         self._sync_actions()
 
     def _paint_btn(self, btn: tk.Button, *, live: bool, role: str) -> None:
-        """live=se puede clickear. Windows ignora colores si state=disabled."""
-        if not live:
-            btn.configure(
-                state="normal",
-                bg=DISABLED_BG,
-                fg=DISABLED_FG,
-                activebackground=DISABLED_BG,
-                activeforeground=DISABLED_FG,
-                relief="flat",
-                bd=0,
-                highlightthickness=0,
-                cursor="arrow",
-            )
-            return
-        if role == "start":
-            btn.configure(
-                bg=ACCENT,
-                fg=ACCENT_FG,
-                activebackground="#7AD7EE",
-                activeforeground=ACCENT_FG,
-                relief="raised",
-                bd=3,
-                highlightthickness=0,
-                cursor="hand2",
-            )
-        elif role == "stop":
-            btn.configure(
-                bg=TEXT,
-                fg=ACCENT_FG,
-                activebackground="#EAF4FA",
-                activeforeground=ACCENT_FG,
-                relief="raised",
-                bd=3,
-                highlightthickness=0,
-                cursor="hand2",
-            )
-        else:
-            btn.configure(
-                bg=BTN2,
-                fg=TEXT,
-                activebackground="#1A4A63",
-                activeforeground=TEXT,
-                relief="raised",
-                bd=3,
-                highlightbackground=ACCENT,
-                highlightthickness=1,
-                cursor="hand2",
-            )
+        btn.configure(**(BTN_DEAD if not live else BTN_LIVE[role]))
 
     def _sync_actions(self, busy: bool = False) -> None:
         running = bool(self.backend.running)
         has_mode = self.mode_var.get() in ("signer", "hearing")
         self._toggle_armed = (not busy) and (running or has_mode)
         self._reset_armed = (not busy) and running
+        pending = self._mode_pending()
         self.toggle_btn.configure(text="Apagar" if running else "Encender")
+        self.reset_btn.configure(text="Reiniciar modo" if pending else "Reiniciar")
         self._paint_btn(self.toggle_btn, live=self._toggle_armed, role="stop" if running else "start")
-        self._paint_btn(self.reset_btn, live=self._reset_armed, role="secondary")
+        self._paint_btn(
+            self.reset_btn,
+            live=self._reset_armed,
+            role="start" if pending else "secondary",
+        )
+        self._paint_mode_control()
+        self._paint_model_control()
 
     def _set_dot(self, color: str) -> None:
         self.dot.delete("all")
         self.dot.create_oval(1, 1, 11, 11, fill=color, outline=color)
 
-    def _start_on_main(self) -> None:
-        """Arranca CUDA + API en el hilo de Tk. Un hilo extra se cuelga en Windows."""
+    def _bind_opts(self) -> str | None:
         mode = self.mode_var.get()
         if mode not in ("signer", "hearing"):
             self._idle("Elegí un modo", error=True)
-            return
+            return None
         self.backend.mode = mode
+        self.backend.semantic_model_id = self.model_var.get() or DEFAULT_MODEL_ID
+        return mode
+
+    def _start_on_main(self) -> None:
+        # PyTorch/CUDA en el hilo de Tk; otro hilo se cuelga en Windows.
+        if not self._bind_opts():
+            return
         try:
             self.backend.start()
             self._idle("Cargando modelos…")
@@ -459,7 +438,7 @@ class IlsaWindow:
         self._start_on_main()
 
     def _on_reset(self) -> None:
-        if not self._reset_armed:
+        if not self._reset_armed or not self._bind_opts():
             return
         self._busy("Reiniciando…")
         self.root.update_idletasks()
@@ -508,6 +487,17 @@ class IlsaWindow:
                             bits.append("LLM cargando")
                         self._set_dot(OK if data.get("semantic_ready") or self.args.no_llm else WARN)
                     device = data.get("device") or ""
+                    if self._mode_pending():
+                        bits.append("Reiniciá el modo")
+                    elif mode == "signer" and (
+                        data.get("semantic_busy")
+                        or (
+                            data.get("semantic_model")
+                            and self.model_var.get()
+                            and data.get("semantic_model") != self.model_var.get()
+                        )
+                    ):
+                        bits.append("traductor…")
                     self.status_var.set(" · ".join(bits))
                     extra = f"{self.args.host}:{self.args.port}"
                     if device:
@@ -575,6 +565,8 @@ class IlsaWindow:
         self.log_text = text
 
     def _on_close(self) -> None:
+        self._close_mode_menu()
+        self._close_model_menu()
         try:
             self.backend.stop(join_sec=4.0)
         except Exception:
@@ -586,7 +578,6 @@ class IlsaWindow:
 
 
 def launch(args) -> None:
-    """Abre la ventana ILSA y arranca el motor en segundo plano."""
     try:
         from ctypes import windll
 

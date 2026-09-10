@@ -24,16 +24,12 @@ from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CON
 
 
 class LSASession:
-    def __init__(self, enable_llm: bool = True):
-        """
-        Carga TinySkeleton en CPU o CUDA. La LLM arranca en un hilo daemon
-        para no bloquear `/health`.
-
-        Args:
-            enable_llm: False muestra glosas sin interpretacion.
-        """
+    def __init__(self, enable_llm: bool = True, semantic_model_id: str | None = None):
+        # La LLM en un hilo aparte: si carga acá, /health se queda mudo un rato.
         self.lock = threading.RLock()
+        self._llm_gate = threading.Lock()
         self.enable_llm = enable_llm
+        self._wanted_model_id = semantic_model_id or DEFAULT_MODEL_ID
         self.left_handed = False
         self.device = torch.device("cpu")
         if torch.cuda.is_available():
@@ -64,13 +60,11 @@ class LSASession:
 
     @staticmethod
     def _load_classes() -> dict:
-        """Lee ``mapeo_clases.json`` y lo invierte a ``{idx: nombre}``."""
         with open(cfg.CLASSES_PATH, "r", encoding="utf-8") as f:
             class_to_idx = json.load(f)
         return {v: k for k, v in class_to_idx.items()}
 
     def _load_classifier(self):
-        """Instancia TinySkeleton, carga ``tinyskeleton_best.pth`` y pasa a eval()."""
         model = TinySkeletonClassifier(
             cfg.FRAME_FEATURES_DIM,
             cfg.HIDDEN_DIM,
@@ -87,7 +81,6 @@ class LSASession:
         return model
 
     def _bootstrap_llm(self):
-        """Hilo: importa el traductor GGUF. Si falla, ``semantic_ready`` queda False."""
         try:
             from semantic.translator import (
                 get_active_model_id,
@@ -95,11 +88,13 @@ class LSASession:
                 translate_glosses,
             )
 
-            load_model_and_tokenizer()
-            with self.lock:
-                self._translate_glosses = translate_glosses
-                self._current_model_id = get_active_model_id() or DEFAULT_MODEL_ID
-                self.semantic_ready = True
+            with self._llm_gate:
+                load_model_and_tokenizer(self._wanted_model_id)
+                with self.lock:
+                    self._translate_glosses = translate_glosses
+                    self._current_model_id = get_active_model_id() or self._wanted_model_id
+                    self.semantic_ready = True
+                    self.semantic_error = ""
             print(f"[backend] Traductor semántico listo ({self._current_model_id}).")
         except Exception as e:
             with self.lock:
@@ -107,8 +102,51 @@ class LSASession:
                 self.semantic_ready = False
             print(f"[backend] LLM no disponible: {e}")
 
+    def switch_semantic_model(self, model_id: str) -> None:
+        # Recarga el GGUF en background; FastAPI y Tk siguen respondiendo.
+        if not self.enable_llm or not model_id:
+            return
+        self._wanted_model_id = model_id
+        threading.Thread(
+            target=self._apply_semantic_switch,
+            args=(model_id,),
+            daemon=True,
+            name="ilsa-semantic-switch",
+        ).start()
+
+    def _apply_semantic_switch(self, model_id: str) -> None:
+        from semantic.translator import get_active_model_id, switch_model, translate_glosses
+
+        with self.lock:
+            if self._current_model_id == model_id and self.semantic_ready:
+                return
+            self.semantic_ready = False
+            self.semantic_busy = True
+            self.semantic_error = ""
+        print(f"[backend] Cambio de traductor pedido: {model_id}")
+        try:
+            with self._llm_gate:
+                wanted = self._wanted_model_id or model_id
+                with self.lock:
+                    if self._current_model_id == wanted and self.semantic_ready:
+                        self.semantic_busy = False
+                        return
+                switch_model(wanted)
+                with self.lock:
+                    self._translate_glosses = translate_glosses
+                    self._current_model_id = get_active_model_id() or wanted
+                    self.semantic_ready = True
+                    self.semantic_busy = False
+                    self.semantic_error = ""
+            print(f"[backend] Traductor semántico listo ({self._current_model_id}).")
+        except Exception as e:
+            with self.lock:
+                self.semantic_error = str(e)
+                self.semantic_ready = False
+                self.semantic_busy = False
+            print(f"[backend] No se pudo cargar {model_id}: {e}")
+
     def reset_session(self, left_handed: bool):
-        """Nueva sesión de trabajo: buffer vacío, memoria de chat limpia, mano dominante."""
         with self.lock:
             self.left_handed = bool(left_handed)
             self.buffer = UtteranceBuffer(
@@ -124,7 +162,6 @@ class LSASession:
             self.last_enqueue_time = 0.0
 
     def snapshot(self) -> dict[str, Any]:
-        """Estado serializable para la extensión (glosas, español, top-3, flags)."""
         with self.lock:
             return {
                 "left_handed": self.left_handed,
@@ -143,25 +180,11 @@ class LSASession:
             }
 
     def note_activity(self):
-        """``POST /activity``: las manos se mueven; no cierra el enunciado."""
         with self.lock:
             self.buffer.note_signing_activity(time.time())
 
     def ingest_sign(self, frames: list[dict]) -> dict[str, Any]:
-        """
-        Clasifica una seña **ya recortada y con landmarks**.
-
-        No extrae esqueleto ni decide si hubo “suficiente movimiento”: eso
-        lo hizo la extensión (Holistic + ``capture.js``). Acá: suavizado EMA,
-        tensor (16, 225), TinySkeleton, buffer de glosas.
-
-        Args:
-            frames: ``{pose, left_hand, right_hand}`` (típicamente 16). No es video.
-
-        Returns:
-            Snapshot más ``accepted``, ``added``, ``activity``, ``gloss``.
-            ``accepted=False`` con ``reason`` ``cooldown`` / ``too_short`` / ``bad_tensor``.
-        """
+        # La seña ya viene recortada. Acá: EMA → (16, 225) → TinySkeleton.
         now = time.time()
         n = len(frames or [])
         with_pose = sum(1 for f in frames or [] if f.get("pose"))
@@ -173,11 +196,9 @@ class LSASession:
         )
 
         with self.lock:
-            if now - self.last_enqueue_time < cfg.INFERENCE_COOLDOWN_SEC:
-                print("[backend] /sign rechazado: cooldown (enqueue)")
-                return {"accepted": False, "reason": "cooldown", **self.snapshot()}
-            if now - self.last_inference_time < cfg.INFERENCE_COOLDOWN_SEC:
-                print("[backend] /sign rechazado: cooldown (inferencia)")
+            cool = cfg.INFERENCE_COOLDOWN_SEC
+            if now - self.last_enqueue_time < cool or now - self.last_inference_time < cool:
+                print("[backend] /sign rechazado: cooldown")
                 return {"accepted": False, "reason": "cooldown", **self.snapshot()}
             if n < cfg.MIN_CAPTURE_FRAMES:
                 print(
@@ -242,12 +263,6 @@ class LSASession:
         return snap
 
     def close_utterance(self) -> dict[str, Any]:
-        """
-        Vacía el buffer de glosas y traduce.
-
-        Returns:
-            Snapshot con ``closed`` y ``spanish``. Si no había glosas, ``closed=False``.
-        """
         with self.lock:
             closed = list(self.buffer.glosses)
             self.buffer.glosses.clear()
@@ -275,7 +290,7 @@ class LSASession:
         return snap
 
     def _translate(self, glosses: list[str]) -> str:
-        """Literal (solo letras/dígitos) o LLM. Si la LLM no está, concatena glosas."""
+        # Letras/dígitos van literales. Si el GGUF no cargó, devolvemos las glosas.
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
@@ -294,12 +309,10 @@ class LSASession:
             return joined
 
     def clear_conversation(self):
-        """Olvida el historial que ve la LLM (el log de sesión puede conservarse)."""
         with self.lock:
             self.memory.clear()
 
     def capture_config(self) -> dict[str, Any]:
-        """Umbrales para que la extensión recorte igual que el escritorio."""
         return {
             "max_frames": cfg.MAX_FRAMES,
             "confidence_threshold": cfg.CONFIDENCE_THRESHOLD,
