@@ -30,7 +30,7 @@ Comandos:
   :c / :clear    limpiar historial conversacional
   :h / :hist     prender/apagar historial
   :m / :model    listar modelos
-  :m ID          cambiar modelo (ej. :m qwen2.5-1.5b)
+  :m ID          cambiar modelo (ej. :m qwen2.5-0.5b)
   :help          esta ayuda
 
 Un enunciado es una línea de glosas separadas por espacio:

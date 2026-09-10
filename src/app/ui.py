@@ -169,7 +169,7 @@ class Dropdown:
         label = self._selected_label()
         cv2.putText(
             canvas,
-            label[:28],
+            label[:40],
             (self.x + 8, self.y + self.h - 8),
             UI_FONT,
             0.5,
@@ -220,7 +220,7 @@ class Dropdown:
                 color = (255, 255, 255)
             cv2.putText(
                 canvas,
-                text[:32],
+                text[:40],
                 (self.x + 8, oy + self.OPTION_H - 8),
                 UI_FONT,
                 0.48,
