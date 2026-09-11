@@ -4,12 +4,11 @@ from pathlib import Path
 _SEMANTIC_DIR = Path(__file__).resolve().parent
 OUTPUTS_DIR = _SEMANTIC_DIR / "outputs"
 
-# Identificador del dropdown (ver semantic.models.SEMANTIC_MODEL_SPECS).
-DEFAULT_MODEL_ID = "qwen2.5-3b"
-BASE_MODEL_ID = "unsloth/Qwen2.5-3B-Instruct"
+# Único GGUF de ILSA (Llama 3.2 1B). Se descarga al abrir si no está en disco.
+DEFAULT_MODEL_ID = "llama-3.2-1b"
+BASE_MODEL_ID = "unsloth/Llama-3.2-1B-Instruct"
 
-# Compat: resolución real del .gguf la hace semantic.models / translator.
-ADAPTER_PATH = str(OUTPUTS_DIR / "unsloth_Qwen2.5-3B-Instruct_gguf")
+ADAPTER_PATH = str(OUTPUTS_DIR / "unsloth_Llama-3.2-1B-Instruct_gguf")
 SYSTEM_PROMPT_PATH = str(_SEMANTIC_DIR / "prompts" / "sys_prompt.txt")
 FEW_SHOTS_PATH = str(_SEMANTIC_DIR / "prompts" / "few_shots_examples.json")
 
@@ -17,9 +16,7 @@ FEW_SHOTS_PATH = str(_SEMANTIC_DIR / "prompts" / "few_shots_examples.json")
 
 MAX_SEQ_LENGTH = 4096
 N_CTX = 4096
-# 0 = CPU (default: la extensión no depende de una placa de video).
-# -1 = offload completo a GPU si llama-cpp-python / Vulkan están disponibles.
-# Override: variable de entorno LSA_USE_GPU=1
+# Siempre CPU. No hay soporte CUDA/Vulkan en el motor empaquetado.
 N_GPU_LAYERS = 0
 
 # Params de generación 

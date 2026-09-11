@@ -7,10 +7,13 @@ enunciado. Acá no se extraen landmarks: se clasifica, se acumula y se traduce.
 
 from __future__ import annotations
 
+import os
 import json
 import threading
 import time
 from typing import Any
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import torch
 
@@ -32,11 +35,7 @@ class LSASession:
         self._wanted_model_id = semantic_model_id or DEFAULT_MODEL_ID
         self.left_handed = False
         self.device = torch.device("cpu")
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("[backend] CUDA disponible: el clasificador la usa; si no hubiera GPU, iría a CPU.")
-        else:
-            print("[backend] Sin GPU: clasificador y LLM en CPU.")
+        print("[backend] Clasificador y traductor en CPU.")
         self.idx_to_class = self._load_classes()
         self.model = self._load_classifier()
         self.buffer = UtteranceBuffer(

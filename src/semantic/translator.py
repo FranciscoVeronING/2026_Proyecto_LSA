@@ -5,6 +5,7 @@ Traductor semántico LSA → español vía GGUF (llama-cpp-python o llama-server
 from __future__ import annotations
 
 import gc
+import importlib.util
 import os
 import sys
 import time
@@ -25,11 +26,7 @@ def _add_dll_dir(path: Path) -> None:
 
 
 def _prepare_llama_native_libs() -> None:
-    """
-    En Windows llama.dll suele existir pero falla al cargar porque no encuentra
-    CUDA / MSVC. La cámara ya importó torch antes; el probe no, y entonces
-    ctypes no resuelve las dependencias.
-    """
+    """En Windows llama.dll necesita el runtime MSVC en PATH."""
     if sys.platform != "win32":
         return
 
@@ -40,17 +37,6 @@ def _prepare_llama_native_libs() -> None:
         _add_dll_dir(prefix / "bin")
 
     try:
-        import torch
-
-        torch_root = Path(torch.__file__).resolve().parent
-        _add_dll_dir(torch_root / "lib")
-        _add_dll_dir(torch_root / "bin")
-    except Exception:
-        pass
-
-    try:
-        import importlib.util
-
         spec = importlib.util.find_spec("llama_cpp")
         origin = Path(spec.origin).resolve().parent if spec and spec.origin else None
         if origin is not None:
@@ -66,7 +52,6 @@ from semantic.config import (
     SYSTEM_PROMPT_PATH,
     MAX_NEW_TOKENS,
     N_CTX,
-    N_GPU_LAYERS,
     TEMPERATURE,
     REPETITION_PENALTY,
 )
@@ -98,14 +83,14 @@ def load_prompt() -> str:
     return prompt_path.read_text(encoding="utf-8").strip()
 
 
-def _make_engine(model_path: str, n_gpu_layers: int, n_threads: int):
-    """llama-cpp-python si está instalado; si no, llama-server.exe (Windows)."""
+def _make_engine(model_path: str, n_threads: int):
+    """llama-cpp-python si está instalado; si no, llama-server.exe (Windows, CPU)."""
     try:
         from llama_cpp import Llama
 
         return Llama(
             model_path=model_path,
-            n_gpu_layers=n_gpu_layers,
+            n_gpu_layers=0,
             n_ctx=int(N_CTX),
             n_batch=256,
             n_threads=n_threads,
@@ -122,18 +107,9 @@ def _make_engine(model_path: str, n_gpu_layers: int, n_threads: int):
         return LlamaServerEngine(
             model_path=model_path,
             n_ctx=int(N_CTX),
-            n_gpu_layers=n_gpu_layers,
+            n_gpu_layers=0,
             n_threads=n_threads,
         )
-
-
-def _gpu_layers() -> int:
-    """CPU por defecto. GPU solo si se pide explícito (LSA_USE_GPU o N_GPU_LAYERS)."""
-    if os.environ.get("LSA_USE_GPU", "").strip() in {"1", "true", "True", "yes"}:
-        return -1
-    if N_GPU_LAYERS is not None:
-        return int(N_GPU_LAYERS)
-    return 0
 
 
 def _to_chatml(messages: list[dict]) -> str:
@@ -190,21 +166,25 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
     Carga el GGUF activo (llama-cpp o llama-server). Idempotente salvo ``force``.
 
     Args:
-        model_id: Clave de ``semantic.models`` (default ``qwen2.5-3b``).
+        model_id: Ignorado (siempre Llama 1B). Default ``llama-3.2-1b``.
         force: Recarga aunque ya esté en memoria.
     """
     global SYSTEM_PROMPT, GGUF_MODEL, _LOADED, _ACTIVE_MODEL_ID, _ACTIVE_CHAT_FORMAT
 
-    target_id = model_id or _ACTIVE_MODEL_ID or DEFAULT_MODEL_ID
+    target_id = DEFAULT_MODEL_ID
     if _LOADED and GGUF_MODEL is not None and not force and _ACTIVE_MODEL_ID == target_id:
         return
 
     spec = spec_by_id(target_id)
     gguf_file = resolve_gguf_path(spec)
     if gguf_file is None:
+        from semantic.gguf_fetch import ensure_gguf
+
+        gguf_file = ensure_gguf()
+    if gguf_file is None:
         raise FileNotFoundError(
-            f"[semantic] No se encontró ningún archivo .gguf para '{target_id}'. "
-            f"Esperaba un .gguf en outputs/{spec.folder}_gguf o outputs/{spec.folder}."
+            f"[semantic] No está el GGUF de '{target_id}'. "
+            "Abrí ILSA con internet o copiá el .gguf a %LOCALAPPDATA%\\ILSA\\models\\"
         )
 
     if _LOADED or GGUF_MODEL is not None:
@@ -214,17 +194,8 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
     SYSTEM_PROMPT = load_prompt()
     _ACTIVE_CHAT_FORMAT = spec.chat_format
     n_threads = max(1, min(8, (os.cpu_count() or 4) // 2))
-    n_gpu_layers = _gpu_layers()
-    print(f"[semantic] Cargando binario GGUF ({target_id}): {gguf_file}")
-    print(
-        f"[semantic] n_gpu_layers={n_gpu_layers} | n_ctx={N_CTX} | "
-        f"n_threads={n_threads} | chat={spec.chat_format}"
-    )
-    GGUF_MODEL = _make_engine(
-        str(gguf_file),
-        n_gpu_layers=n_gpu_layers,
-        n_threads=n_threads,
-    )
+    print(f"[semantic] Cargando GGUF ({target_id}, CPU): {gguf_file}")
+    GGUF_MODEL = _make_engine(str(gguf_file), n_threads=n_threads)
 
     _LOADED = True
     _ACTIVE_MODEL_ID = target_id

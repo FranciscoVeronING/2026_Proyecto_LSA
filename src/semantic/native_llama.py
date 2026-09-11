@@ -1,7 +1,4 @@
-"""llama.cpp nativo (exe) para Windows sin compilar llama-cpp-python.
-
-Por defecto corre en CPU. Una placa de video es opcional (LSA_USE_GPU=1).
-"""
+"""llama.cpp nativo (exe) para Windows sin compilar llama-cpp-python. Solo CPU."""
 
 from __future__ import annotations
 
@@ -24,7 +21,6 @@ DEFAULT_PORT = int(os.environ.get("LSA_LLAMA_PORT", "18790"))
 
 _PACKAGES = {
     "cpu": f"llama-{RELEASE}-bin-win-cpu-x64.zip",
-    "vulkan": f"llama-{RELEASE}-bin-win-vulkan-x64.zip",
 }
 
 
@@ -81,29 +77,14 @@ class LlamaServerEngine:
         self.proc = None
         self._log_file = None
         self.backend = "cpu"
-
-        want_gpu = n_gpu_layers != 0
-        backends = ["vulkan", "cpu"] if want_gpu else ["cpu"]
-        last_error = None
-        for backend in backends:
-            try:
-                self._start(backend, n_gpu_layers=n_gpu_layers)
-                atexit.register(self.close)
-                return
-            except Exception as e:
-                last_error = e
-                print(f"[semantic] Backend {backend} no arrancó: {e}")
-                self.close()
-                if backend == "cpu":
-                    break
-                print("[semantic] Paso a CPU (no se necesita placa de video).")
-        raise RuntimeError(f"No pude arrancar llama-server en CPU. Último error: {last_error}")
+        self._start("cpu", n_gpu_layers=0)
+        atexit.register(self.close)
 
     def _start(self, backend: str, n_gpu_layers: int) -> None:
-        """Lanza ``llama-server.exe`` (CPU o Vulkan) y espera ``/health``."""
-        exe = ensure_llama_server(backend)
-        self.backend = backend
-        ngl = 99 if backend == "vulkan" and n_gpu_layers != 0 else 0
+        """Lanza ``llama-server.exe`` en CPU y espera ``/health``."""
+        exe = ensure_llama_server("cpu")
+        self.backend = "cpu"
+        ngl = 0
         cmd = [
             str(exe),
             "-m",

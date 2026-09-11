@@ -7,8 +7,11 @@ Arranca el motor ILSA (ventana) o solo la API.
     python run_backend.py --port 8765
 """
 
+import os
 import sys
 from pathlib import Path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 if getattr(sys, "frozen", False):
     sys.path.insert(0, getattr(sys, "_MEIPASS", str(Path(sys.executable).parent)))

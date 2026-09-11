@@ -1,10 +1,12 @@
-"""Los tres GGUF que lista ILSA. Sin archivo en outputs/ → available=False."""
+"""Un solo GGUF: Llama 3.2 1B. Sin archivo local → available=False hasta descargarlo."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
+
+import os
 
 from semantic.config import OUTPUTS_DIR
 
@@ -16,59 +18,54 @@ class SemanticModelSpec:
     chat_format: str  # chatml | llama3
 
 
-# Nombres para la UI (sin ids técnicos) y cuánto cuestan de correr.
+GGUF_ASSET_NAME = "llama-3.2-1b-instruct.Q4_K_M.gguf"
+
 SEMANTIC_FRIENDLY_LABELS: dict[str, str] = {
-    "qwen2.5-0.5b": "Traducción rápida",
-    "qwen2.5-3b": "Traducción precisa",
-    "llama-3.2-1b": "Traducción compacta",
+    "llama-3.2-1b": "Traductor",
 }
 
-# liviano < medio < pesado (tamaño del modelo / CPU-RAM al traducir).
 SEMANTIC_COMPUTE: dict[str, str] = {
-    "qwen2.5-0.5b": "liviano",
-    "qwen2.5-3b": "pesado",
     "llama-3.2-1b": "liviano",
 }
 
+SEMANTIC_MODEL_SPECS: tuple[SemanticModelSpec, ...] = (
+    SemanticModelSpec("llama-3.2-1b", "unsloth_Llama-3.2-1B-Instruct", "llama3"),
+)
+
 
 def friendly_label(model_id: str) -> str:
-    if not model_id:
-        return SEMANTIC_FRIENDLY_LABELS["qwen2.5-3b"]
-    return SEMANTIC_FRIENDLY_LABELS.get(model_id, "Traducción")
+    return SEMANTIC_FRIENDLY_LABELS.get(model_id or "llama-3.2-1b", "Traductor")
 
 
 def compute_label(model_id: str) -> str:
-    key = model_id or "qwen2.5-3b"
-    return SEMANTIC_COMPUTE.get(key, "medio")
+    return SEMANTIC_COMPUTE.get(model_id or "llama-3.2-1b", "liviano")
 
 
 def display_label(model_id: str) -> str:
-    return f"{friendly_label(model_id)} · {compute_label(model_id)}"
-
-
-# Etiquetas de UI ↔ carpetas Unsloth exportadas a GGUF.
-SEMANTIC_MODEL_SPECS: tuple[SemanticModelSpec, ...] = (
-    SemanticModelSpec("qwen2.5-0.5b", "unsloth_Qwen2.5-0.5B-Instruct", "chatml"),
-    SemanticModelSpec("qwen2.5-3b", "unsloth_Qwen2.5-3B-Instruct", "chatml"),
-    SemanticModelSpec("llama-3.2-1b", "unsloth_Llama-3.2-1B-Instruct", "llama3"),
-)
+    return friendly_label(model_id)
 
 
 def spec_by_id(model_id: str) -> SemanticModelSpec:
     for spec in SEMANTIC_MODEL_SPECS:
         if spec.id == model_id:
             return spec
-    known = ", ".join(s.id for s in SEMANTIC_MODEL_SPECS)
-    raise KeyError(f"Modelo semántico desconocido: {model_id!r}. Opciones: {known}")
+    raise KeyError(f"Modelo semántico desconocido: {model_id!r}")
 
 
 def resolve_gguf_path(spec: SemanticModelSpec) -> Optional[Path]:
-    # Unsloth a veces deja el .gguf en folder_gguf, a veces en folder.
+    appdata = os.environ.get("LOCALAPPDATA") or os.environ.get("HOME") or str(Path.home())
     candidates = (
+        OUTPUTS_DIR / f"{spec.folder}_gguf" / GGUF_ASSET_NAME,
+        OUTPUTS_DIR / spec.folder / GGUF_ASSET_NAME,
+        Path(appdata) / "ILSA" / "models" / GGUF_ASSET_NAME,
+    )
+    for path in candidates:
+        if path.is_file():
+            return path
+    for folder in (
         OUTPUTS_DIR / f"{spec.folder}_gguf",
         OUTPUTS_DIR / spec.folder,
-    )
-    for folder in candidates:
+    ):
         if not folder.is_dir():
             continue
         files = sorted(folder.glob("*.gguf"))
