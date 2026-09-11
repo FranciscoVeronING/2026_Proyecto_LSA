@@ -9,8 +9,6 @@ const dot = document.getElementById("dot");
 const healthText = document.getElementById("health-text");
 const pageHint = document.getElementById("page-hint");
 const metaMode = document.getElementById("meta-mode");
-const metaTranslatorRow = document.getElementById("meta-translator-row");
-const metaTranslator = document.getElementById("meta-translator");
 const debugBlock = document.getElementById("debug-block");
 const chkLandmarks = document.getElementById("chk-landmarks");
 const reportBox = document.getElementById("report-box");
@@ -96,7 +94,6 @@ function openReport() {
   const h = lastHealth;
   const mode =
     h && h.mode === "hearing" ? "Oyente" : h && h.ok ? "Sordo" : "Motor apagado";
-  const translator = (h && h.semantic_label) || "—";
   const body = [
     "## Qué pasó",
     user,
@@ -105,7 +102,6 @@ function openReport() {
     `- Extensión: ${manifest.version}`,
     `- Motor: ${h && h.ok ? "encendido" : "apagado"}`,
     `- Modo: ${mode}`,
-    `- Traductor: ${translator}`,
     `- En Meet: ${inMeet ? "sí" : "no"}`,
   ].join("\n");
   const url =
@@ -115,25 +111,6 @@ function openReport() {
     "&body=" +
     encodeURIComponent(body);
   chrome.tabs.create({ url });
-}
-
-/**
- * @param {object} h
- * @returns {string}
- */
-function translatorLine(h) {
-  const name =
-    h.semantic_label ||
-    (h.semantic_ready ? "Traducción precisa" : "Cargando el traductor…");
-  const load = h.semantic_load;
-  if (!load) return name;
-  const hint =
-    load === "pesado"
-      ? "cómputo pesado"
-      : load === "liviano"
-        ? "cómputo liviano"
-        : "cómputo medio";
-  return `${name} · ${hint}`;
 }
 
 LsaPrefs.get().then((prefs) => {
@@ -150,12 +127,9 @@ LsaApi.health()
     metaMode.textContent = signer ? "Sordo (LSA → español)" : "Oyente (voz → subtítulos)";
     healthText.textContent = "Motor conectado";
     if (signer) {
-      metaTranslatorRow.hidden = false;
-      metaTranslator.textContent = translatorLine(h);
       debugBlock.hidden = false;
       document.getElementById("output-field").hidden = false;
     } else {
-      metaTranslatorRow.hidden = true;
       debugBlock.hidden = true;
       document.getElementById("output-field").hidden = true;
     }
@@ -165,7 +139,6 @@ LsaApi.health()
     lastHealth = null;
     healthText.textContent = "Motor apagado — descargá ILSA en Instalar motor";
     metaMode.textContent = "—";
-    metaTranslatorRow.hidden = true;
     document.getElementById("output-field").hidden = true;
     return inspectTab(false);
   });

@@ -8,7 +8,7 @@
 
 const PACKAGED_ZIP = chrome.runtime.getURL("bin/ILSA.zip");
 const RELEASE_ZIP =
-  "https://github.com/FranciscoVeronING/2026_Proyecto_LSA/releases/latest/download/ILSA.zip";
+  "https://github.com/FranciscoVeronING/2026_Proyecto_LSA/releases/download/ilsa-llama-1b/ILSA.zip";
 
 const dot = document.getElementById("dot");
 const healthText = document.getElementById("health-text");
@@ -53,20 +53,20 @@ async function downloadIlsa() {
   btnExe.disabled = true;
   exeHint.textContent = "Preparando descarga…";
   try {
+    if (await resourceExists(RELEASE_ZIP)) {
+      saveAs(RELEASE_ZIP, "ILSA.zip");
+      exeHint.textContent =
+        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta. La primera vez baja el traductor sola.";
+      return;
+    }
     if (await resourceExists(PACKAGED_ZIP)) {
       saveAs(PACKAGED_ZIP, "ILSA.zip");
       exeHint.textContent =
         "Listo. Descomprimí ILSA.zip, abrí ILSA.exe y dejá esa ventana abierta.";
       return;
     }
-    if (await resourceExists(RELEASE_ZIP)) {
-      saveAs(RELEASE_ZIP, "ILSA.zip");
-      exeHint.textContent =
-        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta.";
-      return;
-    }
     exeHint.textContent =
-      "Todavía no hay un ILSA.zip en esta extensión. Hay que generarlo una vez con packaging\\build_exe.bat y recargar la extensión en chrome://extensions.";
+      "Todavía no está ILSA.zip en el release ilsa-llama-1b. En esta PC: packaging\\build_exe.bat y packaging\\upload_ilsa_zip.ps1.";
   } catch (err) {
     exeHint.textContent = err && err.message ? err.message : "No se pudo descargar ILSA.";
   } finally {
