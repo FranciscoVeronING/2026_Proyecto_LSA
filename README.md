@@ -3,20 +3,21 @@
 Interpretación de LSA en tiempo real. **Empezá a leer el código por**
 [`docs/ORDEN_DE_LECTURA.md`](docs/ORDEN_DE_LECTURA.md).
 
-Este repositorio traduce **señas LSA a español** en tiempo real.
+Este repositorio traduce **señas LSA a español** (y, en modo oyente, voz a
+subtítulos en Meet).
 
 La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
 (pose + dos manos). Ese esqueleto se recorta en **una seña a la vez**, se
 clasifica como **glosa** (etiqueta léxica: `HOLA`, `MAMA`, `A`, …) y, cuando la
-persona deja de señar unos segundos, una LLM convierte la lista de glosas en
-una **oración en español**.
+persona deja de señar unos segundos, Llama 3.2 1B convierte la lista de glosas
+en una **oración en español**. El traductor corre en **CPU**.
 
 Hay **dos formas de usarlo**, que comparten el mismo clasificador y la misma LLM:
 
 | Uso | Entrada | Cómo se corre |
 |-----|---------|----------------|
 | App de escritorio | Webcam + ventana OpenCV | `python run.py` |
-| Extensión Chrome | Página propia o Google Meet | `python run_backend.py` + extensión descomprimida |
+| Extensión Chrome + ILSA | Google Meet | `python run_backend.py` o `ILSA.exe`, más la extensión descomprimida |
 
 No hace falta haber visto el código antes: el mapa de archivos y el flujo
 completo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
@@ -25,17 +26,18 @@ completo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
 ## Qué necesitás
 
-- Windows (el flujo de la LLM nativa está pensado para Windows).
+- Windows (el flujo nativo de la LLM está pensado para Windows).
 - Python 3.9–3.12 **o** 3.14.
   - En **3.14** no instales `llama-cpp-python`: el backend descarga
-    `llama-server.exe` (CPU) la primera vez.
-  - En **3.10–3.12** podés usar `llama-cpp-python` si preferís.
+    `llama-server.exe` (CPU) si hace falta.
+  - En **3.10–3.12** podés usar `llama-cpp-python` (rueda CPU).
 - Chrome, si vas a usar la extensión.
-- (Opcional) GPU NVIDIA para el clasificador PyTorch. La LLM de la extensión
-  corre en **CPU por defecto**.
+- El GGUF de Llama 3.2 1B: en desarrollo suele estar en
+  `src/semantic/outputs/`. En una PC nueva ILSA lo baja solo la primera vez
+  (GitHub Releases, tag `ilsa-llama-1b`) a `%LOCALAPPDATA%\ILSA\models\`.
 
-Los pesos del clasificador (`src/classifier/weights/`) y los modelos `.gguf`
-(`src/semantic/outputs/`) suelen ir con **Git LFS**. Después de clonar:
+Los pesos del clasificador (`src/classifier/weights/`) suelen ir con **Git LFS**.
+Después de clonar:
 
 ```bash
 git lfs pull
@@ -46,11 +48,15 @@ git lfs pull
 ## Instalación de Python
 
 ```bash
-pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 
-Si no tenés GPU, instalá la rueda CPU de PyTorch en lugar de `cu124`.
+En 3.10–3.12, si querés el binding de llama.cpp:
+
+```bash
+pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+```
 
 ---
 
@@ -73,14 +79,14 @@ contexto de conversación, `n` saltea una seña en modo evaluación.
 
 ---
 
-## Extensión Chrome + motor local
+## Extensión Chrome + motor ILSA
 
-La extensión **no** clasifica ni traduce sola. Habla con un FastAPI en
+La extensión **no** clasifica ni traduce sola. Habla con FastAPI en
 `http://127.0.0.1:8765`.
 
 ### 1. Descargar MediaPipe (una vez)
 
-Los WASM/tflite de Holistic no se commitean (pesan mucho). Hay que generarlos:
+Los WASM/tflite de Holistic no se commitean. Hay que generarlos:
 
 ```bash
 py -3 packaging/fetch_extension_assets.py
@@ -88,20 +94,43 @@ py -3 packaging/fetch_extension_assets.py
 
 Eso llena `extension/vendor/mediapipe/` y, si faltan, los íconos.
 
-### 2. Motor ILSA (usuarias)
+### 2. Motor ILSA
 
-En la extensión: **Instalar motor → Descargar ILSA**. Eso baja `ILSA.zip`
-(lo genera `packaging\build_exe.bat` y queda en `extension/bin/`). La persona
-descomprime, abre **ILSA.exe** y deja esa ventana abierta.
+**Quien usa el exe:** en la extensión, **Instalar motor → Descargar ILSA**.
+Baja `ILSA.zip` del GitHub Release `ilsa-llama-1b`. Descomprimí, abrí
+**ILSA.exe**. La primera vez aparece una pantalla de carga y, si falta el
+traductor, lo descarga (~770 MB). Elegí modo (Sordo u Oyente) y **Encender**.
+Dejá esa ventana abierta.
 
-Quien desarrolla, para generar ese zip una vez:
+**Quien publica el zip** (en esta PC, una vez):
+
+```bash
+packaging\build_exe.bat
+powershell -File packaging\upload_ilsa_zip.ps1
+```
+
+El zip no incluye el GGUF (GitHub admite 2 GB por archivo). El traductor
+ya está en el mismo release.
+
+**Quien desarrolla:**
+
+```bash
+python run_backend.py
+```
+
+Misma ventana, sin empaquetar. Para generar el zip del exe (sin el GGUF):
 
 ```bash
 packaging\build_exe.bat
 ```
 
-Después recargar la extensión. En la máquina de desarrollo también sirve
-`python run_backend.py` (misma ventana, sin empaquetar).
+Para publicar el GGUF en GitHub Releases:
+
+```bash
+powershell -File packaging\upload_llama_gguf.ps1
+```
+
+Hace falta GitHub CLI autenticado (`gh auth login`).
 
 ### 3. Cargar la extensión
 
@@ -111,27 +140,30 @@ Después recargar la extensión. En la máquina de desarrollo también sirve
 4. Tras cambiar `manifest.json` o content scripts, **recargar la extensión**.
    Tras cambiar el hook de cámara de Meet, **recargar la pestaña de Meet**.
 
-Al instalar se abre una guía (`welcome.html`). El popup activa los subtítulos
-en la pestaña de Google Meet.
+Al instalar se abre una guía (`welcome.html`). El popup muestra si el motor
+está conectado y, en modo sordo, la salida en Meet (subtítulo / audio / ambos).
 
 ### Google Meet
 
-1. ILSA abierto (ventana del exe, punto verde en la guía).
+1. ILSA abierto y Encendido.
 2. Entrá a `https://meet.google.com/...` y permití la cámara.
-3. Activá LSA desde el popup (o el flujo de Meet de la extensión).
+3. Con el motor sano, la traducción arranca sola. Para pararla, **Apagá** en
+   el exe.
 
 Qué ocurre:
 
 - Un script en el mundo MAIN intercepta `getUserMedia` **solo si LSA está
   habilitado**. Meet recibe un canvas con la imagen de la cámara y el español
-  dibujado abajo (espejado para que, con el espejo CSS de Meet, se lea bien).
-- Otro script (mundo aislado) muestra un HUD arriba a la derecha: ON mientras
-  se está grabando una seña, última glosa, español.
-- Los frames JPEG van al *service worker* → documento offscreen → iframe
-  sandbox con MediaPipe → `POST /sign`.
+  dibujado abajo.
+- Otro script (mundo aislado) muestra un HUD: ON mientras se graba una seña,
+  última glosa, español.
+- En modo sordo los JPEG van al *service worker* → offscreen → sandbox
+  MediaPipe → `POST /sign`.
+- En modo oyente el reconocimiento de voz corre en MAIN y el texto se pinta
+  en el mismo canvas.
 
-El español **desaparece solo a los 8 segundos** (video quemado y HUD). Si
-llega una oración nueva, el reloj se reinicia.
+El español **desaparece solo a los 8 segundos**. Si llega una oración nueva,
+el reloj se reinicia.
 
 ---
 
@@ -157,27 +189,27 @@ El clasificador espera un tensor de forma `(1, 16, 225)`: 16 frames ×
 
 ```
 run.py                 App de escritorio
-run_backend.py         API local para la extensión
+run_backend.py         Ventana ILSA + API local
 LSABackend.bat         Atajo Windows al backend
 requirements.txt
-packaging/             Scripts para WASM de MediaPipe y (opcional) .exe
+packaging/             WASM MediaPipe, PyInstaller, subida del GGUF
 extension/             Extensión Manifest V3
 src/
   app/                 OpenCV, UI, workers, eval
-  backend/             FastAPI + sesión de inferencia
+  backend/             FastAPI, ventana ILSA, sesión
   core/                Landmarks, memoria, política de repeticiones
   classifier/          TinySkeleton + pesos + lista de clases
-  semantic/            Prompts, GGUF, llama-server
+  semantic/            Prompts, fetch del GGUF, llama.cpp
 docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 ```
 
-**No forma parte del runtime** (y no se versiona):
+**No forma parte del runtime versionado:**
 
-- `señario1/`, `señario2/`: láminas PNG de diccionario visual, si las tenés
-  en el disco.
+- `señario1/`, `señario2/`: láminas PNG, si las tenés en el disco.
 - `src/semantic/bin/`: `llama-server` descargado al vuelo.
-- `extension/vendor/mediapipe/*.wasm` (y similares): regenerar con el script
-  de `packaging/`.
+- `extension/vendor/mediapipe/*.wasm` (y similares): regenerar con `packaging/`.
+- `extension/bin/ILSA.zip` y `dist/`: salida de PyInstaller.
+- `%LOCALAPPDATA%\ILSA\models\`: GGUF descargado en el equipo.
 
 ---
 
@@ -185,17 +217,19 @@ docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 
 | Método | Ruta | Uso |
 |--------|------|-----|
-| GET | `/health` | ¿Clasificador y LLM listos? |
+| GET | `/health` | ¿Motor, clasificador y traductor listos? |
 | GET | `/config` | Umbrales de captura |
 | GET | `/state` | Glosas pendientes y último español |
+| GET | `/semantic/models` | El GGUF activo (Llama 1B) |
 | POST | `/session` | Nueva sesión (`left_handed`) |
 | POST | `/sign` | Lista de frames de una seña |
 | POST | `/activity` | “Sigo señando” (retrasa el cierre) |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
 | POST | `/conversation/clear` | Vaciar memoria |
-| GET | `/download/exe` | `.exe` o `.bat` si existen |
+| GET | `/download/exe` | `.exe` o `.bat` si existen en esta PC |
 
-CORS está abierto a orígenes `chrome-extension://`.
+CORS: `https://meet.google.com`, localhost y orígenes `chrome-extension://`.
+El API debe escuchar solo en loopback.
 
 ---
 
@@ -203,9 +237,10 @@ CORS está abierto a orígenes `chrome-extension://`.
 
 | Síntoma | Qué probar |
 |---------|------------|
-| Extensión: “motor no listo” | `python run_backend.py` y recargar el popup |
-| Meet: cámara bloqueada | Recargar Meet; LSA solo envuelve `getUserMedia` si está ON |
+| Extensión: “motor apagado” | Abrí ILSA, elegí modo, Encender; recargá el popup |
+| Pantalla de carga de ILSA no termina | Internet para bajar el GGUF, o copiá el `.gguf` a `%LOCALAPPDATA%\ILSA\models\` |
+| Meet: cámara bloqueada | Recargar Meet; LSA solo envuelve `getUserMedia` si ILSA está ON |
 | Meet: sin esqueleto / sin glosas | `py -3 packaging/fetch_extension_assets.py` y recargar la extensión |
-| LLM no carga en Python 3.14 | Normal sin `llama-cpp-python`; esperar la descarga de `llama-server.exe` |
-| Subtítulos que no se van | Recargar extensión **y** la pestaña de Meet (content script viejo) |
-| Clasificador en CPU lento | Instalar PyTorch CUDA; la LLM sigue en CPU salvo `--gpu` |
+| LLM no carga en Python 3.14 | Esperar `llama-server.exe` (CPU) |
+| Subtítulos que no se van | Recargar extensión **y** la pestaña de Meet |
+| `Extension context invalidated` | Recargaste la extensión con Meet abierto: recargá Meet |

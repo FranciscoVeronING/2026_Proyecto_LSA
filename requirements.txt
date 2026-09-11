@@ -1,14 +1,15 @@
 # Dependencias del pipeline LSA (cámara → clasificador → glosas → LLM).
-# Probado en Windows 10 + Python 3.9 (conda env `lsa_gpu`) con GPU NVIDIA.
+# El motor ILSA (run_backend.py / ILSA.exe) corre clasificador y traductor en CPU.
 #
-# IMPORTANTE: PyTorch con CUDA no se instala desde PyPI por defecto.
-# Instalarlo primero, eligiendo la variante que corresponda a tu placa:
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
 #
-#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+# Python 3.10–3.12 (opcional, binding llama.cpp CPU):
+#   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 #
-# Luego:  pip install -r requirements.txt
+# Python 3.14: no instales llama-cpp-python; el backend usa llama-server.exe CPU.
 
-# --- Visión / captura ---
+# --- Visión / captura (app de escritorio) ---
 opencv-python==4.11.0.86
 mediapipe==0.10.21
 numpy==1.26.4
@@ -16,17 +17,11 @@ numpy==1.26.4
 # --- Clasificador de señas ---
 torch==2.6.0
 
-# --- Traductor semántico (GGUF) ---
-# En Windows + Python 3.14 NO instales llama-cpp-python: no hay rueda y
-# hay que compilar con Visual Studio. El backend baja llama-server.exe solo.
-# Si tenés Python 3.10–3.12:
-#   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+# --- Traductor semántico (GGUF Llama 3.2 1B, CPU) ---
 
-# --- Síntesis de voz ---
+# --- Síntesis de voz (escritorio) ---
 pyttsx3==2.99
 
 # --- Backend local para la extensión Chrome ---
 fastapi==0.115.12
 uvicorn==0.32.1
-
-# Opcional: rueda precompilada de llama-cpp-python (solo Python 3.10–3.12).

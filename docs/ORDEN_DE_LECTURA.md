@@ -13,13 +13,17 @@ dónde empezar**.
 
 Alguien seña frente a Meet. MediaPipe saca un esqueleto. Un recortador
 decide “esto es una seña”. TinySkeleton la nombra (glosa). Tras una pausa,
-una LLM arma una oración en español. Esa oración se pinta en el video que
-Meet ya está enviando.
+Llama 3.2 1B (CPU) arma una oración en español. Esa oración se pinta en el
+video que Meet ya está enviando.
 
 Hay dos procesos:
 
 1. **Extensión Chrome** (captura, recorte, UI de Meet).
-2. **`python run_backend.py`** (clasificador + LLM en `127.0.0.1:8765`).
+2. **ILSA** (`python run_backend.py` o `ILSA.exe`): clasificador + LLM en
+   `127.0.0.1:8765`.
+
+ILSA pide modo (sordo / oyente) y Encender. El GGUF se descarga la primera
+vez que se abre la ventana, si no está en disco.
 
 ---
 
@@ -45,7 +49,7 @@ Cómo un montón de puntos 3D se vuelve una etiqueta (`HOLA`, `A`, …).
 3. `src/core/landmarks.py` — ancla en hombros, trim, subsampleo a 16 frames.
 4. `src/classifier/config.py` — `MAX_FRAMES`, umbrales, lista de clases.
 5. `src/classifier/arch.py` — `TinySkeletonClassifier.forward`.
-6. `src/backend/session.py` — `ingest_sign`: cooldown, top-3, buffer.
+6. `src/backend/session.py` — `ingest_sign`: cooldown, top-3, buffer (CPU).
 
 Pregunta: *¿por qué el tensor es `(1, 16, 225)`?*
 
@@ -68,29 +72,31 @@ Pregunta: *¿qué cierra el enunciado, la seña o el reloj de 4 s?*
 ## 4. Español (20 min)
 
 1. `src/core/repeat_policy.py` otra vez — `format_literal_utterance` (deletreo).
-2. `src/semantic/translator.py` — `translate_glosses`.
-3. `src/semantic/native_llama.py` — `llama-server.exe` en Windows/3.14.
-4. `src/core/conversation_memory.py` — contexto de turnos previos.
-5. `LSASession.close_utterance` en `session.py`.
+2. `src/semantic/models.py` — un GGUF: Llama 3.2 1B.
+3. `src/semantic/gguf_fetch.py` — disco local o GitHub Releases (`ilsa-llama-1b`).
+4. `src/semantic/translator.py` — `translate_glosses` (CPU).
+5. `src/semantic/native_llama.py` — respaldo: `llama-server.exe` CPU.
+6. `src/core/conversation_memory.py` — contexto de turnos previos.
+7. `LSASession.close_utterance` en `session.py`.
 
 Pregunta: *¿cuándo ni siquiera se llama a la LLM?*
 
 ---
 
-## 5. Meet: el video (40 min)
+## 5. Ventana ILSA y Meet (40 min)
 
-Leé esto **después** de saber qué es una seña. Si no, el hook de cámara
-parece magia negra.
+Leé esto **después** de saber qué es una seña.
 
-1. `extension/manifest.json` — dos content scripts, sandbox, offscreen.
-2. `extension/popup.js` — quién dispara el arranque.
-3. `extension/background.js` — centralita: popup ↔ Meet ↔ offscreen.
-4. `extension/content/inject-gum.js` — intercepta `getUserMedia` (mundo MAIN).
-5. `extension/content/meet.js` — HUD + JPEG hacia el worker.
-6. `extension/offscreen.js` — Holistic + `capture.js` + `LsaApi`.
-7. `extension/sandbox.js` — WASM de MediaPipe (CSP relajado).
+1. `src/backend/iris_app.py` — splash del GGUF, modo, Encender.
+2. `extension/manifest.json` — dos content scripts, sandbox, offscreen.
+3. `extension/popup.js` — estado y ajustes (no enciende el motor).
+4. `extension/background.js` — centralita: popup ↔ Meet ↔ offscreen.
+5. `extension/content/inject-gum.js` — intercepta `getUserMedia` (mundo MAIN).
+6. `extension/content/meet.js` — HUD + JPEG hacia el worker.
+7. `extension/offscreen.js` — Holistic + `capture.js` + `LsaApi`.
+8. `extension/sandbox.js` — WASM de MediaPipe (CSP relajado).
 
-Pregunta: *¿por qué Meet ve un canvas y no la cámara cruda solo cuando LSA está ON?*
+Pregunta: *¿por qué Meet ve un canvas y no la cámara cruda solo cuando ILSA está encendido?*
 
 ---
 
@@ -110,22 +116,28 @@ Misma idea, otra UI. Solo si te interesa `python run.py`.
 - `src/semantic/bin/` — `llama-server` descargado al vuelo.
 - Pesos `.pth` / `.gguf` — artefactos, no código.
 - `src/app/semantic_eval.py` y `--probe-semantic` — evaluación, no el live.
+- `dist/` y `extension/bin/*.zip` — salida de PyInstaller.
 
 ---
 
 ## Diagrama mínimo (para tenerlo a mano)
 
 ```
+ILSA.exe / run_backend.py
+    → splash: gguf_fetch.py (disco o GitHub ilsa-llama-1b)
+    → Encender (modo sordo u oyente)
+    → uvicorn 127.0.0.1:8765
+
 Meet getUserMedia
     → inject-gum.js  (cámara real + canvas con español)
-    → meet.js        (JPEG ~192 px)
+    → meet.js        (JPEG)
     → background.js
     → offscreen.js → sandbox.js (Holistic)
-    → capture.js     (16 frames)
+    → capture.js
     → POST /sign
-    → session.py     (TinySkeleton → glosa)
+    → session.py     (TinySkeleton CPU → glosa)
     → pausa 4 s
     → POST /utterance/end
-    → translator.py  (español)
+    → translator.py  (Llama 1B CPU → español)
     → meet.js HUD + inject-gum subtítulo (caduca 8 s)
 ```

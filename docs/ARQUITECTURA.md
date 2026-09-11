@@ -15,8 +15,9 @@ Documento para alguien que abre el repo por primera vez. Complementa el
 | **Landmarks** | Coordenadas normalizadas de pose (33 puntos) y manos (21 + 21). |
 | **Frame de seña** | Un instante de landmarks, no un JPEG. |
 | **TinySkeleton** | Red chica (transformer) que clasifica una secuencia de 16 frames. |
-| **LLM semántica** | Modelo GGUF (por defecto Qwen2.5-3B) que arma una oración en español. |
+| **Traductor** | Un GGUF Llama 3.2 1B (Q4) que arma una oración en español. Corre en CPU. |
 | **Holistic** | Solución MediaPipe: cuerpo + cara + manos en un solo grafo. Usamos pose y manos. |
+| **ILSA** | Ventana del motor local (`ILSA.exe` o `python run_backend.py`). |
 
 La cara se detecta pero **no entra** al vector de 225 dimensiones del
 clasificador.
@@ -31,7 +32,7 @@ cámara
   → TinySkeleton  →  glosa + confianza
   → buffer de glosas (anti-repetición, cooldown)
   → pausa ~4 s
-  → LLM  →  español
+  → LLM (Llama 1B, CPU)  →  español
   → (escritorio) voz pyttsx3
   → (Meet) texto quemado en el video + HUD
 ```
@@ -49,9 +50,9 @@ tiene nada que hacer.
 - `src/app/ui.py` dibuja overlay y texto.
 
 Punto de entrada: `run.py` → `src/app/main.py`. Los flags `--eval-semantic` y
-`--probe-semantic` evitan importar OpenCV para no gastar VRAM.
+`--probe-semantic` evitan importar OpenCV.
 
-### 2.2 Extensión + FastAPI (`python run_backend.py`)
+### 2.2 Extensión + FastAPI (`python run_backend.py` o `ILSA.exe`)
 
 Chrome no puede cargar el `.pth` ni el GGUF. La extensión solo:
 
@@ -60,7 +61,17 @@ Chrome no puede cargar el `.pth` ni el GGUF. La extensión solo:
 3. POST JSON al backend.
 
 El backend (`src/backend/`) es el mismo TinySkeleton + la misma LLM que el
-escritorio, envueltos en una sesión (`LSASession`).
+escritorio, envueltos en una sesión (`LSASession` o `HearingSession`).
+
+ILSA tiene dos modos, elegidos en la ventana **antes** de Encender:
+
+| Modo | Quién | Qué hace |
+|------|--------|----------|
+| **Sordo** | Quien seña | LSA → español (clasificador + Llama 1B). |
+| **Oyente** | Quien habla | Voz en esta PC → subtítulos pintados en la cámara de Meet. |
+
+Con ILSA encendido, Meet arranca la traducción solo. El popup muestra estado
+y ajustes; no enciende el motor.
 
 ## 3. Por qué un sandbox en la extensión
 
@@ -89,21 +100,24 @@ Reglas del hook (`extension/content/inject-gum.js`, mundo **MAIN**,
 
 - Solo envuelve cuando LSA está **habilitado**.
 - Crea un `<video id="lsa-real-cam">` oculto con el stream real.
-- Un canvas `captureStream(30)` es lo que Meet muestra como “cámara”.
-- El español se dibuja en el canvas. Meet espeja el preview local con CSS; el
-  texto se dibuja con `translate(w,0); scale(-1,1)` para que se lea bien.
+- Un canvas `captureStream` es lo que Meet muestra como “cámara”.
+- El español se dibuja **abajo** del canvas. Meet espeja el preview local con
+  CSS; el texto se dibuja espejado para que se lea bien.
+- En modo oyente, el reconocimiento de voz corre en ese mismo mundo MAIN (no
+  hay TTS de la transcripción).
 - Desactivar LSA **no** hace `stop()` de los tracks reales (eso cortaba Meet).
   Solo deja de quemar subtítulos / deja de interceptar si no hay pipeline.
 
 El HUD (`extension/content/meet.js`, mundo **aislado**) no puede tocar el
 prototipo de `getUserMedia`. Habla con el hook por `window.postMessage` y con
-el service worker por `chrome.runtime`.
+el service worker por `chrome.runtime`. Si se recarga la extensión con Meet
+abierto, el content script corta el poll (`Extension context invalidated`).
 
-Flujo de un frame en Meet:
+Flujo de un frame en Meet (modo sordo):
 
 ```
 #lsa-real-cam
-  → JPEG chico (~192 px, calidad ~0.42, cada ~70 ms)
+  → JPEG (~320 px, calidad ~0.62)
   → content script
   → background.js
   → offscreen.html (Holistic + capture.js + LsaApi)
@@ -138,9 +152,7 @@ Umbrales Python: `src/classifier/config.py`.
 Submuestreo: índices `floor(i * (n-1) / (target-1))`, igual que un `linspace`
 entero. Si hay 16 o menos frames, se mandan todos.
 
-Modo `auto`: la primera mano usable **empieza** la grabación (no hace falta
-esperar 4 frames estáticos). Eso importa porque Meet entrega pocos landmarks
-por segundo.
+Modo `auto`: la primera mano usable **empieza** la grabación.
 
 ## 6. Clasificador
 
@@ -148,10 +160,11 @@ por segundo.
 - Pesos: `src/classifier/weights/tinyskeleton_best.pth`.
 - Nombres de clase: `mapeo_clases.json` / lista `SIGN_CLASSES` en `config.py`.
 - Vector por frame: 33×3 pose + 21×3 mano izq. + 21×3 mano der. = **225**.
-- Device: CUDA si PyTorch la ve; si no, CPU.
+- En el motor ILSA (`LSASession`) el clasificador corre en **CPU**.
+- En `python run.py` PyTorch usa GPU si está disponible; si no, CPU.
 
 El backend aplica un suavizado EMA (`LandmarkSmoother`, α≈0.6) y luego arma
-el tensor (`sequence_buffer_to_model_input`).
+el tensor (`frames_to_matrix`).
 
 Política de repeticiones (`src/core/repeat_policy.py`): letras pueden repetirse
 hasta 2 veces; dígitos sin tope; glosas léxicas no se aceptan dos veces
@@ -159,19 +172,35 @@ seguidas.
 
 ## 7. Traductor semántico
 
+Un solo modelo: **Llama 3.2 1B Instruct** en GGUF Q4
+(`llama-3.2-1b-instruct.Q4_K_M.gguf`), chat format Llama 3. Catálogo:
+`src/semantic/models.py`. Inferencia siempre en **CPU** (`n_gpu_layers=0`).
+
 - Prompt de sistema: `src/semantic/prompts/sys_prompt.txt`.
 - Few-shots: `few_shots_examples.json`.
-- Modelos: solo Qwen 0.5B, Llama 3.2 1B y Qwen 3B (catálogo en
-  `src/semantic/models.py`). Default: `qwen2.5-3b`. Se eligen en la ventana
-  ILSA (dropdown Traductor) o vía `POST /semantic/model`.
+- Motor: `llama-cpp-python` si carga; si no, `llama-server.exe` CPU
+  (`src/semantic/native_llama.py`).
 - Memoria de conversación: `src/core/conversation_memory.py` (últimos N
   turnos). Se puede apagar con `USE_CONVERSATION_HISTORY` para eval.
 
-En Python 3.14 Windows, `translator.py` usa `native_llama.py`: proceso
-`llama-server.exe` HTTP, no el binding `llama-cpp-python`.
-
 Generación: temperatura baja, 64 tokens máx., sin penalización de repetición
 fuerte (si no, se rompen DNI y números).
+
+### Dónde vive el GGUF
+
+No va dentro de `ILSA.zip`. Al abrir ILSA, una pantalla de carga
+(`iris_app.py`) llama a `src/semantic/gguf_fetch.py`:
+
+1. Si ya hay un `.gguf` válido en
+   `src/semantic/outputs/unsloth_Llama-3.2-1B-Instruct_gguf/` o en
+   `%LOCALAPPDATA%\ILSA\models\`, lo usa.
+2. Si no, descarga
+   `https://github.com/FranciscoVeronING/2026_Proyecto_LSA/releases/download/ilsa-llama-1b/llama-3.2-1b-instruct.Q4_K_M.gguf`
+   (~770 MB, una vez) hacia `%LOCALAPPDATA%\ILSA\models\`.
+
+Para publicar el GGUF: `packaging\upload_llama_gguf.ps1`.
+Para publicar el exe: `packaging\build_exe.bat` y luego
+`packaging\upload_ilsa_zip.ps1` (mismo tag `ilsa-llama-1b`).
 
 ## 8. Subtítulos que caducan
 
@@ -179,9 +208,8 @@ El español no debe quedar pegado en la videollamada.
 
 - Constante `SUBTITLE_HOLD_MS = 8000` en `inject-gum.js` y `meet.js`.
 - Un texto nuevo **reinicia** el temporizador.
-- El offscreen **no** reenvía el último español en cada tick de debug (eso
-  reseteaba el reloj para siempre). Solo lo manda cuando el backend devuelve
-  `spanish` en ese snapshot.
+- El offscreen **no** reenvía el último español en cada tick de debug. Solo
+  lo manda cuando el backend devuelve `spanish` en un cierre de enunciado.
 
 ## 9. Archivos de la extensión
 
@@ -189,14 +217,15 @@ El español no debe quedar pegado en la videollamada.
 |---------|-----|
 | `manifest.json` | MV3, permisos Meet, sandbox, CSP |
 | `background.js` | Service worker: offscreen, reenvío de frames y captions |
-| `popup.html` / `popup.js` | Estado del motor, modo y (sordo) nombre del traductor |
-| `welcome.html` | Guía post-instalación |
+| `popup.html` / `popup.js` | Estado del motor, modo, salida Meet, landmarks (debug) |
+| `welcome.html` | Guía: descargar ILSA y comprobar `/health` |
 | `sandbox.html` / `sandbox.js` | Holistic WASM |
-| `offscreen.html` / `offscreen.js` | Mismo motor de captura para Meet (sin pestaña visible) |
+| `offscreen.html` / `offscreen.js` | Captura para Meet (sin pestaña visible) |
 | `lib/api.js` | Cliente HTTP `127.0.0.1:8765` |
+| `lib/prefs.js` | Preferencias (salida, landmarks) |
 | `lib/landmarks.js` | Empaquetado, presencia de manos, dibujo |
 | `lib/capture.js` | Máquina de estados de la seña |
-| `content/inject-gum.js` | Hook `getUserMedia` + canvas con subtítulo |
+| `content/inject-gum.js` | Hook `getUserMedia` + canvas con subtítulo + voz (oyente) |
 | `content/meet.js` / `meet.css` | HUD y envío de JPEG |
 
 Versión actual del manifiesto: ver `extension/manifest.json`.
@@ -206,30 +235,45 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 | Archivo | Rol |
 |---------|-----|
 | `run_backend.py` | Entry point (ventana ILSA o `--headless`) |
-| `src/backend/iris_app.py` | Ventana ILSA: modo, traductor GGUF, encender/apagar |
+| `src/backend/iris_app.py` | Splash (GGUF), modo sordo/oyente, Encender / Apagar |
 | `src/backend/uvicorn_handle.py` | Hilo uvicorn (sin colgar Tk) |
 | `src/backend/http_schemas.py` | Límites de JSON (`POST /sign`, etc.) |
-| `src/backend/server.py` | Rutas FastAPI, CORS loopback + Meet |
-| `src/backend/session.py` | Carga del modelo, ingestión, cierre de enunciado |
+| `src/backend/server.py` | Rutas FastAPI; CORS: Meet + `chrome-extension://` + localhost |
+| `src/backend/session.py` | Clasificador CPU, ingestión, cierre de enunciado, LLM |
+| `src/backend/hearing_session.py` | Sesión oyente (sin TinySkeleton) |
 | `src/backend/landmarks_payload.py` | JSON de frames → tensores |
+| `src/semantic/gguf_fetch.py` | Busca o descarga el GGUF Llama 1B |
 
 Logs útiles al correr el motor: `POST /sign: N frames`, top-3, added/rejected,
 cierre de enunciado.
 
-## 11. Qué no es este repo
+El API escucha en loopback (`127.0.0.1`). No bindear `0.0.0.0`.
+
+## 11. Empaquetado
+
+- `packaging/build_exe.bat` genera `dist/LSABackend/ILSA.exe` y
+  `extension/bin/ILSA.zip` (PyInstaller, sin consola, **sin** el GGUF).
+  El zip no se versiona.
+- `packaging/LSABackend.spec` empaqueta clasificador, prompts y runtime CPU.
+- `packaging/upload_llama_gguf.ps1` publica el `.gguf` al release
+  `ilsa-llama-1b`.
+- En desarrollo: `python run_backend.py` (ventana) o `--headless`.
+
+## 12. Qué no es este repo
 
 - No es un diccionario pedagógico. Carpetas tipo `señario1/` con PNG, si
   existen en el disco, **no las usa el código**.
-- No hay servidor en la nube: todo es localhost.
-- No hay entrenamiento aquí. Los `.pth` y `.gguf` se asumen ya exportados.
-- `packaging/build_exe.bat` puede generar `ILSA.exe` (PyInstaller, sin consola).
-  En desarrollo: `python run_backend.py` (ventana) o `--headless`.
+- No hay servidor de inferencia en la nube: clasificador y LLM corren en la
+  PC. La única descarga remota es el GGUF (y, si hace falta, `llama-server.exe`)
+  desde GitHub.
+- No hay entrenamiento aquí. Los `.pth` se asumen ya exportados.
 
-## 12. Orden mental para debuggear
+## 13. Orden mental para debuggear
 
-1. ¿`GET http://127.0.0.1:8765/health` dice `ok` y `classifier_ready`?
-2. ¿La extensión está recargada y es la carpeta `extension/` de este clone?
-3. ¿Existen los WASM en `extension/vendor/mediapipe/`?
-4. ¿Las manos se ven en el traductor (overlay) o el HUD de Meet pasa a ON?
-5. ¿La consola del backend imprime `POST /sign` al bajar las manos?
-6. ¿Tras 4 s de pausa aparece español y se borra a los 8 s?
+1. ¿Al abrir ILSA terminó la pantalla de carga (traductor en disco)?
+2. ¿Elegiste modo y Encendiste? `GET http://127.0.0.1:8765/health` → `ok`.
+3. ¿La extensión está recargada y es la carpeta `extension/` de este clone?
+4. ¿Existen los WASM en `extension/vendor/mediapipe/`?
+5. ¿Meet está recargado después de tocar `inject-gum.js`?
+6. ¿La consola del motor imprime `/sign` al bajar las manos?
+7. ¿Tras ~4 s de pausa aparece español y se borra a los 8 s?
