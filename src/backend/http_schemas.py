@@ -13,10 +13,6 @@ class SessionIn(BaseModel):
     left_handed: bool = False
 
 
-class SemanticModelIn(BaseModel):
-    id: str = Field(default="", max_length=64)
-
-
 class SignIn(BaseModel):
 
     frames: list[dict] = Field(default_factory=list, max_length=MAX_SIGN_FRAMES)

@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import SemanticModelIn, SessionIn, SignIn
+from backend.http_schemas import SessionIn, SignIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -85,7 +85,7 @@ def health():
             semantic_label = "Cargando el traductor…"
             semantic_load = ""
         else:
-            semantic_label = friendly_label(model_id)
+            semantic_label = friendly_label(model_id or "llama-3.2-1b")
             semantic_load = compute_label(model_id)
     return {
         "ok": session is not None,
@@ -109,27 +109,6 @@ def semantic_models():
     if session and _mode == "signer":
         active = getattr(session, "_current_model_id", "") or ""
     return {"models": list_semantic_models(), "active": active}
-
-
-@app.post("/semantic/model")
-def set_semantic_model(body: SemanticModelIn):
-    if _mode == "hearing":
-        raise HTTPException(status_code=400, detail="El traductor solo se usa en modo sordo.")
-    model_id = (body.id or "").strip()
-    if not model_id:
-        raise HTTPException(status_code=400, detail="Falta el id del modelo.")
-    from semantic.models import spec_by_id
-
-    try:
-        spec_by_id(model_id)
-    except KeyError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    session = get_session()
-    switch = getattr(session, "switch_semantic_model", None)
-    if switch is None:
-        raise HTTPException(status_code=400, detail="Esta sesión no carga traductor.")
-    switch(model_id)
-    return {"ok": True, "requested": model_id}
 
 
 @app.get("/config")
@@ -238,11 +217,6 @@ def parse_args(argv=None):
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-llm", action="store_true")
     parser.add_argument(
-        "--gpu",
-        action="store_true",
-        help="Intentar GPU para la LLM (Vulkan). Por defecto todo corre en CPU.",
-    )
-    parser.add_argument(
         "--headless",
         action="store_true",
         help="Sin ventana ILSA: solo uvicorn en consola (desarrollo / scripts).",
@@ -276,10 +250,14 @@ def main(argv=None):
             "[ilsa] Advertencia: el API debería escuchar solo en localhost. "
             f"host={args.host!r} expone clasificador y LLM en la red."
         )
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ.setdefault("LSA_BACKEND", "1")
-    if args.gpu:
-        os.environ["LSA_USE_GPU"] = "1"
     if args.headless:
+        if not args.no_llm and args.mode != "hearing":
+            from semantic.gguf_fetch import ensure_gguf
+
+            print("[ilsa] Comprobando traductor…")
+            ensure_gguf(lambda _d, _t, msg: print(f"[ilsa] {msg}"))
         init_session(enable_llm=not args.no_llm, mode=args.mode)
         import uvicorn
 

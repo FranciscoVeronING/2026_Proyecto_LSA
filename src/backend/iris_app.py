@@ -1,4 +1,4 @@
-"""Ventana ILSA: modo, GGUF y el switch de uvicorn. La seña se clasifica en session."""
+"""Ventana ILSA: modo y el switch de uvicorn. La seña se clasifica en session."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import logging
 import os
 import queue
 import sys
+import threading
 import tkinter as tk
 import webbrowser
 from collections import deque
@@ -29,7 +30,6 @@ from backend.ui_theme import (
 )
 from backend.uvicorn_handle import BackendHandle
 from semantic.config import DEFAULT_MODEL_ID
-from semantic.models import compute_label, friendly_label, list_semantic_models
 
 REPO_URL = "https://github.com/FranciscoVeronING/2026_Proyecto_LSA"
 AUTHORS = "Maite Nigro · Francisco Veron"
@@ -37,9 +37,6 @@ AUTHORS = "Maite Nigro · Francisco Veron"
 
 class IlsaWindow:
     def __init__(self, args):
-        if args.gpu:
-            os.environ["LSA_USE_GPU"] = "1"
-
         self.args = args
         self.log_q: queue.Queue[str] = queue.Queue()
         self.log_lines: deque[str] = deque(maxlen=400)
@@ -49,6 +46,8 @@ class IlsaWindow:
         self.backend.semantic_model_id = DEFAULT_MODEL_ID
         self.log_win: tk.Toplevel | None = None
         self.log_text: tk.Text | None = None
+        self._boot_q: queue.Queue = queue.Queue()
+        self._ready = False
 
         self.root = tk.Tk()
         self.root.title("ILSA")
@@ -57,9 +56,104 @@ class IlsaWindow:
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self._mode_menu: tk.Toplevel | None = None
-        self._model_menu: tk.Toplevel | None = None
+        self._splash = tk.Frame(self.root, bg=BG, padx=28, pady=28)
+        self._splash.pack(fill="both")
+        title_f = tkfont.Font(family="Segoe UI", size=22, weight="bold")
+        body_f = tkfont.Font(family="Segoe UI", size=10)
+        small_f = tkfont.Font(family="Segoe UI", size=9)
+        tk.Label(self._splash, text="ILSA", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
+        tk.Label(
+            self._splash,
+            text="Intérprete de Lengua de Señas Argentina",
+            font=small_f,
+            fg=MUTED,
+            bg=BG,
+        ).pack(anchor="w", pady=(0, 16))
+        self._splash_status = tk.StringVar(value="Preparando…")
+        self._splash_detail = tk.StringVar(value="Comprobando el traductor.")
+        tk.Label(
+            self._splash,
+            textvariable=self._splash_status,
+            font=body_f,
+            fg=TEXT,
+            bg=BG,
+            wraplength=360,
+            justify="left",
+        ).pack(anchor="w")
+        tk.Label(
+            self._splash,
+            textvariable=self._splash_detail,
+            font=small_f,
+            fg=MUTED,
+            bg=BG,
+            wraplength=360,
+            justify="left",
+        ).pack(anchor="w", pady=(8, 16))
+        self._retry_btn = tk.Button(
+            self._splash,
+            text="Reintentar",
+            font=body_f,
+            relief="flat",
+            bd=0,
+            padx=16,
+            pady=8,
+            command=self._start_bootstrap,
+            **BTN_LIVE["start"],
+        )
+        self.root.after(200, self._drain_logs)
+        self.root.after(80, self._start_bootstrap)
+        self.root.after(120, self._poll_boot)
+
+    def _start_bootstrap(self) -> None:
+        self._retry_btn.pack_forget()
+        self._splash_status.set("Preparando…")
+        self._splash_detail.set("Comprobando el traductor.")
+        threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-gguf").start()
+
+    def _bootstrap_worker(self) -> None:
+        try:
+            from semantic.gguf_fetch import ensure_gguf, find_local_gguf
+
+            if find_local_gguf() is None:
+                self._boot_q.put(("msg", "Descargando el traductor…", "Una sola vez, desde GitHub (~770 MB)."))
+            else:
+                self._boot_q.put(("msg", "Configurando…", "El traductor ya está en esta PC."))
+
+            def progress(_done: int, _total: int, msg: str) -> None:
+                self._boot_q.put(("msg", msg, ""))
+
+            ensure_gguf(progress)
+            self._boot_q.put(("ok",))
+        except Exception as exc:
+            self._boot_q.put(("err", str(exc)))
+
+    def _poll_boot(self) -> None:
+        try:
+            while True:
+                item = self._boot_q.get_nowait()
+                kind = item[0]
+                if kind == "msg":
+                    self._splash_status.set(item[1])
+                    if item[2]:
+                        self._splash_detail.set(item[2])
+                elif kind == "ok":
+                    self._show_main()
+                    return
+                elif kind == "err":
+                    self._splash_status.set("No se pudo preparar ILSA")
+                    self._splash_detail.set(item[1])
+                    self._retry_btn.pack(anchor="w")
+        except queue.Empty:
+            pass
+        if not self._ready:
+            self.root.after(150, self._poll_boot)
+
+    def _show_main(self) -> None:
+        if self._ready:
+            return
+        self._ready = True
+        self._splash.destroy()
         self._build()
-        self.root.after(400, self._drain_logs)
         self.root.after(800, self._poll_health)
 
     def _hook_logs(self) -> None:
@@ -119,22 +213,6 @@ class IlsaWindow:
         self.mode_shell = mode_sel.shell
         self.mode_title = mode_sel.title
         self.mode_hint = mode_sel.hint
-
-        self.model_var = tk.StringVar(value=DEFAULT_MODEL_ID)
-        model_sel = attach_select(
-            pad,
-            caption="Traductor",
-            hint="Cuanto más preciso, más tarda en traducir.",
-            body_font=body_f,
-            tiny_font=tiny_f,
-            on_click=self._toggle_model_menu,
-            title=friendly_label(DEFAULT_MODEL_ID),
-            title_fg=TEXT,
-        )
-        self.model_box = model_sel.box
-        self.model_shell = model_sel.shell
-        self.model_title = model_sel.title
-        self.model_hint = model_sel.hint
         self.root.bind_all("<Button-1>", self._on_global_click_close_menus, add="+")
 
         card = tk.Frame(pad, bg=BG2, highlightbackground=LINE, highlightthickness=1, padx=16, pady=14)
@@ -235,47 +313,7 @@ class IlsaWindow:
         self.mode_hint.configure(text=hint)
         self.mode_shell.configure(highlightbackground=ACCENT if mode else LINE)
 
-    def _show_translator(self) -> bool:
-        return self.mode_var.get() == "signer" and not self.args.no_llm
-
-    def _semantic_choices(self) -> list[dict]:
-        try:
-            return list_semantic_models()
-        except Exception:
-            return []
-
-    def _paint_model_control(self) -> None:
-        if not hasattr(self, "model_box"):
-            return
-        if not self._show_translator():
-            self._close_model_menu()
-            self.model_box.pack_forget()
-            return
-        if not self.model_box.winfo_ismapped():
-            self.model_box.pack(fill="x", pady=(12, 0), after=self.modes_box)
-        model_id = self.model_var.get() or DEFAULT_MODEL_ID
-        items = {item["id"]: item for item in self._semantic_choices()}
-        item = items.get(model_id)
-        title = friendly_label(model_id)
-        load = compute_label(model_id)
-        if item and not item.get("available", True):
-            hint = "Este traductor no está instalado (falta el archivo .gguf)."
-            title = f"{title} (no está)"
-        elif self.backend.running and self.backend.mode == "signer":
-            live = self.backend.semantic_model_id
-            if live and live != model_id:
-                hint = "Cargando este traductor…"
-            else:
-                hint = f"Carga {load}. Un modelo más preciso tarda más."
-        else:
-            hint = f"Carga {load}. Se usa al encender el motor."
-        self.model_title.configure(text=title, fg=TEXT)
-        self.model_hint.configure(text=hint)
-        self.model_shell.configure(highlightbackground=ACCENT)
-
     def _open_menu(self, attr: str, shell, items, selected, on_pick) -> None:
-        other = "_model_menu" if attr == "_mode_menu" else "_mode_menu"
-        self._close_menu(other)
         if getattr(self, attr) is not None:
             self._close_menu(attr)
             return
@@ -298,28 +336,8 @@ class IlsaWindow:
         destroy_popup(getattr(self, attr, None))
         setattr(self, attr, None)
 
-    def _close_model_menu(self) -> None:
-        self._close_menu("_model_menu")
-
     def _close_mode_menu(self) -> None:
         self._close_menu("_mode_menu")
-
-    def _toggle_model_menu(self) -> None:
-        if not self._show_translator():
-            return
-        choices = self._semantic_choices()
-        if not choices:
-            return
-        items = [
-            ChoiceRow(
-                item["id"],
-                friendly_label(item["id"]),
-                "No está descargado" if not item.get("available", True) else f"Carga {compute_label(item['id'])}",
-                bool(item.get("available", True)),
-            )
-            for item in choices
-        ]
-        self._open_menu("_model_menu", self.model_shell, items, self.model_var.get(), self._pick_model)
 
     def _toggle_mode_menu(self) -> None:
         items = [
@@ -329,37 +347,11 @@ class IlsaWindow:
         self._open_menu("_mode_menu", self.mode_shell, items, self.mode_var.get(), self._pick_mode)
 
     def _on_global_click_close_menus(self, event: tk.Event) -> None:
-        pairs = (
-            ("_mode_menu", self.mode_shell),
-            ("_model_menu", self.model_shell),
-        )
-        for attr, shell in pairs:
-            menu = getattr(self, attr)
-            if menu is None:
-                continue
-            if not widget_under(event.widget, shell) and not widget_under(event.widget, menu):
-                self._close_menu(attr)
-
-    def _pick_model(self, model_id: str) -> None:
-        self._close_model_menu()
-        self.model_var.set(model_id)
-        self.backend.semantic_model_id = model_id
-        if (
-            self.backend.running
-            and self.backend.mode == "signer"
-            and self.mode_var.get() == "signer"
-        ):
-            try:
-                from backend import server as srv
-
-                switch = getattr(srv._session, "switch_semantic_model", None)
-                if switch:
-                    switch(model_id)
-                    self.status_var.set("Cargando traductor…")
-                    self._set_dot(WARN)
-            except Exception as exc:
-                print(f"[ilsa] No se pudo cambiar el traductor: {exc}")
-        self._sync_actions()
+        menu = self._mode_menu
+        if menu is None:
+            return
+        if not widget_under(event.widget, self.mode_shell) and not widget_under(event.widget, menu):
+            self._close_mode_menu()
 
     def _pick_mode(self, mode: str) -> None:
         self._close_mode_menu()
@@ -395,7 +387,6 @@ class IlsaWindow:
             role="start" if pending else "secondary",
         )
         self._paint_mode_control()
-        self._paint_model_control()
 
     def _set_dot(self, color: str) -> None:
         self.dot.delete("all")
@@ -407,11 +398,10 @@ class IlsaWindow:
             self._idle("Elegí un modo", error=True)
             return None
         self.backend.mode = mode
-        self.backend.semantic_model_id = self.model_var.get() or DEFAULT_MODEL_ID
+        self.backend.semantic_model_id = DEFAULT_MODEL_ID
         return mode
 
     def _start_on_main(self) -> None:
-        # PyTorch/CUDA en el hilo de Tk; otro hilo se cuelga en Windows.
         if not self._bind_opts():
             return
         try:
@@ -480,28 +470,18 @@ class IlsaWindow:
                         if data.get("classifier_ready"):
                             bits.append("clasificador")
                         if data.get("semantic_ready"):
-                            bits.append("LLM")
+                            bits.append("traductor")
                         elif self.args.no_llm:
-                            bits.append("sin LLM")
+                            bits.append("sin traductor")
                         else:
-                            bits.append("LLM cargando")
+                            bits.append("traductor cargando")
                         self._set_dot(OK if data.get("semantic_ready") or self.args.no_llm else WARN)
-                    device = data.get("device") or ""
                     if self._mode_pending():
                         bits.append("Reiniciá el modo")
-                    elif mode == "signer" and (
-                        data.get("semantic_busy")
-                        or (
-                            data.get("semantic_model")
-                            and self.model_var.get()
-                            and data.get("semantic_model") != self.model_var.get()
-                        )
-                    ):
-                        bits.append("traductor…")
+                    elif mode == "signer" and data.get("semantic_busy"):
+                        bits.append("traduciendo…")
                     self.status_var.set(" · ".join(bits))
-                    extra = f"{self.args.host}:{self.args.port}"
-                    if device:
-                        extra += f"  ·  {device}"
+                    extra = f"{self.args.host}:{self.args.port}  ·  CPU"
                     self.detail_var.set(extra)
                     self._sync_actions()
             except Exception:
@@ -566,7 +546,6 @@ class IlsaWindow:
 
     def _on_close(self) -> None:
         self._close_mode_menu()
-        self._close_model_menu()
         try:
             self.backend.stop(join_sec=4.0)
         except Exception:
@@ -584,4 +563,5 @@ def launch(args) -> None:
         windll.shcore.SetProcessDpiAwareness(1)
     except Exception:
         pass
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
     IlsaWindow(args).run()

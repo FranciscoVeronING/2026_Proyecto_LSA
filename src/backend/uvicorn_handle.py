@@ -1,4 +1,4 @@
-"""Ciclo de vida de uvicorn en un hilo (sin colgar Tk/CUDA en Windows)."""
+"""Ciclo de vida de uvicorn en un hilo (sin colgar Tk en Windows)."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import time
 
 
 class BackendHandle:
-    """uvicorn en un hilo. start() tiene que ser el hilo de Tk o CUDA se cuelga."""
+    """uvicorn en un hilo. start() tiene que ser el hilo de Tk."""
 
     def __init__(self, host: str, port: int, enable_llm: bool):
         self.host = host
