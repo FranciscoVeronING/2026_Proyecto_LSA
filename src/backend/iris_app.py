@@ -93,8 +93,6 @@ class IlsaWindow:
             self._splash,
             text="Reintentar",
             font=body_f,
-            relief="flat",
-            bd=0,
             padx=16,
             pady=8,
             command=self._start_bootstrap,
