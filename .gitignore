@@ -34,6 +34,7 @@ extension/bin/*.exe
 build/
 dist/
 *.spec.bak
+packaging/_env_cpu/
 
 # Binarios pesados de MediaPipe (regenerar con packaging/fetch_extension_assets.py)
 extension/vendor/mediapipe/*.data

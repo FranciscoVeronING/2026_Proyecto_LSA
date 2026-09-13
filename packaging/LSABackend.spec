@@ -44,7 +44,6 @@ _EXCLUDES = [
     "notebook",
     "triton",
     "nvidia",
-    "torch.distributed",
     "torchaudio",
     "torchvision",
     "transformers",
@@ -54,12 +53,32 @@ _EXCLUDES = [
     "unsloth",
 ]
 
+# VC++ al lado del exe: en una PC sin Visual Studio, shm.dll no carga (WinError 126).
+import sys as _sys
+
+_vc_binaries = []
+_conda = Path(_sys.prefix) / "Library" / "bin"
+if not _conda.is_dir():
+    _conda = Path(_sys.prefix) / "DLLs"
+for _dll in (
+    "msvcp140.dll",
+    "msvcp140_1.dll",
+    "msvcp140_2.dll",
+    "vcruntime140.dll",
+    "vcruntime140_1.dll",
+    "VCRUNTIME140.dll",
+    "VCOMP140.DLL",
+):
+    _p = _conda / _dll
+    if _p.is_file():
+        _vc_binaries.append((str(_p), "."))
+
 a = Analysis(
     [str(repo / "run_backend.py")],
     pathex=[str(src), str(repo)],
-    binaries=[],
+    binaries=_vc_binaries,
     datas=datas + collect_data_files("llama_cpp"),
-    hiddenimports=hidden + ["tkinter", "tkinter.ttk", "tkinter.font"],
+    hiddenimports=hidden + ["tkinter", "tkinter.ttk", "tkinter.font", "torch.distributed"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[str(Path(SPECPATH) / "rthook_cpu.py")],
@@ -70,46 +89,7 @@ a = Analysis(
     noarchive=False,
 )
 
-_GPU_MARK = (
-    "cublas",
-    "cudart",
-    "cudnn",
-    "cufft",
-    "curand",
-    "cusolver",
-    "cusparse",
-    "nvrtc",
-    "nvjitlink",
-    "nvtx",
-    "npp",
-    "nccl",
-    "torch_cuda",
-    "c10_cuda",
-    "libtorch_cuda",
-    "ggml-cuda",
-    "cublaslt",
-    "nvtools",
-    "nvidia",
-    "cusparselt",
-)
-
-
-def _cpu_only(items):
-    kept = []
-    for item in items:
-        name = item[0] if isinstance(item, (tuple, list)) else str(item)
-        low = str(name).replace("\\", "/").lower()
-        if any(mark in low for mark in _GPU_MARK):
-            continue
-        if "/nvidia/" in low:
-            continue
-        kept.append(item)
-    return kept
-
-
-a.binaries = _cpu_only(a.binaries)
-a.datas = _cpu_only(a.datas)
-
+# Torch CPU: no recortar DLL. UPX rompe shm.dll (WinError 126).
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -121,7 +101,7 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,
     console=False,
     icon=None,
 )
@@ -132,7 +112,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
     name="LSABackend",
 )

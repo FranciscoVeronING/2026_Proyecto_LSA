@@ -120,5 +120,10 @@ def open_choice_popup(
     menu.update_idletasks()
     menu.geometry(f"{w}x{body.winfo_reqheight() + 2}+{x}+{y}")
     menu.bind("<Escape>", lambda _e: on_escape())
+    try:
+        menu.attributes("-topmost", True)
+    except tk.TclError:
+        pass
+    menu.lift()
     menu.focus_set()
     return menu

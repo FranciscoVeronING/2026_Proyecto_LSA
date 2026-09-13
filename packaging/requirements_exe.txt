@@ -1,0 +1,8 @@
+# Solo para packaging/build_exe.bat (ILSA.exe en CPU, zip < 2 GB).
+# No uses este archivo para entrenar ni para el env lsa_extension.
+
+numpy==1.26.4
+fastapi==0.115.12
+uvicorn==0.32.1
+pydantic==2.10.6
+pyinstaller==6.12.0

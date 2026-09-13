@@ -153,18 +153,18 @@ INFERENCE_COOLDOWN_SEC = 1.0 # Wait time after a prediction before accepting a n
 MOTION_PIXEL_THRESHOLD = 500
 LANDMARK_MOTION_THRESHOLD = 0.008
 
-# Static sign detection thresholds
-STATIC_HANDS_FRAMES_TO_START = 4
+# En Meet Holistic suele ir a 5–15 fps. Umbrales en frames se sienten lentos
+# en una notebook justa: 6 ticks ≈ 1 s solo para empezar a grabar.
+STATIC_HANDS_FRAMES_TO_START = 2
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
 # Fin de seña por manos quietas (no la pausa del enunciado hacia la LLM).
-STILL_FRAMES_LIMIT = 28
+STILL_FRAMES_LIMIT = 14
 CAPTURE_BUFFER_SIZE = 60
 MISSING_HANDS_LIMIT = 12
-# Frames seguidos con mano usable para abrir una seña (evita fantasmas de Holistic).
-HANDS_FRAMES_TO_START = 6
-MIN_CAPTURE_FRAMES = 8
+HANDS_FRAMES_TO_START = 2
+MIN_CAPTURE_FRAMES = 5
 
 # Modes: "auto" (dynamic + static), "dynamic", "static"
 CAPTURE_MODE = "auto"

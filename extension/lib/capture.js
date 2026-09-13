@@ -3,9 +3,9 @@
  * que ya trajo Holistic. El backend no participa hasta `onSign` → `POST /sign`.
  *
  * No se usa movimiento de píxeles (gente detrás de cámara en Meet). En `auto`,
- * empieza tras varios frames seguidos con una mano usable (no un fantasma de
- * Holistic al mover el torso); termina si las manos quedan quietas ~28 frames,
- * a los 60 frames, o ~0,4 s sin manos.
+ * empieza en cuanto hay mano usable un instante (no un fantasma de un solo
+ * tick de Holistic); termina si las manos quedan quietas ~0,9 s, a los 60
+ * frames, o ~0,4 s sin manos.
  */
 
 /**
@@ -26,12 +26,12 @@
 const FALLBACK_CFG = {
   motion_pixel_threshold: 500,
   landmark_motion_threshold: 0.008,
-  static_hands_frames_to_start: 4,
-  hands_frames_to_start: 3,
-  still_frames_limit: 28,
+  static_hands_frames_to_start: 2,
+  hands_frames_to_start: 2,
+  still_frames_limit: 14,
   capture_buffer_size: 60,
   missing_hands_limit: 12,
-  min_capture_frames: 6,
+  min_capture_frames: 5,
   max_frames: 16,
   capture_mode: "auto",
   utterance_pause_sec: 4.0,
@@ -70,12 +70,13 @@ function uniformSampleFrames(frames, target) {
  * @param {number} startFrames Umbral de frames para abrir (`hands_frames_to_start`).
  * @returns {boolean}
  */
-function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, startFrames) {
+function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, startFrames, heldMs) {
   if (!handsPresent) return false;
-  const need = Math.max(2, Math.min(3, startFrames || 3));
-  if (mode === "dynamic") return isMoving && consecutiveHands >= need;
-  if (mode === "static") return consecutiveHands >= Math.max(2, startFrames || 4);
-  return consecutiveHands >= need;
+  const need = Math.max(1, Math.min(2, startFrames || 2));
+  const longEnough = consecutiveHands >= need || (consecutiveHands >= 1 && heldMs >= 160);
+  if (mode === "dynamic") return isMoving && longEnough;
+  if (mode === "static") return longEnough;
+  return longEnough;
 }
 
 /**
@@ -103,6 +104,8 @@ function createCaptureEngine(getCfg, callbacks) {
   let lastActivity = 0;
   let pendingGlosses = false;
   let closing = false;
+  let handsSince = 0;
+  let stillSince = 0;
 
   /** @returns {CaptureConfig} */
   function cfg() {
@@ -140,6 +143,7 @@ function createCaptureEngine(getCfg, callbacks) {
       consecutiveStill = 0;
       missingHands = 0;
       missingSince = 0;
+      stillSince = 0;
       return;
     }
     const payload = uniformSampleFrames(frames.slice(), c.max_frames || 16);
@@ -147,6 +151,7 @@ function createCaptureEngine(getCfg, callbacks) {
     consecutiveStill = 0;
     missingHands = 0;
     missingSince = 0;
+    stillSince = 0;
     callbacks.onSign(payload);
   }
 
@@ -178,21 +183,28 @@ function createCaptureEngine(getCfg, callbacks) {
       if (vector) prevHand = vector;
       else prevHand = null;
 
-      if (handsPresent) consecutiveHands += 1;
-      else consecutiveHands = 0;
+      if (handsPresent) {
+        consecutiveHands += 1;
+        if (!handsSince) handsSince = Date.now();
+      } else {
+        consecutiveHands = 0;
+        handsSince = 0;
+      }
+      const heldMs = handsSince ? Date.now() - handsSince : 0;
 
       const isMoving = landmarkMotion > c.landmark_motion_threshold;
       if (handsPresent && isMoving) {
         bumpActivity(true);
       }
 
-      const startNeed = c.hands_frames_to_start || c.static_hands_frames_to_start || 6;
+      const startNeed = c.hands_frames_to_start || c.static_hands_frames_to_start || 2;
       const start = shouldStartRecording(
         c.capture_mode,
         handsPresent,
         isMoving,
         consecutiveHands,
-        startNeed
+        startNeed,
+        heldMs
       );
       const recording = frames.length > 0 || start;
 
@@ -201,10 +213,21 @@ function createCaptureEngine(getCfg, callbacks) {
           missingHands = 0;
           missingSince = 0;
           frames.push(packFrame(results));
-          if (isMoving) consecutiveStill = 0;
-          else consecutiveStill += 1;
-          const stillLimit = c.still_frames_limit || 28;
-          if (frames.length >= c.capture_buffer_size || consecutiveStill >= stillLimit) {
+          const nowMs = Date.now();
+          if (isMoving) {
+            consecutiveStill = 0;
+            stillSince = 0;
+          } else {
+            consecutiveStill += 1;
+            if (!stillSince) stillSince = nowMs;
+          }
+          const stillLimit = c.still_frames_limit || 14;
+          const stillMs = stillSince ? nowMs - stillSince : 0;
+          if (
+            frames.length >= c.capture_buffer_size ||
+            consecutiveStill >= stillLimit ||
+            stillMs >= 900
+          ) {
             flushSign();
           }
         } else if (frames.length > 0) {
@@ -253,6 +276,8 @@ function createCaptureEngine(getCfg, callbacks) {
       lastActivity = 0;
       pendingGlosses = false;
       closing = false;
+      handsSince = 0;
+      stillSince = 0;
     },
   };
 }

@@ -196,7 +196,7 @@ function setHud(partial) {
 function grabJpeg() {
   const video = document.getElementById("lsa-real-cam");
   if (!video || video.readyState < 2 || !video.videoWidth) return null;
-  const maxW = 320;
+  const maxW = 240;
   let w = video.videoWidth;
   let h = video.videoHeight;
   if (w > maxW) {
@@ -208,7 +208,7 @@ function grabJpeg() {
     grab.height = h;
   }
   grabCtx.drawImage(video, 0, 0, w, h);
-  return { width: w, height: h, dataUrl: grab.toDataURL("image/jpeg", 0.62) };
+  return { width: w, height: h, dataUrl: grab.toDataURL("image/jpeg", 0.5) };
 }
 
 let lastSendAt = 0;

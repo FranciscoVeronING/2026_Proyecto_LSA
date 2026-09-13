@@ -13,7 +13,6 @@ from collections import deque
 from tkinter import font as tkfont
 
 from backend.log_bridge import QueueLogHandler, QueueWriter
-from backend.tk_popup import ChoiceRow, attach_select, destroy_popup, open_choice_popup, widget_under
 from backend.ui_theme import (
     ACCENT,
     BAD,
@@ -55,7 +54,6 @@ class IlsaWindow:
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        self._mode_menu: tk.Toplevel | None = None
         self._splash = tk.Frame(self.root, bg=BG, padx=28, pady=28)
         self._splash.pack(fill="both")
         title_f = tkfont.Font(family="Segoe UI", size=22, weight="bold")
@@ -193,25 +191,42 @@ class IlsaWindow:
             justify="left",
         ).pack(anchor="w")
 
+        self.mode_var = tk.StringVar(value="")
+        self.mode_hint_var = tk.StringVar(
+            value="Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet."
+        )
         modes = tk.Frame(pad, bg=BG)
         modes.pack(fill="x", pady=(14, 0))
-        self.mode_var = tk.StringVar(value="")
-        self.modes_box = modes
-        mode_sel = attach_select(
-            modes,
-            caption="Modo",
-            hint="Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet.",
-            body_font=body_f,
-            tiny_font=tiny_f,
-            on_click=self._toggle_mode_menu,
-            title="Elegí un modo",
-            title_fg=MUTED,
+        tk.Label(modes, text="Modo", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
+        row_modes = tk.Frame(modes, bg=BG)
+        row_modes.pack(fill="x", pady=(6, 0))
+        self.signer_btn = tk.Button(
+            row_modes,
+            text="Sordo",
+            font=body_f,
+            padx=16,
+            pady=10,
+            command=lambda: self._pick_mode("signer"),
         )
-        mode_sel.box.pack(fill="x")
-        self.mode_shell = mode_sel.shell
-        self.mode_title = mode_sel.title
-        self.mode_hint = mode_sel.hint
-        self.root.bind_all("<Button-1>", self._on_global_click_close_menus, add="+")
+        self.signer_btn.pack(side="left", fill="x", expand=True)
+        self.hearing_btn = tk.Button(
+            row_modes,
+            text="Oyente",
+            font=body_f,
+            padx=16,
+            pady=10,
+            command=lambda: self._pick_mode("hearing"),
+        )
+        self.hearing_btn.pack(side="left", fill="x", expand=True, padx=(8, 0))
+        tk.Label(
+            modes,
+            textvariable=self.mode_hint_var,
+            font=tiny_f,
+            fg=MUTED,
+            bg=BG,
+            justify="left",
+            wraplength=340,
+        ).pack(anchor="w", pady=(8, 0))
 
         card = tk.Frame(pad, bg=BG2, highlightbackground=LINE, highlightthickness=1, padx=16, pady=14)
         card.pack(fill="x", pady=(18, 12))
@@ -304,55 +319,14 @@ class IlsaWindow:
 
     def _paint_mode_control(self) -> None:
         mode = self.mode_var.get()
-        title, hint = self._mode_choice(mode)
+        _, hint = self._mode_choice(mode)
         if self._mode_pending():
             hint = "Cambio pendiente: dale a Reiniciar modo para aplicarlo."
-        self.mode_title.configure(text=title, fg=TEXT if mode else MUTED)
-        self.mode_hint.configure(text=hint)
-        self.mode_shell.configure(highlightbackground=ACCENT if mode else LINE)
-
-    def _open_menu(self, attr: str, shell, items, selected, on_pick) -> None:
-        if getattr(self, attr) is not None:
-            self._close_menu(attr)
-            return
-        setattr(
-            self,
-            attr,
-            open_choice_popup(
-                root=self.root,
-                shell=shell,
-                items=items,
-                selected_id=selected,
-                on_pick=on_pick,
-                body_font=self.body_f,
-                tiny_font=self.tiny_f,
-                on_escape=lambda: self._close_menu(attr),
-            ),
-        )
-
-    def _close_menu(self, attr: str) -> None:
-        destroy_popup(getattr(self, attr, None))
-        setattr(self, attr, None)
-
-    def _close_mode_menu(self) -> None:
-        self._close_menu("_mode_menu")
-
-    def _toggle_mode_menu(self) -> None:
-        items = [
-            ChoiceRow("signer", "Sordo", "Señas LSA → español"),
-            ChoiceRow("hearing", "Oyente", "Voz → subtítulos en la cámara"),
-        ]
-        self._open_menu("_mode_menu", self.mode_shell, items, self.mode_var.get(), self._pick_mode)
-
-    def _on_global_click_close_menus(self, event: tk.Event) -> None:
-        menu = self._mode_menu
-        if menu is None:
-            return
-        if not widget_under(event.widget, self.mode_shell) and not widget_under(event.widget, menu):
-            self._close_mode_menu()
+        self.mode_hint_var.set(hint)
+        self._paint_btn(self.signer_btn, live=True, role="start" if mode == "signer" else "secondary")
+        self._paint_btn(self.hearing_btn, live=True, role="start" if mode == "hearing" else "secondary")
 
     def _pick_mode(self, mode: str) -> None:
-        self._close_mode_menu()
         self.mode_var.set(mode)
         self._on_mode_change()
 
@@ -543,7 +517,6 @@ class IlsaWindow:
         self.log_text = text
 
     def _on_close(self) -> None:
-        self._close_mode_menu()
         try:
             self.backend.stop(join_sec=4.0)
         except Exception:

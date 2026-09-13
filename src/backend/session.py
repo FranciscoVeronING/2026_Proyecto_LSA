@@ -7,13 +7,24 @@ enunciado. Acá no se extraen landmarks: se clasifica, se acumula y se traduce.
 
 from __future__ import annotations
 
-import os
 import json
+import os
+import sys
 import threading
 import time
+from pathlib import Path
 from typing import Any
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+if getattr(sys, "frozen", False):
+    _root = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent / "_internal"))
+    for _lib in (_root / "torch" / "lib", _root):
+        if _lib.is_dir() and hasattr(os, "add_dll_directory"):
+            try:
+                os.add_dll_directory(str(_lib))
+            except OSError:
+                pass
 
 import torch
 
