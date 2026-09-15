@@ -1,22 +1,12 @@
-dataset/
-dataset_landmarks_32/
-*.mp4
-
 __pycache__/
 *.pyc
 .venv/
 .env
-
-models/
-*.h5
-*.tflite
+build/
 
 src/semantic/logs/
-src/unsloth_compiled_cache/*
-_unsloth_temporary_saved_buffers/unsloth/qwen2.5-3b-instruct-unsloth-bnb-4bit/input_embeddings.pt
-
 src/semantic/outputs/
-src/semantic/outputs_con_deletreo/
-
-!src/semantic/outputs/eval_trial/
-!src/semantic/outputs/training_summary.json
+unsloth_compiled_cache/
+src/semantic/unsloth_compiled_cache/
+_unsloth_temporary_saved_buffers/
+*.gguf
