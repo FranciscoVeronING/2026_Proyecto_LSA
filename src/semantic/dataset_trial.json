@@ -37,9 +37,7 @@
       "glosses": ["PASADO", "PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
       "spanish": [
         "¿Dónde vivían ellas en la plaza?",
-        "¿Dónde vivían en la plaza?",
-        "¿Dónde vivieron ellas en la plaza?",
-        "¿Dónde vivieron en la plaza?"
+        "¿Dónde vivieron ellas en la plaza?"
       ]
     },
     {
@@ -57,9 +55,7 @@
       "glosses": ["PASADO", "ELLOS", "TENER", "QUE"],
       "spanish": [
         "¿Qué tuvieron?",
-        "¿Qué tuvieron ellos?",
-        "¿Qué tenían?",
-        "¿Qué tenían ellos?"
+        "¿Qué tenían?"
       ]
     },
     {
@@ -75,14 +71,12 @@
       "glosses": ["PASADO", "ELLOS", "HOMBRE", "YO", "VER"],
       "spanish": [
         "Ellos me vieron.",
-        "Me vieron.",
-        "Ellos me vieron a mí.",
-        "Me vieron a mí."
+        "Ellos me vieron a mí."
       ]
     },
     {
       "category": "pregunta_wh_identidad_tiempo_pasado",
-      "glosses": ["PASADO", "HERMANO", "QUIEN"],
+      "glosses": ["PASADO", "HERMANO", "TUYO", "QUIEN"],
       "spanish": [
         "¿Quién era tu hermano?",
         "¿Quién fue tu hermano?"
@@ -90,7 +84,7 @@
     },
     {
       "category": "pregunta_wh_identidad_tiempo_futuro",
-      "glosses": ["FUTURO", "ESPOSO", "MUJER", "QUIEN"],
+      "glosses": ["FUTURO", "ESPOSO", "MUJER", "TUYO", "QUIEN"],
       "spanish": [
         "¿Quién va a ser tu esposa?",
         "¿Quién será tu esposa?"
@@ -126,16 +120,15 @@
     },
     {
       "category": "flexion_genero_parentesco_transitivo_pasado",
-      "glosses": ["PASADO", "YO", "HIJO", "HOMBRE", "LLAMAR"],
+      "glosses": ["PASADO", "YO", "HIJO", "MIO", "LLAMAR"],
       "spanish": [
         "Llamé a mi hijo.",
-        "Yo llamé a mi hijo.",
-        "Llamé al hijo."
+        "Yo llamé a mi hijo."
       ]
     },
     {
       "category": "deletreo_nombre_femenino_no_visto",
-      "glosses": ["YO", "NOMBRE", "M", "I", "C", "A", "E", "L", "A"],
+      "glosses": ["NOMBRE", "MIO", "Micaela"],
       "spanish": [
         "Me llamo Micaela.",
         "Yo me llamo Micaela.",
@@ -146,7 +139,7 @@
     },
     {
       "category": "deletreo_apellido_con_grafemas_complejos",
-      "glosses": ["YO", "APELLIDO", "G", "U", "E", "R", "R", "A"],
+      "glosses": ["APELLIDO", "MIO", "Guerra"],
       "spanish": [
         "Mi apellido es Guerra.",
         "Me apellido Guerra.",
@@ -155,17 +148,15 @@
     },
     {
       "category": "deletreo_calle_no_vista",
-      "glosses": ["CALLE", "M", "O", "R", "E", "N", "O", "YO", "VIVIR_EN"],
+      "glosses": ["CALLE", "Moreno", "YO", "VIVIR_EN"],
       "spanish": [
         "Vivo en la calle Moreno.",
-        "Yo vivo en la calle Moreno.",
-        "Mi domicilio es en la calle Moreno.",
-        "Mi casa está en la calle Moreno."
+        "Yo vivo en la calle Moreno."
       ]
     },
     {
       "category": "secuencia_numerica_dni_arbitraria",
-      "glosses": ["YO", "DOCUMENTO", "NUMERO", "1", "8", "3", "3", "3", "9", "4", "0"],
+      "glosses": ["DOCUMENTO", "MIO", "NUMERO", "18333940"],
       "spanish": [
         "Mi número de documento es 18333940.",
         "Mi documento es 18333940.",

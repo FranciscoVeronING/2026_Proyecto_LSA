@@ -5,7 +5,7 @@
       "spanish": "Hola."
     },
     {
-      "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
+      "glosses": ["YO", "NOMBRE", "Juan"],
       "spanish": "Me llamo Juan."
     },
     {
@@ -25,8 +25,16 @@
       "spanish": "No puedo."
     },
     {
-      "glosses": ["NOMBRE", "M", "A", "R", "I", "A"],
+      "glosses": ["YO", "NOMBRE", "María"],
       "spanish": "Me llamo María."
+    },
+    {
+      "glosses": ["FUTURO", "YO", "CUCHILLO", "LLEVAR", "NO"],
+      "spanish": "No voy a llevar el cuchillo."
+    },
+    {
+      "glosses": ["YO", "DOCUMENTO", "NUMERO", "18333940"],
+      "spanish": "Mi DNI es 18333940."
     }
   ]
 }
