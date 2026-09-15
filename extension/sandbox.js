@@ -32,7 +32,7 @@ function locateFile(file) {
     raw === "pose_landmark_full.tflite" || raw === "pose_landmark_heavy.tflite"
       ? "pose_landmark_lite.tflite"
       : raw;
-  return new URL("vendor/mediapipe/" + name, location.href).href;
+  return new URL("./vendor/mediapipe/" + name, self.location.href).href;
 }
 
 /**

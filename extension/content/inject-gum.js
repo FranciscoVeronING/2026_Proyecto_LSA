@@ -8,6 +8,20 @@
   window.__lsaGumHooked = true;
 
   const origGetUserMedia = MediaDevices.prototype.getUserMedia;
+  const OrigPC = window.RTCPeerConnection;
+  const peerConnections = new Set();
+  if (OrigPC) {
+    window.RTCPeerConnection = class extends OrigPC {
+      constructor(...args) {
+        super(...args);
+        peerConnections.add(this);
+        this.addEventListener("connectionstatechange", () => {
+          const st = this.connectionState;
+          if (st === "closed" || st === "failed") peerConnections.delete(this);
+        });
+      }
+    };
+  }
   const SUBTITLE_HOLD_MS = 8000;
   const POSE_EDGES = [
     [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [11, 23], [12, 24],
@@ -32,6 +46,7 @@
     if (data.type === "LSA_SET_ENABLED") {
       enabled = Boolean(data.enabled);
       if (!enabled) stopPageSpeech();
+      syncCanvasToMeet();
     }
     if (data.type === "LSA_PREFS") {
       if (typeof data.showSubtitles === "boolean") showSubtitles = data.showSubtitles;
@@ -272,8 +287,9 @@
   }
   /**
    * Crea video oculto `#lsa-real-cam` + canvas que Meet ve como “cámara”.
-   * Pinta un frame ya: si el track de `captureStream` queda `muted`, Meet
-   * muestra “cámara bloqueada”.
+   * Hay que devolver el stream YA: si getUserMedia tarda varios segundos,
+   * Meet pone “cámara bloqueada”. DroidCam puede pintar después; un canvas
+   * negro a 24 fps alcanza para que el track no quede mudo.
    *
    * @param {MediaStream} realStream Resultado nativo de `getUserMedia`.
    */
@@ -283,11 +299,14 @@
     const video = document.createElement("video");
     video.id = "lsa-real-cam";
     video.muted = true;
+    video.defaultMuted = true;
     video.playsInline = true;
     video.autoplay = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("muted", "");
     video.srcObject = realStream;
     video.style.cssText =
-      "position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none;";
+      "position:fixed;left:-2000px;top:0;width:640px;height:480px;opacity:0.01;pointer-events:none;";
     (document.body || document.documentElement).appendChild(video);
     video.play().catch(() => {});
 
@@ -304,22 +323,17 @@
       stopped: false,
       running: true,
       alive() {
-        const vt = this.out && this.out.getVideoTracks()[0];
         return Boolean(
           !this.stopped &&
-            vt &&
-            vt.readyState === "live" &&
             realStream.getVideoTracks().some((t) => t.readyState === "live")
         );
       },
     };
 
-    const out = canvas.captureStream(0);
+    const out = canvas.captureStream(24);
     const capTrack = out.getVideoTracks()[0];
-    if (video.readyState >= 2 && video.videoWidth) {
-      drawVideoFrame(ctx, video, canvas.width, canvas.height);
-      if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
-    }
+    if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
+
     const draw = () => {
       if (!handle.running) return;
       if (video.paused) video.play().catch(() => {});
@@ -331,71 +345,59 @@
         drawVideoFrame(ctx, video, canvas.width, canvas.height);
         if (enabled && showLandmarks) drawLandmarks(ctx, canvas.width, canvas.height);
         if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
-        if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
+      } else {
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
       }
+      if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
       requestAnimationFrame(draw);
     };
     draw();
     realStream.getAudioTracks().forEach((audioTrack) => out.addTrack(audioTrack));
-    out.getVideoTracks().forEach((outTrack) => {
-      outTrack.addEventListener("ended", () => {
-        handle.running = false;
-      });
-    });
-    realStream.getVideoTracks().forEach((realTrack) => {
-      realTrack.addEventListener("ended", () => {
-        handle.running = false;
-      });
-    });
     handle.out = out;
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: true }, "*");
+    syncCanvasToMeet();
     return handle;
   }
 
   /**
-   * @param {HTMLVideoElement} video
-   * @param {number} ms
-   * @returns {Promise<void>}
+   * Si Meet ya tomó DroidCam nativa, el español pintado en el canvas no se ve.
+   * Ponemos el canvas en el preview y en el track que se manda a la llamada.
    */
-  function waitForVideo(video, ms) {
-    if (video.videoWidth) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => {
-        video.removeEventListener("loadeddata", done);
-        clearTimeout(tid);
-        resolve();
-      };
-      const tid = setTimeout(done, ms);
-      video.addEventListener("loadeddata", done);
+  function syncCanvasToMeet() {
+    if (!pipeline || !pipeline.out) return;
+    const canvasTrack = pipeline.out.getVideoTracks()[0];
+    if (!canvasTrack || canvasTrack.readyState !== "live") return;
+    document.querySelectorAll("video").forEach((v) => {
+      if (v.id === "lsa-real-cam") return;
+      const src = v.srcObject;
+      if (!(src instanceof MediaStream)) return;
+      if (src === pipeline.out) return;
+      const fromReal =
+        pipeline.real &&
+        src.getVideoTracks().some((t) => pipeline.real.getVideoTracks().indexOf(t) !== -1);
+      if (fromReal || src === pipeline.real) v.srcObject = pipeline.out;
+    });
+    peerConnections.forEach((pc) => {
+      try {
+        pc.getSenders().forEach((sender) => {
+          if (sender.track && sender.track.kind === "video" && sender.track !== canvasTrack) {
+            sender.replaceTrack(canvasTrack).catch(() => {});
+          }
+        });
+      } catch (_) {}
     });
   }
 
   /**
-   * Espera a que el track de canvas deje de estar `muted` (si no, Meet dice
-   * “cámara bloqueada”).
-   * @param {MediaStreamTrack} track
-   * @param {number} ms
-   * @returns {Promise<void>}
+   * Reusa el canvas. Nunca devolvemos DroidCam cruda: ahí no hay subtítulos.
    */
-  function waitUnmuted(track, ms) {
-    if (!track || !track.muted) return Promise.resolve();
-    return new Promise((resolve) => {
-      const done = () => {
-        track.removeEventListener("unmute", done);
-        clearTimeout(tid);
-        resolve();
-      };
-      const tid = setTimeout(done, ms);
-      track.addEventListener("unmute", done);
-    });
-  }
-
-  /** Reusa el canvas si los tracks siguen vivos. También con LSA off (passthrough). */
   function existingStream() {
     if (!pipeline || pipeline.stopped || !pipeline.alive()) return null;
-    const vt = pipeline.out.getVideoTracks()[0];
-    if (!vt || vt.readyState !== "live") return null;
-    return pipeline.out;
+    const canvasTrack = pipeline.out && pipeline.out.getVideoTracks()[0];
+    if (canvasTrack && canvasTrack.readyState === "live") return pipeline.out;
+    return null;
   }
 
   MediaDevices.prototype.getUserMedia = function (constraints) {
@@ -404,18 +406,9 @@
     }
     const reuse = existingStream();
     if (reuse) return Promise.resolve(reuse);
-    if (pipeline) stopPipeline(true);
-    if (!enabled) {
-      return origGetUserMedia.call(this, constraints);
-    }
-    return origGetUserMedia.call(this, constraints).then(async (real) => {
+    return origGetUserMedia.call(this, constraints).then((real) => {
       try {
         pipeline = createPipeline(real);
-        const video = document.getElementById("lsa-real-cam");
-        if (video) await waitForVideo(video, 1200);
-        const vt = pipeline.out.getVideoTracks()[0];
-        await waitUnmuted(vt, 1200);
-        if (!vt || vt.readyState !== "live") return pipeline.out;
         return pipeline.out;
       } catch (_) {
         return real;

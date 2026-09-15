@@ -45,9 +45,10 @@ function packFrame(results) {
 /**
  * ¿Esta mano es usable? Holistic inventa manos al mover el torso:
  * puntos en (0,0), bbox minúsculo o lejos de la muñeca de la pose.
+ * Las manos de Holistic no traen `visibility` (solo x, y, z).
  *
- * @param {Array<{x:number,y:number,visibility?:number}>|number[][]|null|undefined} lms
- * @param {{x:number,y:number,visibility?:number}|number[]|null|undefined} [wrist]
+ * @param {Array<{x:number,y:number}>|number[][]|null|undefined} lms
+ * @param {{x:number,y:number,visibility?:number}|number[]|null|undefined} [wrist] Muñeca de la pose.
  * @returns {boolean}
  */
 function xyOf(p) {
@@ -63,8 +64,6 @@ function handIsPresent(lms, wrist) {
   let minY = 1;
   let maxY = 0;
   let usable = 0;
-  let visSum = 0;
-  let visN = 0;
   for (let i = 0; i < lms.length; i++) {
     const p = xyOf(lms[i]);
     if (!p) continue;
@@ -73,17 +72,12 @@ function handIsPresent(lms, wrist) {
     if (x < -0.15 || x > 1.15 || y < -0.15 || y > 1.15) continue;
     if (Math.abs(x) < 1e-5 && Math.abs(y) < 1e-5) continue;
     usable += 1;
-    if (typeof p.visibility === "number") {
-      visSum += p.visibility;
-      visN += 1;
-    }
     if (x < minX) minX = x;
     if (x > maxX) maxX = x;
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
   if (usable < 14) return false;
-  if (visN >= 8 && visSum / visN < 0.28) return false;
   const bw = maxX - minX;
   const bh = maxY - minY;
   if (bw < 0.035 && bh < 0.035) return false;
@@ -92,9 +86,9 @@ function handIsPresent(lms, wrist) {
     const w = xyOf(wrist);
     const hw = xyOf(lms[0]);
     if (w && hw) {
-      const wristVisOk = typeof w.visibility !== "number" || w.visibility >= 0.2;
+      const poseWristOk = typeof w.visibility !== "number" || w.visibility >= 0.2;
       const dist = Math.hypot(hw.x - w.x, hw.y - w.y);
-      if (wristVisOk && dist > 0.42) return false;
+      if (poseWristOk && dist > 0.42) return false;
     }
   }
   return true;
