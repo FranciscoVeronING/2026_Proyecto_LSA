@@ -32,5 +32,9 @@ node_modules/
 # Caches y artefactos locales
 unsloth_compiled_cache/
 temp_figs/
+src/inspect_out/
 temp_figs.zip
 eval_semantic_*.csv
+
+# Landmarks crudos de cada toma de camera.py --eval (para diagnóstico)
+*_takes/

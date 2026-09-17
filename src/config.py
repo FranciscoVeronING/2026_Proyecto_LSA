@@ -1,15 +1,15 @@
 
 DATASET_VIDEOS_DIR = "../dataset"
-DATASET_NPY_DIR = "../dataset_landmarks_32frames"
+DATASET_NPY_DIR = "../dataset_landmarks_16frames"
 MODEL_SAVE_DIR = "../src/model"
 
-NUM_CLASSES = 94
+NUM_CLASSES = 97
 SAMPLES_PER_CLASS = 60
 
 # Secuencia temporal unificada: preprocessing, entrenamiento e inferencia usan el mismo valor.
 # Si tenés .npy viejos con otra cantidad de frames, train los re-muestrea automáticamente.
 # Optuna v2 explora max_frames en {8, 12, 16, 24} subsampleando estos .npy (hace falta T>=24).
-MAX_FRAMES = 10
+MAX_FRAMES = 16
 TARGET_FRAMES = MAX_FRAMES
 
 
@@ -68,7 +68,7 @@ SIGN_CLASSES = [
     "ellos",
     "hola",
     "chau",
-    #"departamento",
+    "pasado",
     "lugar",
     "nombre",
     "apellido",
@@ -80,7 +80,7 @@ SIGN_CLASSES = [
     "papa",
     "hermano_a",
     "tener",
-    #"arma",
+    "futuro",
     "cuchillo",
     "brazo",
     "cara",
@@ -101,7 +101,7 @@ SIGN_CLASSES = [
     "plaza",
     "ahora_hoy",
     "ayer",
-    #"golpear",
+    "mio",
     "poder",
     #"sacar",
     "robar",
@@ -134,10 +134,10 @@ INDEX_TO_SIGN = {idx: sign for idx, sign in enumerate(SIGN_CLASSES)}
 # ==========================================
 # HIPERPARÁMETROS DEL TINY TRANSFORMER
 # ==========================================
-HIDDEN_DIM = 256
-NUM_HEADS = 2
-NUM_LAYERS = 3
-DROPOUT_RATE = 0.6
+HIDDEN_DIM = 128
+NUM_HEADS = 4
+NUM_LAYERS = 2
+DROPOUT_RATE = 0.4
 
 # ==========================================
 # ENTRENAMIENTO Y DATA AUGMENTATION
@@ -205,6 +205,10 @@ CAPTURE_MODE = "auto"
 #   1) Entrar en la pose → sostener 1–2 s → retirar manos.
 #   2) Evitar movimientos largos de aproximación antes de la pose.
 #   3) Preferir 60+ videos por clase (mismo criterio que train).
+# Pares estática vs dinámica (NO están juntas acá a propósito):
+#   L vs lunes (agitar en X), G vs años (arriba-abajo en Y),
+#   F vs donde (toques al pecho en Z), V vs viernes (V hold; viernes 2 golpes al menton en Z).
+# Las dinámicas (lunes, años, donde, viernes) no van en esta lista.
 STATIC_SIGN_CLASSES = [
     "0", "1", "2", "3", "4", "5", "6", "8",
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M",

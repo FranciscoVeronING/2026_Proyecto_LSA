@@ -181,3 +181,14 @@ O con `Start-Process` / `tmux` si hay WSL. El `-u` evita que el log se bufferice
 | `docs/Informe.tex` / `referencias.bib` | informe agosto |
 | `docs/Relevamiento_clasificador_agosto_2026.md` | métricas 18/08 |
 | `src/video_divider.py` | recorte de gestos en video (script aparte) |
+
+---
+
+## 7. Iteración septiembre 2026 (feature engineering + captura)
+
+No reemplaza las secciones 1–6; las complementa. Entrega: `docs/ficha_tecnica_refinamiento_feature_engineering.md`.
+
+- Descriptor de 26 features (diagnóstico, no entra al tensor).
+- Letterbox 16:9 en `camera.py` (DroidCam entrega 640×480; entrenamiento es 1920×1080).
+- Reentrenamiento baseline 16f / 97 clases (15/09). Val 98,28 %.
+- Eval cámara 17/09: **77,3 %** top-1 / **94,8 %** top-3. `I→ojo` resuelto. `V↔viernes` no. Análisis: `docs/eval_97senias_20260917.md`.

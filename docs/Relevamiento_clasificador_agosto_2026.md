@@ -1,5 +1,7 @@
 # Relevamiento — clasificador TinySkeleton (agosto 2026)
 
+> **Este documento es la foto de agosto.** La eval vigente es la del 17/09/2026 (97 clases, padding 16:9): [eval_97senias_20260917.md](eval_97senias_20260917.md). Ficha de la iteración de septiembre: [ficha_tecnica_refinamiento_feature_engineering.md](ficha_tecnica_refinamiento_feature_engineering.md).
+>
 > **Rama:** `scratch-mediapipe-v2`  
 > **Entrenamiento baseline (Francisco, sin Optuna):** 18/08/2026 — 16 frames, 128/4h/2L  
 > **Entrenamiento Optuna v2 (Francisco):** 27/08/2026 — 12 frames, 256/2h/2L  

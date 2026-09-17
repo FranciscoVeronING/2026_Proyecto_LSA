@@ -749,6 +749,8 @@ class EvalSession:
         "hit_top3",
         "handedness",
         "capture_mode",
+        "frame_size",
+        "mediapipe",
     ]
 
     def __init__(self, sign_list: list[str], csv_path: str, handedness: str, model_ids: list[str]):
@@ -757,6 +759,11 @@ class EvalSession:
         self.handedness = handedness
         self.model_ids = model_ids
         self.index = 0
+        self.takes_dir = os.path.splitext(csv_path)[0] + "_takes"
+        # Se registran en el CSV: sin esto no se puede comparar dos evals
+        # corridas con distinta resolucion o distinta version de MediaPipe.
+        self.frame_size = "desconocido"
+        self.mediapipe_version = getattr(mp, "__version__", "desconocido")
         self._ensure_header()
 
     def _ensure_header(self):
@@ -793,6 +800,8 @@ class EvalSession:
                 "hit_top3": 0,
                 "handedness": self.handedness,
                 "capture_mode": capture_mode,
+                "frame_size": self.frame_size,
+                "mediapipe": self.mediapipe_version,
             }
         else:
             top_names = [t[0] for t in top3]
@@ -811,18 +820,39 @@ class EvalSession:
                 "hit_top3": int(expected in top_names),
                 "handedness": self.handedness,
                 "capture_mode": capture_mode,
+                "frame_size": self.frame_size,
+                "mediapipe": self.mediapipe_version,
             }
         with open(self.csv_path, "a", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
             writer.writerow(row)
 
-    def log_predictions(self, results_by_model: dict, capture_mode: str):
+    def log_predictions(self, results_by_model: dict, capture_mode: str, input_matrix=None):
         if self.finished:
             return
+        expected = self.expected_sign
         for model_id in self.model_ids:
             top3 = results_by_model.get(model_id, [])
             self._write_row(model_id, top3, capture_mode, skipped=False)
+        if input_matrix is not None:
+            self._save_take(expected, input_matrix)
         self.index += 1
+
+    def _save_take(self, expected: str, matrix) -> None:
+        """
+        Guarda los landmarks de la toma en vivo.
+
+        Sin esto no se puede distinguir "el dato es ambiguo" de "en vivo la
+        seña cae en otro lugar": el CSV solo tiene la predicción, no la pose.
+        """
+        safe = re.sub(r"[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ_-]+", "_", expected or "sin_nombre")
+        folder = os.path.join(self.takes_dir, safe)
+        try:
+            os.makedirs(folder, exist_ok=True)
+            path = os.path.join(folder, f"take_{self.index + 1:03d}.npy")
+            np.save(path, np.asarray(matrix, dtype=np.float32))
+        except OSError as exc:
+            print(f"[!] No se pudo guardar la toma de {expected}: {exc}")
 
     def skip_current(self, capture_mode: str):
         if self.finished:
@@ -842,6 +872,7 @@ shared_state = {
     "top3": [],
     "results_by_model": {},
     "last_inference_time": 0.0,
+    "last_input_matrix": None,
     "lock": Lock(),
     "running": True,
 }
@@ -906,6 +937,7 @@ class InferenceWorker:
 
             results_by_model = {}
             primary_top3 = []
+            last_matrix = None
             try:
                 with torch.no_grad():
                     for i, entry in enumerate(entries):
@@ -919,11 +951,15 @@ class InferenceWorker:
                         results_by_model[spec.id] = top3
                         if i == 0:
                             primary_top3 = top3
+                            # Se guarda para poder comparar la toma en vivo
+                            # contra las distribuciones del dataset.
+                            last_matrix = tensor[0].cpu().numpy()
                         print(f"{spec.short}: " + " | ".join(f"{n.upper()} ({c:.1%})" for n, c in top3))
 
                 with shared_state["lock"]:
                     shared_state["results_by_model"] = results_by_model
                     shared_state["top3"] = primary_top3
+                    shared_state["last_input_matrix"] = last_matrix
                     if primary_top3:
                         shared_state["prediction"] = primary_top3[0][0].upper()
                         shared_state["confidence"] = primary_top3[0][1]
@@ -932,21 +968,83 @@ class InferenceWorker:
                 print(f"Error inferencia: {e}")
 
 
+def letterbox_to_aspect(frame, target_aspect: float):
+    """
+    Agrega bandas negras hasta alcanzar target_aspect, sin escalar ni recortar.
+
+    MediaPipe divide x por el ancho e y por el alto, asi que para un mismo
+    tamanio fisico el cociente y_norm/x_norm es exactamente W/H. Los videos de
+    entrenamiento son 1920x1080 (1.778) y esta camara entrega 640x480 (1.333):
+    toda medida vertical llega al modelo a 0.75x de la escala que vio al
+    entrenar. Rellenar a 16:9 restaura ese cociente sin recortar FOV.
+
+    Es no-op si el frame ya tiene el aspect pedido, asi que sirve igual el dia
+    que la camara entregue 16:9 nativo.
+    """
+    if target_aspect <= 0:
+        return frame
+    h, w = frame.shape[:2]
+    if h == 0 or abs(w / h - target_aspect) < 1e-3:
+        return frame
+    if w / h < target_aspect:
+        pad = int(round(h * target_aspect)) - w
+        left = pad // 2
+        return cv2.copyMakeBorder(frame, 0, 0, left, pad - left, cv2.BORDER_CONSTANT, value=(0, 0, 0))
+    pad = int(round(w / target_aspect)) - h
+    top = pad // 2
+    return cv2.copyMakeBorder(frame, top, pad - top, 0, 0, cv2.BORDER_CONSTANT, value=(0, 0, 0))
+
+
 class WebcamStream:
-    def __init__(self, src=0):
-        self.stream = cv2.VideoCapture(src)
-        if not self.stream.isOpened():
-            self.stream = cv2.VideoCapture(src, cv2.CAP_DSHOW)
-        if not self.stream.isOpened():
+    def __init__(self, src=0, width=1280, height=720, pad_aspect=16 / 9, backend=None):
+        self.pad_aspect = pad_aspect
+        self.stream = None
+        for api in ([backend] if backend is not None else [None, cv2.CAP_DSHOW]):
+            cap = cv2.VideoCapture(src) if api is None else cv2.VideoCapture(src, api)
+            if cap.isOpened():
+                self.stream = cap
+                break
+            cap.release()
+        if self.stream is None:
             print("ERROR CRITICO: No se puede abrir la camara.")
             self.stopped = True
             return
 
-        self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.stream.set(cv2.CAP_PROP_FPS, 30)
-        (self.grabbed, self.frame) = self.stream.read()
+        grabbed, raw = self.stream.read()
+        self.grabbed = grabbed
         self.stopped = False
+
+        # La camara puede ignorar lo pedido (DroidCam libre queda en 640x480),
+        # asi que manda la resolucion real del frame, no la solicitada.
+        self.raw_w = int(self.stream.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.raw_h = int(self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        if raw is not None:
+            self.raw_h, self.raw_w = raw.shape[:2]
+
+        self.frame = letterbox_to_aspect(raw, self.pad_aspect) if raw is not None else None
+        if self.frame is not None:
+            self.height, self.width = self.frame.shape[:2]
+        else:
+            self.width, self.height = self.raw_w, self.raw_h
+
+        raw_aspect = self.raw_w / self.raw_h if self.raw_h else 0.0
+        print(f"[*] Camara: {self.raw_w}x{self.raw_h} nativo (aspect {raw_aspect:.3f})")
+        if (self.width, self.height) != (self.raw_w, self.raw_h):
+            print(
+                f"[*] Padding a 16:9 -> {self.width}x{self.height} "
+                f"(aspect {self.width / self.height:.3f}), igual que entrenamiento."
+            )
+        elif abs(raw_aspect - 16 / 9) > 0.05:
+            print(f"[!] Aspect {raw_aspect:.3f} != 1.778 y el padding esta desactivado.")
+
+    @property
+    def frame_size(self) -> str:
+        if (self.width, self.height) != (self.raw_w, self.raw_h):
+            return f"{self.raw_w}x{self.raw_h}->pad{self.width}x{self.height}"
+        return f"{self.raw_w}x{self.raw_h}"
 
     def start(self):
         if not self.stopped:
@@ -959,7 +1057,7 @@ class WebcamStream:
             if not grabbed:
                 self.stop()
             else:
-                self.frame = frame
+                self.frame = letterbox_to_aspect(frame, self.pad_aspect)
 
     def read(self):
         return self.frame
@@ -973,6 +1071,9 @@ class WebcamStream:
 # MAIN
 # =============================================================================
 mouse_state = {"x": 0, "y": 0, "down": False, "clicked": False, "wheel": 0}
+
+# Resolucion de referencia para el detector de movimiento por pixeles.
+MOTION_REF_W, MOTION_REF_H = 640, 480
 
 
 def mouse_callback(event, x, y, flags, param):
@@ -1067,6 +1168,41 @@ def main():
         default=None,
         help="Ruta del CSV de evaluacion (default: eval_94senias_<fecha>.csv en src/).",
     )
+    parser.add_argument(
+        "--cam-width",
+        type=int,
+        default=1280,
+        help="Ancho de captura. Default 1280 (16:9, igual que los videos de entrenamiento).",
+    )
+    parser.add_argument(
+        "--cam-height",
+        type=int,
+        default=720,
+        help="Alto de captura. Default 720. Usar 640x480 para reproducir evals viejas.",
+    )
+    parser.add_argument(
+        "--cam-index",
+        type=int,
+        default=0,
+        help="Indice de camara de OpenCV. Default 0.",
+    )
+    parser.add_argument(
+        "--no-pad-aspect",
+        action="store_true",
+        help=(
+            "Desactiva el padding a 16:9. Por default se rellena con bandas negras "
+            "para igualar el aspect de los videos de entrenamiento (1920x1080)."
+        ),
+    )
+    parser.add_argument(
+        "--signs",
+        nargs="*",
+        default=None,
+        help=(
+            "En --eval, limita a estas senias (ej: --signs I T ojo). "
+            "Presets: 'letras', 'numeros', 'abc' (letras+numeros, el set de 36)."
+        ),
+    )
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -1105,6 +1241,24 @@ def main():
 
     if args.eval:
         sign_list = union_sign_list(active_specs)
+        if args.signs:
+            presets = {
+                "numeros": [str(d) for d in range(10)],
+                "letras": [chr(c) for c in range(ord("A"), ord("Z") + 1)],
+            }
+            presets["abc"] = presets["numeros"] + presets["letras"]
+            expanded: list[str] = []
+            for token in args.signs:
+                expanded.extend(presets.get(token.casefold(), [token]))
+            wanted = {s.casefold() for s in expanded}
+            filtered = [s for s in sign_list if s.casefold() in wanted]
+            missing = wanted - {s.casefold() for s in sign_list}
+            if missing:
+                print(f"[!] No estan en los modelos elegidos: {', '.join(sorted(missing))}")
+            if not filtered:
+                print("[!] Eval cancelada: ninguna senia de --signs existe en los modelos.")
+                return
+            sign_list = filtered
         csv_path = args.eval_output or os.path.join(
             os.path.dirname(__file__),
             f"eval_{len(sign_list)}senias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
@@ -1113,17 +1267,25 @@ def main():
         print(f"[*] Modo eval activo. CSV: {csv_path}")
         print(f"[*] Modelos en paralelo: {', '.join(s.short for s in active_specs)}")
         print(f"[*] Senias a probar: {len(sign_list)}. Tecla 'n' = saltar senia.")
+        print(f"[*] Orden: {', '.join(sign_list)}")
 
     n_models = len(active_specs)
     print("\n[*] Iniciando camara...")
     print(f"[*] Modo captura: {cfg.CAPTURE_MODE} | modelos: {n_models}")
     print(f"[*] Umbral confianza: {cfg.CONFIDENCE_THRESHOLD:.0%} | Cooldown: {cfg.INFERENCE_COOLDOWN_SEC}s")
 
-    vs = WebcamStream(0).start()
+    vs = WebcamStream(
+        args.cam_index,
+        width=args.cam_width,
+        height=args.cam_height,
+        pad_aspect=0.0 if args.no_pad_aspect else 16 / 9,
+    ).start()
     time.sleep(2.0)
     if vs.stopped:
         shared_state["running"] = False
         return
+    if eval_session:
+        eval_session.frame_size = vs.frame_size
 
     cv2.namedWindow("LSA DETECTOR")
     cv2.setMouseCallback("LSA DETECTOR", mouse_callback)
@@ -1131,7 +1293,10 @@ def main():
     mp_holistic = mp.solutions.holistic
     mp_drawing = mp.solutions.drawing_utils
 
-    VID_W, VID_H = 640, 480
+    # El panel de UI asume 640 de ancho; el alto sigue el aspect real de la
+    # camara para no deformar la imagen ni romper el blit.
+    VID_W = 640
+    VID_H = int(round(VID_W * vs.height / vs.width)) if vs.width else 480
 
     btn_capture = Button(280, VID_H + 8, 105, 36, "CAPTURAR")
     btn_pause = Button(395, VID_H + 8, 90, 36, "PAUSA")
@@ -1197,6 +1362,10 @@ def main():
 
             if not paused:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # A resolucion fija: MOTION_PIXEL_THRESHOLD cuenta pixeles, y si
+                # depende de la resolucion de captura el trigger cambia de
+                # sensibilidad al pasar de 480p a 720p.
+                gray = cv2.resize(gray, (MOTION_REF_W, MOTION_REF_H))
                 gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
                 if prev_gray is not None:
@@ -1322,12 +1491,16 @@ def main():
                 and not eval_session.finished
                 and last_inf_time >= pending_eval_after[0]
             ):
-                eval_session.log_predictions(results_by_model, capture_mode)
+                with shared_state["lock"]:
+                    take_matrix = shared_state.get("last_input_matrix")
+                eval_session.log_predictions(results_by_model, capture_mode, take_matrix)
                 pending_eval_after[0] = 0.0
                 if eval_session.finished:
                     print(f"[*] Evaluacion completa. CSV: {eval_session.csv_path}")
 
             canvas = np.zeros((TOT_H, VID_W, 3), dtype="uint8")
+            if image.shape[0] != VID_H or image.shape[1] != VID_W:
+                image = cv2.resize(image, (VID_W, VID_H))
             canvas[0:VID_H, 0:VID_W] = image
             cv2.rectangle(canvas, (0, VID_H), (VID_W, TOT_H), (30, 30, 30), -1)
 
