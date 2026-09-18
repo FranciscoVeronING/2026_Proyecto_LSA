@@ -30,31 +30,26 @@ MODELS = [
         "id": "qwen2.5-0.5b",
         "name": "unsloth/Qwen2.5-0.5B-Instruct",
         "label": "Qwen2.5 0.5B (ultra liviano)",
-        "kind": "causal",
     },
     {
         "id": "qwen2.5-1.5b",
         "name": "unsloth/Qwen2.5-1.5B-Instruct",
         "label": "Qwen2.5 1.5B",
-        "kind": "causal",
     },
     {
         "id": "qwen2.5-3b",
         "name": "unsloth/Qwen2.5-3B-Instruct",
         "label": "Qwen2.5 3B (mayor capacidad)",
-        "kind": "causal",
     },
     {
         "id": "llama-3.2-1b",
         "name": "unsloth/Llama-3.2-1B-Instruct",
         "label": "Llama 3.2 1B (Meta)",
-        "kind": "causal",
     },
     {
         "id": "smollm2-1.7b",
         "name": "unsloth/SmolLM2-1.7B-Instruct",
         "label": "SmolLM2 1.7B",
-        "kind": "causal",
     },
 ]
 
@@ -200,12 +195,6 @@ def find_hf_dir(output_base: Path, folder: str) -> Path | None:
 
 def resolve_backend(output_base: Path, model_cfg: dict) -> dict:
     folder = model_folder_name(model_cfg["name"])
-    if model_cfg["kind"] == "seq2seq":
-        hf_dir = find_hf_dir(output_base, folder)
-        if hf_dir is None:
-            raise FileNotFoundError(f"No hay checkpoint seq2seq en {output_base / folder}")
-        return {"backend": "seq2seq", "path": hf_dir}
-
     gguf = find_gguf(output_base, folder)
     if gguf is not None:
         return {"backend": "gguf", "path": gguf}
@@ -379,46 +368,11 @@ def eval_causal_hf(model_dir: Path, system_prompt: str, samples: list[dict]) -> 
     return predicciones, latencies_ms
 
 
-def eval_seq2seq(model_dir: Path, samples: list[dict]) -> tuple[list[str], list[float]]:
-    import torch
-    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-
-    tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        str(model_dir),
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto" if torch.cuda.is_available() else None,
-    )
-    model.eval()
-
-    predicciones = []
-    latencies_ms = []
-    try:
-        for sample in samples:
-            source = f"traducir glosas a español: {sample['glosas_str']}"
-            encoded = tokenizer(source, return_tensors="pt", truncation=True, max_length=256)
-            encoded = {k: v.to(model.device) for k, v in encoded.items()}
-            start = time.time()
-            with torch.no_grad():
-                outputs = model.generate(**encoded, max_new_tokens=MAX_TOKENS)
-            latencies_ms.append((time.time() - start) * 1000)
-            text = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
-            predicciones.append(limpiar_salida(text.split("\n")[0]))
-    finally:
-        del model, tokenizer
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-    return predicciones, latencies_ms
-
-
 def eval_one_model(model_cfg: dict, backend: dict, system_prompt: str, samples: list[dict]) -> dict:
     if backend["backend"] == "gguf":
         preds, lats = eval_gguf(backend["path"], system_prompt, samples)
     elif backend["backend"] == "causal_hf":
         preds, lats = eval_causal_hf(backend["path"], system_prompt, samples)
-    elif backend["backend"] == "seq2seq":
-        preds, lats = eval_seq2seq(backend["path"], samples)
     else:
         raise ValueError(f"Backend desconocido: {backend['backend']}")
 

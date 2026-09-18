@@ -25,13 +25,6 @@
     },
     {
       "glosses": [
-        "MIO",
-        "CUCHILLO"
-      ],
-      "spanish": "Mi cuchillo."
-    },
-    {
-      "glosses": [
         "YO",
         "OJO",
         "VER"
@@ -162,8 +155,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "8",
@@ -178,8 +171,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "8",
@@ -194,8 +187,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "8",
@@ -210,8 +203,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "8",
@@ -226,8 +219,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "8",
@@ -256,20 +249,6 @@
     },
     {
       "glosses": [
-        "MIO",
-        "DOCUMENTO"
-      ],
-      "spanish": "Mi documento."
-    },
-    {
-      "glosses": [
-        "MIO",
-        "DOCUMENTO"
-      ],
-      "spanish": "Mi DNI."
-    },
-    {
-      "glosses": [
         "YO",
         "PAPA",
         "TENER"
@@ -293,13 +272,6 @@
     },
     {
       "glosses": [
-        "MIO",
-        "PAPA"
-      ],
-      "spanish": "Mi papá."
-    },
-    {
-      "glosses": [
         "MAMA",
         "MIO"
       ],
@@ -307,15 +279,8 @@
     },
     {
       "glosses": [
-        "MIO",
-        "MAMA"
-      ],
-      "spanish": "Mi mamá."
-    },
-    {
-      "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "L",
         "U",
         "I",
@@ -325,8 +290,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "L",
         "U",
         "I",
@@ -336,8 +301,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "L",
         "U",
         "I",
@@ -347,8 +312,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "L",
         "U",
         "I",
@@ -358,8 +323,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "L",
         "U",
         "I",
@@ -397,8 +362,8 @@
     },
     {
       "glosses": [
-        "TUYO",
-        "CASA"
+        "CASA",
+        "TUYO"
       ],
       "spanish": "Tu casa."
     },
@@ -445,6 +410,7 @@
       "glosses": [
         "YO",
         "HIJO",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi hijo."
@@ -453,24 +419,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "VER"
-      ],
-      "spanish": "Yo veo a mi hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
-        "VER"
-      ],
-      "spanish": "Veo a mi hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi hijo."
@@ -480,6 +429,7 @@
         "YO",
         "HIJO",
         "MUJER",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi hija."
@@ -489,6 +439,7 @@
         "YO",
         "HIJO",
         "MUJER",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi hija."
@@ -496,21 +447,6 @@
     {
       "glosses": [
         "HIJO",
-        "MIO"
-      ],
-      "spanish": "Mi hijo."
-    },
-    {
-      "glosses": [
-        "MIO",
-        "HIJO"
-      ],
-      "spanish": "Mi hijo."
-    },
-    {
-      "glosses": [
-        "HIJO",
-        "HOMBRE",
         "MIO"
       ],
       "spanish": "Mi hijo."
@@ -533,14 +469,6 @@
     {
       "glosses": [
         "HERMANO",
-        "HOMBRE",
-        "MIO"
-      ],
-      "spanish": "Mi hermano."
-    },
-    {
-      "glosses": [
-        "HERMANO",
         "MUJER",
         "MIO"
       ],
@@ -555,21 +483,6 @@
     },
     {
       "glosses": [
-        "MIO",
-        "ESPOSO"
-      ],
-      "spanish": "Mi esposo."
-    },
-    {
-      "glosses": [
-        "ESPOSO",
-        "HOMBRE",
-        "MIO"
-      ],
-      "spanish": "Mi esposo."
-    },
-    {
-      "glosses": [
         "ESPOSO",
         "MUJER",
         "MIO"
@@ -578,6 +491,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "ELLOS",
         "YO",
         "ROBAR"
@@ -586,6 +500,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "ELLOS",
         "HOMBRE",
         "YO",
@@ -595,6 +510,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "ELLOS",
         "MUJER",
         "YO",
@@ -604,8 +520,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "0",
@@ -620,8 +536,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "0",
@@ -636,8 +552,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "0",
@@ -652,8 +568,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "0",
@@ -668,8 +584,8 @@
     },
     {
       "glosses": [
-        "YO",
         "DOCUMENTO",
+        "MIO",
         "NUMERO",
         "3",
         "0",
@@ -684,8 +600,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "M",
         "A",
         "R",
@@ -696,8 +612,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "M",
         "A",
         "R",
@@ -708,8 +624,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "M",
         "A",
         "R",
@@ -720,8 +636,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "M",
         "A",
         "R",
@@ -732,8 +648,8 @@
     },
     {
       "glosses": [
-        "YO",
         "NOMBRE",
+        "MIO",
         "M",
         "A",
         "R",
@@ -824,24 +740,17 @@
     },
     {
       "glosses": [
-        "TUYO",
-        "DOCUMENTO"
+        "DOCUMENTO",
+        "TUYO"
       ],
       "spanish": "Tu documento."
     },
     {
       "glosses": [
-        "TUYO",
-        "DOCUMENTO"
+        "DOCUMENTO",
+        "TUYO"
       ],
       "spanish": "Tu DNI."
-    },
-    {
-      "glosses": [
-        "TUYO",
-        "DOCUMENTO"
-      ],
-      "spanish": "Tu documento de identidad."
     },
     {
       "glosses": [
@@ -1111,7 +1020,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "2",
         "5"
       ],
@@ -1120,7 +1029,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "2",
         "5"
       ],
@@ -1129,7 +1038,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "2",
         "5"
       ],
@@ -1360,22 +1269,8 @@
     },
     {
       "glosses": [
-        "MIO",
-        "BRAZO"
-      ],
-      "spanish": "Mi brazo."
-    },
-    {
-      "glosses": [
         "ROSTRO",
         "MIO"
-      ],
-      "spanish": "Mi cara."
-    },
-    {
-      "glosses": [
-        "MIO",
-        "ROSTRO"
       ],
       "spanish": "Mi cara."
     },
@@ -1445,6 +1340,7 @@
       "glosses": [
         "YO",
         "PAPA",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi papá."
@@ -1453,6 +1349,7 @@
       "glosses": [
         "YO",
         "PAPA",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi papá."
@@ -1632,24 +1529,6 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Tengo esposo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ESPOSO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Yo tengo esposo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ESPOSO",
         "MUJER",
         "TENER"
       ],
@@ -1694,7 +1573,7 @@
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "YO",
         "VER"
       ],
@@ -1702,7 +1581,7 @@
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "YO",
         "VER"
       ],
@@ -1710,7 +1589,7 @@
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "YO",
         "VER"
       ],
@@ -1718,7 +1597,7 @@
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "YO",
         "VER"
       ],
@@ -1782,6 +1661,7 @@
       "glosses": [
         "YO",
         "MAMA",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi mamá."
@@ -1798,6 +1678,7 @@
       "glosses": [
         "YO",
         "MAMA",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi mamá."
@@ -1806,6 +1687,7 @@
       "glosses": [
         "YO",
         "HERMANO",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi hermano."
@@ -1814,24 +1696,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "VER"
-      ],
-      "spanish": "Yo veo a mi hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
-        "VER"
-      ],
-      "spanish": "Veo a mi hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi hermano."
@@ -1841,6 +1706,7 @@
         "YO",
         "HERMANO",
         "MUJER",
+        "MIO",
         "VER"
       ],
       "spanish": "Veo a mi hermana."
@@ -1850,6 +1716,7 @@
         "YO",
         "HERMANO",
         "MUJER",
+        "MIO",
         "VER"
       ],
       "spanish": "Yo veo a mi hermana."
@@ -1857,7 +1724,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "3",
         "0"
       ],
@@ -1866,7 +1733,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "3",
         "0"
       ],
@@ -1875,7 +1742,7 @@
     {
       "glosses": [
         "YO",
-        "AÑOS",
+        "ANOS",
         "3",
         "0"
       ],
@@ -1935,42 +1802,6 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "TENER"
-      ],
-      "spanish": "Yo tengo un hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Tengo hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Tengo un hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Yo tengo hermano."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HERMANO",
-        "HOMBRE",
         "TENER"
       ],
       "spanish": "Yo tengo un hermano."
@@ -2080,44 +1911,13 @@
         "YO",
         "VIVIR_EN"
       ],
-      "spanish": "Mi domicilio es en la calle Belgrano."
-    },
-    {
-      "glosses": [
-        "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
-        "YO",
-        "VIVIR_EN"
-      ],
-      "spanish": "Mi casa está en la calle Belgrano."
-    },
-    {
-      "glosses": [
-        "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
-        "YO",
-        "VIVIR_EN"
-      ],
       "spanish": "Yo vivo en la calle Belgrano."
     },
     {
       "glosses": [
         "YO",
         "NOMBRE",
+        "MIO",
         "REPETIR"
       ],
       "spanish": "Repito mi nombre."
@@ -2126,6 +1926,7 @@
       "glosses": [
         "YO",
         "NOMBRE",
+        "MIO",
         "REPETIR"
       ],
       "spanish": "Yo repito mi nombre."
@@ -2293,19 +2094,6 @@
     },
     {
       "glosses": [
-        "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
-        "YO",
-        "VIVIR_EN"
-      ],
-      "spanish": "Mi casa está en la calle Mitre."
-    },
-    {
-      "glosses": [
         "YO",
         "CUCHILLO",
         "VER"
@@ -2335,6 +2123,24 @@
         "VER"
       ],
       "spanish": "Yo veo el cuchillo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CUCHILLO",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Veo mi cuchillo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "CUCHILLO",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Yo veo mi cuchillo."
     },
     {
       "glosses": [
@@ -2452,8 +2258,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "P",
         "E",
         "R",
@@ -2464,8 +2270,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "P",
         "E",
         "R",
@@ -2476,8 +2282,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "P",
         "E",
         "R",
@@ -2488,8 +2294,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "D",
         "I",
         "A",
@@ -2499,8 +2305,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "D",
         "I",
         "A",
@@ -2510,8 +2316,8 @@
     },
     {
       "glosses": [
-        "YO",
         "APELLIDO",
+        "MIO",
         "D",
         "I",
         "A",
@@ -2521,6 +2327,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "VOS",
         "BRAZO",
         "LASTIMAR"
@@ -2529,6 +2336,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "VOS",
         "BRAZO",
         "LASTIMAR"
@@ -2614,42 +2422,6 @@
       "glosses": [
         "YO",
         "HIJO",
-        "TENER"
-      ],
-      "spanish": "Yo tengo hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Tengo un hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Tengo hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
-        "TENER"
-      ],
-      "spanish": "Yo tengo un hijo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "HIJO",
-        "HOMBRE",
         "TENER"
       ],
       "spanish": "Yo tengo hijo."
@@ -2853,6 +2625,7 @@
     {
       "glosses": [
         "FAMILIA",
+        "TUYO",
         "DONDE"
       ],
       "spanish": "¿Dónde está tu familia?"
@@ -2918,6 +2691,7 @@
     },
     {
       "glosses": [
+        "PASADO",
         "VOS",
         "BRAZO",
         "LASTIMAR",
@@ -2958,6 +2732,7 @@
     {
       "glosses": [
         "PAPA",
+        "MIO",
         "DONDE"
       ],
       "spanish": "¿Dónde está mi papá?"
@@ -2965,6 +2740,7 @@
     {
       "glosses": [
         "PAPA",
+        "TUYO",
         "DONDE"
       ],
       "spanish": "¿Dónde está tu papá?"
@@ -3090,14 +2866,15 @@
     },
     {
       "glosses": [
-        "AÑOS",
+        "ANOS",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años?"
     },
     {
       "glosses": [
-        "AÑOS",
+        "VOS",
+        "ANOS",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tenés?"
@@ -3105,15 +2882,7 @@
     {
       "glosses": [
         "VOS",
-        "AÑOS",
-        "CUANTOS"
-      ],
-      "spanish": "¿Cuántos años tenés?"
-    },
-    {
-      "glosses": [
-        "VOS",
-        "AÑOS",
+        "ANOS",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tenés vos?"
@@ -3158,14 +2927,7 @@
     {
       "glosses": [
         "ESPOSO",
-        "QUIEN"
-      ],
-      "spanish": "¿Quién es tu esposo?"
-    },
-    {
-      "glosses": [
-        "ESPOSO",
-        "HOMBRE",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu esposo?"
@@ -3174,6 +2936,7 @@
       "glosses": [
         "ESPOSO",
         "MUJER",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu esposa?"
@@ -3188,6 +2951,7 @@
     {
       "glosses": [
         "DOCUMENTO",
+        "TUYO",
         "DONDE"
       ],
       "spanish": "¿Dónde está tu documento?"
@@ -3201,14 +2965,14 @@
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "DONDE"
       ],
       "spanish": "¿Dónde es el miércoles?"
     },
     {
       "glosses": [
-        "MIÉRCOLES",
+        "MIERCOLES",
         "DONDE"
       ],
       "spanish": "¿Dónde está el miércoles?"
@@ -3216,6 +2980,7 @@
     {
       "glosses": [
         "HERMANO",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu hermano?"
@@ -3223,22 +2988,7 @@
     {
       "glosses": [
         "HERMANO",
-        "QUIEN"
-      ],
-      "spanish": "¿Quiénes son tus hermanos?"
-    },
-    {
-      "glosses": [
-        "HERMANO",
-        "HOMBRE",
-        "QUIEN"
-      ],
-      "spanish": "¿Quién es tu hermano?"
-    },
-    {
-      "glosses": [
-        "HERMANO",
-        "HOMBRE",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quiénes son tus hermanos?"
@@ -3247,6 +2997,7 @@
       "glosses": [
         "HERMANO",
         "MUJER",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu hermana?"
@@ -3255,6 +3006,7 @@
       "glosses": [
         "HERMANO",
         "MUJER",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quiénes son tus hermanas?"
@@ -3298,6 +3050,7 @@
     {
       "glosses": [
         "HIJO",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu hijo?"
@@ -3305,22 +3058,7 @@
     {
       "glosses": [
         "HIJO",
-        "QUIEN"
-      ],
-      "spanish": "¿Quiénes son tus hijos?"
-    },
-    {
-      "glosses": [
-        "HIJO",
-        "HOMBRE",
-        "QUIEN"
-      ],
-      "spanish": "¿Quién es tu hijo?"
-    },
-    {
-      "glosses": [
-        "HIJO",
-        "HOMBRE",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quiénes son tus hijos?"
@@ -3329,6 +3067,7 @@
       "glosses": [
         "HIJO",
         "MUJER",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quién es tu hija?"
@@ -3337,16 +3076,10 @@
       "glosses": [
         "HIJO",
         "MUJER",
+        "TUYO",
         "QUIEN"
       ],
       "spanish": "¿Quiénes son tus hijas?"
-    },
-    {
-      "glosses": [
-        "CALLE",
-        "DONDE"
-      ],
-      "spanish": "¿Dónde está la calle?"
     },
     {
       "glosses": [
@@ -3358,6 +3091,7 @@
     {
       "glosses": [
         "MAMA",
+        "MIO",
         "DONDE"
       ],
       "spanish": "¿Dónde está mi mamá?"
@@ -3365,6 +3099,7 @@
     {
       "glosses": [
         "MAMA",
+        "TUYO",
         "DONDE"
       ],
       "spanish": "¿Dónde está tu mamá?"
@@ -3382,13 +3117,6 @@
         "QUE"
       ],
       "spanish": "¿Qué pasa ahora?"
-    },
-    {
-      "glosses": [
-        "NUMERO",
-        "QUE"
-      ],
-      "spanish": "¿Qué número?"
     },
     {
       "glosses": [
@@ -3461,8 +3189,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "D",
         "I",
         "E",
@@ -3474,8 +3202,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "D",
         "I",
         "E",
@@ -3487,8 +3215,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "D",
         "I",
         "E",
@@ -3500,8 +3228,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "D",
         "I",
         "E",
@@ -3527,8 +3255,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "R",
         "O",
         "S",
@@ -3539,8 +3267,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "R",
         "O",
         "S",
@@ -3551,8 +3279,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "R",
         "O",
         "S",
@@ -3563,8 +3291,8 @@
     {
       "glosses": [
         "HOLA",
-        "YO",
         "NOMBRE",
+        "MIO",
         "R",
         "O",
         "S",
@@ -3590,13 +3318,6 @@
     },
     {
       "glosses": [
-        "ROBAR",
-        "NO"
-      ],
-      "spanish": "No robo."
-    },
-    {
-      "glosses": [
         "VOS",
         "VER",
         "NO"
@@ -3610,27 +3331,6 @@
         "NO"
       ],
       "spanish": "No ves."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "MAL"
-      ],
-      "spanish": "Ayer estuve mal."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "MAL"
-      ],
-      "spanish": "Ayer me sentí mal."
-    },
-    {
-      "glosses": [
-        "LLEVAR",
-        "NO"
-      ],
-      "spanish": "No llevo."
     },
     {
       "glosses": [
@@ -3682,33 +3382,11 @@
     },
     {
       "glosses": [
+        "YO",
         "VER",
         "NO"
       ],
       "spanish": "No veo."
-    },
-    {
-      "glosses": [
-        "TENER",
-        "NO"
-      ],
-      "spanish": "No tengo."
-    },
-    {
-      "glosses": [
-        "CHAU",
-        "VOS",
-        "VER"
-      ],
-      "spanish": "Chau, nos vemos."
-    },
-    {
-      "glosses": [
-        "CHAU",
-        "VOS",
-        "VER"
-      ],
-      "spanish": "Chau, te veo."
     },
     {
       "glosses": [
@@ -3779,6 +3457,7 @@
     {
       "glosses": [
         "PAPA",
+        "MIO",
         "BIEN"
       ],
       "spanish": "Mi papá está bien."
@@ -3793,6 +3472,7 @@
     {
       "glosses": [
         "MAMA",
+        "MIO",
         "BIEN"
       ],
       "spanish": "Mi mamá está bien."
@@ -3806,37 +3486,9 @@
     },
     {
       "glosses": [
-        "HOY_AHORA",
-        "BIEN"
-      ],
-      "spanish": "Hoy estoy bien."
-    },
-    {
-      "glosses": [
-        "HOY_AHORA",
-        "BIEN"
-      ],
-      "spanish": "Ahora estoy bien."
-    },
-    {
-      "glosses": [
         "MAL"
       ],
       "spanish": "Mal."
-    },
-    {
-      "glosses": [
-        "LLAMAR",
-        "NO"
-      ],
-      "spanish": "No llamo."
-    },
-    {
-      "glosses": [
-        "REPETIR",
-        "NO"
-      ],
-      "spanish": "No repito."
     },
     {
       "glosses": [
@@ -3861,28 +3513,6 @@
     {
       "glosses": [
         "YO",
-        "VER",
-        "NO"
-      ],
-      "spanish": "No veo."
-    },
-    {
-      "glosses": [
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "No lastimo."
-    },
-    {
-      "glosses": [
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "No me lastimo."
-    },
-    {
-      "glosses": [
-        "YO",
         "VIVIR",
         "NO"
       ],
@@ -3895,20 +3525,6 @@
         "NO"
       ],
       "spanish": "No vivo acá."
-    },
-    {
-      "glosses": [
-        "PODER",
-        "NO"
-      ],
-      "spanish": "No puedo."
-    },
-    {
-      "glosses": [
-        "PODER",
-        "NO"
-      ],
-      "spanish": "No soy capaz."
     },
     {
       "glosses": [
@@ -4056,6 +3672,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
+        "TUYO",
         "LLAMAR"
       ],
       "spanish": "Vos llamás a tu hermano."
@@ -4064,24 +3681,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
-        "LLAMAR"
-      ],
-      "spanish": "Llamás a tu hermano."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "HERMANO",
-        "HOMBRE",
-        "LLAMAR"
-      ],
-      "spanish": "Vos llamás a tu hermano."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "HERMANO",
-        "HOMBRE",
+        "TUYO",
         "LLAMAR"
       ],
       "spanish": "Llamás a tu hermano."
@@ -4091,6 +3691,7 @@
         "VOS",
         "HERMANO",
         "MUJER",
+        "TUYO",
         "LLAMAR"
       ],
       "spanish": "Vos llamás a tu hermana."
@@ -4100,6 +3701,7 @@
         "VOS",
         "HERMANO",
         "MUJER",
+        "TUYO",
         "LLAMAR"
       ],
       "spanish": "Llamás a tu hermana."
@@ -4166,6 +3768,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
+        "MIO",
         "LLAMAR",
         "NO"
       ],
@@ -4175,26 +3778,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "LLAMAR",
-        "NO"
-      ],
-      "spanish": "No llamo a mi esposo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ESPOSO",
-        "HOMBRE",
-        "LLAMAR",
-        "NO"
-      ],
-      "spanish": "Yo no llamo a mi esposo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ESPOSO",
-        "HOMBRE",
+        "MIO",
         "LLAMAR",
         "NO"
       ],
@@ -4205,6 +3789,7 @@
         "YO",
         "ESPOSO",
         "MUJER",
+        "MIO",
         "LLAMAR",
         "NO"
       ],
@@ -4215,6 +3800,7 @@
         "YO",
         "ESPOSO",
         "MUJER",
+        "MIO",
         "LLAMAR",
         "NO"
       ],
@@ -4247,20 +3833,6 @@
         "DONDE"
       ],
       "spanish": "¿Dónde vivís en la calle Mitre?"
-    },
-    {
-      "glosses": [
-        "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
-        "VOS",
-        "VIVIR_EN",
-        "DONDE"
-      ],
-      "spanish": "¿En QUE parte de la calle Mitre vivís?"
     },
     {
       "glosses": [
@@ -4301,7 +3873,7 @@
         "LLAMAR",
         "QUE"
       ],
-      "spanish": "¿A QUE hora llamás vos?"
+      "spanish": "¿A qué hora llamás vos?"
     },
     {
       "glosses": [
@@ -4310,7 +3882,7 @@
         "LLAMAR",
         "QUE"
       ],
-      "spanish": "¿A QUE hora llamás?"
+      "spanish": "¿A qué hora llamás?"
     },
     {
       "glosses": [
@@ -4429,35 +4001,6 @@
         "ROBAR"
       ],
       "spanish": "Ellas robaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "YO",
-        "ROBAR"
-      ],
-      "spanish": "Me robaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "HOMBRE",
-        "YO",
-        "ROBAR"
-      ],
-      "spanish": "Ellos me robaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "MUJER",
-        "YO",
-        "ROBAR"
-      ],
-      "spanish": "Ellas me robaron."
     },
     {
       "glosses": [
@@ -4750,621 +4293,1647 @@
       ],
       "spanish": "Vos vas a llevar el documento."
     },
-  {
-    "glosses": ["PASADO", "YO", "LLAMAR", "NO"],
-    "spanish": "No llamé."
-  },
-  {
-    "glosses": ["PASADO", "YO", "LLAMAR", "NO"],
-    "spanish": "Yo no llamé."
-  },
-  {
-    "glosses": ["PASADO", "YO", "LLAMAR", "NO"],
-    "spanish": "No estuve llamando."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "LLEVAR", "NO"],
-    "spanish": "No voy a llevar."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "LLEVAR", "NO"],
-    "spanish": "Yo no voy a llevar."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "LLEVAR", "NO"],
-    "spanish": "No llevaré."
-  },
-  {
-    "glosses": ["VOS", "VER", "QUE"],
-    "spanish": "¿Qué ves vos?"
-  },
-  {
-    "glosses": ["VOS", "VER", "QUE"],
-    "spanish": "¿Qué ves?"
-  },
-  {
-    "glosses": ["VOS", "VER", "QUE"],
-    "spanish": "¿Qué estás viendo?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "ROBAR", "QUE"],
-    "spanish": "¿Qué robaron?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "ROBAR", "QUE"],
-    "spanish": "¿Qué robaron ellos?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "ROBAR", "QUE"],
-    "spanish": "¿Qué se robaron?"
-  },
-  {
-    "glosses": ["YO", "HIJO", "MUJER", "LLEVAR"],
-    "spanish": "Llevo a mi hija."
-  },
-  {
-    "glosses": ["YO", "HIJO", "MUJER", "LLEVAR"],
-    "spanish": "Yo llevo a mi hija."
-  },
-  {
-    "glosses": ["YO", "HIJO", "MUJER", "LLEVAR"],
-    "spanish": "Llevo a la hija."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER"],
-    "spanish": "Tuviste."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER"],
-    "spanish": "Vos tuviste."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER"],
-    "spanish": "Tenías."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER"],
-    "spanish": "Vos tenías."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "VER"],
-    "spanish": "Viste."
-  },
-  {
-    "glosses": ["PASADO", "VOS", "VER"],
-    "spanish": "Vos viste."
-  },
-  {
-    "glosses": ["PASADO", "YO", "DOCUMENTO", "NUMERO", "4", "5", "6", "7", "8", "9", "0", "1"],
-    "spanish": "Mi número de documento era 45678901."
-  },
-  {
-    "glosses": ["PASADO", "YO", "DOCUMENTO", "NUMERO", "4", "5", "6", "7", "8", "9", "0", "1"],
-    "spanish": "Mi documento era 45678901."
-  },
-  {
-    "glosses": ["PASADO", "YO", "DOCUMENTO", "NUMERO", "4", "5", "6", "7", "8", "9", "0", "1"],
-    "spanish": "Mi DNI era 45678901."
-  },
-  {
-    "glosses": ["PASADO", "YO", "DOCUMENTO", "NUMERO", "4", "5", "6", "7", "8", "9", "0", "1"],
-    "spanish": "Mi número de DNI era 45678901."
-  },
-  {
-    "glosses": ["PASADO", "YO", "DOCUMENTO", "NUMERO", "4", "5", "6", "7", "8", "9", "0", "1"],
-    "spanish": "El número de mi documento era 45678901."
-  },
-  {
-    "glosses": ["LLAMAR", "QUIEN"],
-    "spanish": "¿Quién llama?"
-  },
-  {
-    "glosses": ["PASADO", "LLAMAR", "QUIEN"],
-    "spanish": "¿Quién llamó?"
-  },
-  {
-    "glosses": ["PASADO", "ROBAR", "QUIEN"],
-    "spanish": "¿Quién robó?"
-  },
-  {
-    "glosses": ["FUTURO", "YO", "CUCHILLO", "LLEVAR", "NO"],
-    "spanish": "No voy a llevar el cuchillo."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "CUCHILLO", "LLEVAR", "NO"],
-    "spanish": "Yo no voy a llevar el cuchillo."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "CUCHILLO", "LLEVAR", "NO"],
-    "spanish": "No llevaré el cuchillo."
-  },
-  {
-    "glosses": ["FUTURO", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vas a vivir?"
-  },
-  {
-    "glosses": ["FUTURO", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vas a vivir vos?"
-  },
-  {
-    "glosses": ["FUTURO", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivirás?"
-  },
-  {
-    "glosses": ["YO", "HIJO", "HOMBRE", "LLEVAR"],
-    "spanish": "Llevo a mi hijo."
-  },
-  {
-    "glosses": ["YO", "HIJO", "HOMBRE", "LLEVAR"],
-    "spanish": "Yo llevo a mi hijo."
-  },
-  {
-    "glosses": ["YO", "HIJO", "HOMBRE", "LLEVAR"],
-    "spanish": "Llevo al hijo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "I", "T", "E"],
-    "spanish": "Me llamo Maite."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "I", "T", "E"],
-    "spanish": "Yo me llamo Maite."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "I", "T", "E"],
-    "spanish": "Mi nombre es Maite."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "I", "T", "E"],
-    "spanish": "Soy Maite."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "I", "T", "E"],
-    "spanish": "Yo soy Maite."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
-    "spanish": "Me llamo Juan."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
-    "spanish": "Yo me llamo Juan."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
-    "spanish": "Mi nombre es Juan."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
-    "spanish": "Soy Juan."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "U", "A", "N"],
-    "spanish": "Yo soy Juan."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "C", "A", "M", "I", "L", "A"],
-    "spanish": "Me llamo Camila."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "C", "A", "M", "I", "L", "A"],
-    "spanish": "Yo me llamo Camila."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "C", "A", "M", "I", "L", "A"],
-    "spanish": "Mi nombre es Camila."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "C", "A", "M", "I", "L", "A"],
-    "spanish": "Soy Camila."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "C", "A", "M", "I", "L", "A"],
-    "spanish": "Yo soy Camila."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "T", "E", "O"],
-    "spanish": "Me llamo Mateo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "T", "E", "O"],
-    "spanish": "Yo me llamo Mateo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "T", "E", "O"],
-    "spanish": "Mi nombre es Mateo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "T", "E", "O"],
-    "spanish": "Soy Mateo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "T", "E", "O"],
-    "spanish": "Yo soy Mateo."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "L", "U", "C", "I", "A"],
-    "spanish": "Me llamo Lucía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "L", "U", "C", "I", "A"],
-    "spanish": "Yo me llamo Lucía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "L", "U", "C", "I", "A"],
-    "spanish": "Mi nombre es Lucía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "L", "U", "C", "I", "A"],
-    "spanish": "Soy Lucía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "L", "U", "C", "I", "A"],
-    "spanish": "Yo soy Lucía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "T", "O", "M", "A", "S"],
-    "spanish": "Me llamo Tomás."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "T", "O", "M", "A", "S"],
-    "spanish": "Yo me llamo Tomás."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "T", "O", "M", "A", "S"],
-    "spanish": "Mi nombre es Tomás."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "T", "O", "M", "A", "S"],
-    "spanish": "Soy Tomás."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "T", "O", "M", "A", "S"],
-    "spanish": "Yo soy Tomás."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "S", "O", "F", "I", "A"],
-    "spanish": "Me llamo Sofía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "S", "O", "F", "I", "A"],
-    "spanish": "Yo me llamo Sofía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "S", "O", "F", "I", "A"],
-    "spanish": "Mi nombre es Sofía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "S", "O", "F", "I", "A"],
-    "spanish": "Soy Sofía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "S", "O", "F", "I", "A"],
-    "spanish": "Yo soy Sofía."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "O", "A", "Q", "U", "I", "N"],
-    "spanish": "Me llamo Joaquín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "O", "A", "Q", "U", "I", "N"],
-    "spanish": "Yo me llamo Joaquín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "O", "A", "Q", "U", "I", "N"],
-    "spanish": "Mi nombre es Joaquín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "O", "A", "Q", "U", "I", "N"],
-    "spanish": "Soy Joaquín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "J", "O", "A", "Q", "U", "I", "N"],
-    "spanish": "Yo soy Joaquín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "V", "A", "L", "E", "N", "T", "I", "N", "A"],
-    "spanish": "Me llamo Valentina."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "V", "A", "L", "E", "N", "T", "I", "N", "A"],
-    "spanish": "Yo me llamo Valentina."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "V", "A", "L", "E", "N", "T", "I", "N", "A"],
-    "spanish": "Mi nombre es Valentina."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "V", "A", "L", "E", "N", "T", "I", "N", "A"],
-    "spanish": "Soy Valentina."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "V", "A", "L", "E", "N", "T", "I", "N", "A"],
-    "spanish": "Yo soy Valentina."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "R", "T", "I", "N"],
-    "spanish": "Me llamo Martín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "R", "T", "I", "N"],
-    "spanish": "Yo me llamo Martín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "R", "T", "I", "N"],
-    "spanish": "Mi nombre es Martín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "R", "T", "I", "N"],
-    "spanish": "Soy Martín."
-  },
-  {
-    "glosses": ["YO", "NOMBRE", "M", "A", "R", "T", "I", "N"],
-    "spanish": "Yo soy Martín."
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "YO", "TENER"],
-    "spanish": "Me tuvieron."
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "YO", "TENER"],
-    "spanish": "Ellos me tuvieron."
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "YO", "TENER"],
-    "spanish": "Me tenían."
-  },
-  {
-    "glosses": ["PASADO", "ESPOSO", "MUJER", "QUIEN"],
-    "spanish": "¿Quién era tu esposa?"
-  },
-  {
-    "glosses": ["PASADO", "ESPOSO", "HOMBRE", "QUIEN"],
-    "spanish": "¿Quién era tu esposo?"
-  },
-  {
-    "glosses": ["PASADO", "HERMANO", "QUIEN"],
-    "spanish": "¿Quién era tu hermano?"
-  },
-  {
-    "glosses": ["FUTURO", "CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vas a vivir?"
-  },
-  {
-    "glosses": ["FUTURO", "CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vas a vivir vos?"
-  },
-  {
-    "glosses": ["PASADO", "CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viviste?"
-  },
-  {
-    "glosses": ["PASADO", "CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivías?"
-  },
-  {
-    "glosses": ["YO", "APELLIDO", "L", "L", "I", "N", "A", "R", "E", "S"],
-    "spanish": "Mi apellido es Llinares."
-  },
-  {
-    "glosses": ["CALLE", "S", "A", "R", "M", "I", "E", "N", "T", "O", "YO", "VIVIR_EN"],
-    "spanish": "Vivo en la calle Sarmiento."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Te tuve."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Yo te tuve."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Te tenía."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Yo te tenía."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "VER"],
-    "spanish": "Te vi."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "VER"],
-    "spanish": "Yo te vi."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
-    "spanish": "Te llamé."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
-    "spanish": "Yo te llamé."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "VER"],
-    "spanish": "Te voy a ver."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "VER"],
-    "spanish": "Yo te voy a ver."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "VER"],
-    "spanish": "Te veré."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "VER"],
-    "spanish": "Yo te veré."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "TENER"],
-    "spanish": "Te voy a tener."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "TENER"],
-    "spanish": "Yo te voy a tener."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Te tuve a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Yo te tuve a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Te tenía a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "TENER"],
-    "spanish": "Yo te tenía a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "VER"],
-    "spanish": "Te vi a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "VER"],
-    "spanish": "Yo te vi a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
-    "spanish": "Te llamé a vos."
-  },
-  {
-    "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
-    "spanish": "Yo te llamé a vos."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "LLAMAR"],
-    "spanish": "Te voy a llamar a vos."
-  },
-  {
-    "glosses": ["FUTURO", "YO", "VOS", "VER"],
-    "spanish": "Te voy a ver a vos."
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivían en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivieron en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "HOMBRE", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivían ellos en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "HOMBRE", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivieron ellos en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivían ellas en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivieron ellas en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivías en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viviste en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivías vos en la plaza?"
-  },
-  {
-    "glosses": ["PASADO", "PLAZA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viviste vos en la plaza?"
-  },
-  {
-    "glosses": ["PLAZA", "ELLOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viven en la plaza?"
-  },
-  {
-    "glosses": ["PLAZA", "ELLOS", "HOMBRE", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viven ellos en la plaza?"
-  },
-  {
-    "glosses": ["PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde viven ellas en la plaza?"
-  },
-  {
-    "glosses": ["CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivís en la casa?"
-  },
-  {
-    "glosses": ["CASA", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivís vos en la casa?"
-  },
-  {
-    "glosses": ["CALLE", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivís en la calle?"
-  },
-  {
-    "glosses": ["CALLE", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivís vos en la calle?"
-  },
-  {
-    "glosses": ["PASADO", "CALLE", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivías en la calle?"
-  },
-  {
-    "glosses": ["PASADO", "CALLE", "VOS", "VIVIR", "DONDE"],
-    "spanish": "¿Dónde vivías vos en la calle?"
-  },
-  {
-    "glosses": ["PASADO", "VOS", "VER", "QUE"],
-    "spanish": "¿Qué viste?"
-  },
-  {
-    "glosses": ["PASADO", "VOS", "VER", "QUE"],
-    "spanish": "¿Qué viste vos?"
-  },
-  {
-    "glosses": ["PASADO", "VOS", "LLAMAR", "QUE"],
-    "spanish": "¿Qué llamaste?"
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER", "QUE"],
-    "spanish": "¿Qué tuviste?"
-  },
-  {
-    "glosses": ["PASADO", "VOS", "TENER", "QUE"],
-    "spanish": "¿Qué tenías?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "TENER", "QUE"],
-    "spanish": "¿Qué tuvieron?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "HOMBRE", "TENER", "QUE"],
-    "spanish": "¿Qué tuvieron ellos?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "MUJER", "TENER", "QUE"],
-    "spanish": "¿Qué tuvieron ellas?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "TENER", "QUE"],
-    "spanish": "¿Qué tenían?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "HOMBRE", "TENER", "QUE"],
-    "spanish": "¿Qué tenían ellos?"
-  },
-  {
-    "glosses": ["PASADO", "ELLOS", "MUJER", "TENER", "QUE"],
-    "spanish": "¿Qué tenían ellas?"
-  }
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No llamé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "Yo no llamé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No estuve llamando."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "No voy a llevar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "Yo no voy a llevar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "No llevaré."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "VER",
+        "QUE"
+      ],
+      "spanish": "¿Qué ves vos?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "VER",
+        "QUE"
+      ],
+      "spanish": "¿Qué ves?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "VER",
+        "QUE"
+      ],
+      "spanish": "¿Qué estás viendo?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "ROBAR",
+        "QUE"
+      ],
+      "spanish": "¿Qué robaron?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "HOMBRE",
+        "ROBAR",
+        "QUE"
+      ],
+      "spanish": "¿Qué robaron ellos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "ROBAR",
+        "QUE"
+      ],
+      "spanish": "¿Qué se robaron?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "MUJER",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo a mi hija."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "MUJER",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Yo llevo a mi hija."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "MUJER",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo a la hija."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Tuviste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Vos tuviste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Tenías."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Vos tenías."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Viste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Vos viste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "MIO",
+        "NUMERO",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "1"
+      ],
+      "spanish": "Mi número de documento era 45678901."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "MIO",
+        "NUMERO",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "1"
+      ],
+      "spanish": "Mi documento era 45678901."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "MIO",
+        "NUMERO",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "1"
+      ],
+      "spanish": "Mi DNI era 45678901."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "MIO",
+        "NUMERO",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "1"
+      ],
+      "spanish": "Mi número de DNI era 45678901."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "MIO",
+        "NUMERO",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "1"
+      ],
+      "spanish": "El número de mi documento era 45678901."
+    },
+    {
+      "glosses": [
+        "LLAMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién llama?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "LLAMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién llamó?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ROBAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién robó?"
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "CUCHILLO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "No voy a llevar el cuchillo."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "CUCHILLO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "Yo no voy a llevar el cuchillo."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "CUCHILLO",
+        "LLEVAR",
+        "NO"
+      ],
+      "spanish": "No llevaré el cuchillo."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vas a vivir?"
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vas a vivir vos?"
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivirás?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Yo llevo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo al hijo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "I",
+        "T",
+        "E"
+      ],
+      "spanish": "Me llamo Maite."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "I",
+        "T",
+        "E"
+      ],
+      "spanish": "Yo me llamo Maite."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "I",
+        "T",
+        "E"
+      ],
+      "spanish": "Mi nombre es Maite."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "I",
+        "T",
+        "E"
+      ],
+      "spanish": "Soy Maite."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "I",
+        "T",
+        "E"
+      ],
+      "spanish": "Yo soy Maite."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Me llamo Juan."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Yo me llamo Juan."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Mi nombre es Juan."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Soy Juan."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "U",
+        "A",
+        "N"
+      ],
+      "spanish": "Yo soy Juan."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "C",
+        "A",
+        "M",
+        "I",
+        "L",
+        "A"
+      ],
+      "spanish": "Me llamo Camila."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "C",
+        "A",
+        "M",
+        "I",
+        "L",
+        "A"
+      ],
+      "spanish": "Yo me llamo Camila."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "C",
+        "A",
+        "M",
+        "I",
+        "L",
+        "A"
+      ],
+      "spanish": "Mi nombre es Camila."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "C",
+        "A",
+        "M",
+        "I",
+        "L",
+        "A"
+      ],
+      "spanish": "Soy Camila."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "C",
+        "A",
+        "M",
+        "I",
+        "L",
+        "A"
+      ],
+      "spanish": "Yo soy Camila."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "T",
+        "E",
+        "O"
+      ],
+      "spanish": "Me llamo Mateo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "T",
+        "E",
+        "O"
+      ],
+      "spanish": "Yo me llamo Mateo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "T",
+        "E",
+        "O"
+      ],
+      "spanish": "Mi nombre es Mateo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "T",
+        "E",
+        "O"
+      ],
+      "spanish": "Soy Mateo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "T",
+        "E",
+        "O"
+      ],
+      "spanish": "Yo soy Mateo."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "L",
+        "U",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo Lucía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "L",
+        "U",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Yo me llamo Lucía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "L",
+        "U",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Mi nombre es Lucía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "L",
+        "U",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Soy Lucía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "L",
+        "U",
+        "C",
+        "I",
+        "A"
+      ],
+      "spanish": "Yo soy Lucía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "T",
+        "O",
+        "M",
+        "A",
+        "S"
+      ],
+      "spanish": "Me llamo Tomás."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "T",
+        "O",
+        "M",
+        "A",
+        "S"
+      ],
+      "spanish": "Yo me llamo Tomás."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "T",
+        "O",
+        "M",
+        "A",
+        "S"
+      ],
+      "spanish": "Mi nombre es Tomás."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "T",
+        "O",
+        "M",
+        "A",
+        "S"
+      ],
+      "spanish": "Soy Tomás."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "T",
+        "O",
+        "M",
+        "A",
+        "S"
+      ],
+      "spanish": "Yo soy Tomás."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Yo me llamo Sofía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Mi nombre es Sofía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Soy Sofía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "S",
+        "O",
+        "F",
+        "I",
+        "A"
+      ],
+      "spanish": "Yo soy Sofía."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "O",
+        "A",
+        "Q",
+        "U",
+        "I",
+        "N"
+      ],
+      "spanish": "Me llamo Joaquín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "O",
+        "A",
+        "Q",
+        "U",
+        "I",
+        "N"
+      ],
+      "spanish": "Yo me llamo Joaquín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "O",
+        "A",
+        "Q",
+        "U",
+        "I",
+        "N"
+      ],
+      "spanish": "Mi nombre es Joaquín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "O",
+        "A",
+        "Q",
+        "U",
+        "I",
+        "N"
+      ],
+      "spanish": "Soy Joaquín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "J",
+        "O",
+        "A",
+        "Q",
+        "U",
+        "I",
+        "N"
+      ],
+      "spanish": "Yo soy Joaquín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "V",
+        "A",
+        "L",
+        "E",
+        "N",
+        "T",
+        "I",
+        "N",
+        "A"
+      ],
+      "spanish": "Me llamo Valentina."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "V",
+        "A",
+        "L",
+        "E",
+        "N",
+        "T",
+        "I",
+        "N",
+        "A"
+      ],
+      "spanish": "Yo me llamo Valentina."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "V",
+        "A",
+        "L",
+        "E",
+        "N",
+        "T",
+        "I",
+        "N",
+        "A"
+      ],
+      "spanish": "Mi nombre es Valentina."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "V",
+        "A",
+        "L",
+        "E",
+        "N",
+        "T",
+        "I",
+        "N",
+        "A"
+      ],
+      "spanish": "Soy Valentina."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "V",
+        "A",
+        "L",
+        "E",
+        "N",
+        "T",
+        "I",
+        "N",
+        "A"
+      ],
+      "spanish": "Yo soy Valentina."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Me llamo Martín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Yo me llamo Martín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Mi nombre es Martín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Soy Martín."
+    },
+    {
+      "glosses": [
+        "NOMBRE",
+        "MIO",
+        "M",
+        "A",
+        "R",
+        "T",
+        "I",
+        "N"
+      ],
+      "spanish": "Yo soy Martín."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "YO",
+        "TENER"
+      ],
+      "spanish": "Me tuvieron."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "HOMBRE",
+        "YO",
+        "TENER"
+      ],
+      "spanish": "Ellos me tuvieron."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "YO",
+        "TENER"
+      ],
+      "spanish": "Me tenían."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ESPOSO",
+        "MUJER",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién era tu esposa?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ESPOSO",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién era tu esposo?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "HERMANO",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién era tu hermano?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CASA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viviste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CASA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivías?"
+    },
+    {
+      "glosses": [
+        "APELLIDO",
+        "MIO",
+        "L",
+        "L",
+        "I",
+        "N",
+        "A",
+        "R",
+        "E",
+        "S"
+      ],
+      "spanish": "Mi apellido es Llinares."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "S",
+        "A",
+        "R",
+        "M",
+        "I",
+        "E",
+        "N",
+        "T",
+        "O",
+        "YO",
+        "VIVIR_EN"
+      ],
+      "spanish": "Vivo en la calle Sarmiento."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "S",
+        "A",
+        "R",
+        "M",
+        "I",
+        "E",
+        "N",
+        "T",
+        "O",
+        "YO",
+        "VIVIR_EN"
+      ],
+      "spanish": "Yo vivo en la calle Sarmiento."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Te tuve."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Yo te tuve."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Te tenía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Yo te tenía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Te vi."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Yo te vi."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Te llamé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Yo te llamé."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Te voy a ver."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Yo te voy a ver."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Te veré."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Yo te veré."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Te voy a tener."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Yo te voy a tener."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Te tuve a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Yo te tuve a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Te tenía a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "TENER"
+      ],
+      "spanish": "Yo te tenía a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Te vi a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Yo te vi a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Te llamé a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Yo te llamé a vos."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "LLAMAR"
+      ],
+      "spanish": "Te voy a llamar a vos."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "VER"
+      ],
+      "spanish": "Te voy a ver a vos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivían en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivieron en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "HOMBRE",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivían ellos en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "HOMBRE",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivieron ellos en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "MUJER",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivían ellas en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "ELLOS",
+        "MUJER",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivieron ellas en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivías en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viviste en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivías vos en la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viviste vos en la plaza?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "ELLOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viven en la plaza?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "ELLOS",
+        "HOMBRE",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viven ellos en la plaza?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "ELLOS",
+        "MUJER",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde viven ellas en la plaza?"
+    },
+    {
+      "glosses": [
+        "CASA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivís en la casa?"
+    },
+    {
+      "glosses": [
+        "CASA",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivís vos en la casa?"
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivís en la calle?"
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivís vos en la calle?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CALLE",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivías en la calle?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CALLE",
+        "VOS",
+        "VIVIR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde vivías vos en la calle?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "VER",
+        "QUE"
+      ],
+      "spanish": "¿Qué viste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "VER",
+        "QUE"
+      ],
+      "spanish": "¿Qué viste vos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LLAMAR",
+        "QUE"
+      ],
+      "spanish": "¿Qué llamaste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tuviste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tenías?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tuvieron?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "HOMBRE",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tuvieron ellos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "MUJER",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tuvieron ellas?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tenían?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "HOMBRE",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tenían ellos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "MUJER",
+        "TENER",
+        "QUE"
+      ],
+      "spanish": "¿Qué tenían ellas?"
+    }
   ]
 }
