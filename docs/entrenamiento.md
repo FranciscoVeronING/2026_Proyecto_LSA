@@ -36,7 +36,6 @@ Salida en `outputs/` (adaptador + carpeta `*_gguf`) y log en `logs/`. Split 85/1
 
 ```powershell
 python eval_compare_models.py
-python chat.py --model qwen2.5-0.5b
 ```
 
 | Parámetro | Valor |

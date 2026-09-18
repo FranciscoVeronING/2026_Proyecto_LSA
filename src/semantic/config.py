@@ -36,7 +36,6 @@ MODELS = [
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
-        "export_gguf": True,
     },
     {
         "id": "qwen2.5-1.5b",
@@ -45,7 +44,6 @@ MODELS = [
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
-        "export_gguf": True,
     },
     {
         "id": "qwen2.5-3b",
@@ -54,7 +52,6 @@ MODELS = [
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
-        "export_gguf": True,
     },
     {
         "id": "llama-3.2-1b",
@@ -63,7 +60,6 @@ MODELS = [
         "chat_template": "llama-3.1",
         "instruction_part": "<|start_header_id|>user<|end_header_id|>\n\n",
         "response_part": "<|start_header_id|>assistant<|end_header_id|>\n\n",
-        "export_gguf": True,
     },
     {
         "id": "smollm2-1.7b",
@@ -72,7 +68,6 @@ MODELS = [
         "chat_template": "chatml",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
-        "export_gguf": True,
     },
 ]
 

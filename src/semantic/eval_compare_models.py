@@ -217,8 +217,7 @@ def main() -> int:
     system_prompt = load_system_prompt()
     samples = load_trial_samples(dataset_path)
     groups = load_trial_groups(dataset_path)
-    
-    # Construye el mapeo de referencia única directa para cada variante en español
+
     refs: dict[str, list[str]] = {}
     for sample in samples:
         refs.setdefault(sample["spanish"], [])

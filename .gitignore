@@ -4,6 +4,8 @@ __pycache__/
 .env
 build/
 
+dataset/
+
 src/semantic/logs/
 src/semantic/outputs/
 unsloth_compiled_cache/

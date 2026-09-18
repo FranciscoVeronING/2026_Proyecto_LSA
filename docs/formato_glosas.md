@@ -1,6 +1,6 @@
 # Formato de glosas
 
-En el JSON los nombres y el DNI siguen letra a letra. Al entrenar se compactan.
+En el JSON los nombres y el DNI siguen letra a letra. Al entrenar y al evaluar se compactan.
 
 | En el JSON | Target |
 |------------|--------|
@@ -14,8 +14,3 @@ Una oración en español tiene una sola lista de glosas.
 - hijo/hermano/esposo → `HOMBRE`; hija/hermana/esposa → `MUJER`
 - `Ellos` → `ELLOS HOMBRE`; `Ellas` → `ELLOS MUJER`; sujeto tácito sin marca
 - `calle` no se traduce como `CASA`
-
-```powershell
-cd src\semantic
-python test_gloss_format.py
-```
