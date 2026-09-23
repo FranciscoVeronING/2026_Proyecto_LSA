@@ -86,3 +86,40 @@ class TinySkeletonClassifier(nn.Module):
 
         x_dropped = self.classifier_dropout(x_pooled)
         return self.classification_head(x_dropped)
+
+
+def load_classifier_bundle(device: str = "cpu"):
+    """Carga mapeo_clases.json + tinyskeleton_best.pth. num_classes = tamaño del mapeo."""
+    import json
+    from pathlib import Path
+
+    from classifier import config as cfg
+
+    class_to_idx = json.loads(Path(cfg.CLASSES_PATH).read_text(encoding="utf-8"))
+    idx_to_class = {int(v): str(k) for k, v in class_to_idx.items()}
+    n_labels = len(idx_to_class)
+    if n_labels == 0:
+        raise RuntimeError(f"mapeo_clases.json vacío: {cfg.CLASSES_PATH}")
+
+    ckpt = torch.load(cfg.WEIGHTS_PATH, map_location=device, weights_only=True)
+    if "classification_head.weight" not in ckpt:
+        raise RuntimeError(f"Checkpoint sin classification_head: {cfg.WEIGHTS_PATH}")
+    n_ckpt = int(ckpt["classification_head.weight"].shape[0])
+    if n_ckpt != n_labels:
+        raise RuntimeError(
+            f"El mapeo tiene {n_labels} señas pero {cfg.WEIGHTS_PATH} tiene {n_ckpt} salidas. "
+            "Copiá el tinyskeleton_best.pth entrenado con esas clases (mismo mapeo_clases.json)."
+        )
+
+    model = TinySkeletonClassifier(
+        cfg.FRAME_FEATURES_DIM,
+        cfg.HIDDEN_DIM,
+        num_heads=cfg.NUM_HEADS,
+        num_layers=cfg.NUM_LAYERS,
+        num_classes=n_labels,
+        dropout_rate=cfg.DROPOUT_RATE,
+    )
+    model.load_state_dict(ckpt)
+    model.to(device)
+    model.eval()
+    return model, idx_to_class

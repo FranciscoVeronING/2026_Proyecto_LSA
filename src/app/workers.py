@@ -15,7 +15,7 @@ import torch
 
 import classifier.config as cfg
 from app.state import shared_state, is_running
-from classifier.arch import TinySkeletonClassifier
+from classifier.arch import load_classifier_bundle
 from core.conversation_memory import ConversationMemory
 from core.repeat_policy import format_literal_utterance
 from semantic.config import USE_CONVERSATION_HISTORY
@@ -30,23 +30,11 @@ class InferenceWorker:
         self.model = None
 
         try:
-            self.model = TinySkeletonClassifier(
-                cfg.FRAME_FEATURES_DIM,
-                cfg.HIDDEN_DIM,
-                num_heads=cfg.NUM_HEADS,
-                num_layers=cfg.NUM_LAYERS,
-                num_classes=num_classes,
-                dropout_rate=cfg.DROPOUT_RATE,
-            ).to(self.device)
-
-            self.model.load_state_dict(
-                torch.load(cfg.WEIGHTS_PATH, map_location=self.device, weights_only=True)
-            )
-            self.model.eval()
-            print(f"[*] Clasificador cargado en {self.device}")
+            self.model, self.idx_to_class = load_classifier_bundle(self.device)
+            print(f"[*] Clasificador: {len(self.idx_to_class)} señas en {self.device}")
         except Exception as e:
             print(f"[!] Error cargando el clasificador: {e}")
-            print("[!] Si cambiaste la arquitectura, reentrená antes de usar la cámara.")
+            print("[!] Si cambiaste la cantidad de señas, copiá el .pth entrenado con el mismo mapeo_clases.json.")
 
     def start(self):
         Thread(target=self.loop, args=(), daemon=True).start()
@@ -161,66 +149,29 @@ class SemanticWorker:
         Thread(target=self._bootstrap_and_loop, args=(), daemon=True).start()
 
     def switch_model(self, model_id: str):
-        """Pide cambio de GGUF al hilo de la LLM (sin reiniciar la cámara)."""
-        if not self.enabled or not model_id:
-            return
-        try:
-            while True:
-                self._switch_queue.get_nowait()
-        except Empty:
-            pass
-        try:
-            self._switch_queue.put_nowait(model_id)
-            print(f"[*] Cambio de modelo semántico pedido: {model_id}")
-        except Exception:
-            print(f"[!] No se pudo encolar el cambio a {model_id}")
+        """El GGUF vive en el servidor remoto; ILSA no cambia de modelo."""
+        return None
 
     def _apply_model_switch(self, model_id: str):
-        from semantic.translator import switch_model, translate_glosses, get_active_model_id
-
-        with shared_state["lock"]:
-            shared_state["semantic_busy"] = True
-            shared_state["spanish_text"] = f"Cargando {model_id}..."
-            shared_state["semantic_model"] = model_id
-
-        try:
-            switch_model(model_id)
-            self._translate_glosses = translate_glosses
-            self._current_model_id = get_active_model_id() or model_id
-            self.ready = True
-            print(f"[*] Traductor semántico listo ({self._current_model_id}).")
-            status = f"Modelo: {self._current_model_id}"
-        except Exception as e:
-            print(f"[!] No se pudo cargar {model_id}: {e}")
-            self._translate_glosses = None
-            self.ready = False
-            status = f"Error al cargar {model_id}"
-
-        with shared_state["lock"]:
-            shared_state["spanish_text"] = status
-            shared_state["semantic_busy"] = False
-            shared_state["semantic_model"] = self._current_model_id or ""
+        return None
 
     def _bootstrap_and_loop(self):
-        from semantic.config import DEFAULT_MODEL_ID
-        from semantic.translator import (
-            get_active_model_id,
-            load_model_and_tokenizer,
-            translate_glosses,
-        )
+        from semantic.remote import configured, ping, translate_sordo
 
         try:
-            load_model_and_tokenizer()
-            self._translate_glosses = translate_glosses
-            self._current_model_id = get_active_model_id() or DEFAULT_MODEL_ID
+            if not configured():
+                raise RuntimeError("Falta LSA_SEMANTIC_URL")
+            if not ping():
+                raise RuntimeError("El servidor semántico no responde")
+            self._translate_glosses = translate_sordo
+            self._current_model_id = "remote"
             self.ready = True
             with shared_state["lock"]:
-                shared_state["semantic_model"] = self._current_model_id
-            print(f"[*] Traductor semántico listo ({self._current_model_id}).")
+                shared_state["semantic_model"] = "remote"
+            print("[*] Traductor remoto listo.")
         except Exception as e:
             print(f"[!] No se pudo iniciar el traductor: {e}")
             print("[!] La cámara sigue; solo glosas, sin LLM.")
-            print("[!] Tip: pip install -r requirements.txt")
             self._translate_glosses = None
             self.ready = False
 

@@ -1,5 +1,4 @@
-# PyInstaller: el motor es 100% CPU (Torch CPU + llama.cpp CPU).
-# Llama 1B no usa placa de video.
+# PyInstaller: el motor es 100% CPU (Torch CPU). El GGUF corre en otro proceso.
 import os
 import sys
 from pathlib import Path
@@ -23,7 +22,6 @@ if getattr(sys, "frozen", False):
                 root,
                 root / "torch" / "lib",
                 root / "torch" / "bin",
-                root / "llama_cpp" / "lib",
             ]
         )
     seen = set()

@@ -103,22 +103,35 @@ class IlsaWindow:
     def _start_bootstrap(self) -> None:
         self._retry_btn.pack_forget()
         self._splash_status.set("Preparando…")
-        self._splash_detail.set("Comprobando el traductor.")
-        threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-gguf").start()
+        self._splash_detail.set("Comprobando el traductor remoto.")
+        threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-semantic").start()
 
     def _bootstrap_worker(self) -> None:
         try:
-            from semantic.gguf_fetch import ensure_gguf, find_local_gguf
+            from semantic.remote import configured, ping, semantic_url
 
-            if find_local_gguf() is None:
-                self._boot_q.put(("msg", "Descargando el traductor…", "Una sola vez, desde GitHub (~770 MB)."))
-            else:
-                self._boot_q.put(("msg", "Configurando…", "El traductor ya está en esta PC."))
-
-            def progress(_done: int, _total: int, msg: str) -> None:
-                self._boot_q.put(("msg", msg, ""))
-
-            ensure_gguf(progress)
+            if self.args.no_llm:
+                self._boot_q.put(("ok",))
+                return
+            if not configured():
+                self._boot_q.put(
+                    (
+                        "msg",
+                        "Sin LSA_SEMANTIC_URL",
+                        "ILSA clasifica igual; las glosas no se traducen hasta que haya túnel.",
+                    )
+                )
+                self._boot_q.put(("ok",))
+                return
+            self._boot_q.put(("msg", "Buscando el traductor…", semantic_url()))
+            if not ping():
+                self._boot_q.put(
+                    (
+                        "msg",
+                        "Traductor no responde",
+                        "Podés Encender igual. Subí semantic_url.txt al release y revisá ngrok.",
+                    )
+                )
             self._boot_q.put(("ok",))
         except Exception as exc:
             self._boot_q.put(("err", str(exc)))
@@ -454,6 +467,9 @@ class IlsaWindow:
                         bits.append("traduciendo…")
                     self.status_var.set(" · ".join(bits))
                     extra = f"{self.args.host}:{self.args.port}  ·  CPU"
+                    line = data.get("metrics") or ""
+                    if line:
+                        extra = f"{extra}  ·  {line}"
                     self.detail_var.set(extra)
                     self._sync_actions()
             except Exception:

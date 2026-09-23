@@ -1,9 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller: dist/LSABackend/ILSA.exe. CPU only, sin GGUF (se descarga al abrir)."""
+"""PyInstaller: ILSA.exe, clasificador CPU, sin llama.cpp ni GGUF."""
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_submodules
 
 block_cipher = None
 repo = Path(SPECPATH).resolve().parent
@@ -11,15 +11,13 @@ src = repo / "src"
 
 datas = [
     (str(src / "classifier" / "weights"), "classifier/weights"),
-    (str(src / "semantic" / "prompts"), "semantic/prompts"),
 ]
 
 hidden = (
     collect_submodules("classifier")
-    + collect_submodules("semantic")
     + collect_submodules("core")
     + collect_submodules("backend")
-    + ["app.utterance"]
+    + ["app.utterance", "semantic.remote", "semantic.config"]
 )
 
 _EXCLUDES = [
@@ -51,6 +49,11 @@ _EXCLUDES = [
     "accelerate",
     "huggingface_hub",
     "unsloth",
+    "llama_cpp",
+    "semantic.translator",
+    "semantic.gguf_fetch",
+    "semantic.native_llama",
+    "semantic.http_server",
 ]
 
 # VC++ al lado del exe: en una PC sin Visual Studio, shm.dll no carga (WinError 126).
@@ -77,7 +80,7 @@ a = Analysis(
     [str(repo / "run_backend.py")],
     pathex=[str(src), str(repo)],
     binaries=_vc_binaries,
-    datas=datas + collect_data_files("llama_cpp"),
+    datas=datas,
     hiddenimports=hidden + ["tkinter", "tkinter.ttk", "tkinter.font", "torch.distributed"],
     hookspath=[],
     hooksconfig={},

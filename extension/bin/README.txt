@@ -2,9 +2,8 @@ El botón «Descargar ILSA» de la extensión sirve el zip que genere:
 
   packaging\build_exe.bat
 
-Ese script deja acá `ILSA.zip` (ILSA.exe + runtime CPU, sin el GGUF).
+Ese script deja acá `ILSA.zip` (ILSA.exe + clasificador CPU, sin GGUF).
 No versionar el zip.
 
-El traductor (Llama 3.2 1B, ~770 MB) no va en este archivo. ILSA lo baja
-la primera vez que se abre, desde el GitHub Release `ilsa-llama-1b`, a
-%LOCALAPPDATA%\ILSA\models\
+El traductor corre aparte: `python run_semantic_server.py` + ngrok.
+ILSA baja la URL de `semantic_url.txt` en el release `ilsa-llama-1b`. Ver docs/SEMANTICO_NUBE.md.

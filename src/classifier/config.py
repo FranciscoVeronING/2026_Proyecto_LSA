@@ -20,110 +20,19 @@ METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
 MAX_FRAMES = 16
 
-# Etiquetas del clasificador (lo que predice TinySkeleton). No es el texto
-# que consume la LLM tal cual: eso pasa por ``normalize_gloss``.
-SIGN_CLASSES = [
-    "como",
-    "cuando",
-    "donde",
-    "que",
-    "quien",
-    "si",
-    "no",
-    "cuantos",
-    "bien",
-    "mal",
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "ñ",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    "yo",
-    "vos",
-    "el_ella",
-    "nosotros",
-    "ellos",
-    "hola",
-    "chau",
-    #"departamento",
-    "lugar",
-    "nombre",
-    "apellido",
-    "documento",
-    "dia",
-    "hora",
-    "familia",
-    "mama",
-    "papa",
-    "hermano_a",
-    "tener",
-    #"arma",
-    "cuchillo",
-    "brazo",
-    "cara",
-    "hijo_a",
-    "numero",
-    "años",
-    "ojo",
-    "esposo a",
-    "casa",
-    "calle",
-    "lunes",
-    "martes",
-    "miercoles",
-    "jueves",
-    "viernes",
-    "sabado",
-    "domingo",
-    "plaza",
-    "ahora_hoy",
-    "ayer",
-    #"golpear",
-    "poder",
-    #"sacar",
-    "robar",
-    #"pasar",
-    "llevar",
-    "tuyo",
-    #"lastimar",
-    "ver",
-    "llamar",
-    "repetir",
-    "vivir",
-    "vivir_en",
-]
+# Etiquetas del clasificador: mismo orden que ``mapeo_clases.json`` (97 señas).
+# No es el texto de la LLM; eso pasa por ``normalize_gloss``.
+def _sign_classes_from_mapeo() -> list[str]:
+    import json
+
+    path = Path(CLASSES_PATH)
+    if not path.is_file():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [name for name, _ in sorted(data.items(), key=lambda kv: int(kv[1]))]
+
+
+SIGN_CLASSES = _sign_classes_from_mapeo()
 
 POSE_DIM = 33 * 3
 HANDS_DIM = (21 * 3) * 2
@@ -155,12 +64,12 @@ LANDMARK_MOTION_THRESHOLD = 0.008
 
 # En Meet Holistic suele ir a 5–15 fps. Umbrales en frames se sienten lentos
 # en una notebook justa: 6 ticks ≈ 1 s solo para empezar a grabar.
-STATIC_HANDS_FRAMES_TO_START = 2
+STATIC_HANDS_FRAMES_TO_START = 4
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
 # Fin de seña por manos quietas (no la pausa del enunciado hacia la LLM).
-STILL_FRAMES_LIMIT = 14
+STILL_FRAMES_LIMIT = 10
 CAPTURE_BUFFER_SIZE = 60
 MISSING_HANDS_LIMIT = 12
 HANDS_FRAMES_TO_START = 2

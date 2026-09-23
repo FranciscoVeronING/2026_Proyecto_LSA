@@ -12,6 +12,7 @@ import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
+from typing import Optional
 
 _SEMANTIC_DIR = Path(__file__).resolve().parent
 BIN_DIR = _SEMANTIC_DIR / "bin"
@@ -68,11 +69,18 @@ def ensure_llama_server(backend: str = "cpu") -> Path:
 class LlamaServerEngine:
     """Misma forma que llama_cpp.Llama.create_completion, vía HTTP local."""
 
-    def __init__(self, model_path: str, n_ctx: int, n_gpu_layers: int, n_threads: int):
+    def __init__(
+        self,
+        model_path: str,
+        n_ctx: int,
+        n_gpu_layers: int,
+        n_threads: int,
+        port: Optional[int] = None,
+    ):
         self.model_path = str(model_path)
         self.n_ctx = int(n_ctx)
         self.n_threads = int(n_threads)
-        self.port = DEFAULT_PORT
+        self.port = int(port or DEFAULT_PORT)
         self.base = f"http://127.0.0.1:{self.port}"
         self.proc = None
         self._log_file = None
@@ -99,7 +107,8 @@ class LlamaServerEngine:
             str(self.n_threads),
             "--no-mmap",
         ]
-        log_path = BIN_DIR / "llama-server.log"
+        log_name = "llama-server.log" if self.port == DEFAULT_PORT else f"llama-server-{self.port}.log"
+        log_path = BIN_DIR / log_name
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_f = open(log_path, "w", encoding="utf-8", errors="replace")
         self._log_file = log_f

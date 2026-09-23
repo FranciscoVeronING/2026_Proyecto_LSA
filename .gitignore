@@ -12,7 +12,7 @@ unsloth_compiled_cache/
 # Salidas del modo --eval
 eval_*.csv
 
-models/
+/models/
 *.h5
 *.tflite
 
@@ -29,6 +29,9 @@ señario2/
 # Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip
 extension/bin/*.exe
+
+# URL viva de ngrok (subir con packaging/upload_semantic_url.ps1)
+packaging/semantic_url.txt
 
 # Empaquetado PyInstaller
 build/

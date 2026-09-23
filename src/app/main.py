@@ -101,8 +101,9 @@ def load_classes():
         return None, None
     with open(cfg.CLASSES_PATH, "r", encoding="utf-8") as f:
         class_to_idx = json.load(f)
-    idx_to_class = {v: k for k, v in class_to_idx.items()}
-    return idx_to_class, sorted(class_to_idx.keys())
+    idx_to_class = {int(v): str(k) for k, v in class_to_idx.items()}
+    print(f"[*] Mapeo: {len(idx_to_class)} señas")
+    return idx_to_class, [idx_to_class[i] for i in sorted(idx_to_class)]
 
 
 def main():

@@ -1,1 +1,1 @@
-"""Traductor semántico: glosas LSA → español, vía LLM con adaptador LoRA."""
+"""Traductor semántico: glosas ↔ español. El GGUF vive en run_semantic_server.py."""

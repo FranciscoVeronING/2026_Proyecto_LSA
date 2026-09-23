@@ -1,0 +1,6 @@
+#   1. python run_semantic_server.py
+#   2. ngrok http 8787
+#   3. Subí la URL al release (ILSA la baja sola):
+#        powershell -File packaging\upload_semantic_url.ps1 -Url https://xxxx.ngrok-free.dev
+#      o, solo para debug:
+#        set LSA_SEMANTIC_URL=https://xxxx.ngrok-free.dev

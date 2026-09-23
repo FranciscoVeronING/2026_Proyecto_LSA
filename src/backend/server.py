@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import SessionIn, SignIn
+from backend.http_schemas import HearingIn, SessionIn, SignIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -60,6 +60,15 @@ _session = None
 _mode = "signer"
 
 
+def _health_metrics() -> str:
+    try:
+        from backend.metrics import health_line
+
+        return health_line()
+    except Exception:
+        return ""
+
+
 def get_session():
     global _session
     if _session is None:
@@ -76,27 +85,27 @@ def health():
     semantic_label = ""
     semantic_load = ""
     if _mode == "signer":
-        from semantic.models import compute_label, friendly_label
-
         if session and getattr(session, "semantic_error", ""):
             semantic_label = "Traductor no disponible"
             semantic_load = ""
         elif session and not getattr(session, "semantic_ready", False):
-            semantic_label = "Cargando el traductor…"
+            semantic_label = "Sin servidor semántico"
             semantic_load = ""
         else:
-            semantic_label = friendly_label(model_id or "llama-3.2-1b")
-            semantic_load = compute_label(model_id)
+            semantic_label = "Traductor remoto"
+            semantic_load = "cloudflare"
     return {
         "ok": session is not None,
         "mode": _mode,
         "classifier_ready": bool(session and getattr(session, "model", None) is not None),
+        "num_classes": len(getattr(session, "idx_to_class", {}) or {}) if session else 0,
         "semantic_ready": bool(session and getattr(session, "semantic_ready", False)),
         "semantic_error": getattr(session, "semantic_error", "") if session else "",
         "semantic_model": model_id,
         "semantic_label": semantic_label,
         "semantic_load": semantic_load,
         "device": str(getattr(session, "device", "")) if session else "",
+        "metrics": _health_metrics(),
     }
 
 
@@ -121,6 +130,13 @@ def state():
     return get_session().snapshot()
 
 
+@app.get("/metrics")
+def metrics_summary():
+    from backend.metrics import summary
+
+    return summary()
+
+
 @app.post("/session")
 def open_session(body: SessionIn):
     get_session().reset_session(left_handed=body.left_handed)
@@ -136,7 +152,18 @@ def ingest_sign(body: SignIn):
         print("[backend] POST /sign: body vacío")
         raise HTTPException(status_code=400, detail="Falta el conjunto de frames de la seña.")
     print(f"[backend] POST /sign: {len(body.frames)} frames")
-    return get_session().ingest_sign(body.frames)
+    return get_session().ingest_sign(body.frames, client=body.client)
+
+
+@app.post("/hearing")
+def hearing_speech(body: HearingIn):
+    if _mode != "hearing":
+        raise HTTPException(status_code=400, detail="Solo en modo oyente.")
+    session = get_session()
+    ingest = getattr(session, "ingest_speech", None)
+    if ingest is None:
+        raise HTTPException(status_code=400, detail="Esta sesión no acepta voz.")
+    return ingest(body.spanish, final=body.final)
 
 
 @app.post("/activity")
@@ -253,11 +280,6 @@ def main(argv=None):
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ.setdefault("LSA_BACKEND", "1")
     if args.headless:
-        if not args.no_llm and args.mode != "hearing":
-            from semantic.gguf_fetch import ensure_gguf
-
-            print("[ilsa] Comprobando traductor…")
-            ensure_gguf(lambda _d, _t, msg: print(f"[ilsa] {msg}"))
         init_session(enable_llm=not args.no_llm, mode=args.mode)
         import uvicorn
 

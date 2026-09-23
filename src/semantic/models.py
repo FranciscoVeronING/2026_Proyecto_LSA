@@ -8,7 +8,7 @@ from typing import List, Optional
 
 import os
 
-from semantic.config import OUTPUTS_DIR
+from semantic.config import OYENTE_GGUF, OYENTE_GGUF_DIR, OUTPUTS_DIR, SORDO_GGUF_DIR
 
 
 @dataclass(frozen=True)
@@ -52,15 +52,63 @@ def spec_by_id(model_id: str) -> SemanticModelSpec:
     raise KeyError(f"Modelo semántico desconocido: {model_id!r}")
 
 
+_WEIGHT_GLOBS = ("*.gguf",)
+
+
+def first_gguf_in(folder: Path, prefer: tuple[str, ...] = ()) -> Optional[Path]:
+    if not folder.is_dir():
+        return None
+    files: list[Path] = []
+    seen = set()
+    for pattern in _WEIGHT_GLOBS:
+        for path in folder.glob(pattern):
+            if not path.is_file():
+                continue
+            key = str(path.resolve()).lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            files.append(path)
+    if not files:
+        return None
+    files.sort(key=lambda p: p.name.lower())
+    for needle in prefer:
+        n = needle.lower()
+        for path in files:
+            if n in path.name.lower():
+                return path
+    return files[0]
+
+
+def resolve_sordo_gguf() -> Optional[Path]:
+    found = first_gguf_in(SORDO_GGUF_DIR, prefer=("llama",))
+    if found is not None:
+        return found
+    return resolve_gguf_path(spec_by_id("llama-3.2-1b"))
+
+
+def resolve_oyente_gguf() -> Optional[Path]:
+    env = (OYENTE_GGUF or "").strip()
+    if env:
+        path = Path(env)
+        if path.is_file():
+            return path
+    found = first_gguf_in(OYENTE_GGUF_DIR, prefer=("qwen", "oyente"))
+    if found is not None:
+        return found
+    return None
+
+
 def resolve_gguf_path(spec: SemanticModelSpec) -> Optional[Path]:
     appdata = os.environ.get("LOCALAPPDATA") or os.environ.get("HOME") or str(Path.home())
     candidates = (
+        first_gguf_in(SORDO_GGUF_DIR),
         OUTPUTS_DIR / f"{spec.folder}_gguf" / GGUF_ASSET_NAME,
         OUTPUTS_DIR / spec.folder / GGUF_ASSET_NAME,
         Path(appdata) / "ILSA" / "models" / GGUF_ASSET_NAME,
     )
     for path in candidates:
-        if path.is_file():
+        if path is not None and path.is_file():
             return path
     for folder in (
         OUTPUTS_DIR / f"{spec.folder}_gguf",

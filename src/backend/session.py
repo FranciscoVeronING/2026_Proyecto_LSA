@@ -7,7 +7,6 @@ enunciado. Acá no se extraen landmarks: se clasifica, se acumula y se traduce.
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 import threading
@@ -31,7 +30,7 @@ import torch
 import classifier.config as cfg
 from app.utterance import UtteranceBuffer, normalize_gloss
 from backend.landmarks_payload import LandmarkSmoother, frames_to_matrix, vector_from_frame
-from classifier.arch import TinySkeletonClassifier
+from classifier.arch import load_classifier_bundle
 from core.conversation_memory import ConversationMemory
 from core.repeat_policy import format_literal_utterance
 from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CONVERSATION_HISTORY
@@ -46,9 +45,9 @@ class LSASession:
         self._wanted_model_id = semantic_model_id or DEFAULT_MODEL_ID
         self.left_handed = False
         self.device = torch.device("cpu")
-        print("[backend] Clasificador y traductor en CPU.")
-        self.idx_to_class = self._load_classes()
-        self.model = self._load_classifier()
+        print("[backend] Clasificador en CPU. Traductor: servidor remoto.")
+        self.model, self.idx_to_class = load_classifier_bundle(self.device)
+        print(f"[backend] Clasificador: {len(self.idx_to_class)} señas en {self.device}")
         self.buffer = UtteranceBuffer(
             pause_sec=cfg.UTTERANCE_PAUSE_SEC,
             min_confidence=cfg.CONFIDENCE_THRESHOLD,
@@ -68,93 +67,29 @@ class LSASession:
         if enable_llm:
             threading.Thread(target=self._bootstrap_llm, daemon=True).start()
 
-    @staticmethod
-    def _load_classes() -> dict:
-        with open(cfg.CLASSES_PATH, "r", encoding="utf-8") as f:
-            class_to_idx = json.load(f)
-        return {v: k for k, v in class_to_idx.items()}
-
-    def _load_classifier(self):
-        model = TinySkeletonClassifier(
-            cfg.FRAME_FEATURES_DIM,
-            cfg.HIDDEN_DIM,
-            num_heads=cfg.NUM_HEADS,
-            num_layers=cfg.NUM_LAYERS,
-            num_classes=len(self.idx_to_class),
-            dropout_rate=cfg.DROPOUT_RATE,
-        ).to(self.device)
-        model.load_state_dict(
-            torch.load(cfg.WEIGHTS_PATH, map_location=self.device, weights_only=True)
-        )
-        model.eval()
-        print(f"[backend] Clasificador en {self.device}")
-        return model
-
     def _bootstrap_llm(self):
         try:
-            from semantic.translator import (
-                get_active_model_id,
-                load_model_and_tokenizer,
-                translate_glosses,
-            )
+            from semantic.remote import configured, ping, translate_sordo
 
+            if not configured():
+                raise RuntimeError("Falta LSA_SEMANTIC_URL")
+            if not ping():
+                raise RuntimeError("El servidor semántico no responde (túnel Cloudflare / run_semantic_server.py)")
             with self._llm_gate:
-                load_model_and_tokenizer(self._wanted_model_id)
                 with self.lock:
-                    self._translate_glosses = translate_glosses
-                    self._current_model_id = get_active_model_id() or self._wanted_model_id
+                    self._translate_glosses = translate_sordo
+                    self._current_model_id = "remote"
                     self.semantic_ready = True
                     self.semantic_error = ""
-            print(f"[backend] Traductor semántico listo ({self._current_model_id}).")
+            print("[backend] Traductor remoto listo.")
         except Exception as e:
             with self.lock:
                 self.semantic_error = str(e)
                 self.semantic_ready = False
-            print(f"[backend] LLM no disponible: {e}")
+            print(f"[backend] LLM remota no disponible: {e}")
 
     def switch_semantic_model(self, model_id: str) -> None:
-        # Recarga el GGUF en background; FastAPI y Tk siguen respondiendo.
-        if not self.enable_llm or not model_id:
-            return
-        self._wanted_model_id = model_id
-        threading.Thread(
-            target=self._apply_semantic_switch,
-            args=(model_id,),
-            daemon=True,
-            name="ilsa-semantic-switch",
-        ).start()
-
-    def _apply_semantic_switch(self, model_id: str) -> None:
-        from semantic.translator import get_active_model_id, switch_model, translate_glosses
-
-        with self.lock:
-            if self._current_model_id == model_id and self.semantic_ready:
-                return
-            self.semantic_ready = False
-            self.semantic_busy = True
-            self.semantic_error = ""
-        print(f"[backend] Cambio de traductor pedido: {model_id}")
-        try:
-            with self._llm_gate:
-                wanted = self._wanted_model_id or model_id
-                with self.lock:
-                    if self._current_model_id == wanted and self.semantic_ready:
-                        self.semantic_busy = False
-                        return
-                switch_model(wanted)
-                with self.lock:
-                    self._translate_glosses = translate_glosses
-                    self._current_model_id = get_active_model_id() or wanted
-                    self.semantic_ready = True
-                    self.semantic_busy = False
-                    self.semantic_error = ""
-            print(f"[backend] Traductor semántico listo ({self._current_model_id}).")
-        except Exception as e:
-            with self.lock:
-                self.semantic_error = str(e)
-                self.semantic_ready = False
-                self.semantic_busy = False
-            print(f"[backend] No se pudo cargar {model_id}: {e}")
+        return None
 
     def reset_session(self, left_handed: bool):
         with self.lock:
@@ -176,6 +111,7 @@ class LSASession:
             return {
                 "left_handed": self.left_handed,
                 "classifier_ready": self.model is not None,
+                "num_classes": len(self.idx_to_class),
                 "semantic_ready": self.semantic_ready,
                 "semantic_error": self.semantic_error,
                 "semantic_model": self._current_model_id,
@@ -193,9 +129,11 @@ class LSASession:
         with self.lock:
             self.buffer.note_signing_activity(time.time())
 
-    def ingest_sign(self, frames: list[dict]) -> dict[str, Any]:
+    def ingest_sign(self, frames: list[dict], client: dict | None = None) -> dict[str, Any]:
         # La seña ya viene recortada. Acá: EMA → (16, 225) → TinySkeleton.
+        t0 = time.perf_counter()
         now = time.time()
+        client = client or {}
         n = len(frames or [])
         with_pose = sum(1 for f in frames or [] if f.get("pose"))
         with_lh = sum(1 for f in frames or [] if f.get("left_hand"))
@@ -209,11 +147,31 @@ class LSASession:
             cool = cfg.INFERENCE_COOLDOWN_SEC
             if now - self.last_enqueue_time < cool or now - self.last_inference_time < cool:
                 print("[backend] /sign rechazado: cooldown")
+                from backend.metrics import log_event
+
+                log_event(
+                    "sign",
+                    accepted=False,
+                    reason="cooldown",
+                    n_frames=n,
+                    capture_ms=client.get("capture_ms"),
+                    holistic_ms=client.get("holistic_ms"),
+                )
                 return {"accepted": False, "reason": "cooldown", **self.snapshot()}
             if n < cfg.MIN_CAPTURE_FRAMES:
                 print(
                     f"[backend] /sign rechazado: too_short "
                     f"({n} < min {cfg.MIN_CAPTURE_FRAMES})"
+                )
+                from backend.metrics import log_event
+
+                log_event(
+                    "sign",
+                    accepted=False,
+                    reason="too_short",
+                    n_frames=n,
+                    capture_ms=client.get("capture_ms"),
+                    holistic_ms=client.get("holistic_ms"),
                 )
                 return {"accepted": False, "reason": "too_short", **self.snapshot()}
 
@@ -230,9 +188,12 @@ class LSASession:
         )
         if matrix.shape[0] != cfg.MAX_FRAMES:
             print("[backend] /sign rechazado: bad_tensor")
+            from backend.metrics import log_event
+
+            log_event("sign", accepted=False, reason="bad_tensor", n_frames=n)
             return {"accepted": False, "reason": "bad_tensor", **self.snapshot()}
         tensor = torch.tensor(matrix, dtype=torch.float32).unsqueeze(0).to(self.device)
-
+        t_inf = time.perf_counter()
         with torch.no_grad():
             logits = self.model(tensor)
             probs = torch.softmax(logits, dim=1)[0]
@@ -241,6 +202,7 @@ class LSASession:
             for conf, idx in zip(values.tolist(), indices.tolist()):
                 name = self.idx_to_class.get(idx, "desconocido")
                 top3.append((name, float(conf)))
+        infer_ms = (time.perf_counter() - t_inf) * 1000
 
         added = False
         activity = False
@@ -260,12 +222,30 @@ class LSASession:
             + (f" → agregada {gloss}" if added else " → no se agregó (repetición/umbral)")
         )
         snap = self.snapshot()
+        total_ms = (time.perf_counter() - t0) * 1000
         snap.update({
             "accepted": True,
             "added": added,
             "activity": activity,
             "gloss": top3[0][0] if top3 else None,
+            "ms": round(total_ms, 1),
         })
+        from backend.metrics import log_event
+
+        log_event(
+            "sign",
+            accepted=True,
+            added=added,
+            n_frames=n,
+            gloss=top3[0][0] if top3 else "",
+            conf1=top3[0][1] if top3 else None,
+            conf2=top3[1][1] if len(top3) > 1 else None,
+            classifier_ms=round(infer_ms, 1),
+            total_ms=round(total_ms, 1),
+            capture_ms=client.get("capture_ms"),
+            holistic_ms=client.get("holistic_ms"),
+            n_raw=client.get("n_raw"),
+        )
         print(
             f"[backend] /sign respuesta: accepted=True added={added} "
             f"glosa={snap.get('gloss')} pending={snap.get('pending_text')!r}"
@@ -287,7 +267,9 @@ class LSASession:
             self.last_utterance = " ".join(closed)
 
         print(f"[backend] /utterance/end recibido: {closed!r}")
-        text = self._translate(closed)
+        t0 = time.perf_counter()
+        text, via, remote_ms, server_ms = self._translate(closed)
+        total_ms = (time.perf_counter() - t0) * 1000
 
         with self.lock:
             self.spanish_text = text
@@ -295,28 +277,52 @@ class LSASession:
             self.memory.add_signer(text, glosses=" ".join(closed))
 
         snap = self.snapshot()
-        snap.update({"closed": True, "glosses": closed, "spanish": text})
-        print(f"[backend] /utterance/end respuesta: español={text!r}")
+        snap.update({
+            "closed": True,
+            "glosses": closed,
+            "spanish": text,
+            "via": via,
+            "ms": round(total_ms, 1),
+        })
+        from backend.metrics import log_event
+
+        log_event(
+            "utterance",
+            glosses=" ".join(closed),
+            spanish=text,
+            via=via,
+            remote_ms=round(remote_ms, 1),
+            server_ms=round(server_ms, 1) if server_ms is not None else None,
+            total_ms=round(total_ms, 1),
+            n_glosses=len(closed),
+        )
+        print(f"[backend] /utterance/end respuesta: español={text!r} via={via} {total_ms:.0f}ms")
         return snap
 
-    def _translate(self, glosses: list[str]) -> str:
-        # Letras/dígitos van literales. Si el GGUF no cargó, devolvemos las glosas.
+    def _translate(self, glosses: list[str]) -> tuple[str, str, float, float | None]:
+        # Letras/dígitos van literales. Sin traductor remoto, devolvemos las glosas.
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
             print(f"[backend] Enunciado → literal: {joined} => {literal}")
-            return literal
+            return literal, "literal", 0.0, None
         print(f"[backend] Enunciado → LLM: {joined}")
         with self.lock:
             fn = self._translate_glosses
         if fn is None:
-            return joined
+            return joined, "fallback", 0.0, None
         try:
+            from semantic.remote import last_timing
+
             history = self.memory.as_messages() if USE_CONVERSATION_HISTORY else None
-            return fn(joined, history_messages=history) or joined
+            t0 = time.perf_counter()
+            text = fn(joined, history_messages=history) or joined
+            remote_ms = (time.perf_counter() - t0) * 1000
+            timing = last_timing()
+            return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:
             print(f"[backend] Error LLM: {e}")
-            return joined
+            return joined, "fallback", 0.0, None
 
     def clear_conversation(self):
         with self.lock:
@@ -336,6 +342,7 @@ class LSASession:
             "missing_hands_limit": cfg.MISSING_HANDS_LIMIT,
             "min_capture_frames": cfg.MIN_CAPTURE_FRAMES,
             "capture_mode": cfg.CAPTURE_MODE,
+            "num_classes": len(self.idx_to_class),
             "utterance_pause_sec": cfg.UTTERANCE_PAUSE_SEC,
             "pose_dim": cfg.POSE_DIM,
             "mode": "signer",

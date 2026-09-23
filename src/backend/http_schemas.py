@@ -13,9 +13,15 @@ class SessionIn(BaseModel):
     left_handed: bool = False
 
 
+class HearingIn(BaseModel):
+    spanish: str = ""
+    final: bool = True
+
+
 class SignIn(BaseModel):
 
     frames: list[dict] = Field(default_factory=list, max_length=MAX_SIGN_FRAMES)
+    client: dict = Field(default_factory=dict)
 
     @field_validator("frames")
     @classmethod

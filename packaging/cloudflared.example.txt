@@ -1,0 +1,8 @@
+# Quick tunnel (la URL cambia cada vez):
+#   1. python run_semantic_server.py
+#   2. cloudflared tunnel --url http://127.0.0.1:8787
+#   3. En la PC de ILSA:
+#        set LSA_SEMANTIC_URL=https://xxxx.trycloudflare.com
+#        set LSA_SEMANTIC_TOKEN=el-mismo-si-lo-usaste
+#
+# Túnel con nombre (URL fija): ver docs/SEMANTICO_NUBE.md

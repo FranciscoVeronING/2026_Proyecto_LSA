@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0\.."
-echo Empaquetando ILSA en CPU (sin GGUF, zip para GitHub ^< 2 GB).
+echo Empaquetando ILSA en CPU (clasificador, sin llama.cpp).
 
 set "CONDA=D:\miniconda3\Scripts\conda.exe"
 set "ENV=%~dp0_env_cpu"
@@ -18,7 +18,7 @@ if not exist "%PY%" (
   if errorlevel 1 exit /b 1
 )
 
-echo Instalando Torch CPU + llama.cpp CPU + PyInstaller
+echo Instalando Torch CPU + PyInstaller
 "%PY%" -m pip install --upgrade pip
 "%PY%" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 if errorlevel 1 exit /b 1
@@ -26,10 +26,6 @@ if errorlevel 1 exit /b 1
 if errorlevel 1 (
   echo El env no tiene Torch CPU. Borrar packaging\_env_cpu y volver a correr.
   exit /b 1
-)
-"%PY%" -m pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
-if errorlevel 1 (
-  echo llama-cpp-python CPU no instalo; PyInstaller seguira, llama-server.exe es el respaldo.
 )
 "%PY%" -m pip install -r packaging\requirements_exe.txt
 if errorlevel 1 exit /b 1
