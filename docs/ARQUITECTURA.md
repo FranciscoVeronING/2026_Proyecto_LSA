@@ -15,7 +15,7 @@ Documento para alguien que abre el repo por primera vez. Complementa el
 | **Landmarks** | Coordenadas normalizadas de pose (33 puntos) y manos (21 + 21). |
 | **Frame de seña** | Un instante de landmarks, no un JPEG. |
 | **TinySkeleton** | Red chica (transformer) que clasifica una secuencia de 16 frames. |
-| **Traductor** | Un GGUF Llama 3.2 1B (Q4) que arma una oración en español. Corre en CPU. |
+| **Traductor** | GGUF Llama 3.2 1B (Q4) en un FastAPI aparte, publicado con ngrok. |
 | **Holistic** | Solución MediaPipe: cuerpo + cara + manos en un solo grafo. Usamos pose y manos. |
 | **ILSA** | Ventana del motor local (`ILSA.exe` o `python run_backend.py`). |
 
@@ -32,7 +32,7 @@ cámara
   → TinySkeleton  →  glosa + confianza
   → buffer de glosas (anti-repetición, cooldown)
   → pausa ~4 s
-  → LLM (Llama 1B, CPU)  →  español
+  → POST /sordo (túnel ngrok)  →  español
   → (escritorio) voz pyttsx3
   → (Meet) texto quemado en el video + HUD
 ```
@@ -126,10 +126,9 @@ Flujo de un frame en Meet (modo sordo):
   → HUD + postMessage LSA_CAPTION → canvas de Meet
 ```
 
-MediaPipe en Meet rinde **pocos FPS**. Por eso el fin de seña no espera
-“12 frames sin manos” a 30 fps (tardaría segundos), sino **tiempo**
-(`missing_hands_limit / 30` ≈ 0,4 s). Durante la gracia se duplica el último
-frame para no acortar el tensor.
+MediaPipe en Meet rinde **pocos FPS**. El fin de seña es **manos fuera de
+cámara** ~0,4 s (`missing_hands_limit / 30`). No se corta por manos quietas
+(señas estáticas). Durante la gracia se duplica el último frame.
 
 No se usa movimiento de **píxeles de todo el cuadro** para arrancar una seña:
 en Meet hay gente moviéndose atrás y dispara falsos positivos. Solo manos.
@@ -188,19 +187,11 @@ fuerte (si no, se rompen DNI y números).
 
 ### Dónde vive el GGUF
 
-No va dentro de `ILSA.zip`. Al abrir ILSA, una pantalla de carga
-(`iris_app.py`) llama a `src/semantic/gguf_fetch.py`:
+No va dentro de `ILSA.zip`. Corre en `python run_semantic_server.py` en la
+PC del servidor. ILSA llama `LSA_SEMANTIC_URL` (túnel ngrok).
+Pasos: [`docs/SEMANTICO_NUBE.md`](SEMANTICO_NUBE.md).
 
-1. Si ya hay un `.gguf` válido en
-   `src/semantic/outputs/unsloth_Llama-3.2-1B-Instruct_gguf/` o en
-   `%LOCALAPPDATA%\ILSA\models\`, lo usa.
-2. Si no, descarga
-   `https://github.com/FranciscoVeronING/2026_Proyecto_LSA/releases/download/ilsa-llama-1b/llama-3.2-1b-instruct.Q4_K_M.gguf`
-   (~770 MB, una vez) hacia `%LOCALAPPDATA%\ILSA\models\`.
-
-Para publicar el GGUF: `packaging\upload_llama_gguf.ps1`.
-Para publicar el exe: `packaging\build_exe.bat` y luego
-`packaging\upload_ilsa_zip.ps1` (mismo tag `ilsa-llama-1b`).
+Para publicar el exe: `packaging\build_exe.bat` y `packaging\upload_ilsa_zip.ps1`.
 
 ## 8. Subtítulos que caducan
 
@@ -235,14 +226,15 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 | Archivo | Rol |
 |---------|-----|
 | `run_backend.py` | Entry point (ventana ILSA o `--headless`) |
-| `src/backend/iris_app.py` | Splash (GGUF), modo sordo/oyente, Encender / Apagar |
+| `src/backend/iris_app.py` | Splash (ping remoto), modo sordo/oyente, Encender / Apagar |
 | `src/backend/uvicorn_handle.py` | Hilo uvicorn (sin colgar Tk) |
 | `src/backend/http_schemas.py` | Límites de JSON (`POST /sign`, etc.) |
 | `src/backend/server.py` | Rutas FastAPI; CORS: Meet + `chrome-extension://` + localhost |
-| `src/backend/session.py` | Clasificador CPU, ingestión, cierre de enunciado, LLM |
-| `src/backend/hearing_session.py` | Sesión oyente (sin TinySkeleton) |
+| `src/backend/session.py` | Clasificador CPU, ingestión, cierre de enunciado, HTTP /sordo |
+| `src/backend/hearing_session.py` | Sesión oyente (voz → POST /oyente) |
 | `src/backend/landmarks_payload.py` | JSON de frames → tensores |
-| `src/semantic/gguf_fetch.py` | Busca o descarga el GGUF Llama 1B |
+| `src/semantic/remote.py` | Cliente HTTP del túnel ngrok |
+| `src/semantic/http_server.py` | FastAPI del GGUF (`run_semantic_server.py`) |
 
 Logs útiles al correr el motor: `POST /sign: N frames`, top-3, added/rejected,
 cierre de enunciado.
@@ -254,23 +246,21 @@ El API escucha en loopback (`127.0.0.1`). No bindear `0.0.0.0`.
 - `packaging/build_exe.bat` genera `dist/LSABackend/ILSA.exe` y
   `extension/bin/ILSA.zip` (PyInstaller, sin consola, **sin** el GGUF).
   El zip no se versiona.
-- `packaging/LSABackend.spec` empaqueta clasificador, prompts y runtime CPU.
-- `packaging/upload_llama_gguf.ps1` publica el `.gguf` al release
-  `ilsa-llama-1b`.
+- `packaging/LSABackend.spec` empaqueta clasificador y runtime CPU (sin llama.cpp).
 - En desarrollo: `python run_backend.py` (ventana) o `--headless`.
+- Semántico: `python run_semantic_server.py` y [`docs/SEMANTICO_NUBE.md`](SEMANTICO_NUBE.md).
 
 ## 12. Qué no es este repo
 
 - No es un diccionario pedagógico. Carpetas tipo `señario1/` con PNG, si
   existen en el disco, **no las usa el código**.
-- No hay servidor de inferencia en la nube: clasificador y LLM corren en la
-  PC. La única descarga remota es el GGUF (y, si hace falta, `llama-server.exe`)
-  desde GitHub.
+- El clasificador corre en ILSA. La LLM corre en `run_semantic_server.py` y se
+  publica con ngrok. El video no sale de la PC de Meet.
 - No hay entrenamiento aquí. Los `.pth` se asumen ya exportados.
 
 ## 13. Orden mental para debuggear
 
-1. ¿Al abrir ILSA terminó la pantalla de carga (traductor en disco)?
+1. ¿Está `python run_semantic_server.py` + ngrok, y `semantic_url.txt` en el release?
 2. ¿Elegiste modo y Encendiste? `GET http://127.0.0.1:8765/health` → `ok`.
 3. ¿La extensión está recargada y es la carpeta `extension/` de este clone?
 4. ¿Existen los WASM en `extension/vendor/mediapipe/`?

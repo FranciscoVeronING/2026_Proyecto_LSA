@@ -9,8 +9,9 @@ subtítulos en Meet).
 La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
 (pose + dos manos). Ese esqueleto se recorta en **una seña a la vez**, se
 clasifica como **glosa** (etiqueta léxica: `HOLA`, `MAMA`, `A`, …) y, cuando la
-persona deja de señar unos segundos, Llama 3.2 1B convierte la lista de glosas
-en una **oración en español**. El traductor corre en **CPU**.
+persona deja de señar unos segundos, un servidor semántico (Llama 3.2 1B en
+**tu PC**, publicado con ngrok) convierte la lista de glosas
+en una **oración en español**. ILSA en la laptop de Meet **solo clasifica**.
 
 Hay **dos formas de usarlo**, que comparten el mismo clasificador y la misma LLM:
 
@@ -28,13 +29,14 @@ completo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
 - Windows (el flujo nativo de la LLM está pensado para Windows).
 - Python 3.9–3.12 **o** 3.14.
-  - En **3.14** no instales `llama-cpp-python`: el backend descarga
+  - En **3.14** no instales `llama-cpp-python`: el servidor semántico descarga
     `llama-server.exe` (CPU) si hace falta.
   - En **3.10–3.12** podés usar `llama-cpp-python` (rueda CPU).
 - Chrome, si vas a usar la extensión.
-- El GGUF de Llama 3.2 1B: en desarrollo suele estar en
-  `src/semantic/outputs/`. En una PC nueva ILSA lo baja solo la primera vez
-  (GitHub Releases, tag `ilsa-llama-1b`) a `%LOCALAPPDATA%\ILSA\models\`.
+- El GGUF de sordo en `src/semantic/models/sordo/` (oyente opcional en
+  `src/semantic/models/oyente/`).
+- `LSA_SEMANTIC_URL` no hace falta: ILSA la baja del release `semantic_url.txt`. Ver
+  [`docs/SEMANTICO_NUBE.md`](docs/SEMANTICO_NUBE.md).
 
 Los pesos del clasificador (`src/classifier/weights/`) suelen ir con **Git LFS**.
 Después de clonar:
@@ -97,10 +99,8 @@ Eso llena `extension/vendor/mediapipe/` y, si faltan, los íconos.
 ### 2. Motor ILSA
 
 **Quien usa el exe:** en la extensión, **Instalar motor → Descargar ILSA**.
-Baja `ILSA.zip` del GitHub Release `ilsa-llama-1b`. Descomprimí, abrí
-**ILSA.exe**. La primera vez aparece una pantalla de carga y, si falta el
-traductor, lo descarga (~770 MB). Elegí modo (Sordo u Oyente) y **Encender**.
-Dejá esa ventana abierta.
+Descomprimí, abrí **ILSA.exe**. La URL del traductor sale del release (`semantic_url.txt`).
+Elegí modo (Sordo u Oyente) y **Encender**. Dejá esa ventana abierta.
 
 **Quien publica el zip** (en esta PC, una vez):
 
@@ -109,8 +109,7 @@ packaging\build_exe.bat
 powershell -File packaging\upload_ilsa_zip.ps1
 ```
 
-El zip no incluye el GGUF (GitHub admite 2 GB por archivo). El traductor
-ya está en el mismo release.
+El zip no incluye el GGUF. El traductor es `python run_semantic_server.py` + túnel.
 
 **Quien desarrolla:**
 
@@ -192,14 +191,14 @@ run.py                 App de escritorio
 run_backend.py         Ventana ILSA + API local
 LSABackend.bat         Atajo Windows al backend
 requirements.txt
-packaging/             WASM MediaPipe, PyInstaller, subida del GGUF
+packaging/             WASM MediaPipe, PyInstaller, túnel ngrok/cloudflared
 extension/             Extensión Manifest V3
 src/
   app/                 OpenCV, UI, workers, eval
   backend/             FastAPI, ventana ILSA, sesión
   core/                Landmarks, memoria, política de repeticiones
   classifier/          TinySkeleton + pesos + lista de clases
-  semantic/            Prompts, fetch del GGUF, llama.cpp
+  semantic/            Cliente remoto + servidor GGUF (`run_semantic_server.py`)
 docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 ```
 
@@ -218,11 +217,13 @@ docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 | Método | Ruta | Uso |
 |--------|------|-----|
 | GET | `/health` | ¿Motor, clasificador y traductor listos? |
+| GET | `/metrics` | Tiempos y conteos de la sesión (JSON) |
 | GET | `/config` | Umbrales de captura |
 | GET | `/state` | Glosas pendientes y último español |
-| GET | `/semantic/models` | El GGUF activo (Llama 1B) |
+| GET | `/semantic/models` | Estado del traductor remoto |
 | POST | `/session` | Nueva sesión (`left_handed`) |
 | POST | `/sign` | Lista de frames de una seña |
+| POST | `/hearing` | Modo oyente: español → glosas |
 | POST | `/activity` | “Sigo señando” (retrasa el cierre) |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
 | POST | `/conversation/clear` | Vaciar memoria |
@@ -238,7 +239,7 @@ El API debe escuchar solo en loopback.
 | Síntoma | Qué probar |
 |---------|------------|
 | Extensión: “motor apagado” | Abrí ILSA, elegí modo, Encender; recargá el popup |
-| Pantalla de carga de ILSA no termina | Internet para bajar el GGUF, o copiá el `.gguf` a `%LOCALAPPDATA%\ILSA\models\` |
+| ILSA arranca sin traducir | En la PC del GGUF: `run_semantic_server.py` + ngrok; subí `semantic_url.txt` al release |
 | Meet: cámara bloqueada | Recargar Meet; LSA solo envuelve `getUserMedia` si ILSA está ON |
 | Meet: sin esqueleto / sin glosas | `py -3 packaging/fetch_extension_assets.py` y recargar la extensión |
 | LLM no carga en Python 3.14 | Esperar `llama-server.exe` (CPU) |

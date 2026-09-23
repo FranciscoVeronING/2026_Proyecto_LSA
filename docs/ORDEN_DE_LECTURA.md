@@ -13,17 +13,17 @@ dónde empezar**.
 
 Alguien seña frente a Meet. MediaPipe saca un esqueleto. Un recortador
 decide “esto es una seña”. TinySkeleton la nombra (glosa). Tras una pausa,
-Llama 3.2 1B (CPU) arma una oración en español. Esa oración se pinta en el
-video que Meet ya está enviando.
+Llama 3.2 1B (CPU) en **otro proceso** (túnel ngrok) arma una oración
+en español. Esa oración se pinta en el video que Meet ya está enviando.
 
-Hay dos procesos:
+Hay tres procesos:
 
 1. **Extensión Chrome** (captura, recorte, UI de Meet).
-2. **ILSA** (`python run_backend.py` o `ILSA.exe`): clasificador + LLM en
+2. **ILSA** (`python run_backend.py` o `ILSA.exe`): clasificador en
    `127.0.0.1:8765`.
+3. **Servidor semántico** (`python run_semantic_server.py`) + `ngrok`.
 
-ILSA pide modo (sordo / oyente) y Encender. El GGUF se descarga la primera
-vez que se abre la ventana, si no está en disco.
+ILSA pide modo (sordo / oyente) y Encender. El GGUF no se descarga en ILSA.
 
 ---
 
@@ -72,12 +72,11 @@ Pregunta: *¿qué cierra el enunciado, la seña o el reloj de 4 s?*
 ## 4. Español (20 min)
 
 1. `src/core/repeat_policy.py` otra vez — `format_literal_utterance` (deletreo).
-2. `src/semantic/models.py` — un GGUF: Llama 3.2 1B.
-3. `src/semantic/gguf_fetch.py` — disco local o GitHub Releases (`ilsa-llama-1b`).
-4. `src/semantic/translator.py` — `translate_glosses` (CPU).
-5. `src/semantic/native_llama.py` — respaldo: `llama-server.exe` CPU.
-6. `src/core/conversation_memory.py` — contexto de turnos previos.
-7. `LSASession.close_utterance` en `session.py`.
+2. `src/semantic/remote.py` — cliente HTTP (`LSA_SEMANTIC_URL`).
+3. `src/semantic/http_server.py` y `run_semantic_server.py` — GGUF en la PC del servidor.
+4. `src/semantic/translator.py` — `translate_glosses` / `translate_spanish_to_glosses`.
+5. `src/core/conversation_memory.py` — contexto de turnos previos.
+6. `LSASession.close_utterance` en `session.py`.
 
 Pregunta: *¿cuándo ni siquiera se llama a la LLM?*
 
@@ -87,7 +86,7 @@ Pregunta: *¿cuándo ni siquiera se llama a la LLM?*
 
 Leé esto **después** de saber qué es una seña.
 
-1. `src/backend/iris_app.py` — splash del GGUF, modo, Encender.
+1. `src/backend/iris_app.py` — splash (ping remoto), modo, Encender.
 2. `extension/manifest.json` — dos content scripts, sandbox, offscreen.
 3. `extension/popup.js` — estado y ajustes (no enciende el motor).
 4. `extension/background.js` — centralita: popup ↔ Meet ↔ offscreen.
@@ -123,8 +122,11 @@ Misma idea, otra UI. Solo si te interesa `python run.py`.
 ## Diagrama mínimo (para tenerlo a mano)
 
 ```
+run_semantic_server.py + ngrok
+    → POST /sordo y /oyente
+
 ILSA.exe / run_backend.py
-    → splash: gguf_fetch.py (disco o GitHub ilsa-llama-1b)
+    → splash: ping LSA_SEMANTIC_URL
     → Encender (modo sordo u oyente)
     → uvicorn 127.0.0.1:8765
 
