@@ -12,18 +12,21 @@ const sandbox = document.getElementById("mp-sandbox");
 let cfg = { ...FALLBACK_CFG };
 let leftHanded = false;
 let sandboxReady = false;
+let sandboxLastError = "";
 let busySign = false;
 let signQueue = null;
 
-function enqueueSign(frames) {
+function enqueueSign(frames, client) {
   if (busySign) {
-    signQueue = frames;
+    signQueue = { frames, client };
     return;
   }
   busySign = true;
   emit({ status: "enviando", capturing: true });
-  LsaApi.sign(frames)
+  const tPost = performance.now();
+  LsaApi.sign(frames, client)
     .then((s) => {
+      const post_ms = Math.round(performance.now() - tPost);
       if (s && s.accepted === false) {
         emit({
           debug: s.reason === "cooldown" ? "Esperá un segundo…" : "Seña corta, repetí",
@@ -31,6 +34,10 @@ function enqueueSign(frames) {
         });
         return;
       }
+      const clf = s && s.ms != null ? Math.round(s.ms) : "?";
+      emit({
+        debug: `Clasificador ${clf} ms · POST ${post_ms} ms`,
+      });
       applyState(s);
       if (s && s.activity) engine.noteInferenceActivity();
     })
@@ -39,7 +46,7 @@ function enqueueSign(frames) {
       busySign = false;
       const next = signQueue;
       signQueue = null;
-      if (next) enqueueSign(next);
+      if (next) enqueueSign(next.frames, next.client);
     });
 }
 let meetTabId = null;
@@ -58,11 +65,17 @@ LsaPrefs.onChange((p) => {
   prefs = p;
 });
 
+let lastHolisticMs = 0;
 const engine = createCaptureEngine(
   () => cfg,
   {
-    onSign(frames) {
-      enqueueSign(frames);
+    onSign(frames, meta) {
+      enqueueSign(frames, {
+        capture_ms: meta && meta.capture_ms,
+        n_raw: meta && meta.n_raw,
+        n_sent: meta && meta.n_sent,
+        holistic_ms: lastHolisticMs || undefined,
+      });
     },
     onSigningActivity() {
       const now = Date.now();
@@ -72,8 +85,13 @@ const engine = createCaptureEngine(
     },
     onUtterancePause() {
       emit({ status: "traduciendo" });
+      const t0 = performance.now();
       return LsaApi.endUtterance()
-        .then((s) => applyState(s))
+        .then((s) => {
+          const ms = s && s.ms != null ? Math.round(s.ms) : Math.round(performance.now() - t0);
+          emit({ debug: `Traductor ${ms} ms (${(s && s.via) || "—"})` });
+          applyState(s);
+        })
         .catch((err) => emit({ status: "error", error: err.message }));
     },
   }
@@ -117,15 +135,22 @@ function applyState(s) {
 window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data || !data.type) return;
-  if (data.type === "ready") sandboxReady = true;
+  if (data.type === "ready") {
+    sandboxReady = true;
+    sandboxLastError = "";
+  }
   if (data.type === "need-frame" || data.type === "error") {
     frameBusy = false;
-    if (data.type === "error") emit({ status: "error", error: data.message });
+    if (data.type === "error") {
+      sandboxLastError = data.message || "Error en MediaPipe";
+      emit({ status: "error", error: sandboxLastError });
+    }
     pumpFrame();
   }
   if (data.type === "landmarks") {
     frameBusy = false;
     pumpFrame();
+    if (typeof data.holistic_ms === "number") lastHolisticMs = data.holistic_ms;
     const results = {
       poseLandmarks: data.pose,
       leftHandLandmarks: data.left_hand,
@@ -194,9 +219,16 @@ function waitSandboxReady(timeoutMs) {
       if (sandboxReady && sandbox.contentWindow) {
         clearInterval(id);
         resolve();
+      } else if (sandboxLastError) {
+        clearInterval(id);
+        reject(new Error(sandboxLastError));
       } else if (Date.now() - t0 > timeoutMs) {
         clearInterval(id);
-        reject(new Error("MediaPipe no arrancó. Recargá la extensión."));
+        reject(
+          new Error(
+            "MediaPipe no arrancó. Faltan los WASM (.data/.wasm) en extension/vendor/mediapipe. Corré py -3 packaging/fetch_extension_assets.py y recargá la extensión."
+          )
+        );
       }
     }, 50);
   });
@@ -206,6 +238,7 @@ function waitSandboxReady(timeoutMs) {
 async function ensureSandbox() {
   if (sandboxReady && sandbox.contentWindow) return;
   sandboxReady = false;
+  sandboxLastError = "";
   sandbox.src = "sandbox.html";
   await waitSandboxReady(20000);
 }
@@ -226,8 +259,8 @@ async function startSession(tabId, handed) {
   const h = await LsaApi.health();
   if (!h.ok) throw new Error("El motor LSA no está encendido.");
   cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
-  cfg.hands_frames_to_start = Math.min(3, Number(cfg.hands_frames_to_start) || 3);
-  cfg.min_capture_frames = Math.min(6, Number(cfg.min_capture_frames) || 6);
+  cfg.hands_frames_to_start = 1;
+  cfg.min_capture_frames = Math.min(2, Number(cfg.min_capture_frames) || 2);
   applyState(await LsaApi.session(leftHanded));
   await ensureSandbox();
   engine.reset();

@@ -7,13 +7,20 @@
 const API_BASE = "http://127.0.0.1:8765";
 
 async function api(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+  } catch (err) {
+    throw new Error(
+      "Failed to fetch: ILSA no responde en 127.0.0.1:8765. Encendé el motor."
+    );
+  }
   const text = await res.text();
   let data = null;
   try {
@@ -38,10 +45,15 @@ const LsaApi = {
       method: "POST",
       body: JSON.stringify({ left_handed: leftHanded }),
     }),
-  sign: (frames) =>
+  sign: (frames, client) =>
     api("/sign", {
       method: "POST",
-      body: JSON.stringify({ frames }),
+      body: JSON.stringify({ frames, client: client || {} }),
+    }),
+  hearing: (spanish, final) =>
+    api("/hearing", {
+      method: "POST",
+      body: JSON.stringify({ spanish, final: Boolean(final) }),
     }),
   activity: () => api("/activity", { method: "POST", body: "{}" }),
   endUtterance: () => api("/utterance/end", { method: "POST", body: "{}" }),

@@ -283,7 +283,17 @@ window.addEventListener("message", (event) => {
     const spanish = data.spanish;
     if (!spanish) return;
     setHud({ spanish, debug: "Transcribiendo…", capturing: true, lastGloss: "voz" });
-    if (data.final) speakSpanish(spanish);
+    if (!data.final) return;
+    LsaApi.hearing(spanish, true)
+      .then((s) => {
+        const caption = (s && (s.caption || s.glosses)) || spanish;
+        setHud({ spanish: caption, debug: "Glosas en tu video", capturing: false, lastGloss: "voz" });
+        postToPage({ type: "LSA_CAPTION", spanish: caption, glosses: s && s.glosses });
+      })
+      .catch(() => {
+        setHud({ spanish, debug: "Sin traductor: español crudo", capturing: false });
+        postToPage({ type: "LSA_CAPTION", spanish, glosses: "" });
+      });
   }
   if (data.type === "LSA_SPEECH_ERROR") {
     setHud({ debug: "Voz: " + (data.error || "error"), capturing: false });

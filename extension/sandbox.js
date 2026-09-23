@@ -21,18 +21,61 @@ function packLandmarks(lms) {
   return out;
 }
 
+const ILSA_MEDIAPIPE = "http://127.0.0.1:8765/mediapipe/";
+/** Prefijo de assets: chrome-extension://… o ILSA si el XHR del sandbox falla. */
+let assetBase = null;
+
 /**
- * Resuelve un asset WASM/tflite vendored. Fuerza el modelo *lite* de pose.
+ * Nombre de archivo que pide Holistic (fuerza pose *lite*).
+ * @param {string} file
+ * @returns {string}
+ */
+function assetName(file) {
+  const raw = String(file).split("/").pop();
+  if (raw === "pose_landmark_full.tflite" || raw === "pose_landmark_heavy.tflite") {
+    return "pose_landmark_lite.tflite";
+  }
+  return raw;
+}
+
+/**
+ * Resuelve un asset WASM/tflite vendored.
  * @param {string} file Nombre que pide Holistic.
- * @returns {string} URL absoluta chrome-extension://…/vendor/mediapipe/…
+ * @returns {string} URL absoluta.
  */
 function locateFile(file) {
-  const raw = String(file).split("/").pop();
-  const name =
-    raw === "pose_landmark_full.tflite" || raw === "pose_landmark_heavy.tflite"
-      ? "pose_landmark_lite.tflite"
-      : raw;
+  const name = assetName(file);
+  if (assetBase) return assetBase + name;
   return new URL("./vendor/mediapipe/" + name, self.location.href).href;
+}
+
+/**
+ * El loader de Emscripten hace XHR del `.data`. Si falta el archivo (está en
+ * .gitignore) o Chrome bloquea chrome-extension:// desde el sandbox, Holistic
+ * nunca manda `ready`. Probamos extensión y, si falla, ILSA `/mediapipe/`.
+ * @returns {Promise<void>}
+ */
+async function resolveAssetBase() {
+  const name = "holistic_solution_packed_assets.data";
+  const extBase = new URL("./vendor/mediapipe/", self.location.href).href;
+  const candidates = [extBase, ILSA_MEDIAPIPE];
+  let last = "";
+  for (const base of candidates) {
+    try {
+      const res = await fetch(base + name);
+      if (res.ok) {
+        assetBase = base;
+        return;
+      }
+      last = `${base + name} → HTTP ${res.status}`;
+    } catch (err) {
+      last = `${base + name} → ${err && err.message ? err.message : err}`;
+    }
+  }
+  throw new Error(
+    "Falta holistic_solution_packed_assets.data. En la carpeta del repo corré: py -3 packaging/fetch_extension_assets.py y recargá la extensión. " +
+      last
+  );
 }
 
 /**
@@ -55,6 +98,7 @@ function isMediaPipeLog(args) {
 
 let holistic = null;
 let busy = false;
+let sendStarted = 0;
 const input = () => document.getElementById("input");
 let inputCtx = null;
 
@@ -82,6 +126,7 @@ async function init() {
   if (typeof Holistic !== "function") {
     throw new Error("No cargó holistic.js en el sandbox");
   }
+  await resolveAssetBase();
   holistic = new Holistic({ locateFile });
   holistic.setOptions({
     selfieMode: false,
@@ -94,11 +139,14 @@ async function init() {
     minTrackingConfidence: 0.4,
   });
   holistic.onResults((results) => {
+    const holistic_ms = sendStarted ? Math.round(performance.now() - sendStarted) : null;
+    sendStarted = 0;
     post({
       type: "landmarks",
       pose: packLandmarks(results.poseLandmarks),
       left_hand: packLandmarks(results.leftHandLandmarks),
       right_hand: packLandmarks(results.rightHandLandmarks),
+      holistic_ms,
     });
   });
   if (typeof holistic.initialize === "function") {
@@ -137,6 +185,7 @@ async function sendFrame(data) {
     return;
   }
 
+  sendStarted = performance.now();
   await holistic.send({ image: canvas });
 }
 
