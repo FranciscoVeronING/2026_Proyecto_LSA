@@ -17,7 +17,7 @@ import classifier.config as cfg
 from app.state import shared_state, is_running
 from classifier.arch import load_classifier_bundle
 from core.conversation_memory import ConversationMemory
-from core.repeat_policy import format_literal_utterance
+from core.repeat_policy import collapse_literal_runs, format_literal_utterance
 from semantic.config import USE_CONVERSATION_HISTORY
 
 
@@ -195,8 +195,11 @@ class SemanticWorker:
     def _handle(self, glosses):
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
+        collapsed = " ".join(collapse_literal_runs(glosses))
         if literal is not None:
             print(f"[*] Enunciado cerrado → literal: {joined} => {literal}")
+        elif collapsed != joined:
+            print(f"[*] Enunciado cerrado → LLM: {joined} => {collapsed}")
         else:
             print(f"[*] Enunciado cerrado → LLM: {joined}")
 
@@ -206,14 +209,14 @@ class SemanticWorker:
             shared_state["spanish_text"] = literal if literal is not None else "Traduciendo..."
 
         # Deletreo o solo números: se muestra y se dice sin pasar por la LLM.
-        text = literal if literal is not None else joined
+        text = literal if literal is not None else collapsed
         if literal is None and self._translate_glosses is not None:
             try:
                 history = self.memory.as_messages() if USE_CONVERSATION_HISTORY else None
-                text = self._translate_glosses(joined, history_messages=history) or joined
+                text = self._translate_glosses(collapsed, history_messages=history) or collapsed
             except Exception as e:
                 print(f"[!] Error de la LLM: {e}")
-                text = joined
+                text = collapsed
 
         # Los literales también entran al contexto: son parte de la conversación.
         self.memory.add_signer(text, glosses=joined)

@@ -23,6 +23,39 @@ def classify_gloss(gloss: str) -> str:
     return "other"
 
 
+def collapse_literal_runs(glosses: Sequence[str]) -> list[str]:
+    """
+    Junta letras o dígitos **seguidos** antes de mandarlos a la LLM.
+
+    ``NOMBRE MIO P E P A`` → ``["NOMBRE", "MIO", "Pepa"]``
+    ``EDAD TUYO 6 7`` → ``["EDAD", "TUYO", "67"]``
+
+    Una letra o un dígito suelto se deja igual (puede ser glosa, no deletreo).
+    """
+    out: list[str] = []
+    i = 0
+    n = len(glosses)
+    while i < n:
+        kind = classify_gloss(glosses[i])
+        if kind in {"letter", "digit"}:
+            j = i + 1
+            while j < n and classify_gloss(glosses[j]) == kind:
+                j += 1
+            run = [str(g) for g in glosses[i:j]]
+            if len(run) >= 2:
+                chunk = "".join(run)
+                if kind == "letter" and chunk.isupper():
+                    chunk = chunk.capitalize()
+                out.append(chunk)
+            else:
+                out.append(run[0])
+            i = j
+            continue
+        out.append(str(glosses[i]))
+        i += 1
+    return out
+
+
 def format_literal_utterance(
     glosses: Sequence[str],
     ambiguous_letters: frozenset = AMBIGUOUS_LETTERS,

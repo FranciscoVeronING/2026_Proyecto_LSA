@@ -32,7 +32,7 @@ from app.utterance import UtteranceBuffer, normalize_gloss
 from backend.landmarks_payload import LandmarkSmoother, frames_to_matrix, vector_from_frame
 from classifier.arch import load_classifier_bundle
 from core.conversation_memory import ConversationMemory
-from core.repeat_policy import format_literal_utterance
+from core.repeat_policy import collapse_literal_runs, format_literal_utterance
 from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CONVERSATION_HISTORY
 
 
@@ -306,23 +306,27 @@ class LSASession:
         if literal is not None:
             print(f"[backend] Enunciado → literal: {joined} => {literal}")
             return literal, "literal", 0.0, None
-        print(f"[backend] Enunciado → LLM: {joined}")
+        collapsed = " ".join(collapse_literal_runs(glosses))
+        if collapsed != joined:
+            print(f"[backend] Enunciado → LLM: {joined} => {collapsed}")
+        else:
+            print(f"[backend] Enunciado → LLM: {joined}")
         with self.lock:
             fn = self._translate_glosses
         if fn is None:
-            return joined, "fallback", 0.0, None
+            return collapsed, "fallback", 0.0, None
         try:
             from semantic.remote import last_timing
 
             history = self.memory.as_messages() if USE_CONVERSATION_HISTORY else None
             t0 = time.perf_counter()
-            text = fn(joined, history_messages=history) or joined
+            text = fn(collapsed, history_messages=history) or collapsed
             remote_ms = (time.perf_counter() - t0) * 1000
             timing = last_timing()
             return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:
             print(f"[backend] Error LLM: {e}")
-            return joined, "fallback", 0.0, None
+            return collapsed, "fallback", 0.0, None
 
     def clear_conversation(self):
         with self.lock:

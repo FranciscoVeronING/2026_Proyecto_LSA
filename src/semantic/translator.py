@@ -65,6 +65,7 @@ from semantic.models import (
     resolve_oyente_gguf,
     resolve_sordo_gguf,
 )
+from core.repeat_policy import collapse_literal_runs
 
 SYSTEM_PROMPT = ""
 SYSTEM_PROMPT_OYENTE = ""
@@ -350,7 +351,11 @@ def translate_glosses(glosses_input: str, history_messages: Optional[list[dict]]
         load_model_and_tokenizer()
 
     with INFER_LOCK:
-        raw = glosses_input.strip()
+        tokens = [t for t in glosses_input.strip().split() if t]
+        collapsed = collapse_literal_runs(tokens)
+        raw = " ".join(collapsed)
+        if raw != glosses_input.strip():
+            print(f"[semantic] Deletreo/números juntados: {glosses_input.strip()!r} → {raw!r}")
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         if history_messages:
             messages.extend(history_messages)
