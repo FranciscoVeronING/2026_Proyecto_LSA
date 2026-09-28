@@ -1,6 +1,5 @@
 dataset/
 dataset_landmarks/
-dataset_landmarks_*
 *.mp4
 
 __pycache__/
