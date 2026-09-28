@@ -6,6 +6,8 @@ Autores: Francisco Veron, Maite Nigro.
 
 > Rama de trabajo del clasificador. Nace de `main` + merge de `scratch-mediapipe`. No es el informe TFG completo: eso está en `docs/Informe.tex`.
 
+Los landmarks se extraen con **`@mediapipe/holistic@0.5.1675471629`** (JS/WASM, GPU/WebGL), no con el paquete Python `mediapipe`. Hay que regenerar los `.npy` (`preprocessing.py --force`) y usar el checkpoint `src/model/tinyskeleton_best.pth`.
+
 ---
 
 ## Qué hay acá (y qué no)
@@ -54,7 +56,9 @@ A igual iluminación Optuna **perdía ~4 pp** en top-1 (sobre todo letras) y gan
 
 `camera.py` descubre los `.pth` en `src/model/` y, en `--eval`, permite elegir varios. La arquitectura tiene que coincidir con el checkpoint (`config.py` hoy: 16 frames, 128 dim, 4 heads, 2 capas, 97 clases).
 
-Checkpoint de septiembre (el de la eval del 17/09): `src/model/tinyskeleton_best_optuna_v2.pth` — el nombre dice Optuna; la arquitectura es **baseline** 16f / 128 / 4H / 2L.
+Checkpoint actual (Holistic web): `src/model/tinyskeleton_best.pth` — baseline 16f / 128 / 4H / 2L, val **99,14%**. El `.pth` de MediaPipe Python (`tinyskeleton_best_optuna_v2.pth`) y la eval del 17/09 quedan como referencia histórica.
+
+Checkpoint de septiembre con MediaPipe Python 0.10.21 (eval del 17/09): `src/model/tinyskeleton_best_optuna_v2.pth` — el nombre dice Optuna; la arquitectura es **baseline** 16f / 128 / 4H / 2L.
 
 Checkpoints de agosto, para comparar:
 
@@ -83,14 +87,15 @@ El 18/08 (luz ambiente) está en `src/model/2026_08_18_model_no_opt/`.
 
 ## Entorno
 
-Python **3.11** + `mediapipe==0.10.21` + `protobuf>=4.25.3,<5`. No subir MediaPipe a 0.10.30+: sacaron `mp.solutions`.
-
-Guía: [docs/entorno.md](docs/entorno.md).
+Python **3.11** + Node **18+** + Chrome/Edge con WebGL GPU. Guía: [docs/entorno.md](docs/entorno.md).
 
 ```powershell
 conda env create -f environment.yml
 conda activate lsa_gpu
-cd src
+cd src\holistic_web
+npm install
+npx playwright install chromium
+cd ..
 python check_env.py
 ```
 
@@ -109,10 +114,10 @@ python camera.py --eval       # recorre las 97 señas y escribe CSV
 
 **Luz:** MediaPipe necesita iluminación decente (landmarks sin jitter). Comparar evals con distinta luz no atribuye el delta al modelo.
 
-**Entrenar de nuevo** (hace falta el corpus local):
+**Entrenar de nuevo** (hace falta el corpus local). Si los `.npy` salieron de MediaPipe Python, `--force`:
 
 ```powershell
-python preprocessing.py          # MP4 → .npy (omití --force si ya existen)
+python preprocessing.py --force  # MP4 → .npy (Holistic web, GPU)
 python train.py                  # escribe tinyskeleton_best.pth + metrics.json
 ```
 

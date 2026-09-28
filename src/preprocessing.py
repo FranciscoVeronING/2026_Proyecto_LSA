@@ -2,13 +2,12 @@ import os
 import glob
 import cv2
 import numpy as np
-import mediapipe as mp
-from typing import List, Any, Optional
+from typing import List
 from tqdm import tqdm
 
+from holistic_web import HolisticWebSession, HolisticWebError, is_session_dead
+from landmarks import extract_frame_vector
 from utils import (
-    get_anchor_and_scale,
-    normalize_spatial_points,
     interpolate_zero_frames,
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
@@ -22,51 +21,13 @@ from config import (
     USE_HANDS,
     FRAME_FEATURES_DIM,
     POSE_DIM,
+    MEDIAPIPE_WEB_ID,
 )
-
-
-def _extract_frame_vector(results, use_pose: bool, use_hands: bool, use_face: bool) -> Optional[np.ndarray]:
-    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
-    features_to_combine = []
-
-    if use_pose:
-        raw_pose = (
-            np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
-            if results.pose_landmarks
-            else np.zeros(33 * 3)
-        )
-        features_to_combine.append(normalize_spatial_points(raw_pose, anchor, scale))
-
-    if use_face:
-        raw_face = (
-            np.array([[lm.x, lm.y, lm.z] for lm in results.face_landmarks.landmark]).flatten()
-            if results.face_landmarks
-            else np.zeros(468 * 3)
-        )
-        features_to_combine.append(normalize_spatial_points(raw_face, anchor, scale))
-
-    if use_hands:
-        raw_left_hand = (
-            np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
-            if results.left_hand_landmarks
-            else np.zeros(21 * 3)
-        )
-        raw_right_hand = (
-            np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
-            if results.right_hand_landmarks
-            else np.zeros(21 * 3)
-        )
-        features_to_combine.append(normalize_spatial_points(raw_left_hand, anchor, scale))
-        features_to_combine.append(normalize_spatial_points(raw_right_hand, anchor, scale))
-
-    if not features_to_combine:
-        return None
-    return np.concatenate(features_to_combine)
 
 
 def process_video_to_landmarks(
     video_path: str,
-    holistic_model: Any,
+    session: HolisticWebSession,
     target_frames: int,
     use_pose: bool,
     use_hands: bool,
@@ -74,20 +35,20 @@ def process_video_to_landmarks(
     left_handed: bool = False,
 ) -> np.ndarray:
     """
-    Extrae landmarks frame a frame, interpola ceros, recorta gesto (trim)
-    y subsamplea — mismo pipeline lógico que camera.py.
+    Extrae landmarks frame a frame con Holistic JS/WASM (GPU), interpola ceros,
+    recorta gesto (trim) y subsamplea — mismo pipeline lógico que camera.py.
     """
     capture = cv2.VideoCapture(video_path)
     sequence_history: List[np.ndarray] = []
+    session.reset()
 
     while capture.isOpened():
         ret, frame = capture.read()
         if not ret:
             break
 
-        rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = holistic_model.process(rgb_image)
-        frame_vector = _extract_frame_vector(results, use_pose, use_hands, use_face)
+        results = session.process_bgr(frame)
+        frame_vector = extract_frame_vector(results, use_pose, use_hands, use_face)
         if frame_vector is not None:
             sequence_history.append(frame_vector)
 
@@ -105,6 +66,16 @@ def process_video_to_landmarks(
         ]
 
     return sequence_buffer_to_model_input(sequence_history, target_frames=target_frames)
+
+
+def _npy_is_usable(path: str, target_frames: int) -> bool:
+    if not os.path.isfile(path):
+        return False
+    try:
+        arr = np.load(path, mmap_mode="r")
+    except (OSError, ValueError):
+        return False
+    return arr.shape == (target_frames, FRAME_FEATURES_DIM) and bool(np.any(arr))
 
 
 def _is_left_handed_video(video_path: str) -> bool:
@@ -125,9 +96,9 @@ def run_extraction_pipeline(
     os.makedirs(dest_dir, exist_ok=True)
     sign_classes = [d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))]
 
-    mp_holistic = mp.solutions.holistic
-
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with HolisticWebSession(require_gpu=True) as session:
+        failed = 0
+        saved = 0
         for sign_class in sign_classes:
             print(f"\n[*] Processing category: {sign_class}")
             class_input_path = os.path.join(source_dir, sign_class)
@@ -140,29 +111,58 @@ def run_extraction_pipeline(
                 npy_filename = os.path.basename(video_path).replace(".mp4", ".npy")
                 final_save_path = os.path.join(class_output_path, npy_filename)
 
-                if os.path.exists(final_save_path) and not force_reprocess:
+                if _npy_is_usable(final_save_path, target_frames) and not force_reprocess:
                     continue
 
-                try:
-                    landmarks_tensor = process_video_to_landmarks(
-                        video_path=video_path,
-                        holistic_model=holistic,
-                        target_frames=target_frames,
-                        use_pose=use_pose,
-                        use_hands=use_hands,
-                        use_face=use_face,
-                        left_handed=_is_left_handed_video(video_path),
-                    )
-                    if landmarks_tensor.shape == (target_frames, FRAME_FEATURES_DIM):
-                        np.save(final_save_path, landmarks_tensor)
-                except Exception as process_error:
-                    print(f"\n[!] Critical error in file {npy_filename}: {process_error}")
+                last_error = None
+                for attempt in range(3):
+                    try:
+                        landmarks_tensor = process_video_to_landmarks(
+                            video_path=video_path,
+                            session=session,
+                            target_frames=target_frames,
+                            use_pose=use_pose,
+                            use_hands=use_hands,
+                            use_face=use_face,
+                            left_handed=_is_left_handed_video(video_path),
+                        )
+                        if landmarks_tensor.shape == (target_frames, FRAME_FEATURES_DIM) and np.any(
+                            landmarks_tensor
+                        ):
+                            np.save(final_save_path, landmarks_tensor)
+                            saved += 1
+                            session.maybe_recycle(every_videos=25)
+                            last_error = None
+                            break
+                        last_error = RuntimeError("secuencia vacía (Holistic no detectó pose/manos)")
+                        break
+                    except Exception as process_error:
+                        last_error = process_error
+                        if is_session_dead(process_error) and attempt < 2:
+                            print(
+                                f"\n[!] Chrome/Holistic se cayó en {npy_filename}. "
+                                f"Reinicio y reintento ({attempt + 1}/2)."
+                            )
+                            try:
+                                session.recycle("crash")
+                            except HolisticWebError as recycle_error:
+                                print(f"[!] No se pudo reiniciar: {recycle_error}")
+                                break
+                            continue
+                        break
+                if last_error is not None:
+                    failed += 1
+                    print(f"\n[!] Critical error in file {npy_filename}: {last_error}")
+
+        print(f"\n[*] Listo. Guardados: {saved}. Fallidos: {failed}.")
 
 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Extrae landmarks LSA desde videos MP4.")
+    parser = argparse.ArgumentParser(
+        description="Extrae landmarks LSA desde videos MP4 con MediaPipe Holistic JS/WASM (GPU)."
+    )
     parser.add_argument(
         "--force",
         action="store_true",
@@ -171,6 +171,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print("Starting extraction:")
+    print(f" > MediaPipe: {MEDIAPIPE_WEB_ID} (WebGL GPU, no Python)")
     print(f" > Extract Pose: {USE_POSE}")
     print(f" > Extract Hands: {USE_HANDS}")
     print(f" > Pipeline: interpolate → trim → subsample (aligned with camera.py)")

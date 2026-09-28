@@ -1,14 +1,21 @@
+import os
 
-DATASET_VIDEOS_DIR = "../dataset"
-DATASET_NPY_DIR = "../dataset_landmarks_16frames"
-MODEL_SAVE_DIR = "../src/model"
+_SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATASET_VIDEOS_DIR = os.path.join(_SRC_DIR, "..", "dataset")
+DATASET_NPY_DIR = os.path.join(_SRC_DIR, "..", "dataset_landmarks_16frames")
+MODEL_SAVE_DIR = os.path.join(_SRC_DIR, "model")
+MODEL_CHECKPOINT = "tinyskeleton_best.pth"
+
+# Misma build que la extensión (Holistic JS/WASM). No usar mediapipe de Python.
+MEDIAPIPE_WEB_PACKAGE = "@mediapipe/holistic"
+MEDIAPIPE_WEB_VERSION = "0.5.1675471629"
+MEDIAPIPE_WEB_ID = f"{MEDIAPIPE_WEB_PACKAGE}@{MEDIAPIPE_WEB_VERSION}"
 
 NUM_CLASSES = 97
 SAMPLES_PER_CLASS = 60
 
-# Secuencia temporal unificada: preprocessing, entrenamiento e inferencia usan el mismo valor.
-# Si tenés .npy viejos con otra cantidad de frames, train los re-muestrea automáticamente.
-# Optuna v2 explora max_frames en {8, 12, 16, 24} subsampleando estos .npy (hace falta T>=24).
+# Preprocess, train e inferencia usan el mismo T.
 MAX_FRAMES = 16
 TARGET_FRAMES = MAX_FRAMES
 

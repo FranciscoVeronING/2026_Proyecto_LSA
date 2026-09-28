@@ -3,21 +3,24 @@ import csv
 import os
 import re
 import time
-import json
 from datetime import datetime
 from threading import Thread, Lock
 from collections import deque
 
 import cv2
-import mediapipe as mp
 import numpy as np
 import torch
 
 import config as cfg
-from model_arch import TinySkeletonClassifier
+from holistic_web import HolisticWebSession, mediapipe_label
+from landmarks import draw_holistic, extract_frame_vector, hands_present as web_hands_present
+from models import (
+    build_classifier,
+    default_model_index,
+    discover_models,
+    resolve_model_root,
+)
 from utils import (
-    get_anchor_and_scale,
-    normalize_spatial_points,
     compute_landmark_hand_motion,
     sequence_buffer_to_model_input,
     mirror_landmarks_for_left_handed,
@@ -68,29 +71,10 @@ def should_start_recording(capture_mode, hands_present, is_moving, consecutive_h
 
 
 def extract_normalized_vector(results, left_handed: bool):
-    """Construye vector (225,) desde resultados MediaPipe; espeja si es zurdo."""
-    anchor, scale = get_anchor_and_scale(results.pose_landmarks)
-    raw_pose = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]).flatten()
-        if results.pose_landmarks
-        else np.zeros(33 * 3)
-    )
-    raw_lh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.left_hand_landmarks.landmark]).flatten()
-        if results.left_hand_landmarks
-        else np.zeros(21 * 3)
-    )
-    raw_rh = (
-        np.array([[lm.x, lm.y, lm.z] for lm in results.right_hand_landmarks.landmark]).flatten()
-        if results.right_hand_landmarks
-        else np.zeros(21 * 3)
-    )
-
-    norm_pose = normalize_spatial_points(raw_pose, anchor, scale)
-    norm_lh = normalize_spatial_points(raw_lh, anchor, scale)
-    norm_rh = normalize_spatial_points(raw_rh, anchor, scale)
-    vector = np.concatenate([norm_pose, norm_lh, norm_rh])
-
+    """Construye vector (225,) desde Holistic JS/WASM; espeja si es zurdo."""
+    vector = extract_frame_vector(results, use_pose=True, use_hands=True, use_face=False)
+    if vector is None:
+        return np.zeros(cfg.FRAME_FEATURES_DIM, dtype=np.float32)
     if left_handed:
         vector = mirror_landmarks_for_left_handed(vector, pose_dim=cfg.POSE_DIM)
     return vector
@@ -101,301 +85,6 @@ def fit_text(text, max_w, scale=0.45):
     while out and cv2.getTextSize(out, UI_FONT, scale, 1)[0][0] > max_w:
         out = out[:-1]
     return out
-
-
-# =============================================================================
-# CATALOGO DE MODELOS
-# =============================================================================
-def resolve_model_root():
-    here = os.path.dirname(os.path.abspath(__file__))
-    candidate = os.path.join(here, "model")
-    if os.path.isdir(candidate):
-        return candidate
-    return os.path.normpath(os.path.join(here, cfg.MODEL_SAVE_DIR))
-
-
-def _safe_json(path):
-    if not path or not os.path.isfile(path):
-        return None
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (json.JSONDecodeError, OSError):
-        return None
-
-
-def _parse_arch_from_folder(folder):
-    """Fallback: '128HD 4H 2L' y carpetas tipo 16_Frames / 32_frames_a."""
-    name = os.path.basename(folder)
-    parent = os.path.basename(os.path.dirname(folder))
-    blob = f"{parent} {name}"
-    out = {}
-    m = re.search(r"(\d+)\s*HD", blob, re.I)
-    if m:
-        out["hidden_dim"] = int(m.group(1))
-    m = re.search(r"(?<![A-Za-z0-9])(\d+)H(?![A-Za-z])", blob)
-    if m:
-        out["num_heads"] = int(m.group(1))
-    m = re.search(r"(?<![A-Za-z0-9])(\d+)L(?![A-Za-z])", blob)
-    if m:
-        out["num_layers"] = int(m.group(1))
-    m = re.search(r"(\d+)\s*[_-]?\s*[Ff]rames", blob)
-    if m:
-        out["max_frames"] = int(m.group(1))
-    return out
-
-
-def infer_arch_from_checkpoint(pth_path):
-    """Lee hidden_dim, num_layers y num_classes del .pth (más fiable que metrics.json)."""
-    state = torch.load(pth_path, map_location="cpu", weights_only=True)
-    hidden = int(state["conv_extractor.0.weight"].shape[0])
-    n_cls = int(state["classification_head.weight"].shape[0])
-    layer_ids = {
-        int(key.split(".")[2])
-        for key in state
-        if key.startswith("transformer.layers.")
-    }
-    n_layers = (max(layer_ids) + 1) if layer_ids else cfg.NUM_LAYERS
-    compatible = "attention_pool.weight" in state
-    return {
-        "hidden_dim": hidden,
-        "num_layers": n_layers,
-        "num_classes": n_cls,
-        "compatible": compatible,
-    }
-
-
-def _guess_num_heads(hidden_dim, parsed=None, metrics=None, metrics_trustworthy=False):
-    if metrics_trustworthy and metrics and metrics.get("num_heads") is not None:
-        return int(metrics["num_heads"])
-    if parsed and parsed.get("num_heads") is not None:
-        return int(parsed["num_heads"])
-    if hidden_dim % 4 == 0 and hidden_dim <= 128:
-        return 4
-    if hidden_dim % 2 == 0:
-        return 2
-    return 1
-
-
-def _load_arch_metrics(folder):
-    metrics = _safe_json(os.path.join(folder, "metrics.json"))
-    if metrics and "hidden_dim" in metrics:
-        return metrics
-
-    try:
-        json_names = os.listdir(folder)
-    except OSError:
-        json_names = []
-    for name in json_names:
-        if not name.lower().endswith(".json") or "optuna" not in name.lower():
-            continue
-        data = _safe_json(os.path.join(folder, name))
-        if not data or "best_params" not in data:
-            continue
-        bp = data["best_params"]
-        return {
-            "hidden_dim": int(bp.get("hidden_dim", cfg.HIDDEN_DIM)),
-            "num_heads": int(bp.get("num_heads", cfg.NUM_HEADS)),
-            "num_layers": int(bp.get("num_layers", cfg.NUM_LAYERS)),
-            "dropout_rate": float(bp.get("dropout_rate", cfg.DROPOUT_RATE)),
-            "max_frames": int(bp.get("max_frames", cfg.MAX_FRAMES)),
-        }
-    return _parse_arch_from_folder(folder)
-
-
-def _load_class_mapping(folder, metrics, model_root):
-    mapeo = _safe_json(os.path.join(folder, "mapeo_clases.json"))
-    if isinstance(mapeo, dict) and mapeo:
-        return {str(k): int(v) for k, v in mapeo.items()}
-
-    classes = metrics.get("classes") if metrics else None
-    if isinstance(classes, list) and classes:
-        return {name: idx for idx, name in enumerate(classes)}
-
-    mapeo = _safe_json(os.path.join(model_root, "mapeo_clases.json"))
-    if isinstance(mapeo, dict) and mapeo:
-        return {str(k): int(v) for k, v in mapeo.items()}
-    return {name: idx for idx, name in enumerate(cfg.SIGN_CLASSES)}
-
-
-def _make_labels(rel_id, metrics, archived):
-    folder = os.path.basename(rel_id.replace("\\", "/"))
-    m = re.match(r"(\d{4})_(\d{2})_(\d{2})_(.+)", folder)
-    if m:
-        tag = m.group(4).replace("model_", "").replace("_", " ")
-        short = f"{m.group(2)}-{m.group(3)} {tag}"
-    else:
-        short = folder[:36]
-
-    parts = []
-    ncls = metrics.get("num_classes")
-    if ncls:
-        parts.append(f"{ncls}c")
-    mf = metrics.get("max_frames")
-    if mf:
-        parts.append(f"{mf}f")
-    hd = metrics.get("hidden_dim")
-    nh = metrics.get("num_heads")
-    nl = metrics.get("num_layers")
-    if hd:
-        parts.append(f"{hd}d")
-    if nh is not None and nl is not None:
-        parts.append(f"{nh}H{nl}L")
-    acc = metrics.get("val_accuracy_top1_pct")
-    if acc is not None:
-        parts.append(f"val {acc:.0f}%")
-
-    prefix = "arch/" if archived else ""
-    detail = " ".join(parts)
-    label = f"{prefix}{short} | {detail}" if detail else f"{prefix}{short}"
-    return short.strip(), label
-
-
-class ModelSpec:
-    def __init__(
-        self,
-        spec_id,
-        short,
-        label,
-        folder,
-        pth_path,
-        hidden_dim,
-        num_heads,
-        num_layers,
-        dropout_rate,
-        max_frames,
-        class_to_idx,
-        archived,
-        num_classes=None,
-        val_acc=None,
-    ):
-        self.id = spec_id
-        self.short = short
-        self.label = label
-        self.folder = folder
-        self.pth_path = pth_path
-        self.hidden_dim = hidden_dim
-        self.num_heads = num_heads
-        self.num_layers = num_layers
-        self.dropout_rate = dropout_rate
-        self.max_frames = max_frames
-        self.class_to_idx = class_to_idx
-        self.idx_to_class = {v: k for k, v in class_to_idx.items()}
-        self.num_classes = int(num_classes) if num_classes is not None else len(class_to_idx)
-        self.archived = archived
-        self.val_acc = val_acc
-
-
-def discover_models(model_root):
-    """Recorre src/model (incluye archivados) y arma un spec por carpeta con .pth."""
-    specs = []
-    if not os.path.isdir(model_root):
-        return specs
-
-    for dirpath, dirnames, filenames in os.walk(model_root):
-        pth_files = [f for f in filenames if f.lower().endswith(".pth")]
-        if not pth_files:
-            continue
-        preferred = [f for f in pth_files if "best" in f.lower()]
-        pth_name = sorted(preferred or pth_files)[0]
-        pth_path = os.path.join(dirpath, pth_name)
-
-        rel = os.path.relpath(dirpath, model_root)
-        if rel == ".":
-            spec_id = os.path.splitext(pth_name)[0]
-        else:
-            spec_id = rel.replace("\\", "/")
-        archived = spec_id.replace("\\", "/").startswith("archivados")
-
-        try:
-            ckpt = infer_arch_from_checkpoint(pth_path)
-        except Exception as e:
-            print(f"[!] No se pudo leer {pth_path}: {e}")
-            continue
-        if not ckpt.get("compatible", True):
-            print(f"[!] Omitido (arquitectura previa, sin attention pool): {spec_id}")
-            continue
-
-        metrics = _load_arch_metrics(dirpath) or {}
-        parsed = _parse_arch_from_folder(dirpath)
-        metrics_ok = int(metrics.get("hidden_dim", -1)) == ckpt["hidden_dim"]
-
-        hidden_dim = ckpt["hidden_dim"]
-        num_layers = ckpt["num_layers"]
-        num_heads = _guess_num_heads(hidden_dim, parsed, metrics, metrics_ok)
-        dropout_rate = float(
-            (metrics.get("dropout_rate") if metrics_ok else None) or cfg.DROPOUT_RATE
-        )
-        if metrics_ok and metrics.get("max_frames") is not None:
-            max_frames = int(metrics["max_frames"])
-        elif parsed.get("max_frames") is not None:
-            max_frames = int(parsed["max_frames"])
-        else:
-            max_frames = cfg.MAX_FRAMES
-
-        class_to_idx = _load_class_mapping(dirpath, metrics, model_root)
-        if len(class_to_idx) != ckpt["num_classes"]:
-            root_map = _safe_json(os.path.join(model_root, "mapeo_clases.json"))
-            if isinstance(root_map, dict) and len(root_map) == ckpt["num_classes"]:
-                class_to_idx = {str(k): int(v) for k, v in root_map.items()}
-
-        label_metrics = {
-            **metrics,
-            "hidden_dim": hidden_dim,
-            "num_heads": num_heads,
-            "num_layers": num_layers,
-            "max_frames": max_frames,
-            "num_classes": ckpt["num_classes"],
-        }
-        short, label = _make_labels(spec_id, label_metrics, archived)
-        specs.append(
-            ModelSpec(
-                spec_id=spec_id,
-                short=short,
-                label=label,
-                folder=dirpath,
-                pth_path=pth_path,
-                hidden_dim=hidden_dim,
-                num_heads=num_heads,
-                num_layers=num_layers,
-                dropout_rate=dropout_rate,
-                max_frames=max_frames,
-                class_to_idx=class_to_idx,
-                archived=archived,
-                num_classes=ckpt["num_classes"],
-                val_acc=metrics.get("val_accuracy_top1_pct") if metrics_ok else None,
-            )
-        )
-
-    specs.sort(key=lambda s: (s.archived, s.id.lower()), reverse=False)
-    # Dentro de los activos, el más reciente primero (fecha en el nombre).
-    active = [s for s in specs if not s.archived]
-    archived = [s for s in specs if s.archived]
-    active.sort(key=lambda s: s.id, reverse=True)
-    archived.sort(key=lambda s: s.id)
-    return active + archived
-
-
-def default_model_index(catalog):
-    for i, spec in enumerate(catalog):
-        if not spec.archived:
-            return i
-    return 0 if catalog else -1
-
-
-def build_classifier(spec, device):
-    model = TinySkeletonClassifier(
-        cfg.FRAME_FEATURES_DIM,
-        spec.hidden_dim,
-        num_heads=spec.num_heads,
-        num_layers=spec.num_layers,
-        num_classes=spec.num_classes,
-        dropout_rate=spec.dropout_rate,
-    ).to(device)
-    state = torch.load(spec.pth_path, map_location=device, weights_only=True)
-    model.load_state_dict(state)
-    model.eval()
-    return model
 
 
 # =============================================================================
@@ -763,7 +452,8 @@ class EvalSession:
         # Se registran en el CSV: sin esto no se puede comparar dos evals
         # corridas con distinta resolucion o distinta version de MediaPipe.
         self.frame_size = "desconocido"
-        self.mediapipe_version = getattr(mp, "__version__", "desconocido")
+        self.mediapipe_version = mediapipe_label()
+        self._take_files = []
         self._ensure_header()
 
     def _ensure_header(self):
@@ -834,11 +524,13 @@ class EvalSession:
         for model_id in self.model_ids:
             top3 = results_by_model.get(model_id, [])
             self._write_row(model_id, top3, capture_mode, skipped=False)
+        take_path = None
         if input_matrix is not None:
-            self._save_take(expected, input_matrix)
+            take_path = self._save_take(expected, input_matrix)
+        self._take_files.append(take_path)
         self.index += 1
 
-    def _save_take(self, expected: str, matrix) -> None:
+    def _save_take(self, expected: str, matrix):
         """
         Guarda los landmarks de la toma en vivo.
 
@@ -851,15 +543,43 @@ class EvalSession:
             os.makedirs(folder, exist_ok=True)
             path = os.path.join(folder, f"take_{self.index + 1:03d}.npy")
             np.save(path, np.asarray(matrix, dtype=np.float32))
+            return path
         except OSError as exc:
             print(f"[!] No se pudo guardar la toma de {expected}: {exc}")
+            return None
 
     def skip_current(self, capture_mode: str):
         if self.finished:
             return
         for model_id in self.model_ids:
             self._write_row(model_id, [], capture_mode, skipped=True)
+        self._take_files.append(None)
         self.index += 1
+
+    def redo_last(self):
+        """Vuelve a la seña anterior y borra su fila del CSV (y el .npy)."""
+        if self.index <= 0:
+            return None
+        self.index -= 1
+        take_path = self._take_files.pop() if self._take_files else None
+        if take_path:
+            try:
+                if os.path.isfile(take_path):
+                    os.remove(take_path)
+            except OSError as exc:
+                print(f"[!] No se pudo borrar la toma {take_path}: {exc}")
+        n_rows = max(1, len(self.model_ids))
+        try:
+            with open(self.csv_path, "r", newline="", encoding="utf-8") as f:
+                rows = list(csv.DictReader(f))
+            keep = rows[:-n_rows] if len(rows) >= n_rows else []
+            with open(self.csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
+                writer.writeheader()
+                writer.writerows(keep)
+        except OSError as exc:
+            print(f"[!] No se pudo reescribir el CSV: {exc}")
+        return self.sign_list[self.index]
 
 
 # =============================================================================
@@ -1266,7 +986,10 @@ def main():
         eval_session = EvalSession(sign_list, csv_path, handedness, [s.id for s in active_specs])
         print(f"[*] Modo eval activo. CSV: {csv_path}")
         print(f"[*] Modelos en paralelo: {', '.join(s.short for s in active_specs)}")
-        print(f"[*] Senias a probar: {len(sign_list)}. Tecla 'n' = saltar senia.")
+        print(
+            f"[*] Senias a probar: {len(sign_list)}. "
+            "Tecla 'n' = saltar, 'r' o boton REHACER = volver a la anterior."
+        )
         print(f"[*] Orden: {', '.join(sign_list)}")
 
     n_models = len(active_specs)
@@ -1290,9 +1013,6 @@ def main():
     cv2.namedWindow("LSA DETECTOR")
     cv2.setMouseCallback("LSA DETECTOR", mouse_callback)
 
-    mp_holistic = mp.solutions.holistic
-    mp_drawing = mp.solutions.drawing_utils
-
     # El panel de UI asume 640 de ancho; el alto sigue el aspect real de la
     # camara para no deformar la imagen ni romper el blit.
     VID_W = 640
@@ -1302,6 +1022,7 @@ def main():
     btn_pause = Button(395, VID_H + 8, 90, 36, "PAUSA")
     btn_view = Button(495, VID_H + 8, 125, 36, "Esqueleto")
     btn_conf = Button(495, VID_H + 50, 125, 36, "Config")
+    btn_redo = Button(280, VID_H + 50, 105, 36, "REHACER")
     dropdown = Dropdown(
         20,
         VID_H + 155,
@@ -1346,7 +1067,7 @@ def main():
         prev_hand_vector = None
         smoother.reset()
 
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with HolisticWebSession(require_gpu=True) as holistic:
         while True:
             frame = vs.read()
             if frame is None:
@@ -1376,18 +1097,11 @@ def main():
                         is_moving_pixels = True
                 prev_gray = gray
 
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                rgb.flags.writeable = False
-                results = holistic.process(rgb)
-                rgb.flags.writeable = True
-                image = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-
+                results = holistic.process_bgr(frame)
                 if show_landmarks:
-                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS)
-                    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
-                    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
+                    draw_holistic(image, results)
 
-                hands_present = bool(results.left_hand_landmarks or results.right_hand_landmarks)
+                hands_present = web_hands_present(results)
 
                 if hands_present:
                     current_vector = extract_normalized_vector(results, left_handed=left_handed)
@@ -1579,7 +1293,7 @@ def main():
                 else:
                     cv2.putText(canvas, "Esperando...", (20, pred_y + 28), UI_FONT, 0.9, (100, 100, 100), 2)
 
-                help_txt = "q=salir | m=modo | p=pausa | n=saltar (eval)"
+                help_txt = "q=salir | m=modo | p=pausa | n=saltar | r=rehacer"
                 cv2.putText(canvas, help_txt, (20, TOT_H - 10), UI_FONT, 0.42, (120, 120, 120), 1)
 
                 if btn_view.update(mouse_state["x"], mouse_state["y"], clicked_ui):
@@ -1601,6 +1315,18 @@ def main():
                     print("[*] PAUSA" if paused else "[*] Captura reanudada")
                 btn_pause.text = "PLAY" if paused else "PAUSA"
                 btn_pause.draw(canvas, active=paused)
+
+                if args.eval:
+                    btn_redo.set_rect(280, VID_H + 50, 105, 36)
+                    if btn_redo.update(mouse_state["x"], mouse_state["y"], clicked_ui):
+                        sign = eval_session.redo_last() if eval_session else None
+                        pending_eval_after[0] = 0.0
+                        clear_capture_state()
+                        if sign:
+                            print(f"[*] Rehacer. Volver a: {sign}")
+                        else:
+                            print("[*] No hay senia anterior para rehacer.")
+                    btn_redo.draw(canvas, active=bool(eval_session and eval_session.index > 0))
 
                 if args.eval:
                     cv2.putText(
@@ -1667,6 +1393,14 @@ def main():
             if key == ord("n") and eval_session and not eval_session.finished:
                 eval_session.skip_current(capture_mode)
                 print(f"[*] Saltada senia. Siguiente: {eval_session.expected_sign}")
+            if key == ord("r") and eval_session:
+                sign = eval_session.redo_last()
+                pending_eval_after[0] = 0.0
+                clear_capture_state()
+                if sign:
+                    print(f"[*] Rehacer. Volver a: {sign}")
+                else:
+                    print("[*] No hay senia anterior para rehacer.")
 
     shared_state["running"] = False
     vs.stop()

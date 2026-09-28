@@ -1,5 +1,5 @@
 """
-Verifica que el entorno Python tenga versiones compatibles con el pipeline LSA.
+Verifica que el entorno tenga Python + Node (Holistic JS/WASM GPU).
 
 Uso:
     cd src
@@ -7,26 +7,9 @@ Uso:
 """
 from __future__ import annotations
 
+import shutil
+import subprocess
 import sys
-
-
-def _parse_version(version_str: str) -> tuple[int, ...]:
-    parts = []
-    for piece in version_str.split(".")[:3]:
-        try:
-            parts.append(int("".join(c for c in piece if c.isdigit()) or "0"))
-        except ValueError:
-            parts.append(0)
-    while len(parts) < 3:
-        parts.append(0)
-    return tuple(parts)
-
-
-def _version_in_range(version_str: str, low: str, high: str) -> bool:
-    v = _parse_version(version_str)
-    lo = _parse_version(low)
-    hi = _parse_version(high)
-    return lo <= v < hi
 
 
 def main() -> int:
@@ -38,79 +21,16 @@ def main() -> int:
 
     if py < (3, 10):
         warnings.append(
-            "Python < 3.10 detectado. Recomendado: 3.11.x "
-            "(el codigo usa typing compatible, pero 3.11 es mas estable con las deps)."
-        )
-    if py >= (3, 13):
-        warnings.append(
-            "Python 3.13+ puede no tener wheels oficiales para mediapipe 0.10.21. "
-            "Use Python 3.11 si hay problemas."
+            "Python < 3.10 detectado. Recomendado: 3.11.x."
         )
 
-    # protobuf (debe instalarse antes de mediapipe en el check)
-    try:
-        import google.protobuf as pb
-
-        pb_ver = pb.__version__
-        print(f"protobuf: {pb_ver}")
-        if not _version_in_range(pb_ver, "4.25.3", "5.0.0"):
-            errors.append(
-                f"protobuf {pb_ver} incompatible. MediaPipe 0.10.21 requiere "
-                f"protobuf>=4.25.3,<5.\n"
-                f"  Fix: pip install 'protobuf>=4.25.3,<5'"
-            )
-    except ImportError:
-        errors.append("protobuf no instalado. pip install 'protobuf>=4.25.3,<5'")
-
-    # numpy
     try:
         import numpy as np
 
-        np_ver = np.__version__
-        print(f"numpy: {np_ver}")
-        major = int(np_ver.split(".")[0])
-        if major >= 2:
-            errors.append(
-                f"numpy {np_ver} incompatible. mediapipe 0.10.21 requiere numpy<2.\n"
-                f"  Fix: pip install 'numpy>=1.26,<2'"
-            )
+        print(f"numpy: {np.__version__}")
     except ImportError:
         errors.append("numpy no instalado.")
 
-    # mediapipe + solutions API
-    try:
-        import mediapipe as mp
-
-        mp_ver = getattr(mp, "__version__", "unknown")
-        print(f"mediapipe: {mp_ver}")
-
-        mp_tuple = _parse_version(mp_ver)
-        if mp_tuple >= (0, 10, 30):
-            errors.append(
-                f"mediapipe {mp_ver} elimino mp.solutions (Holistic).\n"
-                f"  Fix: pip install mediapipe==0.10.21"
-            )
-        elif mp_tuple > (0, 10, 21):
-            warnings.append(
-                f"mediapipe {mp_ver}: no probado. Recomendado pin: mediapipe==0.10.21"
-            )
-
-        if not hasattr(mp, "solutions"):
-            errors.append(
-                "mediapipe no expone 'solutions'. El proyecto usa mp.solutions.holistic.\n"
-                "  Fix: pip install mediapipe==0.10.21"
-            )
-        else:
-            holistic = mp.solutions.holistic
-            with holistic.Holistic(min_detection_confidence=0.5) as model:
-                pass
-            print("mediapipe.solutions.holistic: OK")
-    except ImportError:
-        errors.append("mediapipe no instalado. pip install mediapipe==0.10.21")
-    except Exception as exc:
-        errors.append(f"mediapipe instalado pero falla al iniciar Holistic: {exc}")
-
-    # torch (opcional para preprocessing, requerido para train/camera)
     try:
         import torch
 
@@ -125,6 +45,51 @@ def main() -> int:
     except ImportError:
         errors.append("opencv-python no instalado.")
 
+    try:
+        import mediapipe as mp
+
+        warnings.append(
+            f"mediapipe Python {getattr(mp, '__version__', '?')} está instalado "
+            "pero ya no se usa. El clasificador extrae landmarks con "
+            "@mediapipe/holistic JS/WASM. Podés desinstalarlo: pip uninstall mediapipe"
+        )
+    except ImportError:
+        print("mediapipe Python: no instalado (correcto)")
+
+    node = shutil.which("node")
+    npm = shutil.which("npm") or shutil.which("npm.cmd")
+    if not node:
+        errors.append("Node.js no está en PATH. Instalá Node 18+.")
+    else:
+        try:
+            node_ver = subprocess.check_output([node, "-v"], text=True).strip()
+            print(f"node: {node_ver}")
+            major = int("".join(c for c in node_ver.split(".")[0] if c.isdigit()) or "0")
+            if major < 18:
+                errors.append(f"Node {node_ver} es viejo. Hace falta Node 18+.")
+        except subprocess.CalledProcessError:
+            errors.append("node -v falló.")
+    if not npm:
+        errors.append("npm no está en PATH.")
+    else:
+        print(f"npm: {npm}")
+
+    if node and npm and not errors:
+        try:
+            from holistic_web import HolisticWebSession, ensure_installed
+
+            ensure_installed()
+            print("holistic_web npm: OK")
+            print("Probando Holistic JS/WASM con GPU (Chrome/WebGL)...")
+            with HolisticWebSession(require_gpu=True) as session:
+                gpu = session.gpu_info
+                print(
+                    f"mediapipe web: @mediapipe/holistic@0.5.1675471629 | "
+                    f"{gpu.get('vendor', '?')} / {gpu.get('renderer', '?')}"
+                )
+        except Exception as exc:
+            errors.append(f"Holistic Web GPU no arrancó: {exc}")
+
     print()
     for msg in warnings:
         print(f"[WARN] {msg}")
@@ -134,12 +99,13 @@ def main() -> int:
     if errors:
         print()
         print("Entorno NO listo. Stack recomendado:")
-        print("  Python 3.11 + mediapipe==0.10.21 + protobuf>=4.25.3,<5 + numpy<2")
-        print("Ver environment.yml o requirements.txt en la raiz del repo.")
+        print("  Python 3.11 + Node 18+ + Chrome/Edge con WebGL GPU")
+        print("  cd src/holistic_web && npm install && npx playwright install chromium")
+        print("Ver README.md")
         return 1
 
     print()
-    print("Entorno OK para preprocessing / train / camera.")
+    print("Entorno OK para preprocessing / train / camera (MediaPipe Web GPU).")
     return 0
 
 

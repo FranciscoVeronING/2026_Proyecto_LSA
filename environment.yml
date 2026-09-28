@@ -3,11 +3,7 @@
 # Crear desde cero:
 #   conda env create -f environment.yml
 #   conda activate lsa_gpu
-#
-# Recrear (si tenés conflictos de protobuf/mediapipe):
-#   conda deactivate
-#   conda env remove -n lsa_gpu
-#   conda env create -f environment.yml
+#   cd src/holistic_web && npm install && npx playwright install chromium
 #
 # Verificar:
 #   cd src
@@ -30,7 +26,5 @@ dependencies:
   - torchaudio
   - pytorch-cuda=12.1
   - pip:
-      - mediapipe==0.10.21
-      - "protobuf>=4.25.3,<5"
-      - "numpy>=1.26.0,<2"
+      - "numpy>=1.26.0"
       - "opencv-python>=4.8.0,<5"

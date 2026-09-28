@@ -6,6 +6,23 @@
 
 ---
 
+## MediaPipe Web (GPU)
+
+El extractor Python (`mediapipe==0.10.21`) se reemplazó por **`@mediapipe/holistic@0.5.1675471629`** JS/WASM, con **WebGL GPU**, igual que la extensión.
+
+- Runtime: `src/holistic_web/` (Chrome/Edge + Playwright).
+- Cliente: `src/holistic_web.py` (`preprocessing.py` y `camera.py`).
+- Vector por frame: igual, **225-D** (pose + manos, sin cara).
+- Si WebGL cae a CPU/SwiftShader, el proceso **falla**.
+
+Hay que regenerar los `.npy` (`python preprocessing.py --force`) y reentrenar. Los landmarks de MediaPipe Python no son intercambiables.
+
+Checkpoint de esa corrida: `src/model/tinyskeleton_best.pth` (val **99,14%**, `val_loss` 0,0524).
+
+Se sacaron `inspect_sign_features.py` y `video_divider.py`: dependían de MediaPipe Python.
+
+---
+
 ## 1. Origen de la rama
 
 - Checkout de `main`, branch nueva `scratch-mediapipe-v2`.

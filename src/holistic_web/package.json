@@ -1,0 +1,11 @@
+{
+  "name": "lsa-holistic-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MediaPipe Holistic JS/WASM GPU para extraer landmarks LSA",
+  "dependencies": {
+    "@mediapipe/holistic": "0.5.1675471629",
+    "playwright": "^1.49.0"
+  }
+}

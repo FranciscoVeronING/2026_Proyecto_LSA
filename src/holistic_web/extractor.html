@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>LSA Holistic Web</title>
+</head>
+<body>
+  <canvas id="input"></canvas>
+  <script src="/vendor/holistic.js"></script>
+  <script>
+    function gpuInfo() {
+      const canvas = document.createElement("canvas");
+      const opts = { failIfMajorPerformanceCaveat: true };
+      const gl =
+        canvas.getContext("webgl2", opts) || canvas.getContext("webgl", opts);
+      if (!gl) {
+        return { ok: false, software: true, reason: "no-webgl", vendor: "", renderer: "" };
+      }
+      const ext = gl.getExtension("WEBGL_debug_renderer_info");
+      const vendor = ext
+        ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL)
+        : gl.getParameter(gl.RENDERER);
+      const renderer = ext
+        ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+        : gl.getParameter(gl.RENDERER);
+      const software = /swiftshader|llvmpipe|softpipe|microsoft basic render/i.test(
+        String(renderer)
+      );
+      return { ok: !software, software, vendor: String(vendor), renderer: String(renderer) };
+    }
+
+    function serialize(list) {
+      if (!list || !list.length) return null;
+      const out = [];
+      for (let i = 0; i < list.length; i++) {
+        const lm = list[i];
+        out.push({ x: lm.x, y: lm.y, z: lm.z, visibility: lm.visibility });
+      }
+      return out;
+    }
+
+    window.__mpGpuInfo = gpuInfo;
+
+    window.__mpBoot = async function boot(options) {
+      const gpu = gpuInfo();
+      if (!gpu.ok) {
+        throw new Error(
+          "WebGL no está en GPU (renderer=" +
+            (gpu.renderer || gpu.reason) +
+            "). Holistic JS necesita GPU, no CPU/SwiftShader."
+        );
+      }
+      if (typeof Holistic !== "function") {
+        throw new Error("No cargó window.Holistic desde @mediapipe/holistic.");
+      }
+      const holistic = new Holistic({
+        locateFile: (file) => "/vendor/" + file,
+      });
+      holistic.setOptions({
+        selfieMode: false,
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        smoothSegmentation: false,
+        refineFaceLandmarks: false,
+        minDetectionConfidence: options.minDetectionConfidence ?? 0.5,
+        minTrackingConfidence: options.minTrackingConfidence ?? 0.5,
+      });
+      let pending = null;
+      holistic.onResults((results) => {
+        if (pending) {
+          const resolve = pending;
+          pending = null;
+          resolve(results);
+        }
+      });
+      if (typeof holistic.initialize === "function") {
+        await holistic.initialize();
+      }
+      const warm = document.createElement("canvas");
+      warm.width = 64;
+      warm.height = 64;
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("timeout warmup Holistic")), 60000);
+        pending = () => {
+          clearTimeout(timer);
+          resolve();
+        };
+        holistic.send({ image: warm }).catch((err) => {
+          clearTimeout(timer);
+          pending = null;
+          reject(err);
+        });
+      });
+      window.__holistic = holistic;
+      window.__mpProcessDataUrl = async function processDataUrl(dataUrl) {
+        const img = new Image();
+        img.decoding = "async";
+        const decoded = new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("JPEG inválido: " + dataUrl));
+        });
+        img.src = dataUrl;
+        await decoded;
+        const canvas = document.getElementById("input");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        const results = await new Promise((resolve, reject) => {
+          const timer = setTimeout(
+            () => reject(new Error("timeout Holistic.send")),
+            20000
+          );
+          pending = (r) => {
+            clearTimeout(timer);
+            resolve(r);
+          };
+          holistic.send({ image: canvas }).catch((err) => {
+            clearTimeout(timer);
+            pending = null;
+            reject(err);
+          });
+        });
+        return {
+          pose: serialize(results.poseLandmarks),
+          leftHand: serialize(results.leftHandLandmarks),
+          rightHand: serialize(results.rightHandLandmarks),
+          face: serialize(results.faceLandmarks),
+        };
+      };
+      window.__mpReset = function reset() {
+        if (window.__holistic && typeof window.__holistic.reset === "function") {
+          window.__holistic.reset();
+        }
+      };
+      return gpu;
+    };
+  </script>
+</body>
+</html>

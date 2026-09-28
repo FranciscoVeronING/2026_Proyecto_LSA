@@ -4,23 +4,30 @@ from typing import Tuple, List, Any, Optional
 import config as cfg
 
 
-def get_anchor_and_scale(pose_landmarks: Any) -> Tuple[np.ndarray, float]:
+def get_anchor_and_scale(pose_xyz: Any) -> Tuple[np.ndarray, float]:
     """Calcula ancla (punto medio de hombros) y escala inter-hombros."""
-    if not pose_landmarks:
+    if pose_xyz is None:
         return np.array([0.0, 0.0, 0.0]), 1.0
 
-    left_shoulder = pose_landmarks.landmark[11]
-    right_shoulder = pose_landmarks.landmark[12]
+    pts = np.asarray(pose_xyz, dtype=np.float32)
+    if pts.size == 0:
+        return np.array([0.0, 0.0, 0.0]), 1.0
+    pts = pts.reshape(-1, 3)
+    if pts.shape[0] < 13:
+        return np.array([0.0, 0.0, 0.0]), 1.0
+
+    left_shoulder = pts[11]
+    right_shoulder = pts[12]
 
     anchor = np.array([
-        (left_shoulder.x + right_shoulder.x) / 2.0,
-        (left_shoulder.y + right_shoulder.y) / 2.0,
-        (left_shoulder.z + right_shoulder.z) / 2.0,
+        (left_shoulder[0] + right_shoulder[0]) / 2.0,
+        (left_shoulder[1] + right_shoulder[1]) / 2.0,
+        (left_shoulder[2] + right_shoulder[2]) / 2.0,
     ])
 
     scale = float(np.sqrt(
-        (left_shoulder.x - right_shoulder.x) ** 2 +
-        (left_shoulder.y - right_shoulder.y) ** 2
+        (left_shoulder[0] - right_shoulder[0]) ** 2 +
+        (left_shoulder[1] - right_shoulder[1]) ** 2
     ))
 
     if scale < 1e-5:
