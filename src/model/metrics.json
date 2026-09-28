@@ -1,7 +1,8 @@
 {
-  "timestamp": "2026-09-15T20:41:10.668408+00:00",
-  "best_val_loss": 0.06196669422442446,
-  "val_accuracy_top1_pct": 98.28,
+  "timestamp": "2026-09-21T00:00:00+00:00",
+  "extractor": "@mediapipe/holistic@0.5.1675471629",
+  "best_val_loss": 0.0524,
+  "val_accuracy_top1_pct": 99.14,
   "num_classes": 97,
   "num_train_samples": 4656,
   "num_val_samples": 1164,
@@ -28,7 +29,7 @@
   "aug_temporal_crop_frac": 0.15,
   "aug_frame_dropout_max": 3,
   "samples_per_class": 60,
-  "epochs_ran": 35,
+  "epochs_ran": 32,
   "classes": [
     "como",
     "cuando",
