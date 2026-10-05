@@ -1,0 +1,126 @@
+% ====================================================================
+\chapter{Marco teórico, estado del arte y metodología}
+% ====================================================================
+
+\section{Marco teórico}
+
+\subsection{Arquitectura híbrida de partición Cliente-Nube (Edge-Cloud)}
+Para equilibrar los requerimientos de privacidad, latencia y viabilidad en hardware de consumo masivo, se adoptó una arquitectura de partición cliente-nube (\textit{edge-cloud partitioning}) \parencite{pressman2014software}. 
+
+En el cliente local (\textit{edge}) se ejecutan la captura de video, la extracción de puntos clave corporales y el modelo de clasificación gestual. Este componente presenta un costo computacional acotado y garantiza que el video crudo nunca abandone el equipo del usuario, resguardando su privacidad e identidad visual. 
+
+Por el contrario, los modelos de lenguaje pequeños (SLM) de 1B a 3B parámetros imponen demandas de procesamiento autorregresivo y memoria RAM incompatibles con computadoras estándar que ejecutan simultáneamente una videollamada. Estos módulos se desacoplan y encapsulan como servicios de inferencia en la nube que reciben exclusivamente cargas de texto livianas (vectores de glosas o texto transcripto) y devuelven respuestas contextualizadas con tiempos de transmisión despreciables frente a la latencia de red.
+
+\subsection{Estructura lingüística de la LSA y traducción Topic-Comment}
+La LSA es una lengua natural con estatus propio que no comparte la gramática del español \parencite{massone2012curso}. A diferencia de este último, que sigue preferentemente la estructura Sujeto-Verbo-Objeto (SVO), la LSA carece de artículos, preposiciones gramaticales abstractas y verbos copulativos (``ser'' o ``estar'') \parencite{massone1993numero, massone2012curso}. Morfosintácticamente, la LSA organiza sus proposiciones bajo el principio pragmático de \textit{Topic-Comment} (Tópico-Comentario) \parencite{massone2012curso}. 
+
+Bajo este paradigma, el enunciado sitúa en primer lugar el marco temporal y espacial de referencia (el tópico), seguido por el sujeto, el objeto y finalmente la acción o estado (el comentario):
+\begin{equation}
+\begin{aligned}
+\text{Oración LSA} \rightarrow\;& \text{Tiempo} \rightarrow \text{Lugar} \rightarrow \text{Sujeto} \\
+&\rightarrow \text{Objeto/Sustantivo} \rightarrow \text{Verbo} \rightarrow \text{Negación/Pregunta}
+\end{aligned}
+\label{eq:topic_comment_structure}
+\end{equation}
+Por ende, la equivalencia entre ambas lenguas no admite un mapeo léxico término a término. Es imprescindible una etapa intermedia de interpretación semántica que traduzca tanto la secuencia temporal de glosas a español como el texto en español a glosas formalmente ordenadas antes de su animación.
+
+\subsection{Visión computacional y reconocimiento basado en esqueletos}
+El procesamiento de video crudo píxel a píxel impone demandas computacionales severas y una alta vulnerabilidad ante variaciones de iluminación, fondos y vestimenta. Siguiendo las directrices del estado del arte, se adopta un esquema basado en coordenadas de articulaciones corporales (\textit{landmarks}) mediante MediaPipe Holistic \parencite{google2020mediapipe}. 
+
+El sistema extrae 33 puntos de referencia tridimensionales correspondientes a la pose del torso y 21 puntos por cada mano, conformando un vector instantáneo de 225 descriptores numéricos ($[33 + 21 + 21] \times 3$) \parencite{google2020mediapipe}. Esta abstracción geométrica independiza el flujo de procesamiento de la apariencia visual directa y reduce la dimensionalidad en varios órdenes de magnitud, facilitando el procesamiento en tiempo pseudo-real en CPU local.
+
+\subsection{Arquitectura neuronal temporal: TinySkeletonClassifier}
+El reconocimiento gestual sobre secuencias temporales fijas ($T = 16$ fotogramas) se modela mediante una arquitectura híbrida compacta (413.148 parámetros, $\approx 4{,}1$\,MB de peso) basada en convoluciones y auto-atención \parencite{vaswani2017attention, wu2020lite}, compuesta por:
+\begin{enumerate}
+    \item \textbf{Convolución Temporal 1D (Conv1D):} dos capas convolucionales que extraen correlaciones locales inmediatas a lo largo del eje temporal (transiciones rápidas de dedos y muñeca) \parencite{wu2020lite}.
+    \item \textbf{Codificación Posicional Sinusoidal:} introduce información de orden temporal en la secuencia antes de alimentar al transformador \parencite{vaswani2017attention}.
+    \item \textbf{Transformer Encoder:} capas de auto-atención multi-cabeza que modelan dependencias de largo alcance entre los instantes iniciales, medios y finales del gesto \parencite{vaswani2017attention}.
+    \item \textbf{Attention Pooling:} un mecanismo de atención ponderada que calcula un promedio pesado de los estados temporales, priorizando los instantes de pose estática o máxima expresividad por sobre los fotogramas transicionales de aproximación de las manos.
+\end{enumerate}
+
+\subsection{Modelos de lenguaje pequeños (SLM) y adaptación LoRA}
+Para la traducción semántica bidireccional se emplean Modelos de Lenguaje Pequeños (\textit{Small Language Models}, SLMs) de las familias Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3}. Estos modelos se adaptan mediante la técnica LoRA (\textit{Low-Rank Adaptation}) \parencite{hu2022lora}, congelando los pesos base del modelo e insertando matrices de descomposición de bajo rango en las proyecciones de atención y en las capas de entrada y salida (\texttt{embed\_tokens} y \texttt{lm\_head}) \parencite{hu2022lora, huggingface2024transformers}. Para asegurar su ejecución eficiente en CPU o aceleradores en la nube, los modelos resultantes se cuantizan a 4 bits bajo el formato GGUF mediante \texttt{llama.cpp} \parencite{gerganov2023llamacpp, frantar2022gptq}.
+
+\subsection{Animación y representación visual mediante Avatar 3D}
+El canal inverso requiere transformar las glosas sintácticas en representaciones visuales comprensibles para el usuario sordo. Un avatar tridimensional ejecuta las animaciones asociadas a cada glosa del vocabulario base mediante interpolación de huesos (\textit{skeletal animation}) o blendshapes. Ante términos inexistentes en el diccionario léxico (como nombres propios o tecnicismos), el módulo recurre al subsistema de deletreo manual dactilológico, animando letra por letra la palabra involucrada.
+
+\section{Estado del arte}
+
+\subsection{Desarrollos en Argentina y la región}
+En el ámbito nacional, las iniciativas tecnológicas orientadas a la comunidad sorda han estado enfocadas principalmente en la enseñanza y la consulta de vocabulario. El Diccionario de Señas del INJU opera como un índice léxico en línea sin capacidades de reconocimiento dinámico \parencite{inju2024diccionario}. La Confederación Argentina de Sordos (CAS) promueve herramientas pedagógicas bilingües de carácter estático \parencite{cas2024senario}. En cuanto a la animación digital, la aplicación móvil LSApp \parencite{lsapp2018} introdujo un personaje tridimensional capaz de reproducir entradas del diccionario y deletreo manual, funcionando como material de consulta unilateral sin integración a videoconferencias.
+
+En el plano asistencial comercial, la plataforma Blessit \parencite{blessit2024interpretes} y servicios públicos como la Línea 144 \parencite{argentina2024linea144} ofrecen tele-interpretación mediante videollamada con operadores humanos. Aunque efectivos, estos esquemas están supeditados a la disponibilidad de personal, generan demoras de conexión y comprometen la intimidad de los interlocutores en intercambios de índole privada. 
+
+Académicamente, el corpus LSA64 \parencite{ronchetti2016lsa64} constituye el principal antecedente en reconocimiento automático local; no obstante, su captura controlada mediante guantes de colores restringe su aplicación directa sobre cámaras web comerciales sin aditamentos físicos, limitación observada en desarrollos posteriores con redes recurrentes \parencite{mindlin2021reconocimiento}.
+
+\subsection{Sistemas internacionales de reconocimiento y síntesis}
+A nivel internacional, el referente en reconocimiento unidireccional es SignAll Technologies \parencite{signall2018techcrunch, signall2026linkedin}, enfocado en la traducción de ASL hacia inglés escrito mediante visión computacional y modelos lingüísticos. Sin embargo, su enfoque prioriza que el oyente comprenda a la persona sorda, omitiendo la devolución gestual accesible. Por su parte, corpus a gran escala como WLASL \parencite{li2020wlasl} han impulsado el reconocimiento léxico en video de ASL, aunque sin foco en la traducción oracional bidireccional ni en la LSA.
+
+En la dirección inversa (texto a señas), la empresa Hand Talk \parencite{handtalk2025, sorenson2025handtalk} lidera la región con avatares 3D (Hugo y Maya) que traducen texto escrito a Libras y ASL. De igual forma, el avatar Iris/Juan desarrollado por la fundación HETAH \parencite{hetah2024avatar} en Colombia realiza síntesis gestual a partir de oraciones en español. No obstante, ninguna de estas plataformas comerciales unifica reconocimiento continuo de LSA, traducción semántica contextual y síntesis gestual interactiva dentro del flujo nativo de una videollamada bajo un esquema híbrido y escalable.
+
+\section{Metodología de desarrollo}
+El proyecto se rigió bajo un modelo de ciclo de vida iterativo e incremental \parencite{pressman2014software}, estructurado en cinco fases principales:
+\begin{enumerate}
+    \item \textbf{Curación de datos y formalización léxica:} delimitación de 100 señas de LSA junto a Miriam Rolls; diseño del set de grabación; captura de clips en video 1080p (16:9); y generación del dataset de coordenadas vectoriales normalizadas.
+    \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} experimentación de arquitecturas temporales (16 vs.\ 32 fotogramas); optimización de hiperparámetros mediante marcos automatizados \parencite{akiba2019optuna}; desarrollo de instrumentación de diagnóstico de confusiones mediante análisis AUC de Mann-Whitney; y corrección de relaciones de aspecto de cámara.
+    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} ingeniería de prompts; fine-tuning con LoRA sobre modelos Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3} (traducción directa e inversa \textit{Topic-Comment} \parencite{massone2012curso}); cuantización a binarios GGUF \parencite{gerganov2023llamacpp}; evaluación de fidelidad sintáctica (BLEU, ROUGE-L, METEOR); y diseño conceptual de la arquitectura elástica en la nube.
+    \item \textbf{Integración y renderizado gestual:} desarrollo del controlador del avatar 3D para animación léxica y deletreo manual; acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados \parencite{gamma1994design}; comunicación con el servidor semántico desacoplado; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{w3c2024mediacapture, chrome2024manifestv3}.
+    \item \textbf{Fase de pruebas y evaluación de campo:} pruebas integrales de latencia, usabilidad y robustez frente a escenarios reales de videoconferencia.
+\end{enumerate}
+
+\subsection{Declaración sobre el uso de herramientas de inteligencia artificial}
+En cumplimiento con las directivas de integridad académica y transparencia técnica solicitadas por la comisión evaluadora para Trabajos Finales de Grado de la Facultad de Ingeniería (UNMDP) \parencite{unmdp2024protocolo}, los autores detallan el uso de herramientas de inteligencia artificial generativa como soporte durante el desarrollo del proyecto.
+
+\paragraph{Herramientas empleadas}
+Durante las fases de diseño, implementación y redacción se utilizaron exclusivamente dos herramientas:
+\begin{itemize}
+    \item \textbf{Cursor:} Entorno de desarrollo integrado (IDE) asistido por inteligencia artificial, empleado para la navegación contextual del repositorio, autocompletado sintáctico y asistencia en la edición de scripts en Python y JavaScript.
+    \item \textbf{Gemini (Google):} Modelo de lenguaje utilizado como soporte interactivo de consulta técnica, facilitador en la asimilación de conceptos teóricos y asistencia estilística en la redacción del informe.
+\end{itemize}
+
+\paragraph{Alcance y propósito de su utilización}
+La intervención de dichas herramientas se limitó a:
+\begin{itemize}
+    \item \textbf{Aprendizaje guiado y asimilación conceptual:} Utilización de Gemini como interlocutor de estudio y consulta técnica para comprender en profundidad conceptos que excedían la currícula tradicional de grado, tales como la mecánica de los mecanismos de \textit{attention pooling}, las complejidades de la cuantización GGUF Q4\_K\_M con \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, los fundamentos de adaptación de bajo rango (LoRA) en capas densas de modelos autorregresivos \parencite{hu2022lora}, y los esquemas de comunicación asíncrona entre contextos aislados (\textit{offscreen} y \textit{sandbox}) exigidos por Chrome Manifest V3 \parencite{chrome2024manifestv3}.
+    \item \textbf{Asistencia en el desarrollo de software:} Sugerencias de refactorización de código, resolución de incompatibilidades de sintaxis en el entorno Chrome Extensions Manifest V3 (aislamiento de páginas \textit{offscreen} y \textit{sandbox}) \parencite{chrome2024manifestv3} y resolución de dependencias concurrentes en Python.
+    \item \textbf{Consultas sobre APIs y formatos:} Apoyo en la parametrización de llamadas a MediaPipe Holistic \parencite{google2020mediapipe} y en la sintaxis de cuantización a formato GGUF mediante herramientas de línea de comandos \parencite{gerganov2023llamacpp}.
+    \item \textbf{Edición y formato del documento:} Corrección ortotipográfica y resolución de errores en la redacción del informe.
+\end{itemize}
+
+\paragraph{Límites y responsabilidad de autoría}
+Se deja constancia de que ninguna de las herramientas generativas reemplazó la labor intelectual, analítica ni experimental de los autores. La concepción de la arquitectura híbrida, la recolección y curación del corpus de video de 100 señas validado por Miriam Rolls, el diseño e iteración de las redes neuronales (TinySkeletonClassifier), la ingeniería de prompts y fine-tuning de los modelos de lenguaje, el diagnóstico de captura (aspect ratio) y el análisis de resultados fueron ideados, ejecutados y validados íntegramente por los estudiantes. Los autores asumen la total responsabilidad técnica y académica por el contenido del presente informe y del código fuente asociado \parencite{github2026proyectolsa}.
+
+\section{Herramientas y tecnologías empleadas}
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Conjunto de tecnologías del sistema integrado}
+\label{tab:stack}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth} 
+                             >{\raggedright\arraybackslash}p{0.34\textwidth} 
+                             >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Categoría} & \textbf{Herramienta} & \textbf{Rol en el sistema} \\
+\midrule
+Entorno y Lenguajes & Python 3.10, JavaScript & Lógica de backend, motor local, servidor semántico y extensión web. \\
+\addlinespace[3pt]
+Visión Computacional & MediaPipe Holistic \parencite{google2020mediapipe}, OpenCV & Extracción de coordenadas articulares corporales y manipulación de video. \\
+\addlinespace[3pt]
+Aprendizaje Profundo & PyTorch 2.6 & Inferencia local del clasificador gestual \mbox{TinySkeletonClassifier}. \\
+\addlinespace[3pt]
+Modelos de Lenguaje & Transformers \parencite{huggingface2024transformers}, PEFT, Unsloth & Fine-tuning eficiente con adaptadores LoRA \parencite{hu2022lora} para traducción directa e inversa. \\
+\addlinespace[3pt]
+Inferencia de Lenguaje & \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, GGUF & Servidor de inferencia semántica optimizado en CPU/GPU remota. \\
+\addlinespace[3pt]
+Comunicación y Backend & FastAPI \parencite{tiangolo2018fastapi}, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
+\addlinespace[3pt]
+Túnel de Desarrollo & ngrok / Cloudflare Tunnel & Exposición de la instancia semántica remota para validación del prototipo. \\
+\addlinespace[3pt]
+Integración Web & Chrome Extensions (MV3) \parencite{chrome2024manifestv3} & Intercepción de media mediante Canvas \texttt{captureStream()} en Google Meet \parencite{w3c2024mediacapture}. \\
+\addlinespace[3pt]
+Síntesis de Salida & pyttsx3, Avatar 3D & Emisión de voz local hacia el oyente y animación visual gestual hacia el señante. \\
+\bottomrule
+\end{tabularx}
+\end{table}

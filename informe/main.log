@@ -1,0 +1,1360 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.4)  5 OCT 2026 16:14
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**"d:/Mis Archivos/Proyectos/2026_Proyecto_LSA_informe/informe/main.tex"
+(d:/Mis Archivos/Proyectos/2026_Proyecto_LSA_informe/informe/main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
+Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count276
+\c@chapter=\count277
+\c@section=\count278
+\c@subsection=\count279
+\c@subsubsection=\count280
+\c@paragraph=\count281
+\c@subparagraph=\count282
+\c@figure=\count283
+\c@table=\count284
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen150
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+Package: microtype 2026/03/01 v3.2d Micro-typographical refinements (RS)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count285
+)
+\MT@toks=\toks20
+\MT@tempbox=\box53
+\MT@count=\count286
+LaTeX Info: Redefining \noprotrusionifhmode on input line 1084.
+LaTeX Info: Redefining \leftprotrusion on input line 1085.
+\MT@prot@toks=\toks21
+LaTeX Info: Redefining \rightprotrusion on input line 1104.
+LaTeX Info: Redefining \textls on input line 1449.
+\MT@outer@kern=\dimen151
+LaTeX Info: Redefining \microtypecontext on input line 2053.
+LaTeX Info: Redefining \textmicrotypecontext on input line 2070.
+\MT@listname@count=\count287
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def
+File: microtype-pdftex.def 2026/03/01 v3.2d Definitions specific to pdftex (RS)
+
+LaTeX Info: Redefining \lsstyle on input line 944.
+LaTeX Info: Redefining \lslig on input line 944.
+\MT@outer@space=\skip51
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+File: microtype.cfg 2026/03/01 v3.2d microtype main configuration file (RS)
+)
+LaTeX Info: Redefining \microtypesetup on input line 3065.
+) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2026/09/09 v26.12 The multilingual framework for LuaLaTeX, pdfLa
+TeX and XeLaTeX
+\babel@savecnt=\count288
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input li
+ne 2095.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input li
+ne 2097.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input lin
+e 2099.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input lin
+e 2100.
+LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) 
+on input line 2101.
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) 
+on input line 2103.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) 
+on input line 2128.
+\U@D=\dimen152
+\l@unhyphenated=\language79
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count289
+Package babel Info: Configuration files are deprecated, as
+(babel)             they can break document portability.
+(babel)             Reported on input line 4331.
+
+*************************************
+* Local config file bblopts.cfg used
+*
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/es\babel
+-spanish.tex)
+Package babel Info: Importing font and identification data for 'spanish'
+(babel)             from babel-es.ini. Reported on input line 4459.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/babel-spanish\spanish.l
+df
+Language: spanish.ldf 2021/05/27 v5.0q Spanish support from the babel system
+\es@quottoks=\toks22
+\es@quotdepth=\count290
+))
+LaTeX Encoding Info:    Redeclaring text command \guillemotleft (encoding OT1) 
+on input line 8.
+LaTeX Encoding Info:    Redeclaring text command \guillemotright (encoding OT1)
+ on input line 8.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen153
+\Gin@req@width=\dimen154
+) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2026/05/19 v2.18d AMS math features
+\@mathmargin=\skip52
+For additional information on amsmath, use the `?' option.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks23
+\ex@=\dimen155
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen156
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count291
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count292
+\leftroot@=\count293
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count294
+\DOTSCASE@=\count295
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box54
+\strutbox@=\box55
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen157
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count296
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count297
+\dotsspace@=\muskip17
+\c@parentequation=\count298
+\dspbrk@lvl=\count299
+\tag@help=\toks24
+\row@=\count300
+\column@=\count301
+\maxfields@=\count302
+\andhelp@=\toks25
+\eqnshift@=\dimen158
+\alignsep@=\dimen159
+\tagshift@=\dimen160
+\tagwidth@=\dimen161
+\totwidth@=\dimen162
+\lineht@=\dimen163
+\@envbody=\toks26
+\multlinegap=\skip53
+\multlinetaggap=\skip54
+\mathdisplay@stack=\toks27
+LaTeX Info: Redefining \[ on input line 2965.
+LaTeX Info: Redefining \] on input line 2966.
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.st
+y
+Package: geometry 2026/03/07 v6.0 Page Geometry
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count303
+\Gm@cntv=\count304
+\c@Gm@tempcnt=\count305
+\Gm@bindingoffset=\dimen164
+\Gm@wd@mp=\dimen165
+\Gm@odd@mp=\dimen166
+\Gm@even@mp=\dimen167
+\Gm@layoutwidth=\dimen168
+\Gm@layoutheight=\dimen169
+\Gm@layouthoffset=\dimen170
+\Gm@layoutvoffset=\dimen171
+\Gm@dimlist=\toks28
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2026-06-17 v7.01r Hypertext links for LaTeX
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count306
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen172
+\Hy@linkcounter=\count307
+\Hy@pagecounter=\count308
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2026-06-17 v7.01r Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count309
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2026-06-17 v7.01r Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Option `plainpages' set `false' on input line 4070.
+Package hyperref Info: Option `pdfpagelabels' set `true' on input line 4070.
+Package hyperref Info: Hyper figures OFF on input line 4199.
+Package hyperref Info: Link nesting OFF on input line 4204.
+Package hyperref Info: Hyper index ON on input line 4207.
+Package hyperref Info: Plain pages OFF on input line 4214.
+Package hyperref Info: Backreferencing OFF on input line 4219.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4466.
+\c@Hy@tempcnt=\count310
+LaTeX Info: Redefining \url on input line 4805.
+\XeTeXLinkMargin=\dimen173
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count311
+\Field@Width=\dimen174
+\Fld@charsize=\dimen175
+Package hyperref Info: Hyper figures OFF on input line 6091.
+Package hyperref Info: Link nesting OFF on input line 6096.
+Package hyperref Info: Hyper index ON on input line 6099.
+Package hyperref Info: backreferencing OFF on input line 6106.
+Package hyperref Info: Link coloring OFF on input line 6111.
+Package hyperref Info: Link coloring with OCG OFF on input line 6116.
+Package hyperref Info: PDF/A mode OFF on input line 6121.
+\Hy@abspage=\count312
+\c@Item=\count313
+\c@Hfootnote=\count314
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2026-06-17 v7.01r Hyperref driver for pdfTeX
+\Fld@listcount=\count315
+\c@bookmark@seq@number=\count316
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
+)
+\Hy@SectionHShift=\skip55
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen176
+\lightrulewidth=\dimen177
+\cmidrulewidth=\dimen178
+\belowrulesep=\dimen179
+\belowbottomsep=\dimen180
+\aboverulesep=\dimen181
+\abovetopsep=\dimen182
+\cmidrulesep=\dimen183
+\cmidrulekern=\dimen184
+\defaultaddspace=\dimen185
+\@cmidla=\count317
+\@cmidlb=\count318
+\@aboverulesep=\dimen186
+\@belowrulesep=\dimen187
+\@thisruleclass=\count319
+\@lastruleclass=\count320
+\@thisrulewidth=\dimen188
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count321
+\float@exts=\toks29
+\float@box=\box56
+\@float@everytoks=\toks30
+\@floatcapt=\box57
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/fvextra\fvextra.sty
+Package: fvextra 2026/02/25 v1.14.0 fvextra - extensions and patches for fancyv
+rb
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/fancyvrb\fancyvrb.sty
+Package: fancyvrb 2026/08/13 4.7 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count322
+\FV@InFile=\read3
+\FV@TabBox=\box58
+\c@FancyVerbLine=\count323
+\FV@StepNumber=\count324
+\FV@OutFile=\write3
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+Package: lineno 2026/03/08 line numbers on paragraphs v5.9
+\linenopenalty=\count325
+\output=\toks31
+\linenoprevgraf=\count326
+\linenumbersep=\dimen189
+\linenumberwidth=\dimen190
+\c@linenumber=\count327
+\c@pagewiselinenumber=\count328
+\c@LN@truepage=\count329
+\c@internallinenumber=\count330
+\c@internallinenumbers=\count331
+\quotelinenumbersep=\dimen191
+\bframerule=\dimen192
+\bframesep=\dimen193
+\bframebox=\box59
+\@LN@amsmath@ams@eqpen=\count332
+)
+\c@FancyVerbWriteLine=\count333
+\c@FancyVerbBufferLine=\count334
+\c@FV@TrueTabGroupLevel=\count335
+\c@FV@TrueTabCounter=\count336
+\FV@TabBox@Group=\box60
+\FV@bgcolorstructbox=\box61
+\FV@TmpLength=\skip56
+\c@FV@HighlightLinesStart=\count337
+\c@FV@HighlightLinesStop=\count338
+\FV@LoopCount=\count339
+\FV@NCharsBox=\box62
+\FV@BreakIndent=\dimen194
+\FV@BreakIndentNChars=\count340
+\FV@BreakSymbolSepLeft=\dimen195
+\FV@BreakSymbolSepLeftNChars=\count341
+\FV@BreakSymbolSepRight=\dimen196
+\FV@BreakSymbolSepRightNChars=\count342
+\FV@BreakSymbolIndentLeft=\dimen197
+\FV@BreakSymbolIndentLeftNChars=\count343
+\FV@BreakSymbolIndentRight=\dimen198
+\FV@BreakSymbolIndentRightNChars=\count344
+\c@FancyVerbLineBreakLast=\count345
+\FV@LineBox=\box63
+\FV@LineIndentBox=\box64
+\c@FV@BreakBufferDepth=\count346
+\FV@LineWidth=\dimen199
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
+Package: csquotes 2026-05-19 v5.2p context-sensitive quotations (JAW)
+\csq@reset=\count347
+\csq@gtype=\count348
+\csq@glevel=\count349
+\csq@qlevel=\count350
+\csq@maxlvl=\count351
+\csq@tshold=\count352
+\csq@ltx@everypar=\toks32
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def
+File: csquotes.def 2026-05-19 v5.2p csquotes generic definitions (JAW)
+)
+Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
+Package csquotes Info: ... configuration file loaded successfully.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg
+File: csquotes.cfg 
+)) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2026/02/24 v2.7b Tabular extension package (FMi)
+\col@sep=\dimen256
+\ar@mcellbox=\box65
+\extrarowheight=\dimen257
+\NC@list=\toks33
+\extratabsurround=\skip57
+\backup@length=\skip58
+\ar@cellbox=\box66
+)
+\TX@col@width=\dimen258
+\TX@old@table=\dimen259
+\TX@old@col=\dimen260
+\TX@target=\dimen261
+\TX@delta=\dimen262
+\TX@cols=\count353
+\TX@ftn=\toks34
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip59
+\multirow@cntb=\count354
+\multirow@dima=\skip60
+\bigstrutjot=\dimen263
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.sty
+Package: biblatex 2026/09/24 v3.22a programmable bibliographies (PK/MW)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count355
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+\c@tabx@nest=\count356
+\c@listtotal=\count357
+\c@listcount=\count358
+\c@liststart=\count359
+\c@liststop=\count360
+\c@citecount=\count361
+\c@citetotal=\count362
+\c@multicitecount=\count363
+\c@multicitetotal=\count364
+\c@instcount=\count365
+\c@maxnames=\count366
+\c@minnames=\count367
+\c@maxitems=\count368
+\c@minitems=\count369
+\c@citecounter=\count370
+\c@maxcitecounter=\count371
+\c@savedcitecounter=\count372
+\c@uniquelist=\count373
+\c@uniquename=\count374
+\c@refsection=\count375
+\c@refsegment=\count376
+\c@maxextratitle=\count377
+\c@maxextratitleyear=\count378
+\c@maxextraname=\count379
+\c@maxextradate=\count380
+\c@maxextraalpha=\count381
+\c@abbrvpenalty=\count382
+\c@highnamepenalty=\count383
+\c@lownamepenalty=\count384
+\c@maxparens=\count385
+\c@parenlevel=\count386
+\blx@tempcnta=\count387
+\blx@tempcntb=\count388
+\blx@tempcntc=\count389
+\c@blx@maxsection=\count390
+\blx@maxsegment@0=\count391
+\blx@notetype=\count392
+\blx@parenlevel@text=\count393
+\blx@parenlevel@foot=\count394
+\blx@sectionciteorder@0=\count395
+\blx@sectionciteorderinternal@0=\count396
+\blx@entrysetcounter=\count397
+\blx@biblioinstance=\count398
+\labelnumberwidth=\skip61
+\labelalphawidth=\skip62
+\biblabelsep=\skip63
+\bibitemsep=\skip64
+\bibnamesep=\skip65
+\bibinitsep=\skip66
+\bibparsep=\skip67
+\bibhang=\skip68
+\blx@bcfin=\read4
+\blx@bcfout=\write4
+\blx@langwohyphens=\language80
+\c@mincomprange=\count399
+\c@maxcomprange=\count400
+\c@mincompwidth=\count401
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-dm.def
+File: blx-dm.def 2026/09/24 v3.22a biblatex datamodel (PK/MW)
+)
+Package biblatex Info: Trying to load biblatex style data model...
+Package biblatex Info: ... file 'apa.dbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.dbx
+File: apa.dbx 2025/08/27 v9.20 APA biblatex style data model
+)
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count402
+\c@savedafterword=\count403
+\c@annotator=\count404
+\c@savedannotator=\count405
+\c@author=\count406
+\c@savedauthor=\count407
+\c@bookauthor=\count408
+\c@savedbookauthor=\count409
+\c@commentator=\count410
+\c@savedcommentator=\count411
+\c@editor=\count412
+\c@savededitor=\count413
+\c@editora=\count414
+\c@savededitora=\count415
+\c@editorb=\count416
+\c@savededitorb=\count417
+\c@editorc=\count418
+\c@savededitorc=\count419
+\c@foreword=\count420
+\c@savedforeword=\count421
+\c@holder=\count422
+\c@savedholder=\count423
+\c@introduction=\count424
+\c@savedintroduction=\count425
+\c@namea=\count426
+\c@savednamea=\count427
+\c@nameb=\count428
+\c@savednameb=\count429
+\c@namec=\count430
+\c@savednamec=\count431
+\c@translator=\count432
+\c@savedtranslator=\count433
+\c@shortauthor=\count434
+\c@savedshortauthor=\count435
+\c@shorteditor=\count436
+\c@savedshorteditor=\count437
+\c@narrator=\count438
+\c@savednarrator=\count439
+\c@execproducer=\count440
+\c@savedexecproducer=\count441
+\c@execdirector=\count442
+\c@savedexecdirector=\count443
+\c@with=\count444
+\c@savedwith=\count445
+\c@labelname=\count446
+\c@savedlabelname=\count447
+\c@institution=\count448
+\c@savedinstitution=\count449
+\c@lista=\count450
+\c@savedlista=\count451
+\c@listb=\count452
+\c@savedlistb=\count453
+\c@listc=\count454
+\c@savedlistc=\count455
+\c@listd=\count456
+\c@savedlistd=\count457
+\c@liste=\count458
+\c@savedliste=\count459
+\c@listf=\count460
+\c@savedlistf=\count461
+\c@location=\count462
+\c@savedlocation=\count463
+\c@organization=\count464
+\c@savedorganization=\count465
+\c@origlocation=\count466
+\c@savedoriglocation=\count467
+\c@origpublisher=\count468
+\c@savedorigpublisher=\count469
+\c@publisher=\count470
+\c@savedpublisher=\count471
+\c@language=\count472
+\c@savedlanguage=\count473
+\c@origlanguage=\count474
+\c@savedoriglanguage=\count475
+\c@citation=\count476
+\c@savedcitation=\count477
+\c@pageref=\count478
+\c@savedpageref=\count479
+\shorthandwidth=\skip69
+\shortjournalwidth=\skip70
+\shortserieswidth=\skip71
+\shorttitlewidth=\skip72
+\shortauthorwidth=\skip73
+\shorteditorwidth=\skip74
+\locallabelnumberwidth=\skip75
+\locallabelalphawidth=\skip76
+\localshorthandwidth=\skip77
+\localshortjournalwidth=\skip78
+\localshortserieswidth=\skip79
+\localshorttitlewidth=\skip80
+\localshortauthorwidth=\skip81
+\localshorteditorwidth=\skip82
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-compat.def
+File: blx-compat.def 2026/09/24 v3.22a biblatex compatibility (PK/MW)
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.def
+File: biblatex.def 2026/09/24 v3.22a biblatex compatibility (PK/MW)
+\c@textcitecount=\count480
+\c@textcitetotal=\count481
+\c@textcitemaxnames=\count482
+\c@biburlbigbreakpenalty=\count483
+\c@biburlbreakpenalty=\count484
+\c@biburlnumpenalty=\count485
+\c@biburlucpenalty=\count486
+\c@biburllcpenalty=\count487
+\biburlbigskip=\muskip19
+\biburlnumskip=\muskip20
+\biburlucskip=\muskip21
+\biburllcskip=\muskip22
+\c@smartand=\count488
+)
+Package biblatex Info: Trying to load bibliography style 'apa'...
+Package biblatex Info: ... file 'apa.bbx' found.
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.bbx
+File: apa.bbx 2025/08/27 v9.20 APA biblatex references style
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\standard.b
+bx
+File: standard.bbx 2026/09/24 v3.22a biblatex bibliography style (PK/MW)
+\c@bbx:relatedcount=\count489
+\c@bbx:relatedtotal=\count490
+)
+Package biblatex Info: Delimiter 'nameyeardelim' in context 'bib' already defin
+ed, overwriting.
+Package biblatex Info: Delimiter 'nameyeardelim' in context 'biblist' already d
+efined, overwriting.
+Package biblatex Info: Delimiter 'nonameyeardelim' in context 'bib' already def
+ined, overwriting.
+Package biblatex Info: Delimiter 'nonameyeardelim' in context 'biblist' already
+ defined, overwriting.
+)
+Package biblatex Info: Trying to load citation style 'apa'...
+Package biblatex Info: ... file 'apa.cbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.cbx
+File: apa.cbx 2025/08/27 v9.20 APA biblatex citation style
+Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined,
+ overwriting.
+Package biblatex Info: Delimiter 'andothersdelim' in context '' already defined
+, overwriting.
+Package biblatex Info: Redefining '\fullcite'.
+Package biblatex Info: Redefining '\citeauthor'.
+Package biblatex Info: Redefining '\citeyear'.
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\cites'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\parencites'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcites'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\footcitetexts'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\smartcites'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.cfg
+File: biblatex.cfg 
+)
+Package biblatex Info: Input encoding 'utf8' detected.
+Package biblatex Info: Document encoding is UTF8 ....
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+Package: expl3 2026-09-09 L3 programming layer (loader) 
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\l3backend-pdft
+ex.def
+File: l3backend-pdftex.def 2026-09-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count491
+))
+Package biblatex Info: ... and expl3
+(biblatex)             2026-09-09 L3 programming layer (loader) 
+(biblatex)             is new enough (at least 2020/04/06),
+(biblatex)             setting 'casechanger=expl3'.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-case-expl3
+.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty
+Package: xparse 2025-10-09 L3 Experimental document command parser
+)
+Package: blx-case-expl3 2026/09/24 v3.22a expl3 case changing code for biblatex
+
+))
+Package hyperref Info: Option `colorlinks' set `true' on input line 25.
+Package csquotes Info: Checking for multilingual support...
+Package csquotes Info: ... found 'babel' package.
+Package csquotes Info: Adjusting default style.
+Package csquotes Info: Redefining alias 'default' -> 'spanish'.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 38
+.
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+(main.aux
+LaTeX Info: Redefining \. on input line 9.
+LaTeX Info: Redefining \% on input line 9.
+Package babel Info: 'spanish' activates 'spanish' shorthands.
+(babel)             Reported on input line 9.
+ (capitulos/cap00_resumen_palabras_clave.aux)
+(capitulos/cap01_introduccion.aux) (capitulos/cap02_objetivos.aux)
+(capitulos/cap03_marco_teorico.aux) (capitulos/cap04_requerimientos.aux)
+(capitulos/cap05_arquitectura.aux) (capitulos/cap06_experimentacion.aux)
+(capitulos/cap07_conclusiones.aux) (capitulos/apendice_a_vocabulario.aux)
+(capitulos/apendice_b_configuraciones.aux))
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Info: Redefining \microtypecontext on input line 38.
+Package microtype Info: Applying patch `item' on input line 38.
+Package microtype Info: Applying patch `toc' on input line 38.
+Package microtype Info: Applying patch `eqnum' on input line 38.
+
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 38.
+
+Package microtype Info: Applying patch `verbatim' on input line 38.
+LaTeX Info: Redefining \microtypesetup on input line 38.
+Package microtype Info: Generating PDF output.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using default protrusion set `alltext'.
+Package microtype Info: Automatic font expansion enabled (level 2),
+(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
+Package microtype Info: Using default expansion set `alltext-nott'.
+Package microtype Info: Patching command `\showhyphens'.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of interword spacing.
+Package microtype Info: No adjustment of character kerning.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
+File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
+(RS)
+)
+LaTeX Info: Redefining \. on input line 38.
+LaTeX Info: Redefining \% on input line 38.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count492
+\scratchdimen=\dimen264
+\scratchbox=\box67
+\nofMPsegments=\count493
+\nofMParguments=\count494
+\everyMPshowfont=\toks35
+\MPscratchCnt=\count495
+\MPscratchDim=\dimen265
+\MPnumerator=\count496
+\makeMPintoPDFobject=\count497
+\everyMPtoPDFconversion=\toks36
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(71.13188pt, 455.24411pt, 71.13188pt)
+* v-part:(T,H,B)=(71.13188pt, 702.78308pt, 71.13188pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=455.24411pt
+* \textheight=702.78308pt
+* \oddsidemargin=-1.1381pt
+* \evensidemargin=-1.1381pt
+* \topmargin=-38.1381pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+Package: color 2026-05-17 v1.3f Standard LaTeX Color (DPC)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+Package hyperref Info: Link coloring ON on input line 38.
+ (main.out) (main.out)
+\@outlinefile=\write5
+\openout5 = `main.out'.
+
+Package biblatex Info: Trying to load language 'spanish' -> 'spanish-apa'...
+Package biblatex Info: ... file 'spanish-apa.lbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\spanish-ap
+a.lbx
+File: spanish-apa.lbx 2025/08/27 v9.20 APA biblatex localisation
+Package biblatex Info: Trying to load language 'spanish'...
+Package biblatex Info: ... file 'spanish.lbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
+x
+File: spanish.lbx 2026/09/24 v3.22a biblatex localization (PK/MW)
+)
+Package biblatex Info: Trying to load language 'spanish'...
+Package biblatex Info: ... file 'spanish.lbx' found.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
+x
+File: spanish.lbx 2026/09/24 v3.22a biblatex localization (PK/MW)
+))
+Package biblatex Info: Input encoding 'utf8' detected.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'utf8'.
+\openout4 = `main.bcf'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'main.bbl' found.
+ (main.bbl)
+Package biblatex Info: Reference section=0 on input line 38.
+Package biblatex Info: Reference segment=0 on input line 38.
+Package babel Info: Main language set to 'spanish'.
+ [1
+
+{C:/Users/maite/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{D:/Users/mait
+e/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
+Package microtype Info: Character `029' is missing
+(microtype)             in font `T1/lmr/m/sc/12'.
+(microtype)             Ignoring protrusion settings for this character.
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.I}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.47 \tableofcontents
+                      [1
+
+] (main.toc
+LaTeX Info: Redefining \. on input line 1.
+LaTeX Info: Redefining \% on input line 1.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
+.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
+.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 3.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 3.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 3.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+[2
+
+] [3{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.
+enc}])
+\tf@toc=\write6
+\openout6 = `main.toc'.
+
+ [4]
+\openout2 = `capitulos/cap00_resumen_palabras_clave.aux'.
+
+ (capitulos/cap00_resumen_palabras_clave.tex [5
+
+
+]) [6
+
+]
+\openout2 = `capitulos/cap01_introduccion.aux'.
+
+
+(capitulos/cap01_introduccion.tex
+Cap\'{\i }tulo 1.
+[1
+
+
+
+
+]) [2]
+\openout2 = `capitulos/cap02_objetivos.aux'.
+
+ (capitulos/cap02_objetivos.tex
+Cap\'{\i }tulo 2.
+[3
+
+
+
+
+]) [4]
+\openout2 = `capitulos/cap03_marco_teorico.aux'.
+
+ (capitulos/cap03_marco_teorico.tex
+Cap\'{\i }tulo 3.
+
+Overfull \hbox (19.42981pt too wide) in paragraph at lines 14--14
+[]\T1/lmr/bx/n/14.4 (-20) Estructura lin-güís-ti-ca de la LSA y tra-duc-ción To
+pic-Comment 
+ []
+
+[5
+
+
+
+
+]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
+2.
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `lmtt' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+
+[6{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}]
+[7] [8]) [9] [10
+pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.54 \include{capitulos/cap03_marco_teorico}
+                                            ]
+\openout2 = `capitulos/cap04_requerimientos.aux'.
+
+
+(capitulos/cap04_requerimientos.tex
+Cap\'{\i }tulo 4.
+[11
+
+
+
+
+] [12] (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+Underfull \hbox (badness 2671) in paragraph at lines 58--58
+[]|\T1/lmr/m/n/10.95 (+20) Conexión por fi-bra óp-ti-ca ($\OMS/lmsy/m/n/10.95 ^
+^U
+ []
+
+[13] [14
+pdfTeX warning (ext4): destination with the same identifier (name{table.4.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.75     \item \textbf
+                      {CU-02 --- Configurar mano dominante:} El usuario seÃ±...
+{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+[15]) [16] [17]
+\openout2 = `capitulos/cap05_arquitectura.aux'.
+
+ (capitulos/cap05_arquitectura.tex
+Cap\'{\i }tulo 5.
+[18
+
+
+
+
+]
+<integracion/Diagrama-arquitectura.pdf, id=812, 2902.845pt x 2603.64713pt>
+File: integracion/Diagrama-arquitectura.pdf Graphic file (type pdf)
+<use integracion/Diagrama-arquitectura.pdf>
+Package pdftex.def Info: integracion/Diagrama-arquitectura.pdf  used on input l
+ine 43.
+(pdftex.def)             Requested size: 455.24411pt x 408.28882pt.
+ [19]
+<integracion/Diagrama-secuencia-senante.pdf, id=823, 2902.845pt x 1971.28462pt>
+
+File: integracion/Diagrama-secuencia-senante.pdf Graphic file (type pdf)
+<use integracion/Diagrama-secuencia-senante.pdf>
+Package pdftex.def Info: integracion/Diagrama-secuencia-senante.pdf  used on in
+put line 56.
+(pdftex.def)             Requested size: 455.24411pt x 309.1254pt.
+ [20
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.60 
+      <./integracion/Diagrama-arquitectura.pdf>]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 66.
+ [21
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.67     \item \textbf
+                      {TemporizaciÃ³n y cierre de enunciado:} El acumulador ...
+ <./integracion/Diagrama-secuencia-senante.pdf>]
+<integracion/Diagrama-secuencia-oyente.pdf, id=1123, 2902.845pt x 1589.94pt>
+File: integracion/Diagrama-secuencia-oyente.pdf Graphic file (type pdf)
+<use integracion/Diagrama-secuencia-oyente.pdf>
+Package pdftex.def Info: integracion/Diagrama-secuencia-oyente.pdf  used on inp
+ut line 78.
+(pdftex.def)             Requested size: 455.24411pt x 249.32515pt.
+ [22
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.85     \item \textbf
+                      {Captura y transcripciÃ³n del audio:} Durante el turno...
+ <./integracion/Diagrama-secuencia-oyente.pdf>]
+Overfull \hbox (5.73752pt too wide) in paragraph at lines 137--137
+[]|[]|  
+ []
+
+[23] [24
+pdfTeX warning (ext4): destination with the same identifier (name{table.5.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.166 \end{verbatim}
+                    ]
+Overfull \hbox (7.75133pt too wide) in paragraph at lines 182--182
+[]|\T1/lmtt/m/n/12 TranslateRequest| 
+ []
+
+
+Underfull \hbox (badness 2158) in paragraph at lines 182--182
+[]|\T1/lmr/m/n/12 (+20) Recibe lis-ta de glo-sas LSA (\T1/lmtt/m/n/12 ["HOLA",
+ []
+
+
+Overfull \hbox (7.88112pt too wide) in paragraph at lines 203--203
+[]\T1/lmtt/m/n/12 % TODO: Esto funciona asi? Me refiero a lo de que manda el te
+xto en history[] 
+ []
+
+[25
+pdfTeX warning (ext4): destination with the same identifier (name{table.5.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.207 \begin{verbatim}
+                      ]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <14.4> on input line 230.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 230.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 230.
+ [26] [27] [28] [29] [30] [31] [32]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 392.
+
+Overfull \hbox (35.46089pt too wide) in paragraph at lines 394--395
+\T1/lmr/m/n/12 (-20) ra fí-si-ca. En los na-ve-ga-do-res mo-der-nos, la API es-
+tán-dar \T1/lmtt/m/n/12 navigator.mediaDevices.getUserMedia
+ []
+
+[33] [34]) [35]
+\openout2 = `capitulos/cap06_experimentacion.aux'.
+
+ (capitulos/cap06_experimentacion.tex
+Cap\'{\i }tulo 6.
+
+Overfull \hbox (14.53848pt too wide) in paragraph at lines 21--21
+[]\T1/lmr/bx/n/14.4 (-20) Benchmark com-pa-ra-ti-vo de mo-de-los SLM (Fa-mi-lia
+s Qwen2.5,
+ []
+
+) [36
+
+
+
+
+]
+Overfull \vbox (269.5503pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (269.5503pt too high) has occurred while \output is active []
+
+
+[37]
+\openout2 = `capitulos/cap07_conclusiones.aux'.
+
+ (capitulos/cap07_conclusiones.tex
+Cap\'{\i }tulo 7.
+) [38
+
+
+
+
+] [39
+
+
+
+] [40]
+\openout2 = `capitulos/apendice_a_vocabulario.aux'.
+
+ (capitulos/apendice_a_vocabulario.tex)
+\openout2 = `capitulos/apendice_b_configuraciones.aux'.
+
+
+(capitulos/apendice_b_configuraciones.tex) (main.aux
+LaTeX Info: Redefining \. on input line 9.
+LaTeX Info: Redefining \% on input line 9.
+
+(capitulos/cap00_resumen_palabras_clave.aux) (capitulos/cap01_introduccion.aux)
+(capitulos/cap02_objetivos.aux) (capitulos/cap03_marco_teorico.aux)
+(capitulos/cap04_requerimientos.aux) (capitulos/cap05_arquitectura.aux)
+(capitulos/cap06_experimentacion.aux) (capitulos/cap07_conclusiones.aux)
+(capitulos/apendice_a_vocabulario.aux)
+(capitulos/apendice_b_configuraciones.aux))
+ ***********
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
+ ***********
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 2F65579799E6FD5A4414B7276FC325BC;26971.
+Package logreq Info: Writing requests to 'main.run.xml'.
+\openout1 = `main.run.xml'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 26011 strings out of 467392
+ 473727 string characters out of 5405639
+ 1462293 words of memory out of 5000000
+ 54315 multiletter control sequences out of 15000+600000
+ 754312 words of font info for 304 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 74i,12n,79p,1274b,2803s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.
+pfb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.
+pfb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.
+pfb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb
+><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><
+D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><
+D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><
+D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><
+D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols
+/msbm10.pfb>
+Output written on main.pdf (47 pages, 1766655 bytes).
+PDF statistics:
+ 1555 PDF objects out of 1728 (max. 8388607)
+ 264 named destinations out of 1000 (max. 500000)
+ 69320 words of extra memory for PDF output out of 74296 (max. 10000000)
+

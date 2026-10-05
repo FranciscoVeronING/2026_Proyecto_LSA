@@ -3,12 +3,3 @@ __pycache__/
 .venv/
 .env
 build/
-
-dataset/
-
-src/semantic/logs/
-src/semantic/outputs/
-unsloth_compiled_cache/
-src/semantic/unsloth_compiled_cache/
-_unsloth_temporary_saved_buffers/
-*.gguf

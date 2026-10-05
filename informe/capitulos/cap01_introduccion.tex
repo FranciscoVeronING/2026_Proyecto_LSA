@@ -1,0 +1,28 @@
+
+% ====================================================================
+\chapter{Introducción}
+% ====================================================================
+
+\section{Contexto}
+Tradicionalmente, la sociedad abordó a la comunidad sorda desde una perspectiva clínica centrada en la rehabilitación y la corrección auditiva. Ese enfoque omite que la comunidad sorda se identifica, ante todo, como una minoría lingüística con lengua, cultura y gramática propias, independientes del español oral. En la Argentina, la LSA cuenta con reconocimiento legal formal a través de la Ley 27.710 \parencite{argentina2020ley27710}, la cual garantiza su preservación y el derecho de las personas sordas a comunicarse en su lengua natural en todos los ámbitos sociales.
+
+En el contexto digital contemporáneo, las plataformas de videollamada se han convertido en herramientas centrales para el ámbito laboral, educativo y la atención de situaciones críticas. Sin embargo, las soluciones tecnológicas actuales no ofrecen una arquitectura bilingüe integrada que admita la LSA como un flujo comunicacional válido en tiempo pseudo-real. Los recursos existentes suelen restringirse a diccionarios estáticos o repositorios de video desvinculados, carentes de capacidad de interpretación contextual interactiva \parencite{inju2024diccionario}.
+
+\section{Motivación}
+Este proyecto nace de la necesidad de devolver autonomía funcional a las personas señantes en interacciones cotidianas y de emergencia mediante herramientas informáticas. Resulta indispensable pasar de un paradigma asistencialista a uno de integración lingüística, en el que la tecnología actúe como un puente transparente y bidireccional. La posibilidad de mitigar la dependencia de intérpretes humanos presenciales en situaciones imprevistas, garantizar la estricta privacidad de los datos personales y evitar los costos asociados a intermediarios impulsa una solución asistida por inteligencia artificial. 
+
+Asimismo, desde la perspectiva de la ingeniería de software, surge la motivación de concebir una arquitectura viable: ejecutar la captura visual y el reconocimiento preliminar en el dispositivo del usuario para proteger su intimidad, delegando la pesada inferencia semántica a servicios remotos para democratizar el acceso en computadoras de recursos limitados.
+
+\section{Problemática}
+La problemática central radica en la asimetría funcional de las plataformas de comunicación virtual: mientras que la accesibilidad receptiva (de voz a texto) está ampliamente resuelta mediante subtitulado automático, la comunicación expresiva para usuarios sordos permanece desatendida. Esta carencia fuerza al usuario a recurrir al texto escrito, el cual opera para muchos miembros de la comunidad sorda como una segunda lengua. 
+
+A esta brecha se añade la vacancia tecnológica local: los modelos de visión y lenguaje existentes en el estado del arte internacional están sesgados hacia la Lengua de Señas Americana (ASL), resultando inaplicables a la LSA debido a diferencias léxicas, dactilológicas y sintácticas sustanciales. Esta disparidad hace imperativa la construcción de un corpus propio y de modelos específicamente adaptados al contexto argentino.
+
+Por último, emerge una problemática de rendimiento de hardware: la ejecución simultánea de videoconferencias, extracción de mallas corporales densas, clasificadores neuronales y modelos de lenguaje de gran escala (LLM) satura de manera crítica las computadoras estándar de los usuarios finales (procesadores móviles de 4 núcleos y 8\,GB de RAM), provocando caídas severas de cuadros y congelamientos que invalidan la experiencia en tiempo real.
+
+\section{Alcance y limitaciones}
+El sistema desarrollado comprende un prototipo funcional de traducción bidireccional en tiempo pseudo-real integrado para videollamadas. El canal directo procesa las señas captadas por la cámara web en el cliente, clasifica las glosas correspondientes y recurre a un módulo semántico en la nube para sintetizar oraciones fluidas en español mediante texto y audio para el oyente. El canal inverso transcribe la voz del oyente, traduce en la nube la estructura del español a secuencias sintácticas de LSA y comanda un avatar tridimensional en el cliente que reproduce los movimientos gestuales o ejecuta deletreo manual dactilológico en caso de vocablos no contemplados en el léxico base.
+
+El alcance funcional está delimitado a un vocabulario representativo de 100 señas de LSA seleccionadas y validadas junto a una profesional experta en la lengua (Miriam Rolls), orientadas a situaciones de emergencia y vida cotidiana. 
+
+En lo que respecta a la infraestructura de despliegue, el alcance comprende la especificación y diseño formal de una arquitectura escalable en la nube para el desacoplamiento semántico. Para la validación empírica del prototipo se implementa una instancia de referencia remota comunicada mediante túneles seguros, delimitando la puesta en producción y el aprovisionamiento de clústeres elásticos con auto-escalado fuera de los recursos financieros del presente Trabajo Final de Grado.

@@ -1,0 +1,143 @@
+% ====================================================================
+\chapter{Análisis de requerimientos}
+% ====================================================================
+
+\section{Requerimientos funcionales}
+\begin{itemize}
+    \item \textbf{RF-01 --- Captura y extracción local de landmarks:} Capturar el flujo de video del usuario señante en el cliente y extraer las coordenadas articulares tridimensionales normalizadas de torso y manos en tiempo real mediante visión computacional \parencite{google2020mediapipe}.
+    \item \textbf{RF-02 --- Clasificación gestual temporal local:} Clasificar localmente secuencias fijas de coordenadas en una de las 100 clases de LSA soportadas y reportar la glosa asignada y su confianza empleando arquitecturas de aprendizaje profundo \parencite{vaswani2017attention, wu2020lite}.
+    \item \textbf{RF-03 --- Segmentación heurística de señas:} Identificar de forma automática el inicio y fin de un gesto aislado en función de la actividad de las manos, aplicando políticas de anti-rebote mediante compuertas de repetición (\texttt{RepeatGate}) desacopladas \parencite{gamma1994design}.
+    \item \textbf{RF-04 --- Traducción semántica directa remota (LSA $\rightarrow$ Español):} Transmitir las glosas detectadas hacia el servicio semántico en la nube y recibir una oración gramaticalmente cohesiva en español rioplatense generada por un modelo de lenguaje adaptado \parencite{hu2022lora, qwen2024qwen25}.
+    \item \textbf{RF-05 --- Emisión hacia el oyente:} Presentar la traducción en texto superpuesto en pantalla y/o sintetizarla como audio oral para el interlocutor oyente de forma concurrente \parencite{pressman2014software}.
+    \item \textbf{RF-06 --- Captura del turno del interlocutor oyente:} Capturar la voz o texto del oyente en la videollamada durante su turno de intervención para viabilizar el canal de retorno bidireccional.
+    \item \textbf{RF-07 --- Traducción semántica inversa remota (Español $\rightarrow$ LSA):} Transmitir el texto en español emitido por el oyente hacia el servicio semántico en la nube y obtener una secuencia ordenada de glosas bajo la estructura gramatical \textit{Topic-Comment} canónica de la LSA \parencite{massone2012curso, dubey2024llama3}.
+    \item \textbf{RF-08 --- Representación visual mediante Avatar LSA:} Recibir las glosas generadas por el canal inverso y renderizar localmente en pantalla la animación tridimensional de la seña correspondiente, ejecutando deletreo manual dactilológico en términos fuera del léxico \parencite{massone1993numero, hetah2024avatar}.
+    \item \textbf{RF-09 --- Integración con Google Meet:} Inyectar el video procesado y los canales de comunicación dentro de la pestaña de videollamada mediante la derivación de flujo a un lienzo sintético sin generar conflictos de bloqueo en la cámara física \parencite{w3c2024mediacapture, chrome2024manifestv3}.
+    \item \textbf{RF-10 --- Memoria conversacional de turnos:} Preservar un historial deslizante con los últimos turnos de diálogo entre ambos participantes para resolver ambigüedades deícticas y pronombres \parencite{gamma1994design}.
+\end{itemize}
+
+\section{Requerimientos no funcionales}
+\begin{itemize}
+    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La delimitación de cierre de enunciado debe operar tras un umbral de 4 segundos sin actividad gestual. La inferencia semántica remota y retorno al cliente no debe superar los 1{,}5 segundos bajo conexiones de banda ancha estándar, apoyándose en la optimización de pesos cuantizados \parencite{gerganov2023llamacpp, frantar2022gptq}.
+    \item \textbf{RNF-02 --- Privacidad de imagen y video:} Ningún flujo de video crudo o imagen de la cámara web debe ser transmitido hacia servidores externos o servicios en la nube; el intercambio de red con el backend se restringe exclusivamente a cargas textuales livianas (glosas o texto transcripto), siguiendo principios de diseño seguro \parencite{pressman2014software}.
+    \item \textbf{RNF-03 --- Robustez en reconocimiento en vivo:} El clasificador gestual local debe mantener un rendimiento superior al 75\,\% top-1 y al 90\,\% top-3 en condiciones de iluminación doméstica estándar mediante la corrección de distorsiones de aspecto \parencite{ronchetti2016lsa64}.
+    \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad del servicio semántico:} La arquitectura del backend semántico debe estar concebida para operar de forma desacoplada y elástica \parencite{pressman2014software}, permitiendo su despliegue en infraestructuras con auto-escalado horizontal a través de interfaces REST tipadas \parencite{tiangolo2018fastapi}.
+    \item \textbf{RNF-05 --- Usabilidad y no invasividad:} La interfaz sobre la videollamada debe ofrecer indicadores visuales de estado (grabando seña, procesando texto, reproduciendo avatar) que no ocluyan la visibilidad del interlocutor, mitigando la brecha comunicacional receptiva y expresiva \parencite{argentina2020ley27710}.
+\end{itemize}
+
+\section{Restricciones}
+\begin{itemize}
+    \item \textbf{RC-01 --- Alcance léxico:} El vocabulario reconocido y estructurado está acotado a 100 señas validadas por profesionales de LSA, enmarcadas en las pautas pedagógicas y lingüísticas vigentes \parencite{cas2024senario, inju2024diccionario}.
+    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Debido a restricciones presupuestarias para el sostenimiento de infraestructura elástica de CPU en proveedores comerciales de nube, la validación del backend semántico remoto se efectúa mediante una instancia dedicada expuesta a través de un túnel seguro (ngrok/Cloudflare), dejándose especificado el diseño arquitectónico de producción escalable \parencite{github2026proyectolsa}.
+    \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y los bindings de inferencia están diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes \parencite{chrome2024manifestv3}.
+    \item \textbf{RC-04 --- Dependencia de visión:} La robustez del clasificador depende de la capacidad de MediaPipe Holistic para identificar al menos una mano en el cuadro de captura \parencite{google2020mediapipe}.
+    \item \textbf{RC-05 --- Recursos del cliente objetivo:} El componente local del prototipo debe ser capaz de operar con fluidez en laptops estándar (procesadores de 4 núcleos y 8 GB de memoria RAM, sin placa gráfica dedicada), cumpliendo con las pautas de factibilidad establecidas para el Trabajo Final \parencite{unmdp2024protocolo}.
+\end{itemize}
+
+\subsection{Especificación del entorno de ejecución cliente}
+A fin de asegurar la accesibilidad y democratización del sistema, se definió un hardware objetivo representativo del equipamiento informático estándar presente en ámbitos educativos y laborales:
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\caption{Requisitos de hardware y software del dispositivo cliente}
+\label{tab:requisitos_hardware}
+\begin{tabularx}{\textwidth}{@{}l p{5.5cm} X @{}}
+\toprule
+\textbf{Componente} & \textbf{Requisitos mínimos (Dispositivo base)} & \textbf{Requisitos recomendados} \\
+\midrule
+\textbf{Procesador (CPU)} & Intel Core i3 (10ª gen.) / AMD Ryzen 3 (serie 3000) (4 núcleos / 4 hilos, base $\ge 2{,}0$\,GHz, soporte AVX2). & Intel Core i5 (11ª gen.+) / AMD Ryzen 5 (serie 4000+) (6 núcleos / 12 hilos). \\
+\textbf{Memoria RAM} & 8\,GB DDR4 ($\ge 3{,}0$\,GB libres para el entorno de ejecución). & 16\,GB DDR4 / DDR5. \\
+\textbf{Gráficos (GPU)} & Gráficos integrados (Intel UHD Graphics 620 / AMD Radeon Vega 3) con soporte WebGL. & Intel Iris Xe / AMD Radeon 600M+ o GPU dedicada básica. \\
+\textbf{Almacenamiento} & Disco de estado sólido (SSD) con 2\,GB de espacio libre. & SSD NVMe con $\ge 5$\,GB libres. \\
+\textbf{Cámara web} & Resolución 720p (1280$\times$720) a 24/30 FPS. & Resolución 1080p a 30 FPS. \\
+\textbf{Conectividad} & Conexión de banda ancha ($\ge 10$\,Mbps bajada / $\ge 3$\,Mbps subida, latencia $< 80$\,ms). & Conexión por fibra óptica ($\ge 50$\,Mbps). \\
+\textbf{Entorno de software} & Windows 10/11 (64 bits), Google Chrome 115+ (soporte Manifest V3). & Windows 11 (64 bits), Google Chrome última versión estable. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Criterio técnico de selección del procesador base}
+La especificación de la CPU base no fue adoptada de manera arbitraria, sino deducida a partir de la descomposición de hilos requerida en ejecución simultánea:
+\begin{enumerate}
+    \item \textbf{Carga WebRTC en navegador:} Google Meet demanda aproximadamente entre $1$ y $1{,}5$ núcleos para la decodificación y codificación de video en tiempo real.
+    \item \textbf{Extracción (MediaPipe Holistic):} La ejecución sobre WebAssembly en el contexto aislado del navegador insume la capacidad de $1$ núcleo dedicado para mantener una cadencia de $24$ a $30$ FPS.
+    \item \textbf{Inferencia gestual e interprocesos (Motor ILSA):} El servidor local FastAPI y el modelo neuronal en CPU (\textit{TinySkeletonClassifier}) requieren disponibilidad de cómputo vectorial (instrucciones AVX2/FMA) para garantizar latencias de clasificación inferiores a los $2$\,ms sin contienda de recursos.
+\end{enumerate}
+Esta descomposición fundamenta la exigencia de una arquitectura mínima de 4 núcleos físicos y frecuencia base sostenida de $2{,}0$\,GHz, viable exclusivamente gracias al desacoplamiento del modelo de lenguaje autorregresivo hacia el backend en la nube.
+
+\section{Casos de uso}
+
+\subsection{Casos de uso esenciales en formato breve}
+\begin{itemize}
+    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara web durante la videollamada; el sistema captura y clasifica localmente las señas, solicita la traducción remota y proyecta el mensaje como texto o voz para el oyente \parencite{pressman2014software}.
+    \item \textbf{CU-02 --- Configurar mano dominante:} El usuario señante selecciona si su mano hábil es diestra o zurda para que el sistema normalice adecuadamente los vectores articulares mediante operaciones de espejado \parencite{google2020mediapipe}.
+    \item \textbf{CU-03 --- Configurar canal de salida del oyente:} El usuario oyente selecciona si prefiere recibir los mensajes del señante en formato de subtítulos, voz sintetizada en off o ambas alternativas simultáneamente.
+    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla o escribe durante la llamada; el sistema solicita la estructuración remota en glosas LSA y el avatar reproduce localmente las señas o las deletrea visualmente \parencite{hetah2024avatar, massone1993numero}.
+\end{itemize}
+
+\subsection{Casos de uso expandidos}
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{3.2cm}|c|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+Identificador & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\
+\hline
+Actor principal & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{Usuario señante (persona sorda)} \\
+\hline
+Precondiciones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{El motor ILSA está activo \parencite{tiangolo2018fastapi}, conectado al servicio semántico remoto y el usuario se encuentra en la videollamada con cámara encendida.} \\
+\hline
+Postcondiciones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{El mensaje en LSA es traducido a español e interpretado como texto o voz para el oyente.} \\
+\hline
+\multirow{5}{=}{\textbf{Escenario principal de éxito}} & & \textbf{Usuario señante} & \textbf{Sistema} \\
+\cline{2-4}
+& \textbf{1} & Seña frente a la cámara su mensaje de forma continua. & \\
+\cline{2-4}
+& \textbf{2} & & Detecta las manos, segmenta cada seña, extrae coordenadas \parencite{google2020mediapipe} y clasifica localmente las glosas \parencite{wu2020lite}. \\
+\cline{2-4}
+& \textbf{3} & Realiza una pausa de al menos 4 segundos al finalizar su turno. & \\
+\cline{2-4}
+& \textbf{4} & & Cierra el enunciado y transmite las glosas al servicio semántico en la nube \parencite{hu2022lora}. \\
+\cline{2-4}
+& \textbf{5} & & Recibe la oración traducida, proyecta el subtítulo y reproduce el audio en el cliente. \\
+\hline
+Extensiones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{\textbf{2a.} Glosa con baja confianza o descartada por rebote: se omite el registro y se reinicia la espera \parencite{gamma1994design}.\par\smallskip \textbf{4a.} Falla de conectividad con el servicio semántico: se emite el texto concatenado de las glosas directas como contingencia.} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{3.2cm}|c|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+Identificador & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{\textbf{CU-04: Traducir español a LSA mediante Avatar (Modo Oyente)}} \\
+\hline
+Actor principal & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{Usuario no señante (persona oyente)} \\
+\hline
+Precondiciones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{La videollamada está establecida, el modo oyente se encuentra activo y hay conexión con el servicio semántico remoto.} \\
+\hline
+Postcondiciones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{El mensaje hablado es visualizado en LSA por el usuario sordo mediante el avatar 3D \parencite{hetah2024avatar}.} \\
+\hline
+\multirow{5}{=}{\textbf{Escenario principal de éxito}} & & \textbf{Usuario no señante} & \textbf{Sistema} \\
+\cline{2-4}
+& \textbf{1} & Habla a través del micrófono o ingresa texto en la interfaz. & \\
+\cline{2-4}
+& \textbf{2} & & Transcribe el flujo de audio a texto en español. \\
+\cline{2-4}
+& \textbf{3} & & Envía el texto al servicio semántico inverso en la nube \parencite{dubey2024llama3}. \\
+\cline{2-4}
+& \textbf{4} & & Recibe la secuencia de glosas estructurada bajo el formato \textit{Topic-Comment} \parencite{massone2012curso}. \\
+\cline{2-4}
+& \textbf{5} & & El Avatar 3D reproduce las señas en pantalla y deletrea términos fuera del vocabulario \parencite{massone1993numero}. \\
+\hline
+Extensiones & \multicolumn{3}{>{\raggedright\arraybackslash}X|}{\textbf{5a.} Término no reconocido en el léxico base: el avatar activa la animación de deletreo dactilológico letra a letra \parencite{massone1993numero}.} \\
+\hline
+\end{tabularx}
+\end{table}
