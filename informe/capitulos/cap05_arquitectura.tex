@@ -113,10 +113,10 @@ La interacción entre la extensión y el motor local se rige por contratos tipad
 \centering
 \small
 \renewcommand{\arraystretch}{1.25}
-\setlength{\tabcolsep}{5pt}
+\setlength{\tabcolsep}{4.5pt}
 \caption{Endpoints principales de la API local del motor ILSA (127.0.0.1:8765)}
 \label{tab:endpoints_ilsa}
-\begin{tabularx}{\textwidth}{@{}>{\bfseries}l >{\ttfamily}l >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}l >{\ttfamily}l >{\raggedright\arraybackslash\hsize=0.55\hsize}X >{\raggedright\arraybackslash\hsize=1.45\hsize}X@{}}
 \toprule
 Método & \textrm{\textbf{Ruta}} & \textbf{Esquema / Parámetros} & \textbf{Descripción y Comportamiento} \\
 \midrule
@@ -124,9 +124,9 @@ GET & /health & Ninguno & Monitoreo del estado operativo del clasificador y cone
 \addlinespace[3pt]
 GET & /state & Ninguno & Devuelve las glosas acumuladas en el búfer temporal y el último texto traducido. \\
 \addlinespace[3pt]
-POST & /session & \mbox{SessionStartRequest} & Inicia una sesión de señado configurando la lateralidad (\texttt{left\_handed: bool}). \\
+POST & /session & Session\-Start\-Request & Inicia una sesión de señado configurando la lateralidad (\texttt{left\_handed: bool}). \\
 \addlinespace[3pt]
-POST & /sign & \mbox{SignPayload} & Ingesta una lista de 16 fotogramas con 225 coordenadas articulares normalizadas; ejecuta el clasificador y el filtro RepeatGate. \\
+POST & /sign & SignPayload & Ingesta una lista de 16 fotogramas con 225 coordenadas articulares normalizadas; ejecuta el clasificador y el filtro RepeatGate. \\
 \addlinespace[3pt]
 POST & /activity & Ninguno & Notifica actividad cinemática para resetear el temporizador de cierre de enunciado. \\
 \addlinespace[3pt]
@@ -166,27 +166,45 @@ En respuesta, el motor valida el gesto y devuelve un objeto de confirmación que
 \end{verbatim}
 
 \subsubsection{Contratos de la API del Servicio Semántico Remoto}
-El microservicio en la nube centraliza la inferencia del modelo de lenguaje a través de dos rutas, resumidas en la Tabla~\ref{tab:api_semantico}.
+El microservicio en la nube centraliza la inferencia del modelo de lenguaje a través de dos rutas, resumidas en la Tabla~\ref{tab:endpoints_semantico}.
 
-\begin{table}[H]
+\begin{table}[h!]
 \centering
-\caption{Endpoints del microservicio semántico en la nube}
-\label{tab:api_semantico}
-\begin{tabularx}{\textwidth}{@{}llp{3.2cm}X@{}}
-\toprule
-\textbf{Método} & \textbf{Ruta} & \textbf{Carga de Entrada} & \textbf{Carga de Retorno y Función} \\
-\midrule
-\texttt{POST} & \texttt{/translate} & \texttt{TranslateRequest} & Recibe lista de glosas LSA (\texttt{["HOLA", "AYUDA"]}) y contexto conversacional; devuelve la oración en español rioplatense sintetizada. \\
-\texttt{POST} & \texttt{/hearing} & \texttt{HearingRequest} & Recibe texto en español capturado del oyente; devuelve la lista de glosas estructurada bajo gramática \textit{Topic-Comment} para el avatar. \\
-\bottomrule
+\small
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{5pt} % Reduce levemente el espacio entre columnas para evitar desbordes
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{3.5cm}|c|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+Identificador & \multicolumn{3}{l|}{\textbf{CU-01: Conversar con otra persona}} \\
+\hline
+Actor principal & \multicolumn{3}{l|}{Usuario señante} \\
+\hline
+Precondiciones & \multicolumn{3}{l|}{El usuario debe estar unido a una llamada.} \\
+\hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-3.5cm-6\tabcolsep-4\arrayrulewidth\relax}|}{El usuario no señante es capaz de leer/escuchar lo que el usuario señante le dice.} \\
+\hline
+\multirow{3}{=}{Escenario Principal de éxito (flujo básico)} 
+ & & \textbf{Usuario señante} & \textbf{Sistema} \\
+\cline{2-4}
+ & \textbf{1} & Realiza las señas correspondientes a lo que quiere comunicar. & \\
+\cline{2-4}
+ & \textbf{2} & & El Sistema procesa el búfer con las señas, extrae los landmarks, interpreta cada gesto y envía la secuencia al módulo semántico, el cual traduce y muestra por pantalla la oración resultante. \\
+\hline
+Extensiones & \multicolumn{3}{l|}{---} \\
+\hline
+Requisitos especiales & \multicolumn{3}{l|}{---} \\
+\hline
 \end{tabularx}
 \end{table}
 
 \paragraph{Contrato del Canal Directo (\texttt{/translate})}
 La petición generada por el motor local hacia el servidor remoto encapsula las glosas detectadas y el historial deslizante:
+
+% TODO: Esto funciona asi? Me refiero a lo de que manda el texto en history
+\begingroup
+\small
 \begin{verbatim}
 // Solicitud POST /translate
-% TODO: Esto funciona asi? Me refiero a lo de que manda el texto en history
 {
   "glosses": ["AHORA_HOY", "YO", "BIEN"],
   "history": [
@@ -201,7 +219,7 @@ La petición generada por el motor local hacia el servidor remoto encapsula las 
   "inference_time_ms": 348.3
 }
 \end{verbatim}
-
+\endgroup
 \paragraph{Contrato del Canal Inverso (\texttt{/hearing})}
 En sentido inverso, el texto transcripto de la voz del oyente se remite al modelo inverso para su desarticulación gramatical:
 \begin{verbatim}
@@ -364,13 +382,19 @@ Al momento de integrar la memoria, se consideró que pasarle mensajes previos po
     \item \textbf{Estructuración bajo formato de diálogo (\textit{Chat Format}):} En lugar de concatenar el historial como texto plano, los turnos previos se inyectan en el prompt formateados como mensajes anteriores del diálogo: las intervenciones del oyente se asignan al rol de usuario (\texttt{role: "user"}) y las respuestas del señante al rol de asistente (\texttt{role: "assistant"})[cite: 1]. De este modo, el modelo procesa el enunciado actual como la última respuesta a completar dentro de la conversación.
     \item \textbf{Reinicio del contexto:} Ante cambios de tema, cambios de interlocutor o al iniciar una nueva videollamada, el sistema expone el método \texttt{clear()}, accesible tanto a través del endpoint REST \texttt{POST /conversation/clear} del motor local ILSA como mediante atajos de teclado en la interfaz de usuario[cite: 1, 7]. Esto permite vaciar la ventana activa a cero sin comprometer el registro histórico de la sesión[cite: 1].
 \end{itemize}
-
 \section{Integración en Google Meet y extensión de navegador}
 \subsection{Desafíos del entorno Chrome Manifest V3: aislamiento offscreen y sandbox}
 
 Cuando intentamos llevar el pipeline de visión a una extensión de navegador, nos encontramos con las restricciones de seguridad que impone Chrome Manifest V3 \parencite{chrome2024manifestv3}. En esta versión de la plataforma, los scripts en segundo plano (\textit{service workers}) no tienen acceso al DOM y prohíben evaluar código dinámico o cargar scripts externos no empaquetados. Esto generó un conflicto directo con MediaPipe Holistic, ya que la librería utiliza WebAssembly y crea hilos auxiliares (\textit{workers}) para procesar el video sin congelar la interfaz \parencite{google2020mediapipe}. 
 
-En un contexto de extensión convencional, el navegador bloquea la inicialización de estos módulos auxiliares. Para superar esta limitación técnica y mantener la fluidez de la videollamada, tuvimos que diseñar una arquitectura desacoplada en dos capas:
+En un contexto de extensión convencional, el navegador bloquea la inicialización de estos módulos auxiliares. Para superar esta limitación técnica y mantener la fluidez de la videollamada, diseñamos una arquitectura desacoplada en dos capas, cuya estructura e interacción general se ilustran en la Figura~\ref{fig:arquitectura_extension_meet}.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.85\textwidth,height=0.80\textheight,keepaspectratio]{integracion/Diagrama-arquitectura-extension.pdf}
+    \caption{Arquitectura de integración en el navegador: intercepción de la cámara web, derivación de fotogramas al entorno aislado (\textit{offscreen} y \textit{sandbox}) y enlace con el motor local ILSA.}
+    \label{fig:arquitectura_extension_meet}
+\end{figure}
 
 \paragraph{Página en segundo plano (\textit{offscreen})}
 Dado que el \textit{service worker} no puede manipular elementos visuales, creamos un documento sin ventana visible utilizando la API \texttt{chrome.offscreen} \parencite{chrome2024manifestv3}. Su función principal es recibir los cuadros de video en formato comprimido desde la videollamada y coordinar la comunicación con los demás componentes del sistema. Además, para reducir el consumo de CPU y memoria, bajamos la resolución de los cuadros de 320 a 240 píxeles de ancho.
@@ -378,20 +402,20 @@ Dado que el \textit{service worker} no puede manipular elementos visuales, cream
 \paragraph{Entorno aislado (\textit{sandbox})}
 Para que MediaPipe pudiera ejecutarse sin infringir la política de seguridad del navegador (\textit{Content Security Policy}), declaramos un marco aislado (\textit{sandbox}) en el archivo de manifiesto \parencite{chrome2024manifestv3}. Esta página no tiene acceso directo a las APIs privilegiadas de la extensión ni a la red exterior. Sin embargo, cuenta con los permisos necesarios para instanciar el runtime de WebAssembly y cargar los modelos locales de pose y manos de MediaPipe Holistic \parencite{google2020mediapipe}.
 
-\paragraph{Canal de mensajería y flujo de datos.}
+\paragraph{Canal de mensajería y flujo de datos}
 El intercambio de información entre estos contextos se organizó mediante un puente de eventos:
 \begin{enumerate}
     \item La extensión toma la imagen de la cámara web y la envía al documento \textit{offscreen} como imagen JPEG.
     \item El documento \textit{offscreen} reenvía el cuadro al \textit{sandbox} a través de \texttt{postMessage}.
     \item El entorno \textit{sandbox} procesa la imagen con MediaPipe Holistic y extrae las 225 coordenadas tridimensionales de torso y manos \parencite{google2020mediapipe}.
-    \item Los puntos calculados retornan al script \textit{offscreen}, el cual detecta el inicio o fin del gesto y despacha el vector numérico al motor local ILSA mediante una petición HTTP POST.
+    \item Los puntos calculados retornan al script \textit{offscreen}, el cual analiza si hay manos activas, recorta la ventana temporal y despacha el vector cinemático al motor local ILSA mediante una petición HTTP POST \parencite{tiangolo2018fastapi}.
 \end{enumerate}
 
 Esta separación permitió que Google Meet corriera en su hilo principal sin caídas de cuadros, aislando por completo la carga computacional de la visión artificial dentro de procesos auxiliares del navegador.
 
 \subsection[Intercepción de Media y canvas.captureStream()]{Intercepción de \texttt{getUserMedia} y derivación de flujo vía \texttt{canvas.captureStream()}}
 
-Uno de los mayores desafíos al integrar el sistema en Google Meet fue el acceso a la cámara física. En los navegadores modernos, la API estándar \texttt{navigator.mediaDevices.getUserMedia} maneja la cámara como un recurso exclusivo: no permite que dos procesos consuman el mismo dispositivo al mismo tiempo sin bloquear el hardware. 
+Uno de los mayores desafíos al integrar el sistema en Google Meet fue el acceso a la cámara física. En los navegadores modernos, la API estándar \texttt{navigator.\-mediaDevices.\-getUserMedia} maneja la cámara como un recurso exclusivo: no permite que dos procesos consuman el mismo dispositivo al mismo tiempo sin bloquear el hardware.
 
 En nuestro diseño necesitábamos dos flujos concurrentes: capturar los cuadros de video para extraer los puntos corporales en la extensión y, al mismo tiempo, alimentar la transmisión nativa de la videollamada. Si MediaPipe tomaba el control directo de la cámara, Meet no podía transmitir video; y si Meet la iniciaba primero, el clasificador quedaba bloqueado. 
 
@@ -414,22 +438,21 @@ Para no entorpecer la visión de la llamada, implementamos un temporizador visua
 
 \subsection{Motor Local ILSA (FastAPI)}
 
-Para coordinar las tareas locales sin sobrecargar el navegador web, desarrollamos el motor local ILSA (\textit{Intérprete de Lengua de Señas Argentina}). Se trata de una aplicación de escritorio programada en Python que levanta un servidor HTTP local mediante FastAPI y Uvicorn en la dirección de bucle invertido \texttt{127.0.0.1:8765}. 
+Para coordinar las tareas locales sin sobrecargar el navegador web, desarrollamos el motor local ILSA (\textit{Intérprete de Lengua de Señas Argentina}). Se trata de una aplicación de escritorio programada en Python que levanta un servidor HTTP local mediante FastAPI y Uvicorn en la dirección de bucle invertido \texttt{127.0.0.1:8765} \parencite{tiangolo2018fastapi}. 
 
 Al diseñar este componente, aprendimos que desacoplar la lógica de clasificación y la síntesis de voz del entorno de Chrome simplifica el mantenimiento y evita problemas de rendimiento en la videollamada. El motor actúa como un orquestador que centraliza cuatro responsabilidades principales:
 
-\paragraph{Recepción de secuencias y ejecución del clasificador:}
-A través del endpoint \texttt{POST /sign}, el motor recibe los paquetes JSON enviados por la extensión. Cada paquete contiene una secuencia normalizada de 16 fotogramas con 225 coordenadas cinemáticas. El motor convierte estos datos en un tensor de PyTorch con dimensiones $(1, 16, 225)$ y ejecuta la inferencia local del modelo \textit{TinySkeletonClassifier} en CPU. El resultado se responde inmediatamente a la extensión para actualizar el indicador visual (HUD) en la pantalla del usuario.
+\paragraph{Recepción de secuencias y ejecución del clasificador}
+A través del endpoint \texttt{POST /sign}, el motor recibe los paquetes JSON enviados por la extensión. Cada paquete contiene una secuencia normalizada de 16 fotogramas con 225 coordenadas cinemáticas. El motor convierte estos datos en un tensor de PyTorch con dimensiones $(1, 16, 225)$ y ejecuta la inferencia local del modelo \textit{TinySkeletonClassifier} en CPU en menos de 2\,ms. El resultado se responde inmediatamente a la extensión para actualizar el indicador visual (HUD) en la pantalla del usuario.
 
-\paragraph{Filtrado con RepeatGate y acumulación en UtteranceBuffer:}
-Cada predicción pasa por la compuerta \texttt{RepeatGate}. Esta clase aplica reglas según el tipo de seña para filtrar rebotes no deseados: admite números repetidos, permite hasta dos letras iguales consecutivas y descarta repeticiones inmediatas en palabras generales. Las glosas aceptadas se van acumulando en el objeto \texttt{UtteranceBuffer}. Si pasan 4 segundos continuos sin actividad gestual, el búfer declara el cierre de la frase y dispara la petición al servidor semántico remoto para obtener la traducción en español.
+\paragraph{Filtrado con RepeatGate y acumulación en UtteranceBuffer}
+Cada predicción pasa por la compuerta \texttt{RepeatGate} \parencite{gamma1994design}. Esta clase aplica reglas según el tipo de seña para filtrar rebotes no deseados: admite números repetidos, permite hasta dos letras iguales consecutivas y descarta repeticiones inmediatas en palabras generales. Las glosas aceptadas se van acumulando en el objeto \texttt{UtteranceBuffer}. Si pasan 4 segundos continuos sin actividad gestual, el búfer declara el cierre de la frase y dispara la petición al servidor semántico remoto para obtener la traducción en español.
 
-\paragraph{Manejo de concurrencia y síntesis de voz (pyttsx3):}
-Uno de los problemas técnicos que encontramos fue que la librería \texttt{pyttsx3} bloquea el hilo de ejecución mientras pronuncia una frase, además de depender de la arquitectura COM en Windows. Si corríamos la síntesis de voz en el hilo principal de FastAPI, el servidor dejaba de responder peticiones y la cámara se trababa. Para solucionarlo, implementamos una arquitectura concurrente con hilos desacoplados y colas. El motor de voz corre en su propio proceso en segundo plano, reproduciendo el audio hacia el oyente sin retrasar la clasificación de nuevas señas.
+\paragraph{Manejo de concurrencia y síntesis de voz (pyttsx3)}
+Uno de los problemas técnicos que encontramos fue que la librería \texttt{pyttsx3} bloquea el hilo de ejecución mientras pronuncia una frase, además de depender de la arquitectura COM en Windows. Si corríamos la síntesis de voz en el hilo principal de FastAPI, el servidor dejaba de responder peticiones y la cámara se trababa. Para solucionarlo, implementamos una arquitectura concurrente con hilos desacoplados y colas seguras (\texttt{queue.Queue}) \parencite{pressman2014software}. El motor de voz corre en su propio proceso en segundo plano, reproduciendo el audio hacia el oyente sin retrasar la clasificación de nuevas señas.
 
-\paragraph{Empaquetado y distribución ejecutable:}
+\paragraph{Empaquetado y distribución ejecutable}
 Para que el usuario final no tenga que instalar Python ni configurar entornos virtuales, empaquetamos el backend en un binario ejecutable independiente (\texttt{ILSA.exe}) utilizando PyInstaller. El ejecutable incluye una interfaz gráfica simple donde el usuario puede seleccionar el modo de trabajo (Sordo u Oyente), configurar la mano dominante y encender o apagar el servicio con un solo botón. Al iniciar la sesión, el motor descarga automáticamente la URL pública del servidor semántico desde los lanzamientos de GitHub, permitiendo que la extensión comience a operar en Google Meet de inmediato sin configuraciones manuales de red.
-
 \section{Representación gestual Inversa mediante avatar 3D}
 \subsection{Controlador de animaciones esqueléticas por glosas}
 \subsection{Mecanismo de contingencia: deletreo manual dactilológico}
