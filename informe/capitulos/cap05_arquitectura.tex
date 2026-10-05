@@ -458,5 +458,63 @@ Para que el usuario final no tenga que instalar Python ni configurar entornos vi
 \subsection{Mecanismo de contingencia: deletreo manual dactilológico}
 
 \section{Diseño conceptual de la arquitectura escalable en la nube}
+
+La partición funcional adoptada establece que la carga computacional asociada al modelo de lenguaje (el módulo semántico) quede desacoplada de la computadora del usuario y se atienda de manera remota. De este modo, la máquina cliente solo procesa el flujo de cámara y la inferencia gestual liviana, enviando únicamente texto plano (listas de glosas u oraciones) hacia el servidor exterior.
+
+Sin embargo, para llevar esta solución a un entorno de uso masivo con múltiples videollamadas concurrentes, se requiere una infraestructura elástica capaz de procesar turnos simultáneos sin encolamientos ni demoras que corten el ritmo del diálogo. A continuación, se formaliza el diseño conceptual para entornos de producción y se detalla el esquema real con el que se validó el prototipo.
+
 \subsection{Especificación para entornos de producción concurrente}
+
+Para garantizar alta disponibilidad y responder en tiempos medios menores a los 450\,ms por turno frente a múltiples usuarios concurrentes, se proyectó una arquitectura modular basada en microservicios contenerizados y auto-escalado elástico. La topología de recursos y el flujo de balanceo se describen en la Figura~\ref{fig:arquitectura_nube_produccion}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{integracion/Diagrama-arquitcetura-escalable.pdf}
+    \caption{Diseño conceptual de la infraestructura en la nube: red perimetral, balanceo de carga y clúster elástico de inferencia semántica con escalado horizontal.}
+    \label{fig:arquitectura_nube_produccion}
+\end{figure}
+
+El diseño contempla tres capas principales de infraestructura:
+
+\paragraph{Capa de acceso perimetral y balanceo:}
+Las solicitudes HTTPS enviadas por las computadoras clientes son recibidas por una capa perimetral que incluye resolución DNS, certificados de seguridad TLS y filtrado de tráfico básico para prevenir saturaciones maliciosas. Detrás de esta capa opera un balanceador de carga (\textit{API Gateway} o \textit{Application Load Balancer}):
+\begin{itemize}
+    \item Recibe y valida los esquemas JSON de las rutas \texttt{/translate} y \texttt{/hearing}.
+    \item Distribuye las peticiones hacia las réplicas del microservicio semántico mediante un criterio de menor número de conexiones activas (\textit{Least Connections}), evitando sobrecargar instancias que se encuentren resolviendo enunciados largos.
+\end{itemize}
+
+\paragraph{Clúster de cómputo y escalado elástico:}
+El microservicio semántico (desarrollado con FastAPI y el motor de \texttt{llama.cpp}) se empaqueta en imágenes de contenedor Docker \parencite{gerganov2023llamacpp, tiangolo2018fastapi}. Estos contenedores se despliegan sobre un clúster gestionado de Kubernetes (como AWS EKS o equivalente):
+\begin{itemize}
+    \item \textbf{Almacenamiento compartido de modelos:} Los archivos binarios cuantizados en formato GGUF (Q4\_K\_M) se almacenan en un volumen persistente de solo lectura montado en cada instancia, evitando transferencias repetitivas de red al iniciar nuevos contenedores.
+    \item \textbf{Auto-escalado por demanda:} Mediante un controlador de escalado horizontal (HPA), el clúster monitorea la longitud de la cola de peticiones y los tiempos de generación de respuesta. Cuando la cantidad de turnos simultáneos supera el umbral operativo de las réplicas activas, el orquestador provisiona automáticamente nuevos contenedores para absorber el pico de uso.
+    \item \textbf{Eficiencia de hardware y costos:} Gracias a la cuantización a 4 bits (GGUF Q4\_K\_M), cada réplica requiere menos de 2\,GB de memoria RAM y puede ejecutarse sobre procesadores estándar en la nube, prescindiendo de servidores dedicados con placa de video (GPU).
+\end{itemize}
+
+\paragraph{Monitoreo y telemetría:}
+Se prevé un sistema de recopilación de métricas (como Prometheus y Grafana o AWS CloudWatch) para supervisar la latencia por oración, la memoria ocupada por contenedor y la tasa de errores de red, permitiendo calibrar con precisión las reglas de escalado.
+
 \subsection{Instancia de validación del prototipo mediante túnel seguro}
+
+El despliegue comercial continuo de un clúster elástico en proveedores como AWS o Google Cloud Platform implica costos periódicos de infraestructura que no resultaban viables dentro del marco de un Trabajo Final de Grado, tal como quedó establecido en la restricción \texttt{RC-02} de requerimientos.
+
+Para validar el funcionamiento del sistema desacoplado sin incurrir en costos operativos, se implementó una instancia remota de referencia utilizando un túnel seguro cifrado (\textit{Cloudflare Tunnel} o \textit{ngrok}).
+
+\paragraph{Configuración de la instancia de prueba:}
+El esquema operativo del prototipo se organizó de la siguiente forma:
+\begin{enumerate}
+    \item \textbf{Servidor semántico desacoplado:} El servidor se levanto en una computadora separada del equipo donde corría la videollamada. Este proceso levanta el servidor FastAPI, cargando en memoria RAM los binarios cuantizados del traductor gestionados con \texttt{llama-server}.
+    \item \textbf{Túnel inverso cifrado:} A través del cliente de ngrok, se estableció un túnel TLS saliente que generó una URL pública con HTTPS (por ejemplo, \texttt{https://ilsa-semantic.trycloudflare.com}). Esto permitió exponer el servicio a Internet de forma segura sin requerir una IP pública fija ni configurar redirecciones de puertos en el rúter.
+    \item \textbf{Conexión del cliente local:} El motor ILSA en la computadora del usuario lee la URL remota mediante la variable de configuración \texttt{SEMANTIC\_URL} o la consulta al iniciar la aplicación. Al detectar el fin de una frase de señas, despacha la lista de glosas por la red pública hacia dicho punto de acceso.
+\end{enumerate}
+
+\paragraph{Validez técnica de las pruebas}
+Este esquema reprodujo con exactitud el comportamiento que tendría el sistema en un entorno de producción real:
+\begin{itemize}
+    \item Incorporó los retardos típicos de una red de telecomunicaciones residencial (latencias de subida y bajada, fluctuaciones de conexión y negociación TLS).
+    \item Verificó que los contratos de datos y la serialización JSON funcionaran de manera consistente a través de Internet.
+    % TODO; Chequear metricas
+    \item Demostró que la computadora cliente de 8\,GB de RAM se mantuvo liberada del consumo de memoria y CPU del modelo de lenguaje, garantizando que Google Meet y MediaPipe operaran a 30 FPS continuos sin caídas de rendimiento \parencite{google2020mediapipe}.
+\end{itemize}
+
+De esta manera, se comprobó la viabilidad del modelo híbrido cliente-nube, dejando la aplicación preparada para migrar a una infraestructura en la nube simplemente actualizando la dirección URL del servicio semántico.

@@ -3208,6 +3208,9 @@
     <bcf:citekey order="203" intorder="1">tiangolo2018fastapi</bcf:citekey>
     <bcf:citekey order="204" intorder="1">gamma1994design</bcf:citekey>
     <bcf:citekey order="205" intorder="1">pressman2014software</bcf:citekey>
+    <bcf:citekey order="206" intorder="1">gerganov2023llamacpp</bcf:citekey>
+    <bcf:citekey order="206" intorder="2">tiangolo2018fastapi</bcf:citekey>
+    <bcf:citekey order="207" intorder="1">google2020mediapipe</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="apa">
