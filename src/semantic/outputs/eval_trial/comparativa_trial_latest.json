@@ -1,16 +1,16 @@
 {
-  "evaluated_at": "2026-09-16T21:23:00.269610+00:00",
-  "dataset": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\dataset_trial.json",
-  "n_samples": 18,
+  "evaluated_at": "2026-10-05T12:49:06.502528+00:00",
+  "dataset": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\dataset_trial.json",
+  "n_samples": 20,
   "ranking": [
     {
-      "total_samples": 18,
+      "total_samples": 20,
       "accuracy_strict_percent": 100.0,
       "accuracy_normalized_percent": 100.0,
       "bleu_score": 100.0,
       "rouge_l_score": 100.0,
-      "meteor_score": 99.47,
-      "avg_latency_ms": 413.34,
+      "meteor_score": 99.42,
+      "avg_latency_ms": 416.75,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -47,7 +47,7 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -57,7 +57,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -77,7 +82,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -107,16 +117,16 @@
       "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
       "label": "Qwen2.5 1.5B",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
     },
     {
-      "total_samples": 18,
-      "accuracy_strict_percent": 100.0,
-      "accuracy_normalized_percent": 100.0,
-      "bleu_score": 100.0,
-      "rouge_l_score": 100.0,
-      "meteor_score": 99.47,
-      "avg_latency_ms": 801.29,
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.81,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.53,
+      "avg_latency_ms": 224.29,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -144,241 +154,34 @@
           "rouge_l_score": 100.0
         },
         "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_voseo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_en_pasado_tercera_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_futuro_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_futuro_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_pasado_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "flexion_genero_parentesco_transitivo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_nombre_femenino_no_visto": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_apellido_con_grafemas_complejos": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_calle_no_vista": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "secuencia_numerica_dni_arbitraria": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        }
-      },
-      "id": "qwen2.5-3b",
-      "model_name": "unsloth/Qwen2.5-3B-Instruct",
-      "label": "Qwen2.5 3B (mayor capacidad)",
-      "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
-    },
-    {
-      "total_samples": 18,
-      "accuracy_strict_percent": 94.44,
-      "accuracy_normalized_percent": 94.44,
-      "bleu_score": 97.07,
-      "rouge_l_score": 98.89,
-      "meteor_score": 98.14,
-      "avg_latency_ms": 335.89,
-      "by_category": {
-        "pronombre_objeto_segunda_persona_en_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_voseo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_en_pasado_tercera_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_futuro": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 80.0
         },
-        "pregunta_wh_ubicacion_futuro_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_futuro_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_pasado_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "flexion_genero_parentesco_transitivo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_nombre_femenino_no_visto": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_apellido_con_grafemas_complejos": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_calle_no_vista": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "secuencia_numerica_dni_arbitraria": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        }
-      },
-      "id": "llama-3.2-1b",
-      "model_name": "unsloth/Llama-3.2-1B-Instruct",
-      "label": "Llama 3.2 1B (Meta)",
-      "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
-    },
-    {
-      "total_samples": 18,
-      "accuracy_strict_percent": 88.89,
-      "accuracy_normalized_percent": 88.89,
-      "bleu_score": 92.29,
-      "rouge_l_score": 96.51,
-      "meteor_score": 95.91,
-      "avg_latency_ms": 228.48,
-      "by_category": {
-        "pronombre_objeto_segunda_persona_en_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
         "pregunta_wh_objeto_tiempo_pasado_voseo": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 57.14
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_identidad_tiempo_pasado": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 80.0
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_ubicacion_futuro_transitivo": {
           "n": 1,
@@ -395,7 +198,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -425,16 +233,16 @@
       "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
       "label": "Qwen2.5 0.5B (ultra liviano)",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
     },
     {
-      "total_samples": 18,
-      "accuracy_strict_percent": 66.67,
-      "accuracy_normalized_percent": 66.67,
-      "bleu_score": 83.89,
-      "rouge_l_score": 91.02,
-      "meteor_score": 90.29,
-      "avg_latency_ms": 676.05,
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.46,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.35,
+      "avg_latency_ms": 334.22,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -463,15 +271,247 @@
         },
         "pregunta_wh_objeto_tiempo_pasado_transitivo": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 85.71
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_objeto_tiempo_pasado_voseo": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 80.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.33,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.22,
+      "avg_latency_ms": 789.13,
+      "by_category": {
+        "pronombre_objeto_segunda_persona_en_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_voseo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 80.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 20,
+      "accuracy_strict_percent": 75.0,
+      "accuracy_normalized_percent": 75.0,
+      "bleu_score": 88.45,
+      "rouge_l_score": 92.63,
+      "meteor_score": 92.06,
+      "avg_latency_ms": 660.98,
+      "by_category": {
+        "pronombre_objeto_segunda_persona_en_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_voseo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 66.67
@@ -481,7 +521,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 80.0
@@ -501,7 +546,12 @@
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 75.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 90.91
@@ -531,7 +581,7 @@
       "model_name": "unsloth/SmolLM2-1.7B-Instruct",
       "label": "SmolLM2 1.7B",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
     }
   ],
   "per_example": [
@@ -548,19 +598,7 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
-          "predicho": "Yo te llamé.",
-          "exact_normalized": true
-        },
-        {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
-          "predicho": "Yo te llamé.",
-          "exact_normalized": true
-        },
-        {
-          "id": "llama-3.2-1b",
-          "label": "Llama 3.2 1B (Meta)",
-          "predicho": "Yo te llamé a vos.",
+          "predicho": "Te llamé.",
           "exact_normalized": true
         },
         {
@@ -570,9 +608,21 @@
           "exact_normalized": true
         },
         {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Te llamé a vos.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Te llamé.",
+          "exact_normalized": true
+        },
+        {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "Yo te llamé.",
+          "predicho": "Te llamé a vos.",
           "exact_normalized": true
         }
       ]
@@ -590,19 +640,7 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
-          "predicho": "Yo te vi a vos.",
-          "exact_normalized": true
-        },
-        {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
-          "predicho": "Yo te vi.",
-          "exact_normalized": true
-        },
-        {
-          "id": "llama-3.2-1b",
-          "label": "Llama 3.2 1B (Meta)",
-          "predicho": "Yo te vi a vos.",
+          "predicho": "Te vi a vos.",
           "exact_normalized": true
         },
         {
@@ -612,9 +650,21 @@
           "exact_normalized": true
         },
         {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Te vi a vos.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Te vi a vos.",
+          "exact_normalized": true
+        },
+        {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "Yo te vi.",
+          "predicho": "Te vi a vos.",
           "exact_normalized": true
         }
       ]
@@ -638,8 +688,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Te voy a tener.",
           "exact_normalized": true
         },
@@ -650,8 +700,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "Te voy a tener.",
           "exact_normalized": true
         },
@@ -665,7 +715,7 @@
     },
     {
       "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-      "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
+      "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
       "referencias": [
         "¿Dónde vivían ellas en la plaza?",
         "¿Dónde vivieron ellas en la plaza?"
@@ -674,12 +724,12 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
-          "predicho": "¿Dónde vivieron ellas en la plaza?",
+          "predicho": "¿Dónde vivían ellas en la plaza?",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Dónde vivían ellas en la plaza?",
           "exact_normalized": true
         },
@@ -690,8 +740,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Dónde vivieron ellas en la plaza?",
           "exact_normalized": true
         },
@@ -720,27 +770,27 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Dónde vivías vos en la calle?",
           "exact_normalized": true
         },
         {
           "id": "llama-3.2-1b",
           "label": "Llama 3.2 1B (Meta)",
-          "predicho": "¿Dónde vivías vos en la calle?",
+          "predicho": "¿Dónde vivías en la calle?",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Dónde viviste en la calle?",
           "exact_normalized": true
         },
         {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "¿Dónde vivías vos en la calle?",
+          "predicho": "¿Dónde vivías en la calle?",
           "exact_normalized": true
         }
       ]
@@ -756,6 +806,18 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
+          "predicho": "¿Qué tenían?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Qué tuvieron ellos?",
+          "exact_normalized": false
+        },
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
           "predicho": "¿Qué tuvieron?",
           "exact_normalized": true
         },
@@ -766,22 +828,10 @@
           "exact_normalized": true
         },
         {
-          "id": "llama-3.2-1b",
-          "label": "Llama 3.2 1B (Meta)",
-          "predicho": "¿Qué tenían?",
-          "exact_normalized": true
-        },
-        {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "¿Qué tenían?",
-          "exact_normalized": true
-        },
-        {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "¿Qué tenían ellos?",
-          "exact_normalized": false
+          "predicho": "¿Qué tenían?",
+          "exact_normalized": true
         }
       ]
     },
@@ -800,20 +850,20 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Qué llamaste?",
           "exact_normalized": true
         },
         {
           "id": "llama-3.2-1b",
           "label": "Llama 3.2 1B (Meta)",
-          "predicho": "¿Qué llamaste?",
+          "predicho": "¿Qué llamaste vos?",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Qué llamaste?",
           "exact_normalized": true
         },
@@ -826,8 +876,8 @@
       ]
     },
     {
-      "category": "pronombre_objeto_en_pasado_tercera_persona",
-      "glosas": "PASADO ELLOS HOMBRE YO VER",
+      "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+      "glosas": "PASADO ELLOS O YO VER",
       "referencias": [
         "Ellos me vieron.",
         "Ellos me vieron a mí."
@@ -840,8 +890,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Ellos me vieron.",
           "exact_normalized": true
         },
@@ -852,10 +902,10 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "Ellos me vi themselves.",
-          "exact_normalized": false
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
         },
         {
           "id": "smollm2-1.7b",
@@ -880,8 +930,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Quién era tu hermano?",
           "exact_normalized": true
         },
@@ -892,8 +942,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Quién era tu hermano?",
           "exact_normalized": true
         },
@@ -906,8 +956,48 @@
       ]
     },
     {
-      "category": "pregunta_wh_identidad_tiempo_futuro",
-      "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
+      "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+      "glosas": "PASADO HERMANO O TUYO QUIEN",
+      "referencias": [
+        "¿Quién era tu hermano?",
+        "¿Quién fue tu hermano?"
+      ],
+      "predictions": [
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "¿Quién era tu hermano?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Quién era tu hermano?",
+          "exact_normalized": true
+        },
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "¿Quién era tu hermano?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "¿Quién era tu hermano?",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "¿Quién era tu hermano?",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+      "glosas": "FUTURO ESPOSO A TUYO QUIEN",
       "referencias": [
         "¿Quién va a ser tu esposa?",
         "¿Quién será tu esposa?"
@@ -920,8 +1010,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Quién será tu esposa?",
           "exact_normalized": true
         },
@@ -932,8 +1022,8 @@
           "exact_normalized": false
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Quién es tu esposa?",
           "exact_normalized": false
         },
@@ -963,8 +1053,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "¿Dónde vas a llevar el documento?",
           "exact_normalized": true
         },
@@ -975,8 +1065,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "¿Dónde vas a llevar el documento?",
           "exact_normalized": true
         },
@@ -1000,25 +1090,25 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
-          "predicho": "No llevaré el cuchillo.",
+          "predicho": "No voy a llevar el cuchillo.",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "No voy a llevar el cuchillo.",
           "exact_normalized": true
         },
         {
           "id": "llama-3.2-1b",
           "label": "Llama 3.2 1B (Meta)",
-          "predicho": "No llevaré el cuchillo.",
+          "predicho": "No voy a llevar el cuchillo.",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "No llevaré el cuchillo.",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "No voy a llevar el cuchillo.",
           "exact_normalized": true
         },
         {
@@ -1044,8 +1134,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Yo no llevé el documento.",
           "exact_normalized": true
         },
@@ -1056,9 +1146,9 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "Yo no llevé el documento.",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "No llevé el documento.",
           "exact_normalized": true
         },
         {
@@ -1070,7 +1160,7 @@
       ]
     },
     {
-      "category": "flexion_genero_parentesco_transitivo_pasado",
+      "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
       "glosas": "PASADO YO HIJO MIO LLAMAR",
       "referencias": [
         "Llamé a mi hijo.",
@@ -1085,8 +1175,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Yo llamé a mi hijo.",
           "exact_normalized": true
         },
@@ -1097,8 +1187,49 @@
           "exact_normalized": true
         },
         {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+      "glosas": "PASADO YO HIJO O MIO LLAMAR",
+      "referencias": [
+        "Llamé a mi hijo.",
+        "Yo llamé a mi hijo.",
+        "Llamé al hijo."
+      ],
+      "predictions": [
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
           "id": "qwen2.5-0.5b",
           "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "Yo llamé a mi hijo.",
           "exact_normalized": true
         },
@@ -1124,13 +1255,13 @@
         {
           "id": "qwen2.5-1.5b",
           "label": "Qwen2.5 1.5B",
-          "predicho": "Mi nombre es Micaela.",
+          "predicho": "Me llamo Micaela.",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
-          "predicho": "Yo me llamo Micaela.",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Soy Micaela.",
           "exact_normalized": true
         },
         {
@@ -1140,15 +1271,15 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "Mi nombre es Micaela.",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo me llamo Micaela.",
           "exact_normalized": true
         },
         {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "Mi nombre es Micaela.",
+          "predicho": "Yo me llamo Micaela.",
           "exact_normalized": true
         }
       ]
@@ -1169,8 +1300,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Mi apellido es Guerra.",
           "exact_normalized": true
         },
@@ -1181,8 +1312,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
           "predicho": "Mi apellido es Guerra.",
           "exact_normalized": true
         },
@@ -1211,8 +1342,8 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Vivo en la calle Moreno.",
           "exact_normalized": true
         },
@@ -1223,9 +1354,9 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "Vivo en la calle Moreno.",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo vivo en la calle Moreno.",
           "exact_normalized": true
         },
         {
@@ -1254,27 +1385,27 @@
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-3b",
-          "label": "Qwen2.5 3B (mayor capacidad)",
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
           "predicho": "Mi número de DNI es 18333940.",
           "exact_normalized": true
         },
         {
           "id": "llama-3.2-1b",
           "label": "Llama 3.2 1B (Meta)",
-          "predicho": "Mi DNI es 18333940.",
+          "predicho": "Mi número de documento es 18333940.",
           "exact_normalized": true
         },
         {
-          "id": "qwen2.5-0.5b",
-          "label": "Qwen2.5 0.5B (ultra liviano)",
-          "predicho": "Mi DNI es 18333940.",
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Mi número de DNI es 18333940.",
           "exact_normalized": true
         },
         {
           "id": "smollm2-1.7b",
           "label": "SmolLM2 1.7B",
-          "predicho": "Mi DNI es 18333940.",
+          "predicho": "Mi número de documento es 18333940.",
           "exact_normalized": true
         }
       ]
@@ -1283,13 +1414,13 @@
   "failures": [],
   "details": [
     {
-      "total_samples": 18,
+      "total_samples": 20,
       "accuracy_strict_percent": 100.0,
       "accuracy_normalized_percent": 100.0,
       "bleu_score": 100.0,
       "rouge_l_score": 100.0,
-      "meteor_score": 99.47,
-      "avg_latency_ms": 413.34,
+      "meteor_score": 99.42,
+      "avg_latency_ms": 416.75,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -1326,7 +1457,7 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -1336,7 +1467,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -1356,7 +1492,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -1392,11 +1533,11 @@
             "Te llamé a vos.",
             "Yo te llamé a vos."
           ],
-          "predicho": "Yo te llamé.",
+          "predicho": "Te llamé.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9921875
+          "meteor": 0.9814814814814815
         },
         {
           "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
@@ -1407,11 +1548,11 @@
             "Te vi a vos.",
             "Yo te vi a vos."
           ],
-          "predicho": "Yo te vi a vos.",
+          "predicho": "Te vi a vos.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
+          "meteor": 0.996
         },
         {
           "category": "pronombre_objeto_segunda_persona_futuro",
@@ -1432,12 +1573,12 @@
         },
         {
           "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-          "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
+          "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
           "referencias": [
             "¿Dónde vivían ellas en la plaza?",
             "¿Dónde vivieron ellas en la plaza?"
           ],
-          "predicho": "¿Dónde vivieron ellas en la plaza?",
+          "predicho": "¿Dónde vivían ellas en la plaza?",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
@@ -1465,7 +1606,7 @@
             "¿Qué tuvieron?",
             "¿Qué tenían?"
           ],
-          "predicho": "¿Qué tuvieron?",
+          "predicho": "¿Qué tenían?",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
@@ -1485,8 +1626,8 @@
           "meteor": 0.9814814814814815
         },
         {
-          "category": "pronombre_objeto_en_pasado_tercera_persona",
-          "glosas": "PASADO ELLOS HOMBRE YO VER",
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
           "referencias": [
             "Ellos me vieron.",
             "Ellos me vieron a mí."
@@ -1511,8 +1652,21 @@
           "meteor": 0.996
         },
         {
-          "category": "pregunta_wh_identidad_tiempo_futuro",
-          "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
+          "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+          "glosas": "PASADO HERMANO O TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
           "referencias": [
             "¿Quién va a ser tu esposa?",
             "¿Quién será tu esposa?"
@@ -1547,11 +1701,11 @@
             "Yo no voy a llevar el cuchillo.",
             "No llevaré el cuchillo."
           ],
-          "predicho": "No llevaré el cuchillo.",
+          "predicho": "No voy a llevar el cuchillo.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.996
+          "meteor": 0.9985422740524781
         },
         {
           "category": "tiempo_pasado_objeto_y_negacion",
@@ -1567,8 +1721,22 @@
           "meteor": 0.996
         },
         {
-          "category": "flexion_genero_parentesco_transitivo_pasado",
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
           "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
           "referencias": [
             "Llamé a mi hijo.",
             "Yo llamé a mi hijo.",
@@ -1590,11 +1758,11 @@
             "Soy Micaela.",
             "Yo soy Micaela."
           ],
-          "predicho": "Mi nombre es Micaela.",
+          "predicho": "Me llamo Micaela.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.996
+          "meteor": 0.9921875
         },
         {
           "category": "deletreo_apellido_con_grafemas_complejos",
@@ -1646,16 +1814,16 @@
       "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
       "label": "Qwen2.5 1.5B",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
     },
     {
-      "total_samples": 18,
-      "accuracy_strict_percent": 100.0,
-      "accuracy_normalized_percent": 100.0,
-      "bleu_score": 100.0,
-      "rouge_l_score": 100.0,
-      "meteor_score": 99.47,
-      "avg_latency_ms": 801.29,
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.81,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.53,
+      "avg_latency_ms": 224.29,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -1683,761 +1851,34 @@
           "rouge_l_score": 100.0
         },
         "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_voseo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_en_pasado_tercera_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_futuro_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_futuro_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_pasado_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "flexion_genero_parentesco_transitivo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_nombre_femenino_no_visto": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_apellido_con_grafemas_complejos": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_calle_no_vista": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "secuencia_numerica_dni_arbitraria": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        }
-      },
-      "ejemplos": [
-        {
-          "category": "pronombre_objeto_segunda_persona_en_pasado",
-          "glosas": "PASADO YO VOS LLAMAR",
-          "referencias": [
-            "Te llamé.",
-            "Yo te llamé.",
-            "Te llamé a vos.",
-            "Yo te llamé a vos."
-          ],
-          "predicho": "Yo te llamé.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9921875
-        },
-        {
-          "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
-          "glosas": "PASADO YO VOS VER",
-          "referencias": [
-            "Te vi.",
-            "Yo te vi.",
-            "Te vi a vos.",
-            "Yo te vi a vos."
-          ],
-          "predicho": "Yo te vi.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9921875
-        },
-        {
-          "category": "pronombre_objeto_segunda_persona_futuro",
-          "glosas": "FUTURO YO VOS TENER",
-          "referencias": [
-            "Te voy a tener.",
-            "Yo te voy a tener.",
-            "Te tendré.",
-            "Yo te tendré.",
-            "Te voy a tener a vos.",
-            "Yo te voy a tener a vos."
-          ],
-          "predicho": "Te voy a tener.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-          "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
-          "referencias": [
-            "¿Dónde vivían ellas en la plaza?",
-            "¿Dónde vivieron ellas en la plaza?"
-          ],
-          "predicho": "¿Dónde vivían ellas en la plaza?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
-          "glosas": "PASADO CALLE VOS VIVIR DONDE",
-          "referencias": [
-            "¿Dónde vivías en la calle?",
-            "¿Dónde vivías vos en la calle?",
-            "¿Dónde viviste en la calle?",
-            "¿Dónde viviste vos en la calle?"
-          ],
-          "predicho": "¿Dónde vivías vos en la calle?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
-          "glosas": "PASADO ELLOS TENER QUE",
-          "referencias": [
-            "¿Qué tuvieron?",
-            "¿Qué tenían?"
-          ],
-          "predicho": "¿Qué tuvieron?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9814814814814815
-        },
-        {
-          "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
-          "glosas": "PASADO VOS LLAMAR QUE",
-          "referencias": [
-            "¿Qué llamaste?",
-            "¿Qué llamaste vos?"
-          ],
-          "predicho": "¿Qué llamaste?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9814814814814815
-        },
-        {
-          "category": "pronombre_objeto_en_pasado_tercera_persona",
-          "glosas": "PASADO ELLOS HOMBRE YO VER",
-          "referencias": [
-            "Ellos me vieron.",
-            "Ellos me vieron a mí."
-          ],
-          "predicho": "Ellos me vieron.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9921875
-        },
-        {
-          "category": "pregunta_wh_identidad_tiempo_pasado",
-          "glosas": "PASADO HERMANO TUYO QUIEN",
-          "referencias": [
-            "¿Quién era tu hermano?",
-            "¿Quién fue tu hermano?"
-          ],
-          "predicho": "¿Quién era tu hermano?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "pregunta_wh_identidad_tiempo_futuro",
-          "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
-          "referencias": [
-            "¿Quién va a ser tu esposa?",
-            "¿Quién será tu esposa?"
-          ],
-          "predicho": "¿Quién será tu esposa?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "pregunta_wh_ubicacion_futuro_transitivo",
-          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
-          "referencias": [
-            "¿A dónde vas a llevar el documento?",
-            "¿Dónde vas a llevar el documento?",
-            "¿Dónde vas a llevar el documento vos?",
-            "¿A dónde llevarás el documento?",
-            "¿Dónde llevarás el documento?"
-          ],
-          "predicho": "¿Dónde vas a llevar el documento?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "tiempo_futuro_objeto_y_negacion",
-          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
-          "referencias": [
-            "No voy a llevar el cuchillo.",
-            "Yo no voy a llevar el cuchillo.",
-            "No llevaré el cuchillo."
-          ],
-          "predicho": "No voy a llevar el cuchillo.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "tiempo_pasado_objeto_y_negacion",
-          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
-          "referencias": [
-            "No llevé el documento.",
-            "Yo no llevé el documento."
-          ],
-          "predicho": "Yo no llevé el documento.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "flexion_genero_parentesco_transitivo_pasado",
-          "glosas": "PASADO YO HIJO MIO LLAMAR",
-          "referencias": [
-            "Llamé a mi hijo.",
-            "Yo llamé a mi hijo.",
-            "Llamé al hijo."
-          ],
-          "predicho": "Yo llamé a mi hijo.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "deletreo_nombre_femenino_no_visto",
-          "glosas": "NOMBRE MIO Micaela",
-          "referencias": [
-            "Me llamo Micaela.",
-            "Yo me llamo Micaela.",
-            "Mi nombre es Micaela.",
-            "Soy Micaela.",
-            "Yo soy Micaela."
-          ],
-          "predicho": "Yo me llamo Micaela.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "deletreo_apellido_con_grafemas_complejos",
-          "glosas": "APELLIDO MIO Guerra",
-          "referencias": [
-            "Mi apellido es Guerra.",
-            "Me apellido Guerra.",
-            "Yo me apellido Guerra."
-          ],
-          "predicho": "Mi apellido es Guerra.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "deletreo_calle_no_vista",
-          "glosas": "CALLE Moreno YO VIVIR_EN",
-          "referencias": [
-            "Vivo en la calle Moreno.",
-            "Yo vivo en la calle Moreno.",
-            "Mi domicilio es en la calle Moreno.",
-            "Mi casa está en la calle Moreno."
-          ],
-          "predicho": "Vivo en la calle Moreno.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "secuencia_numerica_dni_arbitraria",
-          "glosas": "DOCUMENTO MIO NUMERO 18333940",
-          "referencias": [
-            "Mi número de documento es 18333940.",
-            "Mi documento es 18333940.",
-            "Mi número de DNI es 18333940.",
-            "Mi DNI es 18333940.",
-            "El número de mi documento es 18333940."
-          ],
-          "predicho": "Mi número de DNI es 18333940.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        }
-      ],
-      "id": "qwen2.5-3b",
-      "model_name": "unsloth/Qwen2.5-3B-Instruct",
-      "label": "Qwen2.5 3B (mayor capacidad)",
-      "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
-    },
-    {
-      "total_samples": 18,
-      "accuracy_strict_percent": 94.44,
-      "accuracy_normalized_percent": 94.44,
-      "bleu_score": 97.07,
-      "rouge_l_score": 98.89,
-      "meteor_score": 98.14,
-      "avg_latency_ms": 335.89,
-      "by_category": {
-        "pronombre_objeto_segunda_persona_en_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_voseo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_en_pasado_tercera_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_identidad_tiempo_futuro": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 80.0
         },
-        "pregunta_wh_ubicacion_futuro_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_futuro_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "tiempo_pasado_objeto_y_negacion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "flexion_genero_parentesco_transitivo_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_nombre_femenino_no_visto": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_apellido_con_grafemas_complejos": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "deletreo_calle_no_vista": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "secuencia_numerica_dni_arbitraria": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        }
-      },
-      "ejemplos": [
-        {
-          "category": "pronombre_objeto_segunda_persona_en_pasado",
-          "glosas": "PASADO YO VOS LLAMAR",
-          "referencias": [
-            "Te llamé.",
-            "Yo te llamé.",
-            "Te llamé a vos.",
-            "Yo te llamé a vos."
-          ],
-          "predicho": "Yo te llamé a vos.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
-          "glosas": "PASADO YO VOS VER",
-          "referencias": [
-            "Te vi.",
-            "Yo te vi.",
-            "Te vi a vos.",
-            "Yo te vi a vos."
-          ],
-          "predicho": "Yo te vi a vos.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "pronombre_objeto_segunda_persona_futuro",
-          "glosas": "FUTURO YO VOS TENER",
-          "referencias": [
-            "Te voy a tener.",
-            "Yo te voy a tener.",
-            "Te tendré.",
-            "Yo te tendré.",
-            "Te voy a tener a vos.",
-            "Yo te voy a tener a vos."
-          ],
-          "predicho": "Te voy a tener.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-          "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
-          "referencias": [
-            "¿Dónde vivían ellas en la plaza?",
-            "¿Dónde vivieron ellas en la plaza?"
-          ],
-          "predicho": "¿Dónde vivían ellas en la plaza?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
-          "glosas": "PASADO CALLE VOS VIVIR DONDE",
-          "referencias": [
-            "¿Dónde vivías en la calle?",
-            "¿Dónde vivías vos en la calle?",
-            "¿Dónde viviste en la calle?",
-            "¿Dónde viviste vos en la calle?"
-          ],
-          "predicho": "¿Dónde vivías vos en la calle?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
-          "glosas": "PASADO ELLOS TENER QUE",
-          "referencias": [
-            "¿Qué tuvieron?",
-            "¿Qué tenían?"
-          ],
-          "predicho": "¿Qué tenían?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9814814814814815
-        },
-        {
-          "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
-          "glosas": "PASADO VOS LLAMAR QUE",
-          "referencias": [
-            "¿Qué llamaste?",
-            "¿Qué llamaste vos?"
-          ],
-          "predicho": "¿Qué llamaste?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9814814814814815
-        },
-        {
-          "category": "pronombre_objeto_en_pasado_tercera_persona",
-          "glosas": "PASADO ELLOS HOMBRE YO VER",
-          "referencias": [
-            "Ellos me vieron.",
-            "Ellos me vieron a mí."
-          ],
-          "predicho": "Ellos me vieron.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9921875
-        },
-        {
-          "category": "pregunta_wh_identidad_tiempo_pasado",
-          "glosas": "PASADO HERMANO TUYO QUIEN",
-          "referencias": [
-            "¿Quién era tu hermano?",
-            "¿Quién fue tu hermano?"
-          ],
-          "predicho": "¿Quién era tu hermano?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "pregunta_wh_identidad_tiempo_futuro",
-          "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
-          "referencias": [
-            "¿Quién va a ser tu esposa?",
-            "¿Quién será tu esposa?"
-          ],
-          "predicho": "¿Quién es tu esposa?",
-          "exact_strict": false,
-          "exact_normalized": false,
-          "rouge_l": 0.8000000000000002,
-          "meteor": 0.7500000000000001
-        },
-        {
-          "category": "pregunta_wh_ubicacion_futuro_transitivo",
-          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
-          "referencias": [
-            "¿A dónde vas a llevar el documento?",
-            "¿Dónde vas a llevar el documento?",
-            "¿Dónde vas a llevar el documento vos?",
-            "¿A dónde llevarás el documento?",
-            "¿Dónde llevarás el documento?"
-          ],
-          "predicho": "¿Dónde vas a llevar el documento?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
-        },
-        {
-          "category": "tiempo_futuro_objeto_y_negacion",
-          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
-          "referencias": [
-            "No voy a llevar el cuchillo.",
-            "Yo no voy a llevar el cuchillo.",
-            "No llevaré el cuchillo."
-          ],
-          "predicho": "No llevaré el cuchillo.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "tiempo_pasado_objeto_y_negacion",
-          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
-          "referencias": [
-            "No llevé el documento.",
-            "Yo no llevé el documento."
-          ],
-          "predicho": "Yo no llevé el documento.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "flexion_genero_parentesco_transitivo_pasado",
-          "glosas": "PASADO YO HIJO MIO LLAMAR",
-          "referencias": [
-            "Llamé a mi hijo.",
-            "Yo llamé a mi hijo.",
-            "Llamé al hijo."
-          ],
-          "predicho": "Yo llamé a mi hijo.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "deletreo_nombre_femenino_no_visto",
-          "glosas": "NOMBRE MIO Micaela",
-          "referencias": [
-            "Me llamo Micaela.",
-            "Yo me llamo Micaela.",
-            "Mi nombre es Micaela.",
-            "Soy Micaela.",
-            "Yo soy Micaela."
-          ],
-          "predicho": "Yo me llamo Micaela.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "deletreo_apellido_con_grafemas_complejos",
-          "glosas": "APELLIDO MIO Guerra",
-          "referencias": [
-            "Mi apellido es Guerra.",
-            "Me apellido Guerra.",
-            "Yo me apellido Guerra."
-          ],
-          "predicho": "Mi apellido es Guerra.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        },
-        {
-          "category": "deletreo_calle_no_vista",
-          "glosas": "CALLE Moreno YO VIVIR_EN",
-          "referencias": [
-            "Vivo en la calle Moreno.",
-            "Yo vivo en la calle Moreno.",
-            "Mi domicilio es en la calle Moreno.",
-            "Mi casa está en la calle Moreno."
-          ],
-          "predicho": "Vivo en la calle Moreno.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
-        },
-        {
-          "category": "secuencia_numerica_dni_arbitraria",
-          "glosas": "DOCUMENTO MIO NUMERO 18333940",
-          "referencias": [
-            "Mi número de documento es 18333940.",
-            "Mi documento es 18333940.",
-            "Mi número de DNI es 18333940.",
-            "Mi DNI es 18333940.",
-            "El número de mi documento es 18333940."
-          ],
-          "predicho": "Mi DNI es 18333940.",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.996
-        }
-      ],
-      "id": "llama-3.2-1b",
-      "model_name": "unsloth/Llama-3.2-1B-Instruct",
-      "label": "Llama 3.2 1B (Meta)",
-      "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
-    },
-    {
-      "total_samples": 18,
-      "accuracy_strict_percent": 88.89,
-      "accuracy_normalized_percent": 88.89,
-      "bleu_score": 92.29,
-      "rouge_l_score": 96.51,
-      "meteor_score": 95.91,
-      "avg_latency_ms": 228.48,
-      "by_category": {
-        "pronombre_objeto_segunda_persona_en_pasado": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pronombre_objeto_segunda_persona_futuro": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
-        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
-          "n": 1,
-          "accuracy_normalized_percent": 100.0,
-          "rouge_l_score": 100.0
-        },
         "pregunta_wh_objeto_tiempo_pasado_voseo": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 57.14
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_identidad_tiempo_pasado": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 80.0
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_ubicacion_futuro_transitivo": {
           "n": 1,
@@ -2454,7 +1895,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
@@ -2530,12 +1976,12 @@
         },
         {
           "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-          "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
+          "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
           "referencias": [
             "¿Dónde vivían ellas en la plaza?",
             "¿Dónde vivieron ellas en la plaza?"
           ],
-          "predicho": "¿Dónde vivieron ellas en la plaza?",
+          "predicho": "¿Dónde vivían ellas en la plaza?",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
@@ -2550,11 +1996,11 @@
             "¿Dónde viviste en la calle?",
             "¿Dónde viviste vos en la calle?"
           ],
-          "predicho": "¿Dónde viviste en la calle?",
+          "predicho": "¿Dónde vivías vos en la calle?",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9976851851851852
+          "meteor": 0.9985422740524781
         },
         {
           "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
@@ -2563,11 +2009,11 @@
             "¿Qué tuvieron?",
             "¿Qué tenían?"
           ],
-          "predicho": "¿Qué tenían?",
-          "exact_strict": true,
-          "exact_normalized": true,
-          "rouge_l": 1.0,
-          "meteor": 0.9814814814814815
+          "predicho": "¿Qué tuvieron ellos?",
+          "exact_strict": false,
+          "exact_normalized": false,
+          "rouge_l": 0.8,
+          "meteor": 0.8243727598566307
         },
         {
           "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
@@ -2583,17 +2029,17 @@
           "meteor": 0.9814814814814815
         },
         {
-          "category": "pronombre_objeto_en_pasado_tercera_persona",
-          "glosas": "PASADO ELLOS HOMBRE YO VER",
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
           "referencias": [
             "Ellos me vieron.",
             "Ellos me vieron a mí."
           ],
-          "predicho": "Ellos me vi themselves.",
-          "exact_strict": false,
-          "exact_normalized": false,
-          "rouge_l": 0.5714285714285715,
-          "meteor": 0.6233062330623306
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
         },
         {
           "category": "pregunta_wh_identidad_tiempo_pasado",
@@ -2609,8 +2055,424 @@
           "meteor": 0.996
         },
         {
-          "category": "pregunta_wh_identidad_tiempo_futuro",
-          "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
+          "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+          "glosas": "PASADO HERMANO O TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién será tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "Yo no llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Soy Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        }
+      ],
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.46,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.35,
+      "avg_latency_ms": 334.22,
+      "by_category": {
+        "pronombre_objeto_segunda_persona_en_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_voseo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 80.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_segunda_persona_en_pasado",
+          "glosas": "PASADO YO VOS LLAMAR",
+          "referencias": [
+            "Te llamé.",
+            "Yo te llamé.",
+            "Te llamé a vos.",
+            "Yo te llamé a vos."
+          ],
+          "predicho": "Te llamé a vos.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
+          "glosas": "PASADO YO VOS VER",
+          "referencias": [
+            "Te vi.",
+            "Yo te vi.",
+            "Te vi a vos.",
+            "Yo te vi a vos."
+          ],
+          "predicho": "Te vi a vos.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pronombre_objeto_segunda_persona_futuro",
+          "glosas": "FUTURO YO VOS TENER",
+          "referencias": [
+            "Te voy a tener.",
+            "Yo te voy a tener.",
+            "Te tendré.",
+            "Yo te tendré.",
+            "Te voy a tener a vos.",
+            "Yo te voy a tener a vos."
+          ],
+          "predicho": "Te voy a tener.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
+          "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
+          "referencias": [
+            "¿Dónde vivían ellas en la plaza?",
+            "¿Dónde vivieron ellas en la plaza?"
+          ],
+          "predicho": "¿Dónde vivían ellas en la plaza?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
+          "glosas": "PASADO CALLE VOS VIVIR DONDE",
+          "referencias": [
+            "¿Dónde vivías en la calle?",
+            "¿Dónde vivías vos en la calle?",
+            "¿Dónde viviste en la calle?",
+            "¿Dónde viviste vos en la calle?"
+          ],
+          "predicho": "¿Dónde vivías en la calle?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
+          "glosas": "PASADO ELLOS TENER QUE",
+          "referencias": [
+            "¿Qué tuvieron?",
+            "¿Qué tenían?"
+          ],
+          "predicho": "¿Qué tuvieron?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
+        },
+        {
+          "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
+          "glosas": "PASADO VOS LLAMAR QUE",
+          "referencias": [
+            "¿Qué llamaste?",
+            "¿Qué llamaste vos?"
+          ],
+          "predicho": "¿Qué llamaste vos?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_pasado",
+          "glosas": "PASADO HERMANO TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+          "glosas": "PASADO HERMANO O TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
           "referencias": [
             "¿Quién va a ser tu esposa?",
             "¿Quién será tu esposa?"
@@ -2645,11 +2507,11 @@
             "Yo no voy a llevar el cuchillo.",
             "No llevaré el cuchillo."
           ],
-          "predicho": "No llevaré el cuchillo.",
+          "predicho": "No voy a llevar el cuchillo.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.996
+          "meteor": 0.9985422740524781
         },
         {
           "category": "tiempo_pasado_objeto_y_negacion",
@@ -2665,8 +2527,22 @@
           "meteor": 0.9976851851851852
         },
         {
-          "category": "flexion_genero_parentesco_transitivo_pasado",
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
           "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
           "referencias": [
             "Llamé a mi hijo.",
             "Yo llamé a mi hijo.",
@@ -2688,7 +2564,7 @@
             "Soy Micaela.",
             "Yo soy Micaela."
           ],
-          "predicho": "Mi nombre es Micaela.",
+          "predicho": "Yo me llamo Micaela.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
@@ -2733,27 +2609,27 @@
             "Mi DNI es 18333940.",
             "El número de mi documento es 18333940."
           ],
-          "predicho": "Mi DNI es 18333940.",
+          "predicho": "Mi número de documento es 18333940.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.996
+          "meteor": 0.9985422740524781
         }
       ],
-      "id": "qwen2.5-0.5b",
-      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
-      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
     },
     {
-      "total_samples": 18,
-      "accuracy_strict_percent": 66.67,
-      "accuracy_normalized_percent": 66.67,
-      "bleu_score": 83.89,
-      "rouge_l_score": 91.02,
-      "meteor_score": 90.29,
-      "avg_latency_ms": 676.05,
+      "total_samples": 20,
+      "accuracy_strict_percent": 95.0,
+      "accuracy_normalized_percent": 95.0,
+      "bleu_score": 97.33,
+      "rouge_l_score": 99.0,
+      "meteor_score": 98.22,
+      "avg_latency_ms": 789.13,
       "by_category": {
         "pronombre_objeto_segunda_persona_en_pasado": {
           "n": 1,
@@ -2782,15 +2658,418 @@
         },
         "pregunta_wh_objeto_tiempo_pasado_transitivo": {
           "n": 1,
-          "accuracy_normalized_percent": 0.0,
-          "rouge_l_score": 85.71
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
         },
         "pregunta_wh_objeto_tiempo_pasado_voseo": {
           "n": 1,
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pronombre_objeto_en_pasado_tercera_persona": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 80.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_segunda_persona_en_pasado",
+          "glosas": "PASADO YO VOS LLAMAR",
+          "referencias": [
+            "Te llamé.",
+            "Yo te llamé.",
+            "Te llamé a vos.",
+            "Yo te llamé a vos."
+          ],
+          "predicho": "Te llamé.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
+        },
+        {
+          "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
+          "glosas": "PASADO YO VOS VER",
+          "referencias": [
+            "Te vi.",
+            "Yo te vi.",
+            "Te vi a vos.",
+            "Yo te vi a vos."
+          ],
+          "predicho": "Te vi a vos.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pronombre_objeto_segunda_persona_futuro",
+          "glosas": "FUTURO YO VOS TENER",
+          "referencias": [
+            "Te voy a tener.",
+            "Yo te voy a tener.",
+            "Te tendré.",
+            "Yo te tendré.",
+            "Te voy a tener a vos.",
+            "Yo te voy a tener a vos."
+          ],
+          "predicho": "Te voy a tener.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
+          "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
+          "referencias": [
+            "¿Dónde vivían ellas en la plaza?",
+            "¿Dónde vivieron ellas en la plaza?"
+          ],
+          "predicho": "¿Dónde vivieron ellas en la plaza?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
+          "glosas": "PASADO CALLE VOS VIVIR DONDE",
+          "referencias": [
+            "¿Dónde vivías en la calle?",
+            "¿Dónde vivías vos en la calle?",
+            "¿Dónde viviste en la calle?",
+            "¿Dónde viviste vos en la calle?"
+          ],
+          "predicho": "¿Dónde viviste en la calle?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
+          "glosas": "PASADO ELLOS TENER QUE",
+          "referencias": [
+            "¿Qué tuvieron?",
+            "¿Qué tenían?"
+          ],
+          "predicho": "¿Qué tuvieron?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
+        },
+        {
+          "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
+          "glosas": "PASADO VOS LLAMAR QUE",
+          "referencias": [
+            "¿Qué llamaste?",
+            "¿Qué llamaste vos?"
+          ],
+          "predicho": "¿Qué llamaste?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
+        },
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_pasado",
+          "glosas": "PASADO HERMANO TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+          "glosas": "PASADO HERMANO O TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién es tu esposa?",
+          "exact_strict": false,
+          "exact_normalized": false,
+          "rouge_l": 0.8000000000000002,
+          "meteor": 0.7500000000000001
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "No llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Yo me llamo Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        }
+      ],
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 20,
+      "accuracy_strict_percent": 75.0,
+      "accuracy_normalized_percent": 75.0,
+      "bleu_score": 88.45,
+      "rouge_l_score": 92.63,
+      "meteor_score": 92.06,
+      "avg_latency_ms": 660.98,
+      "by_category": {
+        "pronombre_objeto_segunda_persona_en_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_en_pasado_percepcion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_segunda_persona_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_con_locativo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_objeto_tiempo_pasado_voseo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 66.67
@@ -2800,7 +3079,12 @@
           "accuracy_normalized_percent": 100.0,
           "rouge_l_score": 100.0
         },
-        "pregunta_wh_identidad_tiempo_futuro": {
+        "pregunta_wh_identidad_tiempo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 80.0
@@ -2820,7 +3104,12 @@
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 75.0
         },
-        "flexion_genero_parentesco_transitivo_pasado": {
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
           "n": 1,
           "accuracy_normalized_percent": 0.0,
           "rouge_l_score": 90.91
@@ -2856,11 +3145,11 @@
             "Te llamé a vos.",
             "Yo te llamé a vos."
           ],
-          "predicho": "Yo te llamé.",
+          "predicho": "Te llamé a vos.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9921875
+          "meteor": 0.996
         },
         {
           "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
@@ -2871,11 +3160,11 @@
             "Te vi a vos.",
             "Yo te vi a vos."
           ],
-          "predicho": "Yo te vi.",
+          "predicho": "Te vi a vos.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9921875
+          "meteor": 0.996
         },
         {
           "category": "pronombre_objeto_segunda_persona_futuro",
@@ -2896,7 +3185,7 @@
         },
         {
           "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-          "glosas": "PASADO PLAZA ELLOS MUJER VIVIR DONDE",
+          "glosas": "PASADO PLAZA ELLOS A VIVIR DONDE",
           "referencias": [
             "¿Dónde vivían ellas en la plaza?",
             "¿Dónde vivieron ellas en la plaza?"
@@ -2916,11 +3205,11 @@
             "¿Dónde viviste en la calle?",
             "¿Dónde viviste vos en la calle?"
           ],
-          "predicho": "¿Dónde vivías vos en la calle?",
+          "predicho": "¿Dónde vivías en la calle?",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.9985422740524781
+          "meteor": 0.9976851851851852
         },
         {
           "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
@@ -2929,11 +3218,11 @@
             "¿Qué tuvieron?",
             "¿Qué tenían?"
           ],
-          "predicho": "¿Qué tenían ellos?",
-          "exact_strict": false,
-          "exact_normalized": false,
-          "rouge_l": 0.8571428571428571,
-          "meteor": 0.8243727598566307
+          "predicho": "¿Qué tenían?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9814814814814815
         },
         {
           "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
@@ -2949,8 +3238,8 @@
           "meteor": 0.9814814814814815
         },
         {
-          "category": "pronombre_objeto_en_pasado_tercera_persona",
-          "glosas": "PASADO ELLOS HOMBRE YO VER",
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
           "referencias": [
             "Ellos me vieron.",
             "Ellos me vieron a mí."
@@ -2975,8 +3264,21 @@
           "meteor": 0.996
         },
         {
-          "category": "pregunta_wh_identidad_tiempo_futuro",
-          "glosas": "FUTURO ESPOSO MUJER TUYA QUIEN",
+          "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+          "glosas": "PASADO HERMANO O TUYO QUIEN",
+          "referencias": [
+            "¿Quién era tu hermano?",
+            "¿Quién fue tu hermano?"
+          ],
+          "predicho": "¿Quién era tu hermano?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
           "referencias": [
             "¿Quién va a ser tu esposa?",
             "¿Quién será tu esposa?"
@@ -3031,8 +3333,22 @@
           "meteor": 0.7500000000000001
         },
         {
-          "category": "flexion_genero_parentesco_transitivo_pasado",
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
           "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
           "referencias": [
             "Llamé a mi hijo.",
             "Yo llamé a mi hijo.",
@@ -3054,7 +3370,7 @@
             "Soy Micaela.",
             "Yo soy Micaela."
           ],
-          "predicho": "Mi nombre es Micaela.",
+          "predicho": "Yo me llamo Micaela.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
@@ -3099,18 +3415,18 @@
             "Mi DNI es 18333940.",
             "El número de mi documento es 18333940."
           ],
-          "predicho": "Mi DNI es 18333940.",
+          "predicho": "Mi número de documento es 18333940.",
           "exact_strict": true,
           "exact_normalized": true,
           "rouge_l": 1.0,
-          "meteor": 0.996
+          "meteor": 0.9985422740524781
         }
       ],
       "id": "smollm2-1.7b",
       "model_name": "unsloth/SmolLM2-1.7B-Instruct",
       "label": "SmolLM2 1.7B",
       "backend": "gguf",
-      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
     }
   ]
 }

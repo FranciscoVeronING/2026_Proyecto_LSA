@@ -94,6 +94,120 @@
         "avg_latency_ms": 403.93,
         "train_loss_final": 0.2651207000868661
       }
+    },
+    {
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "started_at": "2026-10-05T02:05:36.434531+00:00",
+      "finished_at": "2026-10-05T02:16:34.917528+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 89.42,
+        "accuracy_normalized_percent": 89.42,
+        "bleu_score": 93.82,
+        "rouge_l_score": 95.69,
+        "meteor_score": 93.88,
+        "avg_latency_ms": 133.73,
+        "train_loss_final": 0.3214501174720558
+      }
+    },
+    {
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "started_at": "2026-10-05T02:37:02.895846+00:00",
+      "finished_at": "2026-10-05T03:01:13.303146+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 91.87,
+        "accuracy_normalized_percent": 91.87,
+        "bleu_score": 94.14,
+        "rouge_l_score": 96.99,
+        "meteor_score": 96.11,
+        "avg_latency_ms": 126.32,
+        "train_loss_final": 0.32921916246414185
+      }
+    },
+    {
+      "id": "qwen2.5-1.5b",
+      "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
+      "label": "Qwen2.5 1.5B",
+      "started_at": "2026-10-05T03:01:13.303146+00:00",
+      "finished_at": "2026-10-05T03:24:15.134433+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 96.75,
+        "accuracy_normalized_percent": 96.75,
+        "bleu_score": 98.66,
+        "rouge_l_score": 98.28,
+        "meteor_score": 97.24,
+        "avg_latency_ms": 233.89,
+        "train_loss_final": 0.24921561533754522
+      }
+    },
+    {
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "started_at": "2026-10-05T03:24:15.134433+00:00",
+      "finished_at": "2026-10-05T04:09:00.796746+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 96.75,
+        "accuracy_normalized_percent": 96.75,
+        "bleu_score": 97.87,
+        "rouge_l_score": 98.2,
+        "meteor_score": 97.35,
+        "avg_latency_ms": 447.87,
+        "train_loss_final": 0.2326385034756227
+      }
+    },
+    {
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "started_at": "2026-10-05T04:09:00.796746+00:00",
+      "finished_at": "2026-10-05T04:29:01.619075+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 92.68,
+        "accuracy_normalized_percent": 92.68,
+        "bleu_score": 94.7,
+        "rouge_l_score": 97.99,
+        "meteor_score": 97.27,
+        "avg_latency_ms": 196.48,
+        "train_loss_final": 0.3331069296056574
+      }
+    },
+    {
+      "id": "smollm2-1.7b",
+      "model_name": "unsloth/SmolLM2-1.7B-Instruct",
+      "label": "SmolLM2 1.7B",
+      "started_at": "2026-10-05T04:29:01.619778+00:00",
+      "finished_at": "2026-10-05T04:50:35.165711+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 86.18,
+        "accuracy_normalized_percent": 86.18,
+        "bleu_score": 90.59,
+        "rouge_l_score": 93.98,
+        "meteor_score": 93.9,
+        "avg_latency_ms": 380.19,
+        "train_loss_final": 0.25400699431245977
+      }
     }
   ]
 }

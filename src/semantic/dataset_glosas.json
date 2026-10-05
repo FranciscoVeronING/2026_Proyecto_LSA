@@ -42,7 +42,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Nosotros llamamos."
@@ -50,7 +50,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Nosotras llamamos."
@@ -104,7 +104,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven acá."
@@ -112,7 +112,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven acá."
@@ -377,7 +377,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Ellos ven."
@@ -385,7 +385,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ellas ven."
@@ -428,7 +428,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -438,7 +438,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -454,7 +454,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi hija."
@@ -469,7 +469,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi hermana."
@@ -484,7 +484,7 @@
     {
       "glosses": [
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi esposa."
@@ -502,7 +502,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "ROBAR"
       ],
@@ -512,7 +512,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "YO",
         "ROBAR"
       ],
@@ -696,7 +696,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Él ve."
@@ -704,7 +704,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ella ve."
@@ -721,7 +721,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "CUCHILLO",
         "ROBAR"
@@ -731,7 +731,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "YO",
         "CUCHILLO",
         "ROBAR"
@@ -811,7 +811,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Nosotros podemos."
@@ -819,7 +819,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Nosotros somos capaces."
@@ -827,7 +827,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Nosotras podemos."
@@ -835,7 +835,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Nosotras somos capaces."
@@ -873,7 +873,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "FAMILIA",
         "VIVIR"
       ],
@@ -882,7 +882,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "FAMILIA",
         "VIVIR"
       ],
@@ -891,7 +891,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "FAMILIA",
         "VIVIR"
       ],
@@ -900,7 +900,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "FAMILIA",
         "VIVIR"
       ],
@@ -951,7 +951,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Ellos pueden."
@@ -959,7 +959,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Ellos son capaces."
@@ -967,7 +967,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ellas pueden."
@@ -975,7 +975,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ellas son capaces."
@@ -1004,7 +1004,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Ellos llaman."
@@ -1012,7 +1012,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ellas llaman."
@@ -1094,7 +1094,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Él vive acá."
@@ -1102,7 +1102,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ella vive acá."
@@ -1158,7 +1158,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -1167,7 +1167,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -1183,7 +1183,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Nosotros repetimos."
@@ -1191,7 +1191,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Nosotras repetimos."
@@ -1285,9 +1285,9 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "EL",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos le robaron a él."
@@ -1295,9 +1295,9 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "EL",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellos le robaron a ella."
@@ -1305,9 +1305,9 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "EL",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellas le robaron a él."
@@ -1315,9 +1315,9 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "EL",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas le robaron a ella."
@@ -1380,7 +1380,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llama."
@@ -1388,7 +1388,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llama."
@@ -1436,7 +1436,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1445,7 +1445,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1494,7 +1494,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1503,7 +1503,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1529,7 +1529,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo esposa."
@@ -1538,7 +1538,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo esposa."
@@ -1613,7 +1613,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Él lleva."
@@ -1621,7 +1621,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Ella lleva."
@@ -1636,7 +1636,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Él tiene."
@@ -1644,7 +1644,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Ella tiene."
@@ -1705,7 +1705,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -1715,7 +1715,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -1759,7 +1759,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1768,7 +1768,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1810,7 +1810,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo hermana."
@@ -1819,7 +1819,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo una hermana."
@@ -1828,7 +1828,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo hermana."
@@ -1837,7 +1837,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo una hermana."
@@ -1868,7 +1868,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Él repite."
@@ -1876,7 +1876,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Ella repite."
@@ -1957,7 +1957,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Nosotros llevamos."
@@ -1965,7 +1965,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Nosotras llevamos."
@@ -2030,7 +2030,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Ellos repiten."
@@ -2038,7 +2038,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Ellas repiten."
@@ -2053,7 +2053,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Ellos tienen."
@@ -2061,7 +2061,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Ellas tienen."
@@ -2175,7 +2175,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Él puede."
@@ -2183,7 +2183,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Él es capaz."
@@ -2191,7 +2191,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ella puede."
@@ -2199,7 +2199,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ella es capaz."
@@ -2224,7 +2224,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven en la casa."
@@ -2233,7 +2233,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven en una casa."
@@ -2242,7 +2242,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven en la casa."
@@ -2251,7 +2251,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven en una casa."
@@ -2381,7 +2381,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Nosotros tenemos."
@@ -2389,7 +2389,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Nosotras tenemos."
@@ -2430,7 +2430,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo una hija."
@@ -2439,7 +2439,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo hija."
@@ -2448,7 +2448,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo una hija."
@@ -2457,7 +2457,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo hija."
@@ -2486,7 +2486,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Nosotros vemos."
@@ -2494,7 +2494,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Nosotras vemos."
@@ -2509,7 +2509,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Ellos llevan."
@@ -2517,7 +2517,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Ellas llevan."
@@ -2532,7 +2532,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Nosotros robamos."
@@ -2540,7 +2540,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Nosotras robamos."
@@ -2897,7 +2897,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tiene él?"
@@ -2905,7 +2905,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tiene ella?"
@@ -2935,7 +2935,7 @@
     {
       "glosses": [
         "ESPOSO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -2996,7 +2996,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3005,7 +3005,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3066,7 +3066,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3075,7 +3075,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3594,7 +3594,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -3604,7 +3604,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -3614,7 +3614,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -3624,7 +3624,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -3653,7 +3653,7 @@
         "HOY_AHORA",
         "PLAZA",
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Ahora nosotros nos vemos en la plaza."
@@ -3663,7 +3663,7 @@
         "HOY_AHORA",
         "PLAZA",
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ahora nosotras nos vemos en la plaza."
@@ -3690,7 +3690,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "LLAMAR"
       ],
@@ -3700,7 +3700,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "LLAMAR"
       ],
@@ -3718,7 +3718,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "ROSTRO",
         "LASTIMAR",
         "NO"
@@ -3728,7 +3728,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "ROSTRO",
         "LASTIMAR",
         "NO"
@@ -3748,7 +3748,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR_EN",
         "NO"
       ],
@@ -3758,7 +3758,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR_EN",
         "NO"
       ],
@@ -3788,7 +3788,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO",
         "LLAMAR",
         "NO"
@@ -3799,7 +3799,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO",
         "LLAMAR",
         "NO"
@@ -3848,7 +3848,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR",
         "DONDE"
@@ -3859,7 +3859,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR",
         "DONDE"
@@ -3962,7 +3962,7 @@
       "glosses": [
         "PASADO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llamó."
@@ -3971,7 +3971,7 @@
       "glosses": [
         "PASADO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llamó."
@@ -3988,7 +3988,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos robaron."
@@ -3997,7 +3997,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas robaron."
@@ -4113,7 +4113,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él va a llamar."
@@ -4122,7 +4122,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llamará."
@@ -4131,7 +4131,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella va a llamar."
@@ -4140,7 +4140,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llamará."
@@ -4165,7 +4165,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos van a robar."
@@ -4174,7 +4174,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos robarán."
@@ -4183,7 +4183,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas van a robar."
@@ -4192,7 +4192,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas robarán."
@@ -4225,7 +4225,7 @@
       "glosses": [
         "FUTURO",
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Nosotros nos vamos a ver."
@@ -4234,7 +4234,7 @@
       "glosses": [
         "FUTURO",
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Nosotras nos vamos a ver."
@@ -4384,7 +4384,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR",
         "QUE"
       ],
@@ -4403,7 +4403,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "LLEVAR"
       ],
@@ -4413,7 +4413,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "LLEVAR"
       ],
@@ -4423,7 +4423,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Llevo a la hija."
@@ -5315,7 +5315,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "TENER"
       ],
@@ -5334,7 +5334,7 @@
       "glosses": [
         "PASADO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -5668,7 +5668,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5679,7 +5679,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5690,7 +5690,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5701,7 +5701,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5760,7 +5760,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5770,7 +5770,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5890,7 +5890,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER",
         "QUE"
       ],
@@ -5900,7 +5900,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER",
         "QUE"
       ],
@@ -5919,7 +5919,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER",
         "QUE"
       ],
@@ -5929,11 +5929,1409 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER",
         "QUE"
       ],
       "spanish": "¿Qué tenían ellas?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Veo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Yo veo a mi hijo."
+    },
+    {
+      "glosses": [
+        "HIJO",
+        "O",
+        "MIO"
+      ],
+      "spanish": "Mi hijo."
+    },
+    {
+      "glosses": [
+        "HERMANO",
+        "O",
+        "MIO"
+      ],
+      "spanish": "Mi hermano."
+    },
+    {
+      "glosses": [
+        "ESPOSO",
+        "O",
+        "MIO"
+      ],
+      "spanish": "Mi esposo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Tengo esposo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Yo tengo esposo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Veo a mi hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "MIO",
+        "VER"
+      ],
+      "spanish": "Yo veo a mi hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Tengo hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Tengo un hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Yo tengo hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Yo tengo un hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Tengo un hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Tengo hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Yo tengo un hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "TENER"
+      ],
+      "spanish": "Yo tengo hijo."
+    },
+    {
+      "glosses": [
+        "ESPOSO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién es tu esposo?"
+    },
+    {
+      "glosses": [
+        "HERMANO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién es tu hermano?"
+    },
+    {
+      "glosses": [
+        "HERMANO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quiénes son tus hermanos?"
+    },
+    {
+      "glosses": [
+        "HIJO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién es tu hijo?"
+    },
+    {
+      "glosses": [
+        "HIJO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quiénes son tus hijos?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "HERMANO",
+        "O",
+        "TUYO",
+        "LLAMAR"
+      ],
+      "spanish": "Vos llamás a tu hermano."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "HERMANO",
+        "O",
+        "TUYO",
+        "LLAMAR"
+      ],
+      "spanish": "Llamás a tu hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO",
+        "O",
+        "MIO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "Yo no llamo a mi esposo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ESPOSO",
+        "O",
+        "MIO",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No llamo a mi esposo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "MIO",
+        "LLEVAR"
+      ],
+      "spanish": "Yo llevo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "LLEVAR"
+      ],
+      "spanish": "Llevo al hijo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ESPOSO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién era tu esposo?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "HERMANO",
+        "O",
+        "TUYO",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién era tu hermano?"
+    },
+    {
+      "glosses": [
+        "GRACIAS"
+      ],
+      "spanish": "Gracias."
+    },
+    {
+      "glosses": [
+        "YO",
+        "GRACIAS"
+      ],
+      "spanish": "Te agradezco."
+    },
+    {
+      "glosses": [
+        "YO",
+        "GRACIAS"
+      ],
+      "spanish": "Yo te agradezco."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "GRACIAS"
+      ],
+      "spanish": "Muchas gracias a vos."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "GRACIAS"
+      ],
+      "spanish": "Gracias a vos."
+    },
+    {
+      "glosses": [
+        "AYUDAR"
+      ],
+      "spanish": "Ayuda."
+    },
+    {
+      "glosses": [
+        "AYUDAR"
+      ],
+      "spanish": "Ayudame."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Yo ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Vos ayudás."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudás."
+    },
+    {
+      "glosses": [
+        "EL",
+        "AYUDAR"
+      ],
+      "spanish": "Ayuda."
+    },
+    {
+      "glosses": [
+        "EL",
+        "O",
+        "AYUDAR"
+      ],
+      "spanish": "Él ayuda."
+    },
+    {
+      "glosses": [
+        "EL",
+        "A",
+        "AYUDAR"
+      ],
+      "spanish": "Ella ayuda."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudamos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "O",
+        "AYUDAR"
+      ],
+      "spanish": "Nosotros ayudamos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "A",
+        "AYUDAR"
+      ],
+      "spanish": "Nosotras ayudamos."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudan."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "O",
+        "AYUDAR"
+      ],
+      "spanish": "Ellos ayudan."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "A",
+        "AYUDAR"
+      ],
+      "spanish": "Ellas ayudan."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Vos me ayudás."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Me ayudás."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Yo te ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Te ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "PODER"
+      ],
+      "spanish": "Yo te puedo ayudar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "PODER"
+      ],
+      "spanish": "Te puedo ayudar."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "PODER"
+      ],
+      "spanish": "Vos me podés ayudar."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "PODER"
+      ],
+      "spanish": "Me podés ayudar."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayer me ayudaste."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayer vos me ayudaste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Te ayudé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Yo te ayudé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Me ayudaste."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Vos me ayudaste."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Te voy a ayudar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "Yo te voy a ayudar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Me vas a ayudar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "Vos me vas a ayudar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "No ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "Yo no ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "No te ayudo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "Yo no te ayudo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "No me ayudás."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "NO"
+      ],
+      "spanish": "Vos no me ayudás."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "PODER",
+        "NO"
+      ],
+      "spanish": "No te puedo ayudar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "PODER",
+        "NO"
+      ],
+      "spanish": "Yo no te puedo ayudar."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "PODER",
+        "NO"
+      ],
+      "spanish": "No me podés ayudar."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "PODER",
+        "NO"
+      ],
+      "spanish": "Vos no me podés ayudar."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo me ayudás?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "YO",
+        "AYUDAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo me ayudás vos?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te puedo ayudar?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "VOS",
+        "AYUDAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te ayudo?"
+    },
+    {
+      "glosses": [
+        "AYUDAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién ayuda?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "AYUDAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién ayudó?"
+    },
+    {
+      "glosses": [
+        "VOS",
+        "AYUDAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién te ayuda?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "AYUDAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién te ayudó?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "MAMA",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "MAMA",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Yo ayudo a mi mamá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PAPA",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "PAPA",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Yo ayudo a mi papá."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "O",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi hijo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HIJO",
+        "A",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi hija."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "O",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi hermano."
+    },
+    {
+      "glosses": [
+        "YO",
+        "HERMANO",
+        "A",
+        "MIO",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a mi hermana."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Te lastimás."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Vos te lastimás."
+    },
+    {
+      "glosses": [
+        "EL",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastima."
+    },
+    {
+      "glosses": [
+        "EL",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Él se lastima."
+    },
+    {
+      "glosses": [
+        "EL",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Ella se lastima."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "LASTIMAR"
+      ],
+      "spanish": "Nos lastimamos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Nosotros nos lastimamos."
+    },
+    {
+      "glosses": [
+        "NOSOTROS",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Nosotras nos lastimamos."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastiman."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Ellos se lastiman."
+    },
+    {
+      "glosses": [
+        "ELLOS",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Ellas se lastiman."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "EL",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimó."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "EL",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Él se lastimó."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "EL",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Ella se lastimó."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "NOSOTROS",
+        "LASTIMAR"
+      ],
+      "spanish": "Nos lastimamos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "NOSOTROS",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Nosotros nos lastimamos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "NOSOTROS",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Nosotras nos lastimamos."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimaron."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "O",
+        "LASTIMAR"
+      ],
+      "spanish": "Ellos se lastimaron."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "ELLOS",
+        "A",
+        "LASTIMAR"
+      ],
+      "spanish": "Ellas se lastimaron."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me voy a lastimar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me voy a lastimar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Te vas a lastimar."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Vos te vas a lastimar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé el ojo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé el ojo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Te lastimaste el ojo."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Vos te lastimaste el ojo."
+    },
+    {
+      "glosses": [
+        "EL",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimó el ojo."
+    },
+    {
+      "glosses": [
+        "EL",
+        "O",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Él se lastimó el ojo."
+    },
+    {
+      "glosses": [
+        "EL",
+        "A",
+        "OJO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ella se lastimó el ojo."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé la cara."
+    },
+    {
+      "glosses": [
+        "YO",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé la cara."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Te lastimaste la cara."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Vos te lastimaste la cara."
+    },
+    {
+      "glosses": [
+        "EL",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Se lastimó la cara."
+    },
+    {
+      "glosses": [
+        "EL",
+        "O",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Él se lastimó la cara."
+    },
+    {
+      "glosses": [
+        "EL",
+        "A",
+        "ROSTRO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ella se lastimó la cara."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "YO",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ayer me lastimé el brazo."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "YO",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ayer yo me lastimé el brazo."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ayer te lastimaste el brazo."
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "BRAZO",
+        "LASTIMAR"
+      ],
+      "spanish": "Ayer vos te lastimaste el brazo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CUCHILLO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé con un cuchillo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CUCHILLO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé con el cuchillo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CUCHILLO",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé con un cuchillo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CUCHILLO",
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Te lastimaste con un cuchillo."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CUCHILLO",
+        "VOS",
+        "LASTIMAR"
+      ],
+      "spanish": "Vos te lastimaste con un cuchillo."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé en la plaza."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé en la plaza."
+    },
+    {
+      "glosses": [
+        "CASA",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Me lastimé en la casa."
+    },
+    {
+      "glosses": [
+        "CASA",
+        "YO",
+        "LASTIMAR"
+      ],
+      "spanish": "Yo me lastimé en la casa."
+    },
+    {
+      "glosses": [
+        "LASTIMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién se lastimó?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "LASTIMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién se lastimó?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te lastimaste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te lastimaste vos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "BRAZO",
+        "LASTIMAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te lastimaste el brazo?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "BRAZO",
+        "LASTIMAR",
+        "COMO"
+      ],
+      "spanish": "¿Cómo te lastimaste el brazo vos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo te lastimaste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo te lastimaste vos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde te lastimaste?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "LASTIMAR",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde te lastimaste vos?"
+    },
+    {
+      "glosses": [
+        "GRACIAS",
+        "AYUDAR"
+      ],
+      "spanish": "Gracias por ayudarme."
+    },
+    {
+      "glosses": [
+        "GRACIAS",
+        "AYUDAR"
+      ],
+      "spanish": "Gracias por la ayuda."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "AYUDAR",
+        "GRACIAS"
+      ],
+      "spanish": "Gracias por ayudarme."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "AYUDAR",
+        "GRACIAS"
+      ],
+      "spanish": "Muchas gracias por tu ayuda."
     }
   ]
 }

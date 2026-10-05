@@ -34,7 +34,7 @@
     },
     {
       "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-      "glosses": ["PASADO", "PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
+      "glosses": ["PASADO", "PLAZA", "ELLOS", "A", "VIVIR", "DONDE"],
       "spanish": [
         "¿Dónde vivían ellas en la plaza?",
         "¿Dónde vivieron ellas en la plaza?"
@@ -67,8 +67,8 @@
       ]
     },
     {
-      "category": "pronombre_objeto_en_pasado_tercera_persona",
-      "glosses": ["PASADO", "ELLOS", "HOMBRE", "YO", "VER"],
+      "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+      "glosses": ["PASADO", "ELLOS", "O", "YO", "VER"],
       "spanish": [
         "Ellos me vieron.",
         "Ellos me vieron a mí."
@@ -83,8 +83,16 @@
       ]
     },
     {
-      "category": "pregunta_wh_identidad_tiempo_futuro",
-      "glosses": ["FUTURO", "ESPOSO", "MUJER", "TUYA", "QUIEN"],
+      "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
+      "glosses": ["PASADO", "HERMANO", "O", "TUYO", "QUIEN"],
+      "spanish": [
+        "¿Quién era tu hermano?",
+        "¿Quién fue tu hermano?"
+      ]
+    },
+    {
+      "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+      "glosses": ["FUTURO", "ESPOSO", "A", "TUYO", "QUIEN"],
       "spanish": [
         "¿Quién va a ser tu esposa?",
         "¿Quién será tu esposa?"
@@ -119,8 +127,17 @@
       ]
     },
     {
-      "category": "flexion_genero_parentesco_transitivo_pasado",
+      "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
       "glosses": ["PASADO", "YO", "HIJO", "MIO", "LLAMAR"],
+      "spanish": [
+        "Llamé a mi hijo.",
+        "Yo llamé a mi hijo.",
+        "Llamé al hijo."
+      ]
+    },
+    {
+      "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+      "glosses": ["PASADO", "YO", "HIJO", "O", "MIO", "LLAMAR"],
       "spanish": [
         "Llamé a mi hijo.",
         "Yo llamé a mi hijo.",

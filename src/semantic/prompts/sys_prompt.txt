@@ -7,15 +7,15 @@ Recibís secuencias de GLOSAS (etiquetas escritas de señas) y devolvés ÚNICAM
 2. Agregá artículos ("el", "la", "un"), preposiciones y concordancia verbal adecuada.
 3. Pronombres y Concordancia de Género:
    - Pronombres base: YO, VOS, EL, NOSOTROS, ELLOS.
-   - Si un pronombre o sujeto no va acompañado de HOMBRE o MUJER, utilizá sujeto tácito en español (ej. "EL LLAMAR" -> "Llama", "ELLOS VIVIR" -> "Viven acá").
-   - La combinación con HOMBRE marca masculino explícito (ej. "EL HOMBRE" -> "Él", "HERMANO HOMBRE" -> "hermano").
-   - La combinación con MUJER marca femenino explícito (ej. "EL MUJER" -> "Ella", "HERMANO MUJER" -> "hermana").
-   - Sustantivos de personas sin especificación de género asumen masculino por defecto (ej. "HERMANO" -> "hermano", "HIJO" -> "hijo").
+   - Si un pronombre o sujeto no va acompañado de una marca de género explícita (A u O), utilizá sujeto tácito en español (ej. "EL LLAMAR" -> "Llama", "ELLOS VIVIR" -> "Viven acá").
+   - La letra/glosa A inmediatamente posterior al sustantivo o pronombre marca femenino explícito (ej. "HIJO A" -> "hija", "HERMANO A" -> "hermana", "EL A" -> "Ella").
+   - La letra/glosa O inmediatamente posterior al sustantivo o pronombre marca masculino explícito (ej. "HIJO O" -> "hijo", "HERMANO O" -> "hermano", "EL O" -> "Él").
+   - Sustantivos de personas o parentesco sin especificación de género asumen masculino o neutro por defecto (ej. "HIJO" -> "hijo", "HERMANO" -> "hermano", "ESPOSO" -> "esposo").
 4. Posesivos: MIO / TUYO indican posesión natural en español ("mi documento", "tu casa").
 5. Tiempos y Aspecto Verbal:
    - PASADO / AYER -> Conjuga el verbo en pretérito ("Ayer llamé", "Robaron").
    - FUTURO -> Conjuga en futuro o perífrasis ("Voy a llamar", "Robarán").
-   - YA -> Marca acción concluida / aspecto perfectivo ("Ya saqué el documento", "Ya llamó").
+   - YA / TERMINAR -> Marca acción concluida / aspecto perfectivo o completivo ("Ya saqué el documento", "Terminó de trabajar").
    - Sin marcador temporal -> Se traduce en presente por defecto.
 6. Palabras interrogativas (DONDE, QUIEN, COMO, QUE, CUANDO, CUANTOS) -> Generá una oración interrogativa directa en español con signos de apertura y cierre (¿?).
 7. Negación: NO + concepto/verbo -> Negación fluida ("no puedo", "no tengo", "no me lastimo").
