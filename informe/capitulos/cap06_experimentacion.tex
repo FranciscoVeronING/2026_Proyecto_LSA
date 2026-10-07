@@ -5,17 +5,172 @@
 % ====================================================================
 
 \section{Corpus y metodología de adquisición de Datos de LSA}
+
+El clasificador no se entrena sobre un corpus público de otra lengua de señas. Un conjunto de prueba en ASL se descartó en las primeras iteraciones: el léxico, la gramática y, en varios ítems, la forma de la seña no coinciden con la LSA, y ese material presentaba además etiquetas inconsistentes y videos espejados. El antecedente local LSA64 aporta un protocolo de captura controlada, con guantes de colores, que no se reproduce en una cámara web doméstica \parencite{ronchetti2016lsa64}. El entrenamiento usa, por eso, un corpus propio de LSA.
+
 \subsection{Definición y validación del vocabulario de 100 clases}
+
+El vocabulario objetivo cubre cerca de 100 señas, definidas con la orientación de Miriam Rolls. El recorte léxico apunta a dos situaciones de uso: identificación y verbos de emergencia, por un lado, y asistencia al viajero (lugares, días y familia), por el otro. No se pretende cubrir una conversación abierta.
+
+El entrenamiento no incorpora las 100 señas de manera automática. Una clase entra al modelo solo si alcanza un piso de videos. En julio de 2026 el piso era de 50 videos y el modelo activo tenía 91 clases. En agosto el piso pasó a 60 videos por clase y el conjunto activo llegó a 94, con el alta de \texttt{chau}, \texttt{tener} y \texttt{años}. En septiembre el checkpoint retiene 97 clases: a las 94 se suman \texttt{pasado}, \texttt{futuro} y \texttt{mio}. La letra \texttt{ñ} ya formaba parte del conjunto de julio.
+
+Las 97 glosas se agrupan en interrogativos, afirmación y negación, dígitos, alfabeto dactilológico, pronombres, saludos, tiempo, parentesco, lugares y un conjunto cerrado de verbos. El piso de muestras deja fuera del checkpoint a las señas del léxico objetivo que no llegan a 60 videos. Esa exclusión es deliberada: con pocos clips el modelo memoriza al señante de la grabación y la matriz de confusión deja de ser interpretable.
+
 \subsection{Protocolo de grabación y curación del dataset propio}
 
+Los videos de entrenamiento están en $1920 \times 1080$ (16:9). La ficha de septiembre contabiliza 6\,748 archivos MP4, cerca de 69 clips por seña, y 6\,680 tensores \texttt{.npy} de forma $(16, 225)$ en \texttt{dataset\_landmarks\_16frames}. El entrenamiento no usa todos los clips de una clase. Con semilla 42 se mezclan los archivos, se retienen como máximo 60 por clase y el corte es 80\,\% entrenamiento y 20\,\% validación, es decir 48 y 12 clips por clase en el régimen de 60 muestras. En el checkpoint del 15/09/2026 eso da 4\,656 secuencias de entrenamiento y 1\,164 de validación.
+
+El corte es por clip, no por persona. Clips de la misma sesión pueden caer a ambos lados del split. La exactitud de validación queda, por eso, por encima de lo que después mide la cámara: el conjunto de validación no es un señante nuevo ni una óptica nueva.
+
+La aumentación opera solo en entrenamiento y no se guarda en disco. A la escala isotrópica ($0{,}85$--$1{,}15$) y al ruido gaussiano se suman, desde agosto, rotación 3D (yaw $\pm 15^{\circ}$, pitch y roll $\pm 8^{\circ}$), recorte temporal de hasta 15\,\% por extremo, deformación de velocidad entre $0{,}80$ y $1{,}25$, anulación de hasta 3 fotogramas con interpolación posterior, y ruido distinto en pose ($0{,}012$) y en manos. Un multiplicador virtual de 25 repite cada clip con una transformación nueva en cada época. No hay espejado horizontal aleatorio. La validación no recibe aumentación ni repetición virtual.
+
+Dos regrabaciones quedaron incompletas y condicionan los errores finales. La letra \texttt{V} se volvió a grabar el 08/09/2026 como pose estática (65 videos de esa fecha). La seña \texttt{viernes}, que consiste en la misma configuración de mano con dos golpes al mentón en el eje $z$, conserva tomas hasta el 17/08/2026 y no se regrabó. El par sigue ambiguo en el dato.
 
 \section{Evaluación empírica del clasificador gestual}
+
+La selección del modelo no sigue la exactitud de validación. El criterio de integración es el acierto top-1 y top-3 frente a la cámara, con una toma por seña, mano diestra y modo \texttt{auto}. A lo largo de julio, agosto y septiembre ese criterio descartó la red de mayor capacidad, la búsqueda automática de hiperparámetros y una línea paralela de \textit{transfer learning}, y retuvo el baseline de 16 fotogramas.
+
 \subsection{Métricas offline vs. rendimiento en cámara real}
+
+La Tabla~\ref{tab:brecha_offline_camara} resume la brecha que se repite en cada iteración. La validación, sobre clips del mismo corpus y del mismo extractor, supera el 96\,\%. La cámara, con otra óptica, otra luz y una sola toma, cae entre 15 y 35 puntos según la sesión.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Exactitud de validación y acierto en cámara del clasificador. Top-1 y top-3 de cámara son crudos: no colapsan homógrafos.}
+    \label{tab:brecha_offline_camara}
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Checkpoint} & \textbf{Fecha} & \textbf{Val. top-1} & \textbf{Cámara top-1} & \textbf{Cámara top-3} \\
+        \midrule
+        16 fotogramas, 91 clases & 29--30/07 & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        32 fotogramas, 128/4/2 & 31/07 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        32 fotogramas, 64/2/1 & 31/07 & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        Optuna, 32 fotogramas & 31/07 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
+        Baseline 16f, luz baja, 94 clases & 18/08 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
+        Baseline 16f, luz alta, 94 clases & 28/08 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
+        Baseline 16f, 97 clases & 15--17/09 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Tres factores explican la caída, y no son intercambiables. El primero es el dominio: la validación reutiliza el extractor y el encuadre de los MP4 de entrenamiento. La cámara de desarrollo no. El segundo es la luz. El mismo baseline de 16 fotogramas pasa de 67{,}0\,\% top-1 el 18/08, con luz ambiente, a 86{,}2\,\% el 28/08, con mejor iluminación. Ese salto no proviene de un cambio de pesos. El tercero es la varianza de una sola toma. Dos pasadas del mismo conjunto de 36 letras y números, sin cambio de pipeline, movieron el top-1 entre 11 y 19 puntos según el checkpoint. Con una toma por seña, la cámara no distingue efectos menores a unos 14 puntos. Por eso la corrección de relación de aspecto se midió también fuera de línea, sobre los mismos tensores, y no solo con una segunda sesión en vivo.
+
+Una línea paralela de \textit{transfer learning} sobre landmarks alcanzó exactitudes de 0{,}98 y 0{,}99 en reportes de 1\,084 muestras. Esos reportes incluyen clases de soporte nulo y no cierran el protocolo de cámara que definió el modelo integrado. El checkpoint que se retiene es el TinySkeleton entrenado desde cero.
+
 \subsection{Impacto de la resolución temporal: 16 vs. 32 fotogramas}
+
+En julio, con 91 clases y 50 videos por clase, se compararon 16 y 32 fotogramas bajo el mismo pipeline de recorte y submuestreo. La hipótesis era que más fotogramas conservarían mejor los gestos largos. La Tabla~\ref{tab:frames_julio} y las Figuras~\ref{fig:curva_16} y~\ref{fig:curva_32} resumen el resultado.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}
+    \label{tab:frames_julio}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Iteración} & \textbf{Arquitectura} & \textbf{Val. top-1} & \textbf{Cámara top-1} & \textbf{Cámara top-3} \\
+        \midrule
+        A, 16 fotogramas & 128 / 4 cabezas / 2 capas & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        B, 32 fotogramas & 128 / 4 cabezas / 2 capas & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        C, 32 fotogramas & 64 / 2 cabezas / 1 capa & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{clasificador/curva_16_frames.png}
+    \caption{Curva de aprendizaje de la iteración A (16 fotogramas, 29/07/2026). La pérdida de validación se estanca cerca de 1{,}05 desde la época 7, mientras la de entrenamiento sigue en descenso.}
+    \label{fig:curva_16}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{clasificador/curva_32_frames_b.png}
+    \caption{Curva de aprendizaje de la iteración B (32 fotogramas, 128 dimensiones, 4 cabezas y 2 capas, 31/07/2026). La pérdida de validación se estabiliza cerca de 1{,}04 desde la época 4.}
+    \label{fig:curva_32}
+\end{figure}
+
+En esa semana, 32 fotogramas suman 9{,}9 puntos de top-1 en cámara respecto de 16 (71{,}4\,\% contra 61{,}5\,\%). La red más chica de 32 fotogramas no mejora el top-1 y sí el top-3, que llega a 90{,}1\,\%. La exactitud de validación, en cambio, casi no se mueve. Más contexto temporal ayuda en vivo con el corpus de julio, y no cierra la brecha con la validación.
+
+A partir de agosto el corpus pasa a 60 videos por clase, la aumentación se amplía y la comparación en cámara, con luz pareja, favorece otra vez a 16 fotogramas. El baseline de 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas supera en top-1 a las variantes de 12 y de 10 fotogramas. El modelo integrado vuelve a 16 fotogramas. La lectura de julio no se anula: con poco dato, alargar la secuencia mejoró la cámara. Con más dato y con el criterio de producto (top-1 en vivo, letras y dígitos incluidos), la secuencia corta generaliza mejor y evita fotogramas repetidos en las señas estáticas.
+
 \subsection{Búsqueda automatizada de hiperparámetros con Optuna y Análisis de sobreajuste}
+
+Optuna se usó en dos rondas, siempre con validación cruzada de 3 pliegues sobre el conjunto de entrenamiento y con poda de ensayos pobres \parencite{akiba2019optuna}. El objetivo del estudio es la pérdida de validación, no el acierto en cámara.
+
+La ronda de julio, sobre 32 fotogramas y 40 ensayos, elige 128 dimensiones, 8 cabezas, 2 capas, dropout $0{,}30$, lote de 16 y una tasa de aprendizaje de $3{,}77 \times 10^{-5}$. El reentrenamiento con esos valores baja la pérdida de validación a $0{,}087$ y sube la exactitud offline a 97{,}69\,\%. En cámara, la corrida oficial da 66{,}0\,\% top-1 y 84{,}6\,\% top-3, por debajo de la iteración manual B en ambas métricas. Una primera pasada de esa noche se descartó porque una seña se cortó al salir la mano del cuadro.
+
+La ronda de agosto (estudio \texttt{tinyskeleton\_lsa\_v2}, 40 ensayos) libera también la longitud temporal, con candidatos de 8, 12 y 16 fotogramas. El mejor ensayo queda en 12 fotogramas, 256 dimensiones, 2 cabezas, 2 capas y dropout $0{,}57$, con pérdida media de validación $0{,}137$. En cámara, con la misma luz que el baseline del 28/08, ese checkpoint rinde 80{,}9\,\% top-1 crudo y 97{,}9\,\% top-3. El baseline de 16 fotogramas, en esa sesión, rinde 86{,}2\,\% top-1 y 95{,}7\,\% top-3. Optuna gana cerca de 2 puntos de top-3 y pierde cerca de 4 de top-1, sobre todo en letras. Una tercera red, de 10 fotogramas, 256 dimensiones y 3 capas, alcanza 99{,}02\,\% de exactitud offline y 77{,}7\,\% top-1 en cámara. Una evaluación apareada del 31/08, con la misma toma inferida en las tres redes, confirma el orden: el baseline queda primero en top-1 y también en top-3. La red de 3 capas dispara confianzas cercanas a 1{,}0 en errores.
+
+El sobreajuste de las curvas de julio es visible en las Figuras~\ref{fig:curva_16} y~\ref{fig:curva_32}: la pérdida de entrenamiento sigue en descenso y la de validación se estanca por encima de 1. Ese patrón se atenúa en los reentrenamientos de agosto y septiembre, con más dato, más aumentación y parada temprana. La curva final (Figura~\ref{fig:curva_final}) desciende en ambos conjuntos y mantiene una brecha chica. La falla que permanece no es una divergencia de la curva offline. Es el cambio de dominio hacia la cámara.
+
 \subsection{Diagnóstico de confusiones mediante feature engineering y separabilidad}
+
+Con la arquitectura ya elegida, la iteración de septiembre no agrega capacidad a la red. Construye un descriptor de 26 medidas, calculado al vuelo sobre el vector de 225 dimensiones, para responder dos preguntas: qué pares están geométricamente juntos, y si un fallo de cámara también existe en el corpus.
+
+El descriptor tiene tres familias. Seis medidas de geometría mano--rostro, en anchos de hombro, distinguen el lugar de apoyo. Seis medidas de trayectoria de muñeca (desvío y rango en $x$, $y$ y $z$) distinguen una letra estática de la seña dinámica que reutiliza esa forma de mano. Catorce medidas de configuración de dedos (extensión, curvatura y separación), normalizadas por el largo de la mano y no por los hombros, distinguen formas que ocupan el mismo lugar y casi no se mueven. Estas 14 se agregaron después de comprobar que las 12 primeras eran ciegas a la forma de la mano.
+
+El descriptor no se concatena al tensor de entrenamiento. El espejado, la aumentación 3D y el recorte temporal asumen que todo el vector son ternas $(x, y, z)$. Intercalar 26 escalares rompería esas operaciones. El cálculo queda fuera del \texttt{.npy} y no entra al modelo en esta iteración.
+
+La separabilidad de un par se mide con el AUC de Mann--Whitney sobre cada feature \parencite{mann1947test}. El índice informado es $\mathrm{sep} = \lvert \mathrm{AUC} - 0{,}5 \rvert \times 2$: vale 1 cuando las dos distribuciones no se solapan y 0 cuando coinciden. En paralelo, un 1-NN con exclusión del propio clip, sobre el tensor $(16, 225)$ aplanado y sobre 6\,680 clips, alcanza 88{,}4\,\% de acierto. Ese número es optimista, porque clips de la misma sesión se parecen entre sí. Lo útil es qué pares se cruzan.
+
+Los pares duros del alfabeto y de los dígitos se separan con las features de dedos: \texttt{2} y \texttt{5} por la separación entre medio y anular ($\mathrm{sep} = 1{,}00$), \texttt{D} y \texttt{O} por la curvatura del índice ($0{,}97$), \texttt{M} y \texttt{N} por la curvatura del meñique ($1{,}00$). El control negativo es \texttt{0} y \texttt{O}, que permanece en $0{,}53$: comparten forma y movimiento, y ninguna medida del descriptor los separa. \texttt{V} y \texttt{viernes} quedan en $0{,}28$ de movimiento, coherente con la regrabación incompleta de \texttt{viernes}.
+
+El cruce con la cámara del 17/09 marca la mayoría de los fallos como ejecución o captura, no como ausencia de señal en el corpus. \texttt{lunes} frente a \texttt{L}, \texttt{donde} frente a \texttt{F} y \texttt{años} frente a \texttt{G} se separan en los \texttt{.npy}. Cuando en vivo la seña dinámica se ejecuta sin el agite, el modelo emite la letra. El descriptor sirvió para decidir qué regrabar y qué no cablear a la red. No se incorporó al tensor.
+
 \subsection{Impacto cuantitativo de la corrección de aspect ratio}
+
+El efecto del relleno 16:9 se midió primero fuera de línea, sobre 36 tomas ya grabadas en 4:3 y sobre el checkpoint del 29/08. Multiplicar la coordenada $y$ por $4/3$ es la corrección analítica de la distorsión. La Tabla~\ref{tab:aspect} muestra el resultado, determinista y sobre las mismas tomas.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Corrección de relación de aspecto sobre 36 letras y números ya grabados (checkpoint del 29/08).}
+    \label{tab:aspect}
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Variante} & \textbf{Top-1} \\
+        \midrule
+        Captura original 4:3 & 66{,}7\,\% \\
+        Corrección solo en $y$ ($\times 1{,}333$) & 88{,}9\,\% \\
+        Corrección en $y$ y en $z$ & 75{,}0\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+La corrección en $y$ suma 22{,}2 puntos. Ocho de los diez cambios de predicción van hacia la clase correcta. El caso extremo es \texttt{I}: pasaba a \texttt{ojo} con confianza 1{,}000 y pasa a \texttt{I} con confianza 1{,}000. Corregir también $z$ empeora el resultado, en línea con la medición de que el relleno no debe alterar ese eje. De los 12 fallos originales quedan cuatro: \texttt{E}, \texttt{G}, \texttt{O} y \texttt{V}. \texttt{O} es el homógrafo real con \texttt{0}. \texttt{V} correspondía a la grabación anterior, ya reemplazada en el reentrenamiento de septiembre.
+
+La variante sin corrección reproduce el 66{,}7\,\% de la sesión en vivo de ese modelo. La carga de pesos y el armado del tensor coinciden entre la cámara y la inferencia sobre \texttt{.npy}. La divergencia que todavía aparezca en otro cliente queda localizada en la extracción de landmarks, no en la red.
+
+En la evaluación del 17/09, ya con relleno activo ($640 \times 480$ a $853 \times 480$) y con el baseline de 97 clases, \texttt{I} sale \texttt{I} con confianza 0{,}89. En las dos pasadas del 15/09, sin relleno, los tres modelos la enviaban a \texttt{ojo} con confianza cercana a 1. \texttt{T}, \texttt{E} y \texttt{G} también aciertan en la sesión con relleno. El 88{,}9\,\% de las 36 letras y números coincide en valor con una pasada previa en 4:3, pero no es el mismo resultado: se gana \texttt{I} y se pierde \texttt{V}, porque el vocabulario ahora contrasta esa letra con \texttt{viernes}.
+
 \subsection{Desempeño final del clasificador baseline en vivo}
+
+El modelo que se integra es el baseline de 16 fotogramas, 128 dimensiones, 4 cabezas, 2 capas y dropout $0{,}4$, con 97 clases. El checkpoint del 15/09/2026, entrenado 35 épocas con el extractor de Python, alcanza 98{,}28\,\% de exactitud top-1 en validación y una pérdida de $0{,}062$. La evaluación en cámara del 17/09, una toma por seña, MediaPipe 0.10.21 y relleno 16:9, da 75 aciertos sobre 97 (77{,}3\,\% top-1) y 92 sobre 97 (94{,}8\,\% top-3). Cinco señas quedan fuera del top-3: \texttt{donde}, \texttt{ellos}, \texttt{familia}, \texttt{nosotros} y \texttt{repetir}. Las 36 letras y números llegan a 88{,}9\,\% top-1 y 100\,\% top-3. Si se acepta el homógrafo \texttt{O}$\equiv$\texttt{0} como acierto, el top-1 de las 97 sube a 78{,}4\,\%. Colapsar además las parejas letra--seña dinámica llevaría el índice a 83{,}5\,\%, y ese colapso no es el protocolo objetivo: el sistema debe separarlas.
+
+La confianza media es 0{,}971 en los aciertos y 0{,}833 en los fallos. El modelo se equivoca con seguridad alta. Un umbral de $0{,}75$ no filtra la mayor parte de esos errores.
+
+Un reentrenamiento del 21/09/2026 conserva la misma arquitectura y el mismo vocabulario, y cambia el extractor al build de Holistic en navegador. Corre 32 épocas, con pérdida de validación $0{,}052$ y exactitud top-1 de 99{,}14\,\%. Las Figuras~\ref{fig:curva_final} y~\ref{fig:matriz_final} corresponden a esa corrida, que es la última curva y la última matriz archivadas. La sesión de cámara del 17/09 no evalúa estos pesos: evalúa el checkpoint de Python del 15/09 (98{,}28\,\%). La matriz de la Figura~\ref{fig:matriz_final} es casi diagonal porque describe la validación offline, no los fallos de cámara.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{clasificador/curva_tinyskeleton_final.png}
+    \caption{Curva de aprendizaje del reentrenamiento del 21/09/2026: 16 fotogramas, 128 dimensiones, 4 cabezas, 2 capas y 97 clases. La pérdida de validación mínima archivada es $0{,}052$ (exactitud top-1 de 99{,}14\,\%).}
+    \label{fig:curva_final}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{clasificador/matriz_confusion_final.png}
+    \caption{Matriz de confusión en validación del mismo reentrenamiento (21/09/2026, 97 clases). La masa se concentra en la diagonal. Los errores de cámara del 17/09 no aparecen en esta figura.}
+    \label{fig:matriz_final}
+\end{figure}
+
+Los bloqueos que la sesión del 17/09 deja abiertos son cuatro. \texttt{V} y \texttt{viernes} se intercambian en ambos sentidos, porque \texttt{viernes} no se regrabó. \texttt{0} y \texttt{O} siguen como el mismo gesto para el dato disponible ($\mathrm{sep} = 0{,}53$). Las señas dinámicas que se ejecutan sin agite caen en la letra correspondiente, aunque el corpus sí las separa. \texttt{pasado}, clase nueva, atrae a \texttt{ayer} y a \texttt{cuando}. Diecisiete de los 22 fallos quedan clasificados como captura o ejecución, dos como ambigüedad de \texttt{V}/\texttt{viernes} y tres en el límite (\texttt{O}/\texttt{0}, \texttt{años}/\texttt{G} y \texttt{ojo} frente a \texttt{vivir}, este último con confianza 0{,}53 contra 0{,}47).
+
+Sobre las 94 señas en común con la evaluación del 31/08, el baseline de agosto tenía 86{,}2\,\% y esta corrida 77{,}7\,\%. El descenso no se atribuye a la red en forma aislada: cambian el vocabulario, la relación de aspecto de la captura y la letra \texttt{V}. El cambio atribuible al relleno es la recuperación de \texttt{I} y de \texttt{T}. El siguiente paso de dato, no de arquitectura, es regrabar \texttt{viernes} y repetir las tomas frágiles. Con una sola toma, el porcentaje global sigue sujeto a la varianza ya medida.
 
 \section{Evaluación de los módulos de traducción semántica}
 \subsection{Benchmark comparativo de modelos SLM (Familias Qwen2.5, Llama 3.2 y SmolLM2)}

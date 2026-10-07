@@ -238,11 +238,81 @@ En sentido inverso, el texto transcripto de la voz del oyente se remite al model
 Este desacoplamiento contractual garantiza una delimitación de responsabilidades limpia: el motor cliente no depende de la arquitectura interna ni de los pesos del modelo de lenguaje que atiende en la API remota, requiriendo únicamente el cumplimiento estricto del esquema de intercambio JSON.
 
 \section{Subsistema de reconocimiento gestual (Clasificador)}
+
+El subsistema de reconocimiento gestual convierte una seña aislada en una glosa de un vocabulario cerrado. La inferencia corre en el cliente, sobre coordenadas articulares y no sobre píxeles. El video crudo permanece en el dispositivo. El modelo retenido, \textit{TinySkeletonClassifier}, es una red compacta de convolución temporal y auto-atención \parencite{vaswani2017attention, wu2020lite}. La configuración final usa 16 fotogramas, 128 dimensiones, 4 cabezas, 2 capas y 97 clases.
+
 \subsection{Captura e ingesta de video con MediaPipe Holistic}
+
+La captura toma el flujo de la cámara web y estima, en cada fotograma, un esqueleto con MediaPipe Holistic \parencite{google2020mediapipe}. Entran la pose del torso y ambas manos. El rostro queda fuera del tensor de clasificación: Face Mesh aportaría 468 puntos y 1\,404 coordenadas adicionales, un volumen excesivo frente a un corpus de cerca de 60 clips por clase. El descriptor instantáneo queda en 225 números, $(33 + 21 + 21) \times 3$.
+
+La versión de referencia del entrenamiento y de la evaluación en cámara del 17/09/2026 es MediaPipe 0.10.21 en Python. Versiones iguales o posteriores a 0.10.30 retiran la API \texttt{mp.solutions} y rompen ese pipeline. Un reentrenamiento posterior, del 21/09/2026, cambia el extractor al build de navegador \texttt{@mediapipe/holistic@0.5.1675471629} y obliga a regenerar los tensores \texttt{.npy}. La arquitectura de la red no cambia entre ambos extractores.
+
+En cámara, un hilo de captura acumula fotogramas y un hilo de inferencia consume el tensor ya armado. El modo \texttt{auto} abre un gesto ante movimiento de píxeles, movimiento de las manos o presencia sostenida de manos. Ese tercer disparador cubre las señas estáticas del alfabeto y de los dígitos, que casi no alteran la imagen. Los modos \texttt{static} y \texttt{dynamic} fuerzan uno de los dos criterios. Si MediaPipe pierde ambas manos, el fotograma no aporta forma de mano y la seña queda fuera del dominio de entrenamiento \parencite{google2020mediapipe}.
+
 \subsection{Normalización geométrica y corrección de distorsión de relación de aspecto}
+
+Cada fotograma válido se traslada al punto medio de los hombros y se escala por la distancia inter-hombros. La operación reduce el efecto de la distancia a la cámara y de la posición del torso en el encuadre. No se aplica un espejado horizontal aleatorio: en la LSA la mano dominante forma parte de la seña. El espejado zurdo es una normalización previa, a partir de la mano declarada por el usuario, y no una aumentación de datos.
+
+MediaPipe expresa $x$ como fracción del ancho de la imagen e $y$ como fracción del alto. El cociente entre una medida vertical y una horizontal queda entonces atado a $W/H$. Los videos de entrenamiento miden $1920 \times 1080$ ($W/H = 1{,}778$). La cámara de desarrollo entrega $640 \times 480$ ($W/H = 1{,}333$) con independencia de la resolución pedida. Como el ancla es el punto medio de los hombros y la escala es una distancia casi horizontal, toda medida vertical llega al modelo a $0{,}75$ veces la escala vista en el entrenamiento. Las medidas horizontales no se alteran. El eje $z$ de MediaPipe comparte escala con $x$, de modo que el relleno no debe corregirlo.
+
+La corrección rellena el fotograma con bandas hasta $853 \times 480$ antes de pasarlo a MediaPipe. Así se restituye $W/H = 1{,}778$ sin recorte del campo visual y sin reescalar la imagen. Si la cámara ya entrega 16:9, el relleno no modifica el cuadro. El detector de movimiento, que compara píxeles absolutos, se calcula sobre una copia en gris redimensionada a $640 \times 480$ fijos, para que el cambio de resolución no altere su umbral.
+
+Una medición sobre 472 muestras, con recorte 4:3 de videos de entrenamiento frente a la versión con relleno, dio ratios de $1{,}008$ en $x$ (predicho $1{,}000$), $1{,}321$ en $y$ (predicho $1{,}333$) y $1{,}033$ en $z$ (predicho $1{,}000$). La derivación analítica se sostiene. El síntoma visible de la distorsión, antes de la corrección, era la confusión sistemática de la letra \texttt{I} con la seña \texttt{ojo}.
+
 \subsection{Preprocesamiento: recorte temporal, submuestreo e interpolación}
+
+El mismo encadenado arma el tensor en el preprocesado de los videos y en la cámara. Tres pasos convierten un clip de duración variable en una secuencia fija.
+
+El primer paso reemplaza fotogramas nulos. Cuando MediaPipe falla, el vector llega en ceros. Si un fotograma nulo queda entre dos fotogramas válidos, cada coordenada se interpola en forma lineal. Sin ese reemplazo, el transformador interpreta el fallo del tracker como un salto espacial.
+
+El segundo paso recorta el silencio. El buffer de cámara incluye la aproximación de las manos y la espera posterior. El recorte conserva el tramo con movimiento de las manos y descarta los extremos quietos. De otro modo, los 16 fotogramas finales diluyen el gesto útil entre poses vacías.
+
+El tercer paso aplica un submuestreo uniforme hasta \texttt{MAX\_FRAMES}. El modelo exige longitud fija. Con 16 fotogramas, un gesto breve queda representado por instantes repartidos a lo largo del tramo útil. Una longitud de 32 fotogramas, ensayada en julio de 2026, repite cuadros casi idénticos en las señas cortas del alfabeto y de los dígitos. El detalle de esa comparación está en el capítulo de experimentación.
+
+La salida de los tres pasos es un tensor de forma $(16, 225)$. El entrenamiento de septiembre parte de 6\,680 clips con esa forma, obtenidos de videos en $1920 \times 1080$.
+
 \subsection{Arquitectura neuronal TinySkeletonClassifier (Conv1D + transformer + attention pooling)}
+
+La red recibe un lote de secuencias $(B, 16, 225)$ y devuelve un logit por clase. La Figura~\ref{fig:tinyskeleton} resume el camino retenido. Dos convoluciones temporales de núcleo 3 y relleno 1 proyectan las 225 coordenadas a 128 canales y conservan la longitud de 16 fotogramas \parencite{wu2020lite}. Cada convolución va seguida de normalización por lote y ReLU. La primera incluye además un dropout temporal de $0{,}2$.
+
+Una codificación posicional sinusoidal se suma a la secuencia de 128 dimensiones \parencite{vaswani2017attention}. Después, un codificador Transformer de 2 capas y 4 cabezas modela dependencias entre cualquier par de fotogramas. La red de avance interna tiene 256 unidades y el dropout de las capas es $0{,}4$.
+
+El agregado temporal no es un promedio uniforme. Una capa lineal de 128 a 1 produce un puntaje por fotograma; un softmax convierte esos puntajes en pesos, y la secuencia colapsa a un vector de 128 dimensiones. Ese \textit{attention pooling} asigna más peso a la pose sostenida que a los fotogramas de entrada y de salida, que es donde se decide gran parte del alfabeto y de los dígitos. Un dropout de $0{,}4$ y una capa lineal final proyectan el vector a las 97 clases.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.42cm,
+        box/.style={draw, rounded corners=2pt, align=center, font=\small, inner sep=5pt, text width=0.86\textwidth},
+        arr/.style={-{Stealth[length=2.2mm]}, thick}
+    ]
+        \node[box] (in) {Entrada $(B, 16, 225)$: pose $33 \times 3$ y dos manos de $21 \times 3$};
+        \node[box, below=of in] (conv) {Conv1D $225 \rightarrow 128$, núcleo 3, relleno 1, BatchNorm, ReLU, Dropout1d $0{,}2$\\Conv1D $128 \rightarrow 128$, núcleo 3, relleno 1, BatchNorm, ReLU};
+        \node[box, below=of conv] (pos) {Codificación posicional sinusoidal sobre $(B, 16, 128)$};
+        \node[box, below=of pos] (tr) {Transformer encoder: 2 capas, 4 cabezas, avance de 256, dropout $0{,}4$};
+        \node[box, below=of tr] (pool) {Attention pooling: lineal $128 \rightarrow 1$, softmax temporal y suma ponderada};
+        \node[box, below=of pool] (head) {Dropout $0{,}4$ y capa lineal $128 \rightarrow 97$ logits};
+        \draw[arr] (in) -- (conv);
+        \draw[arr] (conv) -- (pos);
+        \draw[arr] (pos) -- (tr);
+        \draw[arr] (tr) -- (pool);
+        \draw[arr] (pool) -- (head);
+    \end{tikzpicture}
+    \caption{Arquitectura final de \textit{TinySkeletonClassifier}: convolución temporal, codificador Transformer y \textit{attention pooling}, con 16 fotogramas y 97 clases.}
+    \label{fig:tinyskeleton}
+\end{figure}
+
+Se descartaron tres alternativas antes de fijar este diseño. Una red convolucional sobre video RGB exige muchos más datos y memoriza fondo, ropa e iluminación. Una LSTM pequeña no relaciona en un solo paso el inicio del gesto con la pose final. Un promedio uniforme de los 16 fotogramas diluye la pose informativa con las transiciones. El tamaño de la red queda acotado a propósito: con decenas de clips por clase, una capacidad mayor mejora la pérdida de validación y empeora el acierto frente a la cámara, como se documenta en la experimentación.
+
 \subsection{Segmentación continua y políticas anti-rebote (RepeatGate)}
+
+La cámara no clasifica el flujo completo de manera ciega. La máquina de estados del modo \texttt{auto} delimita una seña aislada y solo entonces arma el tensor. Tras la inferencia, dos filtros evitan que un mismo gesto entre varias veces al enunciado.
+
+El primero es un umbral de confianza de $0{,}75$ en la interfaz de cámara. Por debajo de ese valor la predicción no se acepta como glosa emitida. Las métricas top-1 y top-3 de la evaluación por señas, en cambio, registran el argmax del modelo con independencia de ese umbral, para no mezclar la calidad de la red con la política de descarte.
+
+El segundo filtro es la compuerta \texttt{RepeatGate}, un objeto de política separado de la red \parencite{gamma1994design}. La regla depende de la categoría de la glosa. Los dígitos admiten repeticiones sucesivas, porque un número puede reiterar la misma cifra. Las letras del alfabeto admiten como máximo dos apariciones consecutivas, para cubrir un deletreo breve sin absorber un rebote del tracker. El resto del vocabulario descarta la repetición inmediata. La glosa aceptada pasa al acumulador de enunciado. El cierre de la frase, tras cuatro segundos sin actividad gestual, pertenece al motor de integración y no a la red.
+
+Un enfriamiento de un segundo en la cámara de desarrollo cumplió un rol parecido en las primeras pruebas en vivo. En el prototipo integrado, la política explícita queda en \texttt{RepeatGate}, de modo que el criterio de repetición no depende del temporizador de captura.
 
 \section{Subsistema de traducción semántica bidireccional}
 \subsection{Canal directo (\texorpdfstring{LSA $\rightarrow$ Español}{LSA -> Español}): fine-tuning LoRA y loss masking}
