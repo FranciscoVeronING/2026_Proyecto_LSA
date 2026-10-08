@@ -1246,22 +1246,6 @@
     },
     {
       "glosses": [
-        "YO",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé el brazo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé el brazo."
-    },
-    {
-      "glosses": [
         "BRAZO",
         "MIO"
       ],
@@ -1427,32 +1411,6 @@
     },
     {
       "glosses": [
-        "EL",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimó el brazo."
-    },
-    {
-      "glosses": [
-        "EL",
-        "O",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Él se lastimó el brazo."
-    },
-    {
-      "glosses": [
-        "EL",
-        "A",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ella se lastimó el brazo."
-    },
-    {
-      "glosses": [
         "AYER",
         "YO",
         "MAL"
@@ -1482,32 +1440,6 @@
         "MAL"
       ],
       "spanish": "Ayer yo me sentí mal."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimaron el brazo."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "O",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellos se lastimaron el brazo."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "A",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellas se lastimaron el brazo."
     },
     {
       "glosses": [
@@ -1747,32 +1679,6 @@
         "0"
       ],
       "spanish": "Mi edad es treinta años."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Nos lastimamos el brazo."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "O",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotros nos lastimamos el brazo."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "A",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotras nos lastimamos el brazo."
     },
     {
       "glosses": [
@@ -2327,24 +2233,6 @@
     },
     {
       "glosses": [
-        "PASADO",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimaste el brazo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimaste el brazo."
-    },
-    {
-      "glosses": [
         "VOS",
         "PODER"
       ],
@@ -2688,25 +2576,6 @@
         "COMO"
       ],
       "spanish": "¿Cómo me llamo?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR",
-        "DONDE"
-      ],
-      "spanish": "¿Dónde te lastimaste el brazo?"
-    },
-    {
-      "glosses": [
-        "VOS",
-        "BRAZO",
-        "LASTIMAR",
-        "DONDE"
-      ],
-      "spanish": "¿Dónde te lastimás el brazo?"
     },
     {
       "glosses": [
@@ -3396,38 +3265,6 @@
     },
     {
       "glosses": [
-        "YO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "Yo no lastimo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "No lastimo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "Yo no me lastimo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "No me lastimo."
-    },
-    {
-      "glosses": [
         "BIEN"
       ],
       "spanish": "Bien."
@@ -3708,35 +3545,6 @@
     },
     {
       "glosses": [
-        "NOSOTROS",
-        "ROSTRO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "No nos lastimamos la cara."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "O",
-        "ROSTRO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "Nosotros no nos lastimamos la cara."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "A",
-        "ROSTRO",
-        "LASTIMAR",
-        "NO"
-      ],
-      "spanish": "Nosotras no nos lastimamos la cara."
-    },
-    {
-      "glosses": [
         "PLAZA",
         "ELLOS",
         "VIVIR_EN",
@@ -4001,22 +3809,6 @@
         "ROBAR"
       ],
       "spanish": "Ellas robaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimaste."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimaste."
     },
     {
       "glosses": [
@@ -6764,547 +6556,6 @@
     },
     {
       "glosses": [
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimo."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimás."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimás."
-    },
-    {
-      "glosses": [
-        "EL",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastima."
-    },
-    {
-      "glosses": [
-        "EL",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Él se lastima."
-    },
-    {
-      "glosses": [
-        "EL",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Ella se lastima."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "LASTIMAR"
-      ],
-      "spanish": "Nos lastimamos."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotros nos lastimamos."
-    },
-    {
-      "glosses": [
-        "NOSOTROS",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotras nos lastimamos."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastiman."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellos se lastiman."
-    },
-    {
-      "glosses": [
-        "ELLOS",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellas se lastiman."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "EL",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimó."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "EL",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Él se lastimó."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "EL",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Ella se lastimó."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "NOSOTROS",
-        "LASTIMAR"
-      ],
-      "spanish": "Nos lastimamos."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "NOSOTROS",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotros nos lastimamos."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "NOSOTROS",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Nosotras nos lastimamos."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "O",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellos se lastimaron."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "ELLOS",
-        "A",
-        "LASTIMAR"
-      ],
-      "spanish": "Ellas se lastimaron."
-    },
-    {
-      "glosses": [
-        "FUTURO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me voy a lastimar."
-    },
-    {
-      "glosses": [
-        "FUTURO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me voy a lastimar."
-    },
-    {
-      "glosses": [
-        "FUTURO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Te vas a lastimar."
-    },
-    {
-      "glosses": [
-        "FUTURO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te vas a lastimar."
-    },
-    {
-      "glosses": [
-        "YO",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé el ojo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé el ojo."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimaste el ojo."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimaste el ojo."
-    },
-    {
-      "glosses": [
-        "EL",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimó el ojo."
-    },
-    {
-      "glosses": [
-        "EL",
-        "O",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Él se lastimó el ojo."
-    },
-    {
-      "glosses": [
-        "EL",
-        "A",
-        "OJO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ella se lastimó el ojo."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé la cara."
-    },
-    {
-      "glosses": [
-        "YO",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé la cara."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimaste la cara."
-    },
-    {
-      "glosses": [
-        "VOS",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimaste la cara."
-    },
-    {
-      "glosses": [
-        "EL",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Se lastimó la cara."
-    },
-    {
-      "glosses": [
-        "EL",
-        "O",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Él se lastimó la cara."
-    },
-    {
-      "glosses": [
-        "EL",
-        "A",
-        "ROSTRO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ella se lastimó la cara."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "YO",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ayer me lastimé el brazo."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "YO",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ayer yo me lastimé el brazo."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ayer te lastimaste el brazo."
-    },
-    {
-      "glosses": [
-        "AYER",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR"
-      ],
-      "spanish": "Ayer vos te lastimaste el brazo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "CUCHILLO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé con un cuchillo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "CUCHILLO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé con el cuchillo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "CUCHILLO",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé con un cuchillo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "CUCHILLO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Te lastimaste con un cuchillo."
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "CUCHILLO",
-        "VOS",
-        "LASTIMAR"
-      ],
-      "spanish": "Vos te lastimaste con un cuchillo."
-    },
-    {
-      "glosses": [
-        "PLAZA",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé en la plaza."
-    },
-    {
-      "glosses": [
-        "PLAZA",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé en la plaza."
-    },
-    {
-      "glosses": [
-        "CASA",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Me lastimé en la casa."
-    },
-    {
-      "glosses": [
-        "CASA",
-        "YO",
-        "LASTIMAR"
-      ],
-      "spanish": "Yo me lastimé en la casa."
-    },
-    {
-      "glosses": [
-        "LASTIMAR",
-        "QUIEN"
-      ],
-      "spanish": "¿Quién se lastimó?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "LASTIMAR",
-        "QUIEN"
-      ],
-      "spanish": "¿Quién se lastimó?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "COMO"
-      ],
-      "spanish": "¿Cómo te lastimaste?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "COMO"
-      ],
-      "spanish": "¿Cómo te lastimaste vos?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR",
-        "COMO"
-      ],
-      "spanish": "¿Cómo te lastimaste el brazo?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "BRAZO",
-        "LASTIMAR",
-        "COMO"
-      ],
-      "spanish": "¿Cómo te lastimaste el brazo vos?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "CUANDO"
-      ],
-      "spanish": "¿Cuándo te lastimaste?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "CUANDO"
-      ],
-      "spanish": "¿Cuándo te lastimaste vos?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "DONDE"
-      ],
-      "spanish": "¿Dónde te lastimaste?"
-    },
-    {
-      "glosses": [
-        "PASADO",
-        "VOS",
-        "LASTIMAR",
-        "DONDE"
-      ],
-      "spanish": "¿Dónde te lastimaste vos?"
-    },
-    {
-      "glosses": [
         "GRACIAS",
         "AYUDAR"
       ],
@@ -7332,6 +6583,299 @@
         "GRACIAS"
       ],
       "spanish": "Muchas gracias por tu ayuda."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Llamo a la policía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Yo llamo a la policía."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Vos llamás a la policía."
+    },
+    {
+      "glosses": [
+        "VOS",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Llamás a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Llamé a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Yo llamé a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Llamaste a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Vos llamaste a la policía."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Voy a llamar a la policía."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Yo voy a llamar a la policía."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "POLICIA",
+        "LLAMAR"
+      ],
+      "spanish": "Llamaré a la policía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "AYUDAR"
+      ],
+      "spanish": "Ayudo a la policía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "AYUDAR"
+      ],
+      "spanish": "Yo ayudo a la policía."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "La policía me ayuda."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "VOS",
+        "AYUDAR"
+      ],
+      "spanish": "La policía te ayuda."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "POLICIA",
+        "YO",
+        "AYUDAR"
+      ],
+      "spanish": "La policía me ayudó."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "YO",
+        "AYUDAR",
+        "PODER"
+      ],
+      "spanish": "La policía me puede ayudar."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Veo a la policía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Yo veo a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Vi a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Yo vi a la policía."
+    },
+    {
+      "glosses": [
+        "CALLE",
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Veo a la policía en la calle."
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "YO",
+        "POLICIA",
+        "VER"
+      ],
+      "spanish": "Veo a la policía en la plaza."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde está la policía?"
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "DONDE"
+      ],
+      "spanish": "¿Dónde queda la policía?"
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "LLAMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién llama a la policía?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "POLICIA",
+        "LLAMAR",
+        "QUIEN"
+      ],
+      "spanish": "¿Quién llamó a la policía?"
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No llamo a la policía."
+    },
+    {
+      "glosses": [
+        "YO",
+        "POLICIA",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "Yo no llamo a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No llamé a la policía."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "YO",
+        "POLICIA",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "Yo no llamé a la policía."
+    },
+    {
+      "glosses": [
+        "FUTURO",
+        "YO",
+        "POLICIA",
+        "LLAMAR",
+        "NO"
+      ],
+      "spanish": "No voy a llamar a la policía."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "HERMANO",
+        "MIO"
+      ],
+      "spanish": "La policía es mi hermano."
+    },
+    {
+      "glosses": [
+        "POLICIA",
+        "HERMANO",
+        "A",
+        "MIO"
+      ],
+      "spanish": "La policía es mi hermana."
     }
   ]
 }

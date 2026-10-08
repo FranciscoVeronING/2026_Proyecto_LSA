@@ -1,93 +1,11 @@
 {
   "test_dataset": [
     {
-      "category": "pronombre_objeto_segunda_persona_en_pasado",
-      "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
-      "spanish": [
-        "Te llamé.",
-        "Yo te llamé.",
-        "Te llamé a vos.",
-        "Yo te llamé a vos."
-      ]
-    },
-    {
-      "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
-      "glosses": ["PASADO", "YO", "VOS", "VER"],
-      "spanish": [
-        "Te vi.",
-        "Yo te vi.",
-        "Te vi a vos.",
-        "Yo te vi a vos."
-      ]
-    },
-    {
-      "category": "pronombre_objeto_segunda_persona_futuro",
-      "glosses": ["FUTURO", "YO", "VOS", "TENER"],
-      "spanish": [
-        "Te voy a tener.",
-        "Yo te voy a tener.",
-        "Te tendré.",
-        "Yo te tendré.",
-        "Te voy a tener a vos.",
-        "Yo te voy a tener a vos."
-      ]
-    },
-    {
-      "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
-      "glosses": ["PASADO", "PLAZA", "ELLOS", "A", "VIVIR", "DONDE"],
-      "spanish": [
-        "¿Dónde vivían ellas en la plaza?",
-        "¿Dónde vivieron ellas en la plaza?"
-      ]
-    },
-    {
-      "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
-      "glosses": ["PASADO", "CALLE", "VOS", "VIVIR", "DONDE"],
-      "spanish": [
-        "¿Dónde vivías en la calle?",
-        "¿Dónde vivías vos en la calle?",
-        "¿Dónde viviste en la calle?",
-        "¿Dónde viviste vos en la calle?"
-      ]
-    },
-    {
-      "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
-      "glosses": ["PASADO", "ELLOS", "TENER", "QUE"],
-      "spanish": [
-        "¿Qué tuvieron?",
-        "¿Qué tenían?"
-      ]
-    },
-    {
-      "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
-      "glosses": ["PASADO", "VOS", "LLAMAR", "QUE"],
-      "spanish": [
-        "¿Qué llamaste?",
-        "¿Qué llamaste vos?"
-      ]
-    },
-    {
       "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
       "glosses": ["PASADO", "ELLOS", "O", "YO", "VER"],
       "spanish": [
         "Ellos me vieron.",
         "Ellos me vieron a mí."
-      ]
-    },
-    {
-      "category": "pregunta_wh_identidad_tiempo_pasado",
-      "glosses": ["PASADO", "HERMANO", "TUYO", "QUIEN"],
-      "spanish": [
-        "¿Quién era tu hermano?",
-        "¿Quién fue tu hermano?"
-      ]
-    },
-    {
-      "category": "pregunta_wh_identidad_tiempo_pasado_masculino_explicito",
-      "glosses": ["PASADO", "HERMANO", "O", "TUYO", "QUIEN"],
-      "spanish": [
-        "¿Quién era tu hermano?",
-        "¿Quién fue tu hermano?"
       ]
     },
     {
@@ -183,6 +101,86 @@
         "Mi número de DNI es 18333940.",
         "Mi DNI es 18333940.",
         "El número de mi documento es 18333940."
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_presente",
+      "glosses": ["YO", "POLICIA", "LLAMAR"],
+      "spanish": [
+        "Llamo a la policía.",
+        "Yo llamo a la policía."
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_futuro",
+      "glosses": ["FUTURO", "YO", "POLICIA", "LLAMAR"],
+      "spanish": [
+        "Voy a llamar a la policía.",
+        "Yo voy a llamar a la policía.",
+        "Llamaré a la policía.",
+        "Yo llamaré a la policía."
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_pasado",
+      "glosses": ["PASADO", "YO", "POLICIA", "LLAMAR"],
+      "spanish": [
+        "Llamé a la policía.",
+        "Yo llamé a la policía."
+      ]
+    },
+    {
+      "category": "policia_sujeto_agente_ayuda_presente",
+      "glosses": ["POLICIA", "YO", "AYUDAR"],
+      "spanish": [
+        "La policía me ayuda.",
+        "La policía me está ayudando."
+      ]
+    },
+    {
+      "category": "policia_sujeto_agente_ayuda_modal_poder",
+      "glosses": ["POLICIA", "YO", "AYUDAR", "PODER"],
+      "spanish": [
+        "La policía me puede ayudar.",
+        "La policía es capaz de ayudarme."
+      ]
+    },
+    {
+      "category": "policia_percepcion_locativo_calle",
+      "glosses": ["CALLE", "YO", "POLICIA", "VER"],
+      "spanish": [
+        "Veo a la policía en la calle.",
+        "Yo veo a la policía en la calle."
+      ]
+    },
+    {
+      "category": "policia_pregunta_wh_ubicacion",
+      "glosses": ["POLICIA", "DONDE"],
+      "spanish": [
+        "¿Dónde está la policía?",
+        "¿Dónde queda la policía?"
+      ]
+    },
+    {
+      "category": "policia_pregunta_wh_agente_pasado",
+      "glosses": ["PASADO", "POLICIA", "LLAMAR", "QUIEN"],
+      "spanish": [
+        "¿Quién llamó a la policía?"
+      ]
+    },
+    {
+      "category": "policia_objeto_pasado_negacion",
+      "glosses": ["PASADO", "YO", "POLICIA", "LLAMAR", "NO"],
+      "spanish": [
+        "No llamé a la policía.",
+        "Yo no llamé a la policía."
+      ]
+    },
+    {
+      "category": "policia_predicado_parentesco_femenino_explicito",
+      "glosses": ["POLICIA", "HERMANO", "A", "MIO"],
+      "spanish": [
+        "La policía es mi hermana."
       ]
     }
   ]
