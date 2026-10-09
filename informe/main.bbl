@@ -707,6 +707,44 @@
       \field{pages}{1459\bibrangedash 1469}
       \range{pages}{11}
     \endentry
+    \entry{mann1947test}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5cf19aa5110d49e31bafd83ce394b092}{%
+           family={Mann},
+           familyi={M\bibinitperiod},
+           given={Henry\bibnamedelima B.},
+           giveni={H\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c28a32eaa7f3921fc42ff47698be3a36}{%
+           family={Whitney},
+           familyi={W\bibinitperiod},
+           given={Donald\bibnamedelima R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{fullhash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{fullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{bibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorbibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authornamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorfullhash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorfullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Mathematical Statistics}
+      \field{number}{1}
+      \field{title}{On a Test of Whether One of Two Random Variables is Stochastically Larger than the Other}
+      \field{volume}{18}
+      \field{year}{1947}
+      \field{pages}{50\bibrangedash 60}
+      \range{pages}{11}
+    \endentry
     \entry{massone1993numero}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
@@ -915,7 +953,7 @@
       \verb https://github.com/fastapi/fastapi
       \endverb
     \endentry
-    \entry{argentina2020ley27710}{misc}{}{}
+    \entry{argentina2023ley27710}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=14588ffab73b8df534b4c808edb904db}{%
            family={{República Argentina}},
@@ -938,7 +976,7 @@
       \field{labeltitlesource}{title}
       \field{howpublished}{Boletín Oficial}
       \field{title}{Ley 27.710 --- Lengua de Señas Argentina}
-      \field{year}{2020}
+      \field{year}{2023}
     \endentry
     \entry{ronchetti2016lsa64}{article}{}{}
       \name{author}{5}{}{%
@@ -1971,6 +2009,44 @@
       \field{pages}{1459\bibrangedash 1469}
       \range{pages}{11}
     \endentry
+    \entry{mann1947test}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5cf19aa5110d49e31bafd83ce394b092}{%
+           family={Mann},
+           familyi={M\bibinitperiod},
+           given={Henry\bibnamedelima B.},
+           giveni={H\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c28a32eaa7f3921fc42ff47698be3a36}{%
+           family={Whitney},
+           familyi={W\bibinitperiod},
+           given={Donald\bibnamedelima R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{fullhash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{fullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{bibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorbibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authornamehash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorfullhash}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{authorfullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Mathematical Statistics}
+      \field{number}{1}
+      \field{title}{On a Test of Whether One of Two Random Variables is Stochastically Larger than the Other}
+      \field{volume}{18}
+      \field{year}{1947}
+      \field{pages}{50\bibrangedash 60}
+      \range{pages}{11}
+    \endentry
     \entry{massone1993numero}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
@@ -2179,7 +2255,7 @@
       \verb https://github.com/fastapi/fastapi
       \endverb
     \endentry
-    \entry{argentina2020ley27710}{misc}{}{}
+    \entry{argentina2023ley27710}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=14588ffab73b8df534b4c808edb904db}{%
            family={{República Argentina}},
@@ -2202,7 +2278,7 @@
       \field{labeltitlesource}{title}
       \field{howpublished}{Boletín Oficial}
       \field{title}{Ley 27.710 --- Lengua de Señas Argentina}
-      \field{year}{2020}
+      \field{year}{2023}
     \endentry
     \entry{ronchetti2016lsa64}{article}{}{}
       \name{author}{5}{}{%
@@ -2546,6 +2622,7 @@
       \field{year}{2020}
     \endentry
   \enddatalist
+  \missing{argentina2020ley27710}
 \endrefsection
 \endinput
 

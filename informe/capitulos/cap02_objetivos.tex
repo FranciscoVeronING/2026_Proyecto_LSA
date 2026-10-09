@@ -1,5 +1,4 @@
 
-
 % ====================================================================
 \chapter{Objetivos}
 % ====================================================================
@@ -9,15 +8,29 @@ Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y 
 
 \section{Objetivos específicos}
 \begin{itemize}
-    \item Implementar un módulo de visión computacional y clasificación gestual local basado en la extracción de puntos de referencia corporales (esqueleto y manos) para reconocer un vocabulario de 100 señas de LSA.
-    \item Diseñar e integrar un módulo de traducción semántica bidireccional desplegable como servicio:
-    \begin{enumerate}
-        \item Canal directo (LSA $\rightarrow$ Español): transformar secuencias de glosas aisladas en oraciones gramaticalmente fluidas en español rioplatense, considerando contexto conversacional.
-        \item Canal inverso (Español $\rightarrow$ LSA): transformar oraciones en español oral a secuencias de glosas estructuradas.
-    \end{enumerate}
-    \item Implementar un mecanismo de visualización gestual inversa mediante un avatar tridimensional capaz de animar las señas resultantes y deletrear dactilológicamente términos ausentes en el vocabulario.
-    \item Formular y documentar el diseño de una arquitectura escalable en la nube para el aprovisionamiento concurrente de los servicios semánticos, mitigando cuellos de botella en el hardware cliente.
-    \item Diseñar mecanismos heurísticos de segmentación continua (delimitación de inicio y fin de señas, vaciado de búfer de enunciados y compuertas de filtrado de repeticiones).
-    \item Garantizar la privacidad de los usuarios mediante la ejecución de los algoritmos de visión y clasificación de forma local en el dispositivo del cliente, transmitiendo a la nube únicamente cargas textuales desidentificadas.
-    \item Desarrollar la arquitectura de software de una extensión de navegador para plataformas de videoconferencia (Google Meet) articulada con un motor de ejecución en segundo plano (ILSA).
+    \item Implementar un módulo local de visión computacional y clasificación gestual basado en la extracción de puntos de referencia corporales para el reconocimiento de un vocabulario de 100 señas de LSA.
+    \item Diseñar e integrar el servicio semántico del canal directo (LSA $\rightarrow$ Español) para transformar secuencias de glosas aisladas en oraciones fluidas y gramaticalmente correctas en español rioplatense en relacion con el contexto conversacional.
+    \item Diseñar e integrar el servicio semántico del canal inverso (Español $\rightarrow$ LSA) para reestructurar oraciones del español oral a secuencias de glosas alineadas con la gramática \textit{Topic-Comment} de la LSA.
+    \item Implementar un módulo de visualización gestual inversa mediante un avatar tridimensional capaz de animar las señas resultantes y ejecutar deletreo dactilológico para términos ausentes en el vocabulario.
+    \item Diseñar una arquitectura escalable en la nube para el aprovisionamiento concurrente de los servicios semánticos, lo que desacopla el procesamiento del hardware cliente.
+    \item Garantizar la privacidad de los usuarios al ejecutar la extracción de características y clasificación de forma local en el dispositivo cliente y transmitir hacia la nube únicamente cargas textuales.
+    \item Desarrollar la arquitectura de software de una extensión para navegadores basados en Chromium articulada con un motor de ejecución en segundo plano (ILSA).
 \end{itemize}
+
+
+- se menciona el concepto de glosas, pero antes no se explica. Se va a explicar en las palabras claves y despues lo mencionariamos en cap 3 donde hablamos de LSA.
+-  la extension solo en google meet por ahora? onda es para google nomas? me olvide de preguntarte
+
+es compatible con cualquier navegador basado en Chromium. No lo queria dejar de la otra forma porq era muy general y tecnicamente no funciona en todos los navegadores, pero los q usan chromium son bastantes: Google Chrome, Microsoft Edge, Brave, Opera, Vivaldi. No funcionarian en Mozilla o en Safari (El de apple)
+ 
+
+
+
+
+
+
+
+
+
+
+
