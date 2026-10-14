@@ -1,138 +1,49 @@
-"""Un solo GGUF: Llama 3.2 1B. Sin archivo local → available=False hasta descargarlo."""
+"""Rutas estrictas de GGUF: solo ``src/semantic/models/{sordo,oyente}/``."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
-import os
-
-from semantic.config import OYENTE_GGUF, OYENTE_GGUF_DIR, OUTPUTS_DIR, SORDO_GGUF_DIR
-
-
-@dataclass(frozen=True)
-class SemanticModelSpec:
-    id: str
-    folder: str
-    chat_format: str  # chatml | llama3
-
-
-GGUF_ASSET_NAME = "llama-3.2-1b-instruct.Q4_K_M.gguf"
-
-SEMANTIC_FRIENDLY_LABELS: dict[str, str] = {
-    "llama-3.2-1b": "Traductor",
-}
-
-SEMANTIC_COMPUTE: dict[str, str] = {
-    "llama-3.2-1b": "liviano",
-}
-
-SEMANTIC_MODEL_SPECS: tuple[SemanticModelSpec, ...] = (
-    SemanticModelSpec("llama-3.2-1b", "unsloth_Llama-3.2-1B-Instruct", "llama3"),
+from semantic.config import (
+    BACKUP_GGUF,
+    OYENTE_GGUF_DIR,
+    PRIMARY_GGUF,
+    SORDO_GGUF_DIR,
 )
 
 
-def friendly_label(model_id: str) -> str:
-    return SEMANTIC_FRIENDLY_LABELS.get(model_id or "llama-3.2-1b", "Traductor")
-
-
-def compute_label(model_id: str) -> str:
-    return SEMANTIC_COMPUTE.get(model_id or "llama-3.2-1b", "liviano")
-
-
-def display_label(model_id: str) -> str:
-    return friendly_label(model_id)
-
-
-def spec_by_id(model_id: str) -> SemanticModelSpec:
-    for spec in SEMANTIC_MODEL_SPECS:
-        if spec.id == model_id:
-            return spec
-    raise KeyError(f"Modelo semántico desconocido: {model_id!r}")
-
-
-_WEIGHT_GLOBS = ("*.gguf",)
-
-
-def first_gguf_in(folder: Path, prefer: tuple[str, ...] = ()) -> Optional[Path]:
-    if not folder.is_dir():
-        return None
-    files: list[Path] = []
-    seen = set()
-    for pattern in _WEIGHT_GLOBS:
-        for path in folder.glob(pattern):
-            if not path.is_file():
-                continue
-            key = str(path.resolve()).lower()
-            if key in seen:
-                continue
-            seen.add(key)
-            files.append(path)
-    if not files:
-        return None
-    files.sort(key=lambda p: p.name.lower())
-    for needle in prefer:
-        n = needle.lower()
-        for path in files:
-            if n in path.name.lower():
-                return path
-    return files[0]
-
-
-def resolve_sordo_gguf() -> Optional[Path]:
-    found = first_gguf_in(SORDO_GGUF_DIR, prefer=("llama",))
-    if found is not None:
-        return found
-    return resolve_gguf_path(spec_by_id("llama-3.2-1b"))
-
-
-def resolve_oyente_gguf() -> Optional[Path]:
-    env = (OYENTE_GGUF or "").strip()
-    if env:
-        path = Path(env)
+def gguf_candidates(folder: Path) -> list[Path]:
+    """Principal (Qwen) y backup (Llama), en ese orden, si el archivo existe."""
+    out: list[Path] = []
+    for name in (PRIMARY_GGUF, BACKUP_GGUF):
+        path = folder / name
         if path.is_file():
-            return path
-    found = first_gguf_in(OYENTE_GGUF_DIR, prefer=("qwen", "oyente"))
-    if found is not None:
-        return found
-    return None
+            out.append(path.resolve())
+    return out
 
 
-def resolve_gguf_path(spec: SemanticModelSpec) -> Optional[Path]:
-    appdata = os.environ.get("LOCALAPPDATA") or os.environ.get("HOME") or str(Path.home())
-    candidates = (
-        first_gguf_in(SORDO_GGUF_DIR),
-        OUTPUTS_DIR / f"{spec.folder}_gguf" / GGUF_ASSET_NAME,
-        OUTPUTS_DIR / spec.folder / GGUF_ASSET_NAME,
-        Path(appdata) / "ILSA" / "models" / GGUF_ASSET_NAME,
-    )
-    for path in candidates:
-        if path is not None and path.is_file():
-            return path
-    for folder in (
-        OUTPUTS_DIR / f"{spec.folder}_gguf",
-        OUTPUTS_DIR / spec.folder,
-    ):
-        if not folder.is_dir():
-            continue
-        files = sorted(folder.glob("*.gguf"))
-        if files:
-            return files[0]
-    return None
+def sordo_candidates() -> list[Path]:
+    return gguf_candidates(SORDO_GGUF_DIR)
 
 
-def list_semantic_models() -> List[dict]:
-    items = []
-    for spec in SEMANTIC_MODEL_SPECS:
-        path = resolve_gguf_path(spec)
-        items.append(
-            {
-                "id": spec.id,
-                "label": display_label(spec.id),
-                "available": path is not None,
-                "path": str(path) if path else None,
-                "chat_format": spec.chat_format,
-            }
-        )
-    return items
+def oyente_candidates() -> list[Path]:
+    return gguf_candidates(OYENTE_GGUF_DIR)
+
+
+def describe_slot(folder: Path) -> dict:
+    primary = folder / PRIMARY_GGUF
+    backup = folder / BACKUP_GGUF
+    return {
+        "dir": str(folder.resolve()),
+        "primary": PRIMARY_GGUF,
+        "primary_present": primary.is_file(),
+        "backup": BACKUP_GGUF,
+        "backup_present": backup.is_file(),
+    }
+
+
+def model_used_name(path: Optional[str]) -> str:
+    if not path:
+        return ""
+    return Path(path).name

@@ -1,45 +1,10 @@
-dataset/
-*.mp4
-
 __pycache__/
 *.pyc
 .venv/
+venv/
 .env
 
-# Caché autogenerada por Unsloth al importar sus trainers
-unsloth_compiled_cache/
-
-# Salidas del modo --eval
-eval_*.csv
-
-/models/
-*.h5
-*.tflite
-
-src/semantic/outputs/*Instruct
+# Modelos GGUF (van en la imagen o se montan al correr)
 *.gguf
-
-# llama-server.exe descargado en runtime (Windows / Python 3.14)
+src/semantic/outputs/
 src/semantic/bin/
-
-# Diccionario visual opcional (no forma parte del runtime)
-señario1/
-señario2/
-
-# Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
-extension/bin/*.zip
-extension/bin/*.exe
-
-# URL viva de ngrok (subir con packaging/upload_semantic_url.ps1)
-packaging/semantic_url.txt
-
-# Empaquetado PyInstaller
-build/
-dist/
-*.spec.bak
-packaging/_env_cpu/
-
-# Binarios pesados de MediaPipe (regenerar con packaging/fetch_extension_assets.py)
-extension/vendor/mediapipe/*.data
-extension/vendor/mediapipe/*.wasm
-extension/vendor/mediapipe/*.tflite

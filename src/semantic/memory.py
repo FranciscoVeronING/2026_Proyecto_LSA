@@ -1,4 +1,4 @@
-"""Memoria conversacional para interpretación LSA ↔ persona oyente."""
+"""Memoria conversacional del servidor semántico (sin dependencia de ``core``)."""
 
 from __future__ import annotations
 
@@ -15,25 +15,14 @@ ROLE_HEARING = "hearing"
 
 @dataclass
 class Turn:
-    """Un turno de la conversación."""
-
-    role: str  # signer | hearing
+    role: str
     text: str
     glosses: Optional[str] = None
     ts: float = field(default_factory=time.time)
 
 
 class ConversationMemory:
-    """
-    Ventana deslizante de turnos para contexto de la LLM + log de sesión.
-
-    - window: últimos `maxlen` turnos (lo que ve el modelo)
-    - session: historial completo de la sesión (auditoría / futuro UI)
-    - signer: interpretación LSA → español (glosas opcionales)
-    - hearing: texto o voz del oyente (STT/UI pendiente)
-
-    Thread-safe: el hilo semántico escribe mientras la UI puede limpiar.
-    """
+    """Ventana de turnos para el prompt de la LLM + log de sesión."""
 
     def __init__(self, maxlen: int = 10):
         if maxlen < 1:
@@ -56,19 +45,16 @@ class ConversationMemory:
         self._append(Turn(role=ROLE_SIGNER, text=text, glosses=glosses_clean))
 
     def add_hearing(self, text: str) -> None:
-        """Reservado para captura por texto o STT del oyente."""
         text = (text or "").strip()
         if not text:
             return
         self._append(Turn(role=ROLE_HEARING, text=text))
 
     def clear(self) -> None:
-        """Corta el contexto que ve la LLM; conserva el log de la sesión."""
         with self._lock:
             self._window.clear()
 
     def reset_session(self) -> None:
-        """Descarta también el log completo (nueva sesión de trabajo)."""
         with self._lock:
             self._window.clear()
             self._session.clear()
@@ -84,12 +70,6 @@ class ConversationMemory:
             return tuple(self._session)
 
     def as_messages(self) -> List[dict]:
-        """
-        Historial en formato chat (user/assistant) para apply_chat_template.
-
-        - signer: user=Glosas / assistant=español
-        - hearing: user=Persona oyente / assistant=ack corto (mantiene alternancia)
-        """
         messages: List[dict] = []
         for turn in self.turns:
             if turn.role == ROLE_SIGNER:

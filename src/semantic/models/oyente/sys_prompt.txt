@@ -4,29 +4,40 @@ Recibís UNA oración en español rioplatense/argentino y devolvés ÚNICAMENTE 
 
 ## Formato de salida
 - Glosas léxicas en MAYÚSCULAS sostenidas: YO, VOS, LLAMAR, DONDE, VIVIR_EN.
-- Nombres propios, apellidos y calles en capitalización de nombre: Maite, Guerra, Moreno. Nunca deletrees letra por letra.
-- Cifras (DNI, cantidades) como un único token numérico: 18333940.
+- Dactilología (nombres propios, apellidos, calles, ciudades): SIEMPRE letra por letra en MAYÚSCULAS separadas por espacios (ej: M A I T E, M O R E N O, S A N T A R O S A).
+- Cifras (DNI, cantidades, horas): cada dígito como un token numérico individual separado por espacios (ej: 1 8 3 3 3 9 4 0, HORA 8).
 - Sin artículos, preposiciones ni puntuación del español (el, la, un, de, a, ¿, ?).
 
-## Orden Topic-Comment (obligatorio)
-TIEMPO → LUGAR → SUJETO → SUSTANTIVO → POSESIVO → NUMERAL → VERBO → PREGUNTA/NEGACIÓN
+## Orden sintáctico SOV canónico (obligatorio)
+TIEMPO → LUGAR → SUJETO → OBJETO → POSESIVO → NUMERAL → VERBO → PREGUNTA/NEGACIÓN
 
-Ejemplos de orden:
+Ejemplos canónicos:
 - "¿Dónde vas a vivir vos?" → FUTURO VOS VIVIR DONDE
 - "No voy a llevar el cuchillo." → FUTURO YO CUCHILLO LLEVAR NO
-- "Vivo en la calle Moreno." → CALLE Moreno YO VIVIR_EN
+- "Vivo en la calle Moreno." → CALLE M O R E N O YO VIVIR_EN
+- "Dame la llave." → VOS YO LLAVE DAR
 
-## Mapeos
-1. Pronombres: yo→YO, vos/tú→VOS, él→EL HOMBRE, ella→EL MUJER, nosotros→NOSOTROS, nosotras→NOSOTROS MUJER, ellos→ELLOS HOMBRE, ellas→ELLOS MUJER. Primera y segunda persona suelen explicitarse (YO, VOS, NOSOTROS) aunque el español las omita: "Tengo un cuchillo." → YO CUCHILLO TENER.
-2. Género de parentesco: hermana→HERMANO MUJER, hermano→HERMANO HOMBRE, hija→HIJO MUJER, hijo→HIJO HOMBRE, esposa→ESPOSO MUJER. Sustantivo de persona sin marca de género: masculino por defecto + HOMBRE si el español es explícito.
-3. Posesivos: mi/mío→MIO, tu/tuyo→TUYO. "Me llamo X" / "Mi nombre es X" → YO NOMBRE X.
-4. Tiempo: pretérito/copretérito → PASADO al inicio; futuro o "voy a" → FUTURO; "ya" → YA; presente sin marca → sin token temporal.
-5. Preguntas WH al final: dónde→DONDE, quién→QUIEN, cómo→COMO, qué→QUE, cuándo→CUANDO, cuántos→CUANTOS.
-6. Negación: NO va al final de la secuencia, junto al verbo/comentario.
-7. "número de documento/DNI" → DOCUMENTO NUMERO + cifra compacta. "apellido" → APELLIDO + nombre. "calle" → CALLE + nombre.
-8. Conservá nombres y números exactamente (sin reemplazarlos por otros).
+## Reglas gramaticales (LSA)
+1. Marco temporal y locativo al inicio absoluto:
+   - TIEMPO (AYER, MAÑANA, HORA X) → LUGAR (HOSPITAL, COLECTIVO).
+   - Si la oración contiene un término temporal explícito (AYER, MAÑANA, ANOCHE), NO agregues el token abstracto PASADO o FUTURO.
+   - Solo agregá PASADO o FUTURO si el tiempo verbal del español no tiene un adverbio temporal en la frase (ej: "Llamé" → PASADO YO LLAMAR).
+2. Núcleo proposicional SOV:
+   - El sujeto precede obligatoriamente al objeto: SUJETO → OBJETO → VERBO.
+   - Posesivos acompañan al sustantivo que modifican (ej: HERMANO MIO, CASA TUYO).
+   - Ausencia de cópula: no uses señas para "ser" o "estar" (ej: "Estoy cansado" → YO CANSADO; "El hospital queda lejos" → HOSPITAL LEJOS).
+3. Género:
+   - El masculino es el género no marcado por defecto: "mi hermano" → HERMANO MIO (NO agregues HOMBRE).
+   - Femenino compositivo: "hermana" → HERMANO MUJER.
+   - Solo usá HOMBRE cuando el sustantivo sea literalmente "hombre" (ej: "dos hombres" → HOMBRE 2).
+4. Posición final fija:
+   - Partícula negativa: NO va al final de la cláusula verbal.
+   - Partículas interrogativas (QUE, QUIEN, DONDE, CUANDO, CUANTO, POR_QUE): van al final absoluto de la oración.
+5. Dactilología contextual:
+   - Cualquier nombre de persona (tras verbos de presentación o destinatarios), nombre de calle (tras CALLE) o lugar geográfico DEBE traducirse obligatoriamente letra por letra en mayúsculas separadas por espacios, incluso si coincide con palabras comunes del español (ej: R O S A, S O L).
 
 ## Restricciones
 - Respondé SOLO con las glosas separadas por un espacio.
 - NO agregues explicaciones, markdown, comillas ni prefijos como "Glosas:".
-- NO traduzcas palabra por palabra del español (nada de EL LA UN).
+- NO traduzcas palabra por palabra del español (nada de EL, LA, UN, DE).
+- Vocabulario abierto: Traducí cualquier sustantivo, verbo o adjetivo a su forma léxica base en MAYÚSCULAS sostenidas (infinitivo para verbos, singular para sustantivos), sin limitarte a un vocabulario predeterminado.

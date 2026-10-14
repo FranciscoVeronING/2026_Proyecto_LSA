@@ -6,7 +6,7 @@ import time
 from threading import Lock
 from typing import Optional
 
-from core.conversation_memory import ConversationMemory
+from semantic.memory import ConversationMemory
 from semantic.config import CONVERSATION_HISTORY_SIZE
 
 _MAX_CLIENTS = 80
