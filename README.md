@@ -3,8 +3,8 @@
 Interpretación de LSA en tiempo real. **Empezá a leer el código por**
 [`docs/ORDEN_DE_LECTURA.md`](docs/ORDEN_DE_LECTURA.md).
 
-Este repositorio traduce **señas LSA a español** (y, en modo oyente, voz a
-subtítulos en Meet).
+Este repositorio traduce **señas LSA a español** en Google Meet (extensión
+Chrome + motor ILSA). El modo oyente (voz → glosas) queda para más adelante.
 
 La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
 (pose + dos manos). Ese esqueleto se recorta en **una seña a la vez**, se
@@ -12,22 +12,15 @@ clasifica como **glosa** (etiqueta léxica: `HOLA`, `MAMA`, `A`, …) y, cuando 
 persona deja de señar unos segundos, ILSA manda las glosas a Cloud Run
 y recibe una **oración en español**. ILSA en la laptop de Meet **solo clasifica**.
 
-Hay **dos formas de usarlo**, que comparten el mismo clasificador y la misma LLM:
-
-| Uso | Entrada | Cómo se corre |
-|-----|---------|----------------|
-| App de escritorio | Webcam + ventana OpenCV | `python run.py` |
-| Extensión Chrome + ILSA | Google Meet | `python run_backend.py` o `ILSA.exe`, más la extensión descomprimida |
-
-No hace falta haber visto el código antes: el mapa de archivos y el flujo
-completo están en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+Se corre con `python run_backend.py` o `ILSA.exe`, más la extensión
+descomprimida. El mapa de archivos está en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
 ---
 
 ## Qué necesitás
 
 - Windows (ILSA.exe se arma con PyInstaller en esta PC).
-- Python 3.9–3.12 (escritorio / desarrollo) o el exe empaquetado.
+- Python 3.9–3.12 (desarrollo) o el exe empaquetado.
 - Chrome, si vas a usar la extensión.
 - El traductor semántico vive en Cloud Run
   (`https://ilsa-semantic-service-705664945052.us-central1.run.app`).
@@ -48,23 +41,6 @@ git lfs pull
 pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
-
----
-
-## App de escritorio
-
-```bash
-python run.py
-```
-
-| Comando | Qué hace |
-|---------|----------|
-| `python run.py` | Cámara, glosas, español y (si está activo) voz |
-| `python run.py --no-llm` | Solo glosas; arranque más rápido |
-| `python run.py --eval` | Recorre señas de evaluación y escribe un CSV |
-
-Teclas en la ventana: `q` sale, `m` cambia el modo de captura, `c` limpia el
-contexto de conversación, `n` saltea una seña en modo evaluación.
 
 ---
 
@@ -139,9 +115,6 @@ Qué ocurre:
   última glosa, español.
 - En modo sordo los JPEG van al *service worker* → offscreen → sandbox
   MediaPipe → `POST /sign`.
-- En modo oyente el reconocimiento de voz corre en MAIN y el texto se pinta
-  en el mismo canvas.
-
 El español **desaparece solo a los 8 segundos**. Si llega una oración nueva,
 el reloj se reinicia.
 
@@ -149,8 +122,7 @@ el reloj se reinicia.
 
 ## Cómo se decide “una seña”
 
-Alineado entre escritorio y extensión (`src/classifier/config.py` y
-`extension/lib/capture.js`):
+Alineado entre `src/classifier/config.py` y `extension/lib/capture.js`:
 
 1. **Empieza** cuando hay al menos una mano usable (modo `auto`).
 2. **Termina** cuando el buffer llega a 60 frames **o** ambas manos desaparecen
@@ -168,16 +140,14 @@ El clasificador espera un tensor de forma `(1, 16, 225)`: 16 frames ×
 ## Mapa del repositorio
 
 ```
-run.py                 App de escritorio
 run_backend.py         Ventana ILSA + API local
 LSABackend.bat         Atajo Windows al backend
 requirements.txt
 packaging/             WASM MediaPipe, PyInstaller
 extension/             Extensión Manifest V3
 src/
-  app/                 OpenCV, UI, workers, eval
   backend/             FastAPI, ventana ILSA, sesión
-  core/                Landmarks, memoria, política de repeticiones
+  core/                Landmarks, enunciado, política de repeticiones
   classifier/          TinySkeleton + pesos + lista de clases
   semantic/            Cliente HTTP de Cloud Run (`remote.py`)
 docs/ARQUITECTURA.md   Pipeline, Meet, API, captura

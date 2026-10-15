@@ -61,7 +61,7 @@ recortada**.
 ## 3. Recortar la seña en el tiempo (25 min)
 
 1. `extension/lib/capture.js` — máquina de estados (empieza / gracia / flush).
-2. `src/app/utterance.py` — `UtteranceBuffer.try_add`.
+2. `src/core/utterance.py` — `UtteranceBuffer.try_add`.
 3. `src/core/repeat_policy.py` — letras vs dígitos vs glosas léxicas.
 
 Pregunta: *¿qué cierra el enunciado, la seña o el reloj de 4 s?*
@@ -93,16 +93,6 @@ Leé esto **después** de saber qué es una seña.
 8. `extension/sandbox.js` — WASM de MediaPipe (CSP relajado).
 
 Pregunta: *¿por qué Meet ve un canvas y no la cámara cruda solo cuando ILSA está encendido?*
-
----
-
-## 6. Escritorio (opcional)
-
-Misma idea, otra UI. Solo si te interesa `python run.py`.
-
-1. `run.py` → `src/app/main.py`
-2. `src/app/capture.py` — equivalente de `capture.js`
-3. `src/app/workers.py` / `ui.py`
 
 ---
 

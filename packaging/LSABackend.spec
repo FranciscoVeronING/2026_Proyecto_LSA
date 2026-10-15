@@ -17,7 +17,7 @@ hidden = (
     collect_submodules("classifier")
     + collect_submodules("core")
     + collect_submodules("backend")
-    + ["app.utterance", "semantic.remote", "semantic.config"]
+    + ["core.utterance", "semantic.remote", "semantic.config"]
 )
 
 _EXCLUDES = [

@@ -28,11 +28,16 @@ if getattr(sys, "frozen", False):
 import torch
 
 import classifier.config as cfg
-from app.utterance import UtteranceBuffer, normalize_gloss
+from core.utterance import UtteranceBuffer, normalize_gloss
 from backend.landmarks_payload import LandmarkSmoother, frames_to_matrix, vector_from_frame
 from classifier.arch import load_classifier_bundle
 from core.conversation_memory import ConversationMemory
-from core.repeat_policy import collapse_literal_runs, format_literal_utterance
+from core.repeat_policy import (
+    collapse_literal_runs,
+    format_literal_utterance,
+    resolve_letter_lookalikes,
+    simple_lexical_spanish,
+)
 from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CONVERSATION_HISTORY
 
 
@@ -296,16 +301,28 @@ class LSASession:
             total_ms=round(total_ms, 1),
             n_glosses=len(closed),
         )
-        print(f"[backend] /utterance/end respuesta: español={text!r} via={via} {total_ms:.0f}ms")
+        srv = f" server={server_ms:.0f}ms" if server_ms is not None else ""
+        print(
+            f"[backend] /utterance/end respuesta: español={text!r} via={via} "
+            f"{total_ms:.0f}ms{srv}"
+        )
         return snap
 
     def _translate(self, glosses: list[str]) -> tuple[str, str, float, float | None]:
         # Letras/dígitos van literales. Sin traductor remoto, devolvemos las glosas.
+        fixed = resolve_letter_lookalikes(glosses)
+        if fixed != list(glosses):
+            print(f"[backend] Lookalikes letra: {glosses!r} => {fixed!r}")
+            glosses = fixed
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
             print(f"[backend] Enunciado → literal: {joined} => {literal}")
             return literal, "literal", 0.0, None
+        simple = simple_lexical_spanish(glosses)
+        if simple is not None:
+            print(f"[backend] Enunciado → glosa directa: {joined} => {simple}")
+            return simple, "lexical", 0.0, None
         collapsed = " ".join(collapse_literal_runs(glosses))
         if collapsed != joined:
             print(f"[backend] Enunciado → LLM: {joined} => {collapsed}")

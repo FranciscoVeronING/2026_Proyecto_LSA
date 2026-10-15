@@ -33,26 +33,13 @@ cámara
   → buffer de glosas (anti-repetición, cooldown)
   → pausa ~4 s
   → POST /sordo (Cloud Run)  →  español
-  → (escritorio) voz pyttsx3
   → (Meet) texto quemado en el video + HUD
 ```
 
 El video **nunca** entra a PyTorch. Si MediaPipe falla, el clasificador no
 tiene nada que hacer.
 
-### 2.1 Escritorio (`python run.py`)
-
-- OpenCV abre la webcam.
-- MediaPipe **Python** (`mediapipe` en `requirements.txt`) corre en el mismo
-  proceso.
-- `src/app/capture.py` recorta señas.
-- `src/app/workers.py` llama al clasificador y a la LLM.
-- `src/app/ui.py` dibuja overlay y texto.
-
-Punto de entrada: `run.py` → `src/app/main.py`. Los flags `--eval-semantic` y
-`--probe-semantic` evitan importar OpenCV.
-
-### 2.2 Extensión + FastAPI (`python run_backend.py` o `ILSA.exe`)
+### 2.1 Extensión + FastAPI (`python run_backend.py` o `ILSA.exe`)
 
 Chrome no puede cargar el `.pth` ni el GGUF. La extensión solo:
 
@@ -60,8 +47,8 @@ Chrome no puede cargar el `.pth` ni el GGUF. La extensión solo:
 2. Decide cuándo cortar la seña (`extension/lib/capture.js`).
 3. POST JSON al backend.
 
-El backend (`src/backend/`) es el mismo TinySkeleton + la misma LLM que el
-escritorio, envueltos en una sesión (`LSASession` o `HearingSession`).
+El backend (`src/backend/`) envuelve TinySkeleton y el cliente de Cloud Run
+en una sesión (`LSASession` o `HearingSession`).
 
 ILSA tiene dos modos, elegidos en la ventana **antes** de Encender:
 
@@ -160,7 +147,6 @@ Modo `auto`: la primera mano usable **empieza** la grabación.
 - Nombres de clase: `mapeo_clases.json` / lista `SIGN_CLASSES` en `config.py`.
 - Vector por frame: 33×3 pose + 21×3 mano izq. + 21×3 mano der. = **225**.
 - En el motor ILSA (`LSASession`) el clasificador corre en **CPU**.
-- En `python run.py` PyTorch usa GPU si está disponible; si no, CPU.
 
 El backend aplica un suavizado EMA (`LandmarkSmoother`, α≈0.6) y luego arma
 el tensor (`frames_to_matrix`).

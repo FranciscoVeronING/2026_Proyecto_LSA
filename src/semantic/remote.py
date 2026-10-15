@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -13,8 +14,11 @@ from typing import Optional
 
 from semantic.config import CLOUD_SEMANTIC_URL, SEMANTIC_TOKEN
 
-_TIMEOUT = 45.0
+_TIMEOUT = 120.0
+_KEEPALIVE_SEC = 240.0
 _last_timing: dict = {"roundtrip_ms": None, "server_ms": None}
+_keepalive_started = False
+_keepalive_lock = threading.Lock()
 
 
 def semantic_url() -> str:
@@ -84,6 +88,10 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
     server_ms = data.get("ms")
     _last_timing["roundtrip_ms"] = round(roundtrip, 1)
     _last_timing["server_ms"] = float(server_ms) if isinstance(server_ms, (int, float)) else None
+    srv = _last_timing["server_ms"]
+    extra = f" server={srv:.0f}ms" if srv is not None else ""
+    print(f"[semantic] POST {path} roundtrip={roundtrip:.0f}ms{extra}")
+    _ensure_keepalive()
     return data
 
 
@@ -91,7 +99,7 @@ def last_timing() -> dict:
     return dict(_last_timing)
 
 
-def ping(timeout: float = 8.0) -> bool:
+def ping(timeout: float = 60.0) -> bool:
     base = semantic_url()
     if not base:
         print("[semantic] ping: no hay URL")
@@ -99,14 +107,32 @@ def ping(timeout: float = 8.0) -> bool:
     req = urllib.request.Request(f"{base}/health", headers=_headers(), method="GET")
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = json.loads(resp.read().decode("utf-8") or "{}")
-        ok = bool(data.get("ok"))
-        if not ok:
-            print(f"[semantic] ping {base}/health: sin ok ({data!r})")
-        return ok
+            ok = 200 <= resp.status < 300
+            print(f"[semantic] ping {base}/health → HTTP {resp.status}")
+            if ok:
+                _ensure_keepalive()
+            return ok
     except Exception as exc:
         print(f"[semantic] ping {base}/health: {exc}")
         return False
+
+
+def _ensure_keepalive() -> None:
+    global _keepalive_started
+    with _keepalive_lock:
+        if _keepalive_started:
+            return
+        _keepalive_started = True
+
+    def _loop() -> None:
+        while True:
+            time.sleep(_KEEPALIVE_SEC)
+            try:
+                ping(timeout=12.0)
+            except Exception:
+                pass
+
+    threading.Thread(target=_loop, name="semantic-keepalive", daemon=True).start()
 
 
 def translate_sordo(glosses: str, history_messages: Optional[list[dict]] = None) -> str:
@@ -117,4 +143,10 @@ def translate_sordo(glosses: str, history_messages: Optional[list[dict]] = None)
 
 def translate_oyente(spanish: str) -> str:
     data = _post("/oyente", {"spanish": spanish})
-    return str(data.get("glosses") or "").strip()
+    return str(
+        data.get("glosses")
+        or data.get("caption")
+        or data.get("text")
+        or data.get("output")
+        or ""
+    ).strip()

@@ -11,6 +11,14 @@ from typing import Optional, Sequence
 # Un deletreo que las contenga necesita el criterio de la LLM.
 AMBIGUOUS_LETTERS = frozenset({"I", "T"})
 
+# Señas léxicas que el clasificador confunde con una letra (misma forma de mano).
+# Si aparecen al lado o entre letras, casi seguro querían deletrear la letra.
+LETTER_LOOKALIKES = {
+    "OJO": "I",
+    "VIERNES": "V",
+    "AÑOS": "G",
+}
+
 
 def classify_gloss(gloss: str) -> str:
     """Clasifica una glosa normalizada: digit | letter | other."""
@@ -21,6 +29,32 @@ def classify_gloss(gloss: str) -> str:
     if gloss.isalpha():
         return "letter"
     return "other"
+
+
+def resolve_letter_lookalikes(glosses: Sequence[str]) -> list[str]:
+    """
+    OJO / VIERNES / AÑOS pegadas a letras → I / V / G.
+
+    Varias pasadas: ``M OJO VIERNES A`` primero cambia VIERNES (junto a A)
+    y después OJO (junto a V). Un OJO o AÑOS sueltos se dejan como seña.
+    """
+    out = [str(g) for g in glosses]
+    changed = True
+    while changed:
+        changed = False
+        nxt = list(out)
+        for i, tok in enumerate(out):
+            letter = LETTER_LOOKALIKES.get(tok.upper())
+            if not letter:
+                continue
+            left = out[i - 1] if i > 0 else ""
+            right = out[i + 1] if i + 1 < len(out) else ""
+            if classify_gloss(left) != "letter" and classify_gloss(right) != "letter":
+                continue
+            nxt[i] = letter
+            changed = True
+        out = nxt
+    return out
 
 
 def collapse_literal_runs(glosses: Sequence[str]) -> list[str]:
@@ -92,6 +126,24 @@ def format_literal_utterance(
         return f"{word}."
 
     return None
+
+
+def simple_lexical_spanish(glosses: Sequence[str]) -> Optional[str]:
+    """
+    Una sola glosa léxica (HOLA, GRACIAS, …) ya es la palabra en español.
+    No hace falta el GGUF de Cloud Run (~segundos de CPU).
+    """
+    if len(glosses) != 1:
+        return None
+    g = str(glosses[0]).strip()
+    if not g or classify_gloss(g) != "other":
+        return None
+    if g.upper() in LETTER_LOOKALIKES:
+        return None
+    if any(ch in g for ch in "/_"):
+        return None
+    word = g.capitalize() if g.isupper() else g
+    return word + "."
 
 
 class RepeatGate:

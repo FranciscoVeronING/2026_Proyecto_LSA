@@ -8,6 +8,8 @@ __pycache__/
 
 # Caché autogenerada por Unsloth al importar sus trainers
 unsloth_compiled_cache/
+src/semantic/logs/
+src/semantic/outputs/
 
 # Salidas del modo --eval
 eval_*.csv

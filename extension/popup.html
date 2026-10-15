@@ -30,6 +30,16 @@
     <p class="hint" id="output-hint"></p>
   </div>
 
+  <div class="field" id="pause-field" hidden>
+    <label class="field-label" for="pause-select">Pausa para cerrar la oración</label>
+    <select id="pause-select" class="pause-select" aria-label="Pausa en segundos">
+      <option value="2">2 segundos</option>
+      <option value="3">3 segundos</option>
+      <option value="4" selected>4 segundos</option>
+    </select>
+    <p class="hint">Sin señas durante este tiempo, se manda el enunciado al traductor.</p>
+  </div>
+
   <div id="debug-block">
   <label class="toggle" id="landmarks-row">
     <input type="checkbox" id="chk-landmarks" />

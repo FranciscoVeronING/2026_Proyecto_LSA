@@ -88,12 +88,15 @@
     "ayer": 86,
     "mio": 87,
     "poder": 88,
-    "robar": 89,
-    "llevar": 90,
-    "tuyo": 91,
-    "ver": 92,
-    "llamar": 93,
-    "repetir": 94,
-    "vivir": 95,
-    "vivir_en": 96
+    "gracias": 89,
+    "robar": 90,
+    "policia": 91,
+    "llevar": 92,
+    "tuyo": 93,
+    "ayudar": 94,
+    "ver": 95,
+    "llamar": 96,
+    "repetir": 97,
+    "vivir": 98,
+    "vivir_en": 99
 }

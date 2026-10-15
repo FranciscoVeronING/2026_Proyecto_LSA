@@ -20,7 +20,7 @@ METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
 MAX_FRAMES = 16
 
-# Etiquetas del clasificador: mismo orden que ``mapeo_clases.json`` (97 señas).
+# Etiquetas del clasificador: mismo orden que ``mapeo_clases.json``.
 # No es el texto de la LLM; eso pasa por ``normalize_gloss``.
 def _sign_classes_from_mapeo() -> list[str]:
     import json

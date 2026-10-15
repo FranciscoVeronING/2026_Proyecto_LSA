@@ -218,6 +218,20 @@ code, .cmd {
   border-color: var(--accent);
 }
 
+.popup .pause-select {
+  display: block;
+  width: 100%;
+  margin: 0 0 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 2px solid #1a4a63;
+  background: #152a38;
+  color: #eaf4fa;
+  font: inherit;
+  font-weight: 650;
+  font-size: 0.85rem;
+}
+
 .popup .toggle {
   display: flex;
   align-items: center;

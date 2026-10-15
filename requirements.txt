@@ -1,20 +1,10 @@
-# Dependencias del pipeline LSA (cámara → clasificador → glosas → Cloud Run).
-# El motor ILSA (run_backend.py / ILSA.exe) clasifica en CPU y traduce por HTTP.
+# Dependencias de ILSA (clasificador CPU + API local + cliente de Cloud Run).
+# MediaPipe corre en la extensión Chrome, no acá.
 #
 #   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 #   pip install -r requirements.txt
 
-# --- Visión / captura (app de escritorio) ---
-opencv-python==4.11.0.86
-mediapipe==0.10.21
 numpy==1.26.4
-
-# --- Clasificador de señas ---
 torch==2.6.0
-
-# --- Síntesis de voz (escritorio) ---
-pyttsx3==2.99
-
-# --- Backend local para la extensión Chrome ---
 fastapi==0.115.12
 uvicorn==0.32.1

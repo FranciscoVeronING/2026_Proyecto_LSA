@@ -1,6 +1,7 @@
 /**
  * Preferencias del popup (chrome.storage.local).
  * `outputMode`: subtitles | audio | both
+ * `utterancePauseSec`: 2 | 3 | 4
  *
  * En offscreen a veces no hay `chrome.storage`; nunca hay que tirar el script.
  */
@@ -10,6 +11,7 @@ const LSA_PREFS_KEY = "lsaPrefs";
 const LSA_PREFS_DEFAULTS = {
   showLandmarks: false,
   outputMode: "subtitles",
+  utterancePauseSec: 4,
 };
 
 /**
@@ -27,8 +29,17 @@ function lsaStorageLocal() {
 }
 
 /**
- * @param {object} [raw]
- * @returns {{ showLandmarks: boolean, outputMode: string }}
+ * @param {unknown} value
+ * @returns {2|3|4}
+ */
+function normalizePauseSec(value) {
+  const n = Number(value);
+  if (n === 2 || n === 3 || n === 4) return n;
+  return 4;
+}
+
+/**
+ * @returns {{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }}
  */
 function normalizeLsaPrefs(raw) {
   const src = raw && typeof raw === "object" ? raw : {};
@@ -36,12 +47,13 @@ function normalizeLsaPrefs(raw) {
   return {
     showLandmarks: Boolean(src.showLandmarks),
     outputMode: mode === "audio" || mode === "both" ? mode : "subtitles",
+    utterancePauseSec: normalizePauseSec(src.utterancePauseSec),
   };
 }
 
 const LsaPrefs = {
   /**
-   * @returns {Promise<{ showLandmarks: boolean, outputMode: string }>}
+   * @returns {Promise<{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }>}
    */
   get() {
     const store = lsaStorageLocal();
@@ -54,7 +66,7 @@ const LsaPrefs = {
 
   /**
    * @param {object} partial
-   * @returns {Promise<{ showLandmarks: boolean, outputMode: string }>}
+   * @returns {Promise<{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }>}
    */
   set(partial) {
     const store = lsaStorageLocal();
@@ -66,7 +78,7 @@ const LsaPrefs = {
   },
 
   /**
-   * @param {(prefs: { showLandmarks: boolean, outputMode: string }) => void} fn
+   * @param {(prefs: { showLandmarks: boolean, outputMode: string, utterancePauseSec: number }) => void} fn
    */
   onChange(fn) {
     const store = lsaStorageLocal();

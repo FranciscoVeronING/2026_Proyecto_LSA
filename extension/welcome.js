@@ -66,7 +66,7 @@ async function downloadIlsa() {
       return;
     }
     exeHint.textContent =
-      "Todavía no está ILSA.zip en el release ilsa-llama-1b. En esta PC: packaging\\build_exe.bat y packaging\\upload_ilsa_zip.ps1.";
+      "No se encuentra ILSA.zip en el release ilsa.";
   } catch (err) {
     exeHint.textContent = err && err.message ? err.message : "No se pudo descargar ILSA.";
   } finally {

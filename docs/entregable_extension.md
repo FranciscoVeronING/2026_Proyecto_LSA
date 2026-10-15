@@ -98,4 +98,4 @@ No se decide aún proveedor, costo ni arquitectura de red. Primero hay que medir
 
 ### Tecnologías usadas en esta entrega
 
-Extensión Manifest V3, MediaPipe Holistic en WASM, FastAPI en loopback, PyTorch CPU (TinySkeleton), Llama 3.2 1B GGUF por llama.cpp, PyInstaller, Tkinter para la ventana ILSA, pyttsx3 solo en el escritorio (en Meet el sordo ve texto, no se lee en voz alta hacia la llamada).
+Extensión Manifest V3, MediaPipe Holistic en WASM, FastAPI en loopback, PyTorch CPU (TinySkeleton), traductor GGUF en Cloud Run, PyInstaller, Tkinter para la ventana ILSA. En Meet el sordo ve texto; no se lee en voz alta hacia la llamada.

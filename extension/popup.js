@@ -15,6 +15,9 @@ const reportBox = document.getElementById("report-box");
 const reportText = document.getElementById("report-text");
 const reportHint = document.getElementById("report-hint");
 const outputHint = document.getElementById("output-hint");
+const outputField = document.getElementById("output-field");
+const pauseField = document.getElementById("pause-field");
+const pauseSelect = document.getElementById("pause-select");
 
 let lastHealth = null;
 let inMeet = false;
@@ -36,7 +39,7 @@ chkLandmarks.addEventListener("change", () => {
   LsaPrefs.set({ showLandmarks: chkLandmarks.checked });
 });
 
-document.querySelectorAll(".seg-btn").forEach((btn) => {
+document.querySelectorAll("[data-output]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const outputMode = btn.getAttribute("data-output");
     paintOutput(outputMode);
@@ -44,11 +47,17 @@ document.querySelectorAll(".seg-btn").forEach((btn) => {
   });
 });
 
+pauseSelect.addEventListener("change", () => {
+  const utterancePauseSec = normalizePauseSec(pauseSelect.value);
+  pauseSelect.value = String(utterancePauseSec);
+  LsaPrefs.set({ utterancePauseSec });
+});
+
 /**
  * @param {string} outputMode
  */
 function paintOutput(outputMode) {
-  document.querySelectorAll(".seg-btn").forEach((btn) => {
+  document.querySelectorAll("[data-output]").forEach((btn) => {
     btn.classList.toggle("on", btn.getAttribute("data-output") === outputMode);
   });
   if (outputMode === "audio") {
@@ -116,6 +125,7 @@ function openReport() {
 LsaPrefs.get().then((prefs) => {
   chkLandmarks.checked = prefs.showLandmarks;
   paintOutput(prefs.outputMode);
+  pauseSelect.value = String(normalizePauseSec(prefs.utterancePauseSec));
 });
 
 LsaApi.health()
@@ -128,10 +138,12 @@ LsaApi.health()
     healthText.textContent = "Motor conectado";
     if (signer) {
       debugBlock.hidden = false;
-      document.getElementById("output-field").hidden = false;
+      outputField.hidden = false;
+      pauseField.hidden = false;
     } else {
       debugBlock.hidden = true;
-      document.getElementById("output-field").hidden = true;
+      outputField.hidden = true;
+      pauseField.hidden = true;
     }
     return inspectTab(true);
   })
@@ -139,6 +151,7 @@ LsaApi.health()
     lastHealth = null;
     healthText.textContent = "Motor apagado — descargá ILSA en Instalar motor";
     metaMode.textContent = "—";
-    document.getElementById("output-field").hidden = true;
+    outputField.hidden = true;
+    pauseField.hidden = true;
     return inspectTab(false);
   });

@@ -67,7 +67,10 @@ LsaPrefs.onChange((p) => {
 
 let lastHolisticMs = 0;
 const engine = createCaptureEngine(
-  () => cfg,
+  () => ({
+    ...cfg,
+    utterance_pause_sec: normalizePauseSec(prefs.utterancePauseSec),
+  }),
   {
     onSign(frames, meta) {
       enqueueSign(frames, {
