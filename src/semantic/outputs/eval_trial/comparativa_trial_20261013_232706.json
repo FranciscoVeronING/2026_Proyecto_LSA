@@ -1,0 +1,3527 @@
+{
+  "evaluated_at": "2026-10-14T02:27:06.871643+00:00",
+  "dataset": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\dataset_trial.json",
+  "n_samples": 21,
+  "ranking": [
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.74,
+      "avg_latency_ms": 343.41,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.71,
+      "avg_latency_ms": 790.53,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.69,
+      "avg_latency_ms": 412.99,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "qwen2.5-1.5b",
+      "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
+      "label": "Qwen2.5 1.5B",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.67,
+      "avg_latency_ms": 225.64,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 95.24,
+      "accuracy_normalized_percent": 95.24,
+      "bleu_score": 97.73,
+      "rouge_l_score": 99.21,
+      "meteor_score": 98.74,
+      "avg_latency_ms": 655.4,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 83.33
+        }
+      },
+      "id": "smollm2-1.7b",
+      "model_name": "unsloth/SmolLM2-1.7B-Instruct",
+      "label": "SmolLM2 1.7B",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
+    }
+  ],
+  "per_example": [
+    {
+      "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+      "glosas": "PASADO ELLOS O YO VER",
+      "referencias": [
+        "Ellos me vieron.",
+        "Ellos me vieron a mí."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Ellos me vieron.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+      "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+      "referencias": [
+        "¿Quién va a ser tu esposa?",
+        "¿Quién será tu esposa?"
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "pregunta_wh_ubicacion_futuro_transitivo",
+      "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+      "referencias": [
+        "¿A dónde vas a llevar el documento?",
+        "¿Dónde vas a llevar el documento?",
+        "¿Dónde vas a llevar el documento vos?",
+        "¿A dónde llevarás el documento?",
+        "¿Dónde llevarás el documento?"
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "tiempo_futuro_objeto_y_negacion",
+      "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+      "referencias": [
+        "No voy a llevar el cuchillo.",
+        "Yo no voy a llevar el cuchillo.",
+        "No llevaré el cuchillo."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Yo no voy a llevar el cuchillo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "tiempo_pasado_objeto_y_negacion",
+      "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+      "referencias": [
+        "No llevé el documento.",
+        "Yo no llevé el documento."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo no llevé el documento.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo no llevé el documento.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "No llevé el documento.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "No llevé el documento.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "No llevé el documento.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+      "glosas": "PASADO YO HIJO MIO LLAMAR",
+      "referencias": [
+        "Llamé a mi hijo.",
+        "Yo llamé a mi hijo.",
+        "Llamé al hijo."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Llamé a mi hijo.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+      "glosas": "PASADO YO HIJO O MIO LLAMAR",
+      "referencias": [
+        "Llamé a mi hijo.",
+        "Yo llamé a mi hijo.",
+        "Llamé al hijo."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Llamé a mi hijo.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Llamé a mi hijo.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "deletreo_nombre_femenino_no_visto",
+      "glosas": "NOMBRE MIO Micaela",
+      "referencias": [
+        "Me llamo Micaela.",
+        "Yo me llamo Micaela.",
+        "Mi nombre es Micaela.",
+        "Soy Micaela.",
+        "Yo soy Micaela."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo me llamo Micaela.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Me llamo Micaela.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Mi nombre es Micaela.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Mi nombre es Micaela.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Me llamo Micaela.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "deletreo_apellido_con_grafemas_complejos",
+      "glosas": "APELLIDO MIO Guerra",
+      "referencias": [
+        "Mi apellido es Guerra.",
+        "Me apellido Guerra.",
+        "Yo me apellido Guerra."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Mi apellido es Guerra.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Mi apellido es Guerra.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Mi apellido es Guerra.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Mi apellido es Guerra.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Me apellido Guerra.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "deletreo_calle_no_vista",
+      "glosas": "CALLE Moreno YO VIVIR_EN",
+      "referencias": [
+        "Vivo en la calle Moreno.",
+        "Yo vivo en la calle Moreno.",
+        "Mi domicilio es en la calle Moreno.",
+        "Mi casa está en la calle Moreno."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Vivo en la calle Moreno.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Vivo en la calle Moreno.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "secuencia_numerica_dni_arbitraria",
+      "glosas": "DOCUMENTO MIO NUMERO 18333940",
+      "referencias": [
+        "Mi número de documento es 18333940.",
+        "Mi documento es 18333940.",
+        "Mi número de DNI es 18333940.",
+        "Mi DNI es 18333940.",
+        "El número de mi documento es 18333940."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Mi DNI es 18333940.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Mi DNI es 18333940.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Mi DNI es 18333940.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_presente",
+      "glosas": "YO POLICIA LLAMAR",
+      "referencias": [
+        "Llamo a la policía.",
+        "Yo llamo a la policía."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo llamo a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo llamo a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Llamo a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Llamo a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Llamo a la policía.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_futuro",
+      "glosas": "FUTURO YO POLICIA LLAMAR",
+      "referencias": [
+        "Voy a llamar a la policía.",
+        "Yo voy a llamar a la policía.",
+        "Llamaré a la policía.",
+        "Yo llamaré a la policía."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo voy a llamar a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo voy a llamar a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Voy a llamar a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Llamaré a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Llamaré a la policía.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_transitivo_objeto_pasado",
+      "glosas": "PASADO YO POLICIA LLAMAR",
+      "referencias": [
+        "Llamé a la policía.",
+        "Yo llamé a la policía."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Llamé a la policía.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_sujeto_agente_ayuda_presente",
+      "glosas": "POLICIA YO AYUDAR",
+      "referencias": [
+        "La policía me ayuda.",
+        "La policía me está ayudando."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "La policía me ayuda.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "La policía me ayuda.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "La policía me ayuda.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "La policía me ayuda.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "La policía me ayuda.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_sujeto_agente_ayuda_modal_poder",
+      "glosas": "POLICIA YO AYUDAR PODER",
+      "referencias": [
+        "La policía me puede ayudar.",
+        "La policía es capaz de ayudarme."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "La policía me puede ayudar.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "La policía me puede ayudar.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "La policía me puede ayudar.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "La policía me puede ayudar.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "La policía me puede ayudar.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_percepcion_locativo_calle",
+      "glosas": "CALLE YO POLICIA VER",
+      "referencias": [
+        "Veo a la policía en la calle.",
+        "Yo veo a la policía en la calle."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Veo a la policía en la calle.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Veo a la policía en la calle.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "Veo a la policía en la calle.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "Veo a la policía en la calle.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "Veo a la policía en la calle.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_pregunta_wh_ubicacion",
+      "glosas": "POLICIA DONDE",
+      "referencias": [
+        "¿Dónde está la policía?",
+        "¿Dónde queda la policía?"
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "¿Dónde queda la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "¿Dónde queda la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "¿Dónde queda la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Dónde queda la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "¿Dónde está la policía?",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_pregunta_wh_agente_pasado",
+      "glosas": "PASADO POLICIA LLAMAR QUIEN",
+      "referencias": [
+        "¿Quién llamó a la policía?"
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_objeto_pasado_negacion",
+      "glosas": "PASADO YO POLICIA LLAMAR NO",
+      "referencias": [
+        "No llamé a la policía.",
+        "Yo no llamé a la policía."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "Yo no llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "Yo no llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "No llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "No llamé a la policía.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "No llamé a la policía.",
+          "exact_normalized": true
+        }
+      ]
+    },
+    {
+      "category": "policia_predicado_parentesco_femenino_explicito",
+      "glosas": "POLICIA HERMANO A MIO",
+      "referencias": [
+        "La policía es mi hermana."
+      ],
+      "predictions": [
+        {
+          "id": "llama-3.2-1b",
+          "label": "Llama 3.2 1B (Meta)",
+          "predicho": "La policía es mi hermana.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-3b",
+          "label": "Qwen2.5 3B (mayor capacidad)",
+          "predicho": "La policía es mi hermana.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-1.5b",
+          "label": "Qwen2.5 1.5B",
+          "predicho": "La policía es mi hermana.",
+          "exact_normalized": true
+        },
+        {
+          "id": "qwen2.5-0.5b",
+          "label": "Qwen2.5 0.5B (ultra liviano)",
+          "predicho": "La policía es mi hermana.",
+          "exact_normalized": true
+        },
+        {
+          "id": "smollm2-1.7b",
+          "label": "SmolLM2 1.7B",
+          "predicho": "La policía es mi hermano.",
+          "exact_normalized": false
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "details": [
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.74,
+      "avg_latency_ms": 343.41,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "Yo no llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Yo me llamo Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "policia_transitivo_objeto_presente",
+          "glosas": "YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamo a la policía.",
+            "Yo llamo a la policía."
+          ],
+          "predicho": "Yo llamo a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_transitivo_objeto_futuro",
+          "glosas": "FUTURO YO POLICIA LLAMAR",
+          "referencias": [
+            "Voy a llamar a la policía.",
+            "Yo voy a llamar a la policía.",
+            "Llamaré a la policía.",
+            "Yo llamaré a la policía."
+          ],
+          "predicho": "Yo voy a llamar a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_transitivo_objeto_pasado",
+          "glosas": "PASADO YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamé a la policía.",
+            "Yo llamé a la policía."
+          ],
+          "predicho": "Llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_presente",
+          "glosas": "POLICIA YO AYUDAR",
+          "referencias": [
+            "La policía me ayuda.",
+            "La policía me está ayudando."
+          ],
+          "predicho": "La policía me ayuda.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_modal_poder",
+          "glosas": "POLICIA YO AYUDAR PODER",
+          "referencias": [
+            "La policía me puede ayudar.",
+            "La policía es capaz de ayudarme."
+          ],
+          "predicho": "La policía me puede ayudar.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_percepcion_locativo_calle",
+          "glosas": "CALLE YO POLICIA VER",
+          "referencias": [
+            "Veo a la policía en la calle.",
+            "Yo veo a la policía en la calle."
+          ],
+          "predicho": "Veo a la policía en la calle.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_pregunta_wh_ubicacion",
+          "glosas": "POLICIA DONDE",
+          "referencias": [
+            "¿Dónde está la policía?",
+            "¿Dónde queda la policía?"
+          ],
+          "predicho": "¿Dónde queda la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_pregunta_wh_agente_pasado",
+          "glosas": "PASADO POLICIA LLAMAR QUIEN",
+          "referencias": [
+            "¿Quién llamó a la policía?"
+          ],
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_objeto_pasado_negacion",
+          "glosas": "PASADO YO POLICIA LLAMAR NO",
+          "referencias": [
+            "No llamé a la policía.",
+            "Yo no llamé a la policía."
+          ],
+          "predicho": "Yo no llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "policia_predicado_parentesco_femenino_explicito",
+          "glosas": "POLICIA HERMANO A MIO",
+          "referencias": [
+            "La policía es mi hermana."
+          ],
+          "predicho": "La policía es mi hermana.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        }
+      ],
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct_gguf\\llama-3.2-1b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.71,
+      "avg_latency_ms": 790.53,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "Yo no llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Me llamo Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_presente",
+          "glosas": "YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamo a la policía.",
+            "Yo llamo a la policía."
+          ],
+          "predicho": "Yo llamo a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_transitivo_objeto_futuro",
+          "glosas": "FUTURO YO POLICIA LLAMAR",
+          "referencias": [
+            "Voy a llamar a la policía.",
+            "Yo voy a llamar a la policía.",
+            "Llamaré a la policía.",
+            "Yo llamaré a la policía."
+          ],
+          "predicho": "Yo voy a llamar a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_transitivo_objeto_pasado",
+          "glosas": "PASADO YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamé a la policía.",
+            "Yo llamé a la policía."
+          ],
+          "predicho": "Llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_presente",
+          "glosas": "POLICIA YO AYUDAR",
+          "referencias": [
+            "La policía me ayuda.",
+            "La policía me está ayudando."
+          ],
+          "predicho": "La policía me ayuda.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_modal_poder",
+          "glosas": "POLICIA YO AYUDAR PODER",
+          "referencias": [
+            "La policía me puede ayudar.",
+            "La policía es capaz de ayudarme."
+          ],
+          "predicho": "La policía me puede ayudar.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_percepcion_locativo_calle",
+          "glosas": "CALLE YO POLICIA VER",
+          "referencias": [
+            "Veo a la policía en la calle.",
+            "Yo veo a la policía en la calle."
+          ],
+          "predicho": "Veo a la policía en la calle.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_pregunta_wh_ubicacion",
+          "glosas": "POLICIA DONDE",
+          "referencias": [
+            "¿Dónde está la policía?",
+            "¿Dónde queda la policía?"
+          ],
+          "predicho": "¿Dónde queda la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_pregunta_wh_agente_pasado",
+          "glosas": "PASADO POLICIA LLAMAR QUIEN",
+          "referencias": [
+            "¿Quién llamó a la policía?"
+          ],
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_objeto_pasado_negacion",
+          "glosas": "PASADO YO POLICIA LLAMAR NO",
+          "referencias": [
+            "No llamé a la policía.",
+            "Yo no llamé a la policía."
+          ],
+          "predicho": "Yo no llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "policia_predicado_parentesco_femenino_explicito",
+          "glosas": "POLICIA HERMANO A MIO",
+          "referencias": [
+            "La policía es mi hermana."
+          ],
+          "predicho": "La policía es mi hermana.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        }
+      ],
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (mayor capacidad)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct_gguf\\qwen2.5-3b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.69,
+      "avg_latency_ms": 412.99,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "No llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Yo llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Mi nombre es Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_presente",
+          "glosas": "YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamo a la policía.",
+            "Yo llamo a la policía."
+          ],
+          "predicho": "Llamo a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_futuro",
+          "glosas": "FUTURO YO POLICIA LLAMAR",
+          "referencias": [
+            "Voy a llamar a la policía.",
+            "Yo voy a llamar a la policía.",
+            "Llamaré a la policía.",
+            "Yo llamaré a la policía."
+          ],
+          "predicho": "Voy a llamar a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "policia_transitivo_objeto_pasado",
+          "glosas": "PASADO YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamé a la policía.",
+            "Yo llamé a la policía."
+          ],
+          "predicho": "Llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_presente",
+          "glosas": "POLICIA YO AYUDAR",
+          "referencias": [
+            "La policía me ayuda.",
+            "La policía me está ayudando."
+          ],
+          "predicho": "La policía me ayuda.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_modal_poder",
+          "glosas": "POLICIA YO AYUDAR PODER",
+          "referencias": [
+            "La policía me puede ayudar.",
+            "La policía es capaz de ayudarme."
+          ],
+          "predicho": "La policía me puede ayudar.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_percepcion_locativo_calle",
+          "glosas": "CALLE YO POLICIA VER",
+          "referencias": [
+            "Veo a la policía en la calle.",
+            "Yo veo a la policía en la calle."
+          ],
+          "predicho": "Veo a la policía en la calle.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_pregunta_wh_ubicacion",
+          "glosas": "POLICIA DONDE",
+          "referencias": [
+            "¿Dónde está la policía?",
+            "¿Dónde queda la policía?"
+          ],
+          "predicho": "¿Dónde queda la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_pregunta_wh_agente_pasado",
+          "glosas": "PASADO POLICIA LLAMAR QUIEN",
+          "referencias": [
+            "¿Quién llamó a la policía?"
+          ],
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_objeto_pasado_negacion",
+          "glosas": "PASADO YO POLICIA LLAMAR NO",
+          "referencias": [
+            "No llamé a la policía.",
+            "Yo no llamé a la policía."
+          ],
+          "predicho": "No llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_predicado_parentesco_femenino_explicito",
+          "glosas": "POLICIA HERMANO A MIO",
+          "referencias": [
+            "La policía es mi hermana."
+          ],
+          "predicho": "La policía es mi hermana.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        }
+      ],
+      "id": "qwen2.5-1.5b",
+      "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
+      "label": "Qwen2.5 1.5B",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct_gguf\\qwen2.5-1.5b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 100.0,
+      "accuracy_normalized_percent": 100.0,
+      "bleu_score": 100.0,
+      "rouge_l_score": 100.0,
+      "meteor_score": 99.67,
+      "avg_latency_ms": 225.64,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "Yo no voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "No llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Mi nombre es Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Mi apellido es Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_presente",
+          "glosas": "YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamo a la policía.",
+            "Yo llamo a la policía."
+          ],
+          "predicho": "Llamo a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_futuro",
+          "glosas": "FUTURO YO POLICIA LLAMAR",
+          "referencias": [
+            "Voy a llamar a la policía.",
+            "Yo voy a llamar a la policía.",
+            "Llamaré a la policía.",
+            "Yo llamaré a la policía."
+          ],
+          "predicho": "Llamaré a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_pasado",
+          "glosas": "PASADO YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamé a la policía.",
+            "Yo llamé a la policía."
+          ],
+          "predicho": "Llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_presente",
+          "glosas": "POLICIA YO AYUDAR",
+          "referencias": [
+            "La policía me ayuda.",
+            "La policía me está ayudando."
+          ],
+          "predicho": "La policía me ayuda.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_modal_poder",
+          "glosas": "POLICIA YO AYUDAR PODER",
+          "referencias": [
+            "La policía me puede ayudar.",
+            "La policía es capaz de ayudarme."
+          ],
+          "predicho": "La policía me puede ayudar.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_percepcion_locativo_calle",
+          "glosas": "CALLE YO POLICIA VER",
+          "referencias": [
+            "Veo a la policía en la calle.",
+            "Yo veo a la policía en la calle."
+          ],
+          "predicho": "Veo a la policía en la calle.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_pregunta_wh_ubicacion",
+          "glosas": "POLICIA DONDE",
+          "referencias": [
+            "¿Dónde está la policía?",
+            "¿Dónde queda la policía?"
+          ],
+          "predicho": "¿Dónde queda la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_pregunta_wh_agente_pasado",
+          "glosas": "PASADO POLICIA LLAMAR QUIEN",
+          "referencias": [
+            "¿Quién llamó a la policía?"
+          ],
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_objeto_pasado_negacion",
+          "glosas": "PASADO YO POLICIA LLAMAR NO",
+          "referencias": [
+            "No llamé a la policía.",
+            "Yo no llamé a la policía."
+          ],
+          "predicho": "No llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_predicado_parentesco_femenino_explicito",
+          "glosas": "POLICIA HERMANO A MIO",
+          "referencias": [
+            "La policía es mi hermana."
+          ],
+          "predicho": "La policía es mi hermana.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        }
+      ],
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra liviano)",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct_gguf\\qwen2.5-0.5b-instruct.Q4_K_M.gguf"
+    },
+    {
+      "total_samples": 21,
+      "accuracy_strict_percent": 95.24,
+      "accuracy_normalized_percent": 95.24,
+      "bleu_score": 97.73,
+      "rouge_l_score": 99.21,
+      "meteor_score": 98.74,
+      "avg_latency_ms": 655.4,
+      "by_category": {
+        "pronombre_objeto_en_pasado_tercera_persona_masculino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_identidad_tiempo_futuro_femenino": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "pregunta_wh_ubicacion_futuro_transitivo": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_futuro_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "tiempo_pasado_objeto_y_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_defecto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "flexion_genero_parentesco_transitivo_pasado_masculino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_nombre_femenino_no_visto": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_apellido_con_grafemas_complejos": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "deletreo_calle_no_vista": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "secuencia_numerica_dni_arbitraria": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_futuro": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_transitivo_objeto_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_presente": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_sujeto_agente_ayuda_modal_poder": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_percepcion_locativo_calle": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_ubicacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_pregunta_wh_agente_pasado": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_objeto_pasado_negacion": {
+          "n": 1,
+          "accuracy_normalized_percent": 100.0,
+          "rouge_l_score": 100.0
+        },
+        "policia_predicado_parentesco_femenino_explicito": {
+          "n": 1,
+          "accuracy_normalized_percent": 0.0,
+          "rouge_l_score": 83.33
+        }
+      },
+      "ejemplos": [
+        {
+          "category": "pronombre_objeto_en_pasado_tercera_persona_masculino",
+          "glosas": "PASADO ELLOS O YO VER",
+          "referencias": [
+            "Ellos me vieron.",
+            "Ellos me vieron a mí."
+          ],
+          "predicho": "Ellos me vieron.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "pregunta_wh_identidad_tiempo_futuro_femenino",
+          "glosas": "FUTURO ESPOSO A TUYO QUIEN",
+          "referencias": [
+            "¿Quién va a ser tu esposa?",
+            "¿Quién será tu esposa?"
+          ],
+          "predicho": "¿Quién va a ser tu esposa?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "pregunta_wh_ubicacion_futuro_transitivo",
+          "glosas": "FUTURO VOS DOCUMENTO LLEVAR DONDE",
+          "referencias": [
+            "¿A dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento?",
+            "¿Dónde vas a llevar el documento vos?",
+            "¿A dónde llevarás el documento?",
+            "¿Dónde llevarás el documento?"
+          ],
+          "predicho": "¿Dónde vas a llevar el documento?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_futuro_objeto_y_negacion",
+          "glosas": "FUTURO YO CUCHILLO LLEVAR NO",
+          "referencias": [
+            "No voy a llevar el cuchillo.",
+            "Yo no voy a llevar el cuchillo.",
+            "No llevaré el cuchillo."
+          ],
+          "predicho": "No voy a llevar el cuchillo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "tiempo_pasado_objeto_y_negacion",
+          "glosas": "PASADO YO DOCUMENTO LLEVAR NO",
+          "referencias": [
+            "No llevé el documento.",
+            "Yo no llevé el documento."
+          ],
+          "predicho": "No llevé el documento.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_defecto",
+          "glosas": "PASADO YO HIJO MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "flexion_genero_parentesco_transitivo_pasado_masculino_explicito",
+          "glosas": "PASADO YO HIJO O MIO LLAMAR",
+          "referencias": [
+            "Llamé a mi hijo.",
+            "Yo llamé a mi hijo.",
+            "Llamé al hijo."
+          ],
+          "predicho": "Llamé a mi hijo.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "deletreo_nombre_femenino_no_visto",
+          "glosas": "NOMBRE MIO Micaela",
+          "referencias": [
+            "Me llamo Micaela.",
+            "Yo me llamo Micaela.",
+            "Mi nombre es Micaela.",
+            "Soy Micaela.",
+            "Yo soy Micaela."
+          ],
+          "predicho": "Me llamo Micaela.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "deletreo_apellido_con_grafemas_complejos",
+          "glosas": "APELLIDO MIO Guerra",
+          "referencias": [
+            "Mi apellido es Guerra.",
+            "Me apellido Guerra.",
+            "Yo me apellido Guerra."
+          ],
+          "predicho": "Me apellido Guerra.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9921875
+        },
+        {
+          "category": "deletreo_calle_no_vista",
+          "glosas": "CALLE Moreno YO VIVIR_EN",
+          "referencias": [
+            "Vivo en la calle Moreno.",
+            "Yo vivo en la calle Moreno.",
+            "Mi domicilio es en la calle Moreno.",
+            "Mi casa está en la calle Moreno."
+          ],
+          "predicho": "Yo vivo en la calle Moreno.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "secuencia_numerica_dni_arbitraria",
+          "glosas": "DOCUMENTO MIO NUMERO 18333940",
+          "referencias": [
+            "Mi número de documento es 18333940.",
+            "Mi documento es 18333940.",
+            "Mi número de DNI es 18333940.",
+            "Mi DNI es 18333940.",
+            "El número de mi documento es 18333940."
+          ],
+          "predicho": "Mi número de DNI es 18333940.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9985422740524781
+        },
+        {
+          "category": "policia_transitivo_objeto_presente",
+          "glosas": "YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamo a la policía.",
+            "Yo llamo a la policía."
+          ],
+          "predicho": "Llamo a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_futuro",
+          "glosas": "FUTURO YO POLICIA LLAMAR",
+          "referencias": [
+            "Voy a llamar a la policía.",
+            "Yo voy a llamar a la policía.",
+            "Llamaré a la policía.",
+            "Yo llamaré a la policía."
+          ],
+          "predicho": "Llamaré a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_transitivo_objeto_pasado",
+          "glosas": "PASADO YO POLICIA LLAMAR",
+          "referencias": [
+            "Llamé a la policía.",
+            "Yo llamé a la policía."
+          ],
+          "predicho": "Llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_presente",
+          "glosas": "POLICIA YO AYUDAR",
+          "referencias": [
+            "La policía me ayuda.",
+            "La policía me está ayudando."
+          ],
+          "predicho": "La policía me ayuda.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_sujeto_agente_ayuda_modal_poder",
+          "glosas": "POLICIA YO AYUDAR PODER",
+          "referencias": [
+            "La policía me puede ayudar.",
+            "La policía es capaz de ayudarme."
+          ],
+          "predicho": "La policía me puede ayudar.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_percepcion_locativo_calle",
+          "glosas": "CALLE YO POLICIA VER",
+          "referencias": [
+            "Veo a la policía en la calle.",
+            "Yo veo a la policía en la calle."
+          ],
+          "predicho": "Veo a la policía en la calle.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9990234375
+        },
+        {
+          "category": "policia_pregunta_wh_ubicacion",
+          "glosas": "POLICIA DONDE",
+          "referencias": [
+            "¿Dónde está la policía?",
+            "¿Dónde queda la policía?"
+          ],
+          "predicho": "¿Dónde está la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.996
+        },
+        {
+          "category": "policia_pregunta_wh_agente_pasado",
+          "glosas": "PASADO POLICIA LLAMAR QUIEN",
+          "referencias": [
+            "¿Quién llamó a la policía?"
+          ],
+          "predicho": "¿Quién llamó a la policía?",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_objeto_pasado_negacion",
+          "glosas": "PASADO YO POLICIA LLAMAR NO",
+          "referencias": [
+            "No llamé a la policía.",
+            "Yo no llamé a la policía."
+          ],
+          "predicho": "No llamé a la policía.",
+          "exact_strict": true,
+          "exact_normalized": true,
+          "rouge_l": 1.0,
+          "meteor": 0.9976851851851852
+        },
+        {
+          "category": "policia_predicado_parentesco_femenino_explicito",
+          "glosas": "POLICIA HERMANO A MIO",
+          "referencias": [
+            "La policía es mi hermana."
+          ],
+          "predicho": "La policía es mi hermano.",
+          "exact_strict": false,
+          "exact_normalized": false,
+          "rouge_l": 0.8333333333333334,
+          "meteor": 0.8066666666666668
+        }
+      ],
+      "id": "smollm2-1.7b",
+      "model_name": "unsloth/SmolLM2-1.7B-Instruct",
+      "label": "SmolLM2 1.7B",
+      "backend": "gguf",
+      "checkpoint": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_LSA_rama2\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct_gguf\\SmolLM2-1.7B-Instruct.Q4_K_M.gguf"
+    }
+  ]
+}
