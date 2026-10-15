@@ -50,10 +50,6 @@ _EXCLUDES = [
     "huggingface_hub",
     "unsloth",
     "llama_cpp",
-    "semantic.translator",
-    "semantic.gguf_fetch",
-    "semantic.native_llama",
-    "semantic.http_server",
 ]
 
 # VC++ al lado del exe: en una PC sin Visual Studio, shm.dll no carga (WinError 126).

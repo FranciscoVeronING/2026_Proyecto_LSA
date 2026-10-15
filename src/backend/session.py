@@ -72,9 +72,9 @@ class LSASession:
             from semantic.remote import configured, ping, translate_sordo
 
             if not configured():
-                raise RuntimeError("Falta LSA_SEMANTIC_URL")
+                raise RuntimeError("Falta la URL del traductor semántico")
             if not ping():
-                raise RuntimeError("El servidor semántico no responde (túnel Cloudflare / run_semantic_server.py)")
+                raise RuntimeError("El traductor Cloud Run no responde")
             with self._llm_gate:
                 with self.lock:
                     self._translate_glosses = translate_sordo

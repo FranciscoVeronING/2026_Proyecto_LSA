@@ -13,17 +13,16 @@ dónde empezar**.
 
 Alguien seña frente a Meet. MediaPipe saca un esqueleto. Un recortador
 decide “esto es una seña”. TinySkeleton la nombra (glosa). Tras una pausa,
-Llama 3.2 1B (CPU) en **otro proceso** (túnel ngrok) arma una oración
-en español. Esa oración se pinta en el video que Meet ya está enviando.
+ILSA manda las glosas a Cloud Run y recibe una oración en español. Esa
+oración se pinta en el video que Meet ya está enviando.
 
-Hay tres procesos:
+Hay dos procesos locales más Cloud Run:
 
 1. **Extensión Chrome** (captura, recorte, UI de Meet).
 2. **ILSA** (`python run_backend.py` o `ILSA.exe`): clasificador en
-   `127.0.0.1:8765`.
-3. **Servidor semántico** (`python run_semantic_server.py`) + `ngrok`.
+   `127.0.0.1:8765`, y cliente HTTP del traductor.
 
-ILSA pide modo (sordo / oyente) y Encender. El GGUF no se descarga en ILSA.
+ILSA pide modo (sordo / oyente) y Encender. El GGUF no corre en esta rama.
 
 ---
 
@@ -72,11 +71,9 @@ Pregunta: *¿qué cierra el enunciado, la seña o el reloj de 4 s?*
 ## 4. Español (20 min)
 
 1. `src/core/repeat_policy.py` otra vez — `format_literal_utterance` (deletreo).
-2. `src/semantic/remote.py` — cliente HTTP (`LSA_SEMANTIC_URL`).
-3. `src/semantic/http_server.py` y `run_semantic_server.py` — GGUF en la PC del servidor.
-4. `src/semantic/translator.py` — `translate_glosses` / `translate_spanish_to_glosses`.
-5. `src/core/conversation_memory.py` — contexto de turnos previos.
-6. `LSASession.close_utterance` en `session.py`.
+2. `src/semantic/remote.py` — cliente HTTP de Cloud Run (`POST /sordo`, `/oyente`).
+3. `src/core/conversation_memory.py` — contexto de turnos previos.
+4. `LSASession.close_utterance` en `session.py`.
 
 Pregunta: *¿cuándo ni siquiera se llama a la LLM?*
 
@@ -112,9 +109,7 @@ Misma idea, otra UI. Solo si te interesa `python run.py`.
 ## Qué no leer primero
 
 - `extension/vendor/mediapipe/*` — binarios de Google, no son nuestro diseño.
-- `src/semantic/bin/` — `llama-server` descargado al vuelo.
-- Pesos `.pth` / `.gguf` — artefactos, no código.
-- `src/app/semantic_eval.py` y `--probe-semantic` — evaluación, no el live.
+- Pesos `.pth` — artefactos, no código.
 - `dist/` y `extension/bin/*.zip` — salida de PyInstaller.
 
 ---
@@ -122,11 +117,11 @@ Misma idea, otra UI. Solo si te interesa `python run.py`.
 ## Diagrama mínimo (para tenerlo a mano)
 
 ```
-run_semantic_server.py + ngrok
+Cloud Run
     → POST /sordo y /oyente
 
 ILSA.exe / run_backend.py
-    → splash: ping LSA_SEMANTIC_URL
+    → splash: ping Cloud Run
     → Encender (modo sordo u oyente)
     → uvicorn 127.0.0.1:8765
 
@@ -140,6 +135,6 @@ Meet getUserMedia
     → session.py     (TinySkeleton CPU → glosa)
     → pausa 4 s
     → POST /utterance/end
-    → translator.py  (Llama 1B CPU → español)
+    → remote.py      (Cloud Run → español)
     → meet.js HUD + inject-gum subtítulo (caduca 8 s)
 ```

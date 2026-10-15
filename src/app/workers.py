@@ -160,9 +160,9 @@ class SemanticWorker:
 
         try:
             if not configured():
-                raise RuntimeError("Falta LSA_SEMANTIC_URL")
+                raise RuntimeError("Falta la URL del traductor semántico")
             if not ping():
-                raise RuntimeError("El servidor semántico no responde")
+                raise RuntimeError("El traductor Cloud Run no responde")
             self._translate_glosses = translate_sordo
             self._current_model_id = "remote"
             self.ready = True

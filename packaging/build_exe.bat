@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0\.."
-echo Empaquetando ILSA en CPU (clasificador, sin llama.cpp).
+echo Empaquetando ILSA en CPU (clasificador; traduce contra Cloud Run).
 
 set "CONDA=D:\miniconda3\Scripts\conda.exe"
 set "ENV=%~dp0_env_cpu"

@@ -104,7 +104,7 @@ class Dropdown:
     def _selected_label(self):
         for opt in self.options:
             if opt["id"] == self.selected_id:
-                suffix = "" if opt.get("available", True) else " (sin .gguf)"
+                suffix = "" if opt.get("available", True) else " (no disponible)"
                 return opt.get("label", opt["id"]) + suffix
         return str(self.selected_id or "-")
 
@@ -130,7 +130,7 @@ class Dropdown:
                 if hit:
                     self.open = False
                     if not opt.get("available", True):
-                        print(f"[!] {opt['id']}: no hay archivo .gguf en outputs/")
+                        print(f"[!] {opt['id']}: traductor no disponible")
                         return None, True
                     if opt["id"] != self.selected_id:
                         self.selected_id = opt["id"]
@@ -214,7 +214,7 @@ class Dropdown:
             )
             text = opt.get("label", opt["id"])
             if not available:
-                text = f"{text} (sin .gguf)"
+                text = f"{text} (no disponible)"
                 color = (120, 120, 120)
             else:
                 color = (255, 255, 255)

@@ -46,8 +46,7 @@ from app.ui import (
 from app.utterance import UtteranceBuffer, normalize_gloss
 from app.workers import InferenceWorker, SemanticWorker, VoiceWorker
 from core.landmarks import compute_landmark_hand_motion
-from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID
-from semantic.models import list_semantic_models
+from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, list_semantic_models
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 

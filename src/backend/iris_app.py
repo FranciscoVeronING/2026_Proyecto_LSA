@@ -117,8 +117,8 @@ class IlsaWindow:
                 self._boot_q.put(
                     (
                         "msg",
-                        "Sin LSA_SEMANTIC_URL",
-                        "ILSA clasifica igual; las glosas no se traducen hasta que haya túnel.",
+                        "Sin URL del traductor",
+                        "ILSA clasifica igual; las glosas no se traducen.",
                     )
                 )
                 self._boot_q.put(("ok",))
@@ -129,7 +129,7 @@ class IlsaWindow:
                     (
                         "msg",
                         "Traductor no responde",
-                        "Podés Encender igual. Subí semantic_url.txt al release y revisá ngrok.",
+                        "Podés Encender igual. Revisá Cloud Run.",
                     )
                 )
             self._boot_q.put(("ok",))

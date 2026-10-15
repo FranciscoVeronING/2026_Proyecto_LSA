@@ -16,12 +16,6 @@ eval_*.csv
 *.h5
 *.tflite
 
-src/semantic/outputs/*Instruct
-*.gguf
-
-# llama-server.exe descargado en runtime (Windows / Python 3.14)
-src/semantic/bin/
-
 # Diccionario visual opcional (no forma parte del runtime)
 señario1/
 señario2/
@@ -29,9 +23,6 @@ señario2/
 # Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip
 extension/bin/*.exe
-
-# URL viva de ngrok (subir con packaging/upload_semantic_url.ps1)
-packaging/semantic_url.txt
 
 # Empaquetado PyInstaller
 build/

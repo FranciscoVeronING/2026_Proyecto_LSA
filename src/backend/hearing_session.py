@@ -18,9 +18,9 @@ class HearingSession:
         self.gloss_text = ""
         try:
             if not configured():
-                raise RuntimeError("Falta LSA_SEMANTIC_URL")
+                raise RuntimeError("Falta la URL del traductor semántico")
             if not ping():
-                raise RuntimeError("El servidor semántico no responde")
+                raise RuntimeError("El traductor Cloud Run no responde")
             self.semantic_ready = True
             print("[backend] Modo oyente: voz → glosas (semántico remoto).")
         except Exception as exc:

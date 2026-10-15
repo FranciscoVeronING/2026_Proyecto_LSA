@@ -15,7 +15,7 @@ Documento para alguien que abre el repo por primera vez. Complementa el
 | **Landmarks** | Coordenadas normalizadas de pose (33 puntos) y manos (21 + 21). |
 | **Frame de seña** | Un instante de landmarks, no un JPEG. |
 | **TinySkeleton** | Red chica (transformer) que clasifica una secuencia de 16 frames. |
-| **Traductor** | GGUF Llama 3.2 1B (Q4) en un FastAPI aparte, publicado con ngrok. |
+| **Traductor** | FastAPI en Cloud Run (`POST /sordo` y `POST /oyente`). |
 | **Holistic** | Solución MediaPipe: cuerpo + cara + manos en un solo grafo. Usamos pose y manos. |
 | **ILSA** | Ventana del motor local (`ILSA.exe` o `python run_backend.py`). |
 
@@ -32,7 +32,7 @@ cámara
   → TinySkeleton  →  glosa + confianza
   → buffer de glosas (anti-repetición, cooldown)
   → pausa ~4 s
-  → POST /sordo (túnel ngrok)  →  español
+  → POST /sordo (Cloud Run)  →  español
   → (escritorio) voz pyttsx3
   → (Meet) texto quemado en el video + HUD
 ```
@@ -171,25 +171,15 @@ seguidas.
 
 ## 7. Traductor semántico
 
-Un solo modelo: **Llama 3.2 1B Instruct** en GGUF Q4
-(`llama-3.2-1b-instruct.Q4_K_M.gguf`), chat format Llama 3. Catálogo:
-`src/semantic/models.py`. Inferencia siempre en **CPU** (`n_gpu_layers=0`).
+ILSA no carga GGUF. `src/semantic/remote.py` hace HTTP a Cloud Run:
 
-- Prompt de sistema: `src/semantic/prompts/sys_prompt.txt`.
-- Few-shots: `few_shots_examples.json`.
-- Motor: `llama-cpp-python` si carga; si no, `llama-server.exe` CPU
-  (`src/semantic/native_llama.py`).
-- Memoria de conversación: `src/core/conversation_memory.py` (últimos N
-  turnos). Se puede apagar con `USE_CONVERSATION_HISTORY` para eval.
+`https://ilsa-semantic-service-705664945052.us-central1.run.app`
 
-Generación: temperatura baja, 64 tokens máx., sin penalización de repetición
-fuerte (si no, se rompen DNI y números).
+- Sordo: `POST /sordo` con `{ "glosses": "..." }` → `{ "spanish": "..." }`.
+- Oyente: `POST /oyente` con `{ "spanish": "..." }` → `{ "glosses": "..." }`.
+- Memoria de conversación local: `src/core/conversation_memory.py`.
 
-### Dónde vive el GGUF
-
-No va dentro de `ILSA.zip`. Corre en `python run_semantic_server.py` en la
-PC del servidor. ILSA llama `LSA_SEMANTIC_URL` (túnel ngrok).
-Pasos: [`docs/SEMANTICO_NUBE.md`](SEMANTICO_NUBE.md).
+El código del servidor GGUF vive en la rama `semantic-cloud`, no acá.
 
 Para publicar el exe: `packaging\build_exe.bat` y `packaging\upload_ilsa_zip.ps1`.
 
@@ -233,8 +223,7 @@ Versión actual del manifiesto: ver `extension/manifest.json`.
 | `src/backend/session.py` | Clasificador CPU, ingestión, cierre de enunciado, HTTP /sordo |
 | `src/backend/hearing_session.py` | Sesión oyente (voz → POST /oyente) |
 | `src/backend/landmarks_payload.py` | JSON de frames → tensores |
-| `src/semantic/remote.py` | Cliente HTTP del túnel ngrok |
-| `src/semantic/http_server.py` | FastAPI del GGUF (`run_semantic_server.py`) |
+| `src/semantic/remote.py` | Cliente HTTP de Cloud Run |
 
 Logs útiles al correr el motor: `POST /sign: N frames`, top-3, added/rejected,
 cierre de enunciado.
@@ -244,23 +233,23 @@ El API escucha en loopback (`127.0.0.1`). No bindear `0.0.0.0`.
 ## 11. Empaquetado
 
 - `packaging/build_exe.bat` genera `dist/LSABackend/ILSA.exe` y
-  `extension/bin/ILSA.zip` (PyInstaller, sin consola, **sin** el GGUF).
+  `extension/bin/ILSA.zip` (PyInstaller, sin consola).
   El zip no se versiona.
-- `packaging/LSABackend.spec` empaqueta clasificador y runtime CPU (sin llama.cpp).
+- `packaging/LSABackend.spec` empaqueta clasificador y runtime CPU.
 - En desarrollo: `python run_backend.py` (ventana) o `--headless`.
-- Semántico: `python run_semantic_server.py` y [`docs/SEMANTICO_NUBE.md`](SEMANTICO_NUBE.md).
+- Semántico: Cloud Run; este repo solo tiene el cliente HTTP.
 
 ## 12. Qué no es este repo
 
 - No es un diccionario pedagógico. Carpetas tipo `señario1/` con PNG, si
   existen en el disco, **no las usa el código**.
-- El clasificador corre en ILSA. La LLM corre en `run_semantic_server.py` y se
-  publica con ngrok. El video no sale de la PC de Meet.
+- El clasificador corre en ILSA. La LLM corre en Cloud Run. El video no sale
+  de la PC de Meet.
 - No hay entrenamiento aquí. Los `.pth` se asumen ya exportados.
 
 ## 13. Orden mental para debuggear
 
-1. ¿Está `python run_semantic_server.py` + ngrok, y `semantic_url.txt` en el release?
+1. ¿Responde el `/health` de Cloud Run desde esta PC?
 2. ¿Elegiste modo y Encendiste? `GET http://127.0.0.1:8765/health` → `ok`.
 3. ¿La extensión está recargada y es la carpeta `extension/` de este clone?
 4. ¿Existen los WASM en `extension/vendor/mediapipe/`?

@@ -1,5 +1,5 @@
-# Sube extension\bin\ILSA.zip al mismo GitHub Release que el GGUF (tag ilsa-llama-1b).
-# GitHub admite como máximo 2 GB por archivo. El zip NO debe incluir el .gguf.
+# Sube extension\bin\ILSA.zip al GitHub Release (tag ilsa-llama-1b).
+# GitHub admite como máximo 2 GB por archivo.
 # Uso (después de packaging\build_exe.bat):
 #   powershell -File packaging\upload_ilsa_zip.ps1
 
@@ -18,7 +18,7 @@ $zi = Get-Item $zip
 $gb = [math]::Round($zi.Length / 1GB, 2)
 Write-Host "Zip: $zip ($gb GB)"
 if ($zi.Length -gt 2GB) {
-  Write-Error "GitHub no acepta archivos de más de 2 GB. Este zip pesa $gb GB. Regeneralo con packaging\build_exe.bat (sin GGUF)."
+  Write-Error "GitHub no acepta archivos de más de 2 GB. Este zip pesa $gb GB. Regeneralo con packaging\build_exe.bat."
 }
 
 $gh = Get-Command gh -ErrorAction SilentlyContinue
@@ -39,13 +39,17 @@ $exists = ($LASTEXITCODE -eq 0)
 $ErrorActionPreference = $prevEap
 
 if (-not $exists) {
-  Write-Error "No existe el release $tag. Subí antes el GGUF: packaging\upload_llama_gguf.ps1"
-}
-
-Write-Host "Subiendo ILSA.zip a $tag ..."
-& $ghBin release upload $tag $zip --repo $repo --clobber
-if ($LASTEXITCODE -ne 0) {
-  Write-Error "gh falló al subir ILSA.zip"
+  Write-Host "Creando release $tag ..."
+  & $ghBin release create $tag $zip --repo $repo --title "ILSA" --notes "Motor ILSA (clasificador CPU). Traduce contra Cloud Run."
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "gh falló al crear el release"
+  }
+} else {
+  Write-Host "Subiendo ILSA.zip a $tag ..."
+  & $ghBin release upload $tag $zip --repo $repo --clobber
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "gh falló al subir ILSA.zip"
+  }
 }
 
 Write-Host "Listo. El botón de la extensión baja:"

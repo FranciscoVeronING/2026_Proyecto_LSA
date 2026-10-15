@@ -89,11 +89,11 @@ def health():
             semantic_label = "Traductor no disponible"
             semantic_load = ""
         elif session and not getattr(session, "semantic_ready", False):
-            semantic_label = "Sin servidor semántico"
+            semantic_label = "Sin traductor"
             semantic_load = ""
         else:
             semantic_label = "Traductor remoto"
-            semantic_load = "cloudflare"
+            semantic_load = "cloud"
     return {
         "ok": session is not None,
         "mode": _mode,
@@ -111,7 +111,7 @@ def health():
 
 @app.get("/semantic/models")
 def semantic_models():
-    from semantic.models import list_semantic_models
+    from semantic.config import list_semantic_models
 
     session = _session
     active = ""
