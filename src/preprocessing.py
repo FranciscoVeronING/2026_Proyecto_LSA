@@ -2,7 +2,7 @@ import os
 import glob
 import cv2
 import numpy as np
-from typing import List
+from typing import List, Optional
 from tqdm import tqdm
 
 from holistic_web import HolisticWebSession, HolisticWebError, is_session_dead
@@ -84,6 +84,30 @@ def _is_left_handed_video(video_path: str) -> bool:
     return "_zurdo" in name or "_left" in name
 
 
+def _select_sign_classes(source_dir: str, only_signs: Optional[List[str]]) -> List[str]:
+    sign_classes = [
+        d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))
+    ]
+    if not only_signs:
+        return sign_classes
+
+    by_name = {name.casefold(): name for name in sign_classes}
+    selected = []
+    missing = []
+    for requested in only_signs:
+        match = by_name.get(requested.casefold())
+        if match is None:
+            missing.append(requested)
+        else:
+            selected.append(match)
+    if missing:
+        available = ", ".join(sorted(sign_classes))
+        raise SystemExit(
+            f"No están en {source_dir}: {', '.join(missing)}. Carpetas: {available}"
+        )
+    return selected
+
+
 def run_extraction_pipeline(
     source_dir: str,
     dest_dir: str,
@@ -92,9 +116,10 @@ def run_extraction_pipeline(
     use_face: bool,
     target_frames: int,
     force_reprocess: bool = False,
+    only_signs: Optional[List[str]] = None,
 ) -> None:
     os.makedirs(dest_dir, exist_ok=True)
-    sign_classes = [d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))]
+    sign_classes = _select_sign_classes(source_dir, only_signs)
 
     with HolisticWebSession(require_gpu=True) as session:
         failed = 0
@@ -168,6 +193,14 @@ if __name__ == "__main__":
         action="store_true",
         help="Reprocesa aunque el .npy ya exista (necesario tras cambiar trim/interpolación).",
     )
+    parser.add_argument(
+        "--signs",
+        nargs="+",
+        default=None,
+        metavar="SEÑA",
+        help="Solo estas carpetas de dataset/ (ej. --signs Gracias Ayudar Policia). "
+        "El resto de dataset_landmarks_16frames no se toca.",
+    )
     args = parser.parse_args()
 
     print("Starting extraction:")
@@ -179,6 +212,8 @@ if __name__ == "__main__":
     print(f" > Output temporal sequence: {MAX_FRAMES} frames")
     if args.force:
         print(" > Modo: FORCE (reprocesar todos los videos)")
+    if args.signs:
+        print(f" > Solo señas: {', '.join(args.signs)}")
 
     run_extraction_pipeline(
         source_dir=DATASET_VIDEOS_DIR,
@@ -188,4 +223,5 @@ if __name__ == "__main__":
         use_face=USE_FACE,
         target_frames=MAX_FRAMES,
         force_reprocess=args.force,
+        only_signs=args.signs,
     )

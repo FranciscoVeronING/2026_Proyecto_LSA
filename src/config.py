@@ -4,7 +4,7 @@ _SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATASET_VIDEOS_DIR = os.path.join(_SRC_DIR, "..", "dataset")
 DATASET_NPY_DIR = os.path.join(_SRC_DIR, "..", "dataset_landmarks_16frames")
-MODEL_SAVE_DIR = os.path.join(_SRC_DIR, "model")
+MODEL_SAVE_DIR = os.path.join(_SRC_DIR, "model_new_2026_10_15")
 MODEL_CHECKPOINT = "tinyskeleton_best.pth"
 
 # Misma build que la extensión (Holistic JS/WASM). No usar mediapipe de Python.
@@ -12,7 +12,7 @@ MEDIAPIPE_WEB_PACKAGE = "@mediapipe/holistic"
 MEDIAPIPE_WEB_VERSION = "0.5.1675471629"
 MEDIAPIPE_WEB_ID = f"{MEDIAPIPE_WEB_PACKAGE}@{MEDIAPIPE_WEB_VERSION}"
 
-NUM_CLASSES = 97
+NUM_CLASSES = 100
 SAMPLES_PER_CLASS = 60
 
 # Preprocess, train e inferencia usan el mismo T.
@@ -110,12 +110,12 @@ SIGN_CLASSES = [
     "ayer",
     "mio",
     "poder",
-    #"sacar",
+    "gracias",
     "robar",
-    #"pasar",
+    "policia",
     "llevar",
     "tuyo",
-    #"lastimar",
+    "ayudar",
     "ver",
     "llamar",
     "repetir",
