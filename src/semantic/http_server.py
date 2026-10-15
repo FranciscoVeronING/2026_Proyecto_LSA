@@ -6,6 +6,7 @@ import os
 from typing import Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import time
 
@@ -16,12 +17,19 @@ from semantic.sessions import client_key, memory_for, n_clients
 from semantic.translator import (
     infer_slot,
     load_model_and_tokenizer,
+    load_status,
     loaded_paths,
     translate_glosses,
     translate_spanish_to_glosses,
 )
 
 app = FastAPI(title="LSA semántico", version="1.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class SordoIn(BaseModel):
@@ -47,13 +55,22 @@ def _check_token(authorization: Optional[str], x_lsa_token: Optional[str]) -> No
 
 @app.get("/health")
 def health():
+    """ILSA: listo solo con HTTP 200 y ready=true. Si el GGUF aún no está en RAM,
+    el puerto no está abierto (cold start) o este campo es false."""
     paths = loaded_paths()
+    sordo_slot = describe_slot(SORDO_GGUF_DIR)
+    oyente_slot = describe_slot(OYENTE_GGUF_DIR)
+    ready = bool(paths.get("sordo"))
+    status = load_status()
     return {
         "ok": True,
+        "ready": ready,
+        "loading": status["loading"],
+        "load_error": status["error"],
         "primary": PRIMARY_GGUF,
         "backup": BACKUP_GGUF,
-        "sordo": describe_slot(SORDO_GGUF_DIR),
-        "oyente": describe_slot(OYENTE_GGUF_DIR),
+        "sordo": sordo_slot,
+        "oyente": oyente_slot,
         "sordo_gguf": paths.get("sordo"),
         "oyente_gguf": paths.get("oyente"),
         "model_used_sordo": paths.get("sordo_model"),
@@ -78,7 +95,7 @@ def _sordo_impl(body: SordoIn, request: Request, authorization, x_lsa_token, x_l
             spanish, model_used = translate_glosses(
                 body.glosses, history_messages=history
             )
-        except RuntimeError as exc:
+        except (RuntimeError, FileNotFoundError, OSError) as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         spanish = spanish or ""
         ms = (time.perf_counter() - t0) * 1000
@@ -104,7 +121,7 @@ def _oyente_impl(body: OyenteIn, request: Request, authorization, x_lsa_token, x
         t0 = time.perf_counter()
         try:
             glosses, model_used = translate_spanish_to_glosses(body.spanish)
-        except RuntimeError as exc:
+        except (RuntimeError, FileNotFoundError, OSError) as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         glosses = glosses or ""
         ms = (time.perf_counter() - t0) * 1000
@@ -166,9 +183,11 @@ def hearing(
 
 
 def warmup() -> None:
-    print("[semantic-http] Cargando GGUF desde src/semantic/models/…")
+    print("[semantic-http] Cargando GGUF desde src/semantic/models/…", flush=True)
     load_model_and_tokenizer()
     paths = loaded_paths()
-    print(f"[semantic-http] sordo RAM: {paths.get('sordo')}")
-    print(f"[semantic-http] oyente RAM: {paths.get('oyente')}")
-    print("[semantic-http] Listo /sordo /translate /oyente /hearing")
+    print(f"[semantic-http] sordo RAM: {paths.get('sordo')}", flush=True)
+    print(f"[semantic-http] oyente RAM: {paths.get('oyente')}", flush=True)
+    if not paths.get("sordo"):
+        raise RuntimeError("[semantic-http] Warmup incompleto: sin GGUF en RAM")
+    print("[semantic-http] Listo /sordo /translate /oyente /hearing", flush=True)

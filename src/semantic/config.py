@@ -15,7 +15,10 @@ SYSTEM_PROMPT_OYENTE_PATH = str(_SEMANTIC_DIR / "prompts" / "sys_prompt_oyente.t
 
 SEMANTIC_TOKEN = (os.getenv("LSA_SEMANTIC_TOKEN") or "").strip()
 
-N_CTX = 4096
+# En Cloud Run (PORT) un n_ctx 4096 × 4 motores OOM/cuelga el mmap.
+# Un GGUF Q4 1.5B + 2048 alcanza para las glosas.
+_default_n_ctx = 2048 if os.getenv("PORT") else 4096
+N_CTX = int(os.getenv("LSA_N_CTX") or _default_n_ctx)
 N_GPU_LAYERS = 0
 MAX_NEW_TOKENS = 64
 TEMPERATURE = 0.1

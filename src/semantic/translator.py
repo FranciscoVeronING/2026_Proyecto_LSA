@@ -68,7 +68,10 @@ from semantic.models import oyente_candidates, sordo_candidates
 SYSTEM_PROMPT = ""
 SYSTEM_PROMPT_OYENTE = ""
 _LOADED = False
+_LOADING = False
+_LOAD_ERROR: Optional[str] = None
 _NATIVE_PORT = 18790
+_LOAD_LOCK = threading.Lock()
 
 _CHATML_STOP = ["<|im_end|>", "<|endoftext|>", "<|im_start|>"]
 _LLAMA3_STOP = ["<|eot_id|>", "<|eom_id|>", "<|start_header_id|>"]
@@ -138,6 +141,10 @@ def loaded_paths() -> dict[str, Optional[str]]:
     }
 
 
+def load_status() -> dict:
+    return {"loading": _LOADING, "error": _LOAD_ERROR}
+
+
 def _read_prompt_file(path: Path) -> Optional[str]:
     if not path.is_file():
         return None
@@ -183,7 +190,12 @@ def _make_engine(model_path: str, n_threads: int):
     try:
         from llama_cpp import Llama
 
-        return Llama(
+        print(
+            f"[semantic] Llama() mmap {model_path} n_ctx={N_CTX} threads={n_threads}…",
+            flush=True,
+        )
+        t0 = time.perf_counter()
+        engine = Llama(
             model_path=model_path,
             n_gpu_layers=0,
             n_ctx=int(N_CTX),
@@ -192,6 +204,11 @@ def _make_engine(model_path: str, n_threads: int):
             n_threads_batch=n_threads,
             verbose=False,
         )
+        print(
+            f"[semantic] Llama() listo en {time.perf_counter() - t0:.1f}s",
+            flush=True,
+        )
+        return engine
     except (ImportError, OSError, RuntimeError) as exc:
         print(f"[semantic] llama-cpp-python no carga ({exc}). Uso llama-server.exe.")
         from semantic.native_llama import LlamaServerEngine
@@ -258,12 +275,9 @@ def _close_engine(engine: object) -> None:
 
 def unload_model() -> None:
     global _LOADED, SYSTEM_PROMPT, SYSTEM_PROMPT_OYENTE
-    seen = []
     for ch in (_SORDO, _OYENTE):
         for item in ch.engines:
-            if item.engine not in seen:
-                seen.append(item.engine)
-                _close_engine(item.engine)
+            _close_engine(item.engine)
         ch.engines.clear()
         ch.index = 0
     SYSTEM_PROMPT = ""
@@ -273,32 +287,31 @@ def unload_model() -> None:
 
 
 def _try_init(path: Path, n_threads: int, channel: str) -> Optional[LoadedEngine]:
-    print(f"[semantic] Intentando {channel}: {path}")
+    resolved = path.resolve()
+    print(f"[semantic] Intentando {channel}: {resolved}", flush=True)
     try:
-        engine = _make_engine(str(path), n_threads=n_threads)
+        engine = _make_engine(str(resolved), n_threads=n_threads)
     except Exception as exc:
-        print(f"[semantic] Falló inicialización {path.name}: {exc}")
+        print(f"[semantic] Falló inicialización {path.name}: {exc}", flush=True)
         return None
     chat = _chat_format_for(path)
-    print(f"[semantic] GGUF en RAM ({channel}): {path.resolve()} ({chat})")
-    return LoadedEngine(path=path.resolve(), engine=engine, chat=chat)
+    print(f"[semantic] GGUF en RAM ({channel}): {resolved} ({chat})", flush=True)
+    return LoadedEngine(path=resolved, engine=engine, chat=chat)
 
 
 def _load_channel(channel: Channel, paths: list[Path], n_threads: int) -> None:
+    folder = SORDO_GGUF_DIR if channel.name == "sordo" else OYENTE_GGUF_DIR
     if not paths:
         raise FileNotFoundError(
-            f"[semantic] No hay {PRIMARY_GGUF} ni {BACKUP_GGUF} en "
-            f"{'sordo' if channel.name == 'sordo' else 'oyente'}. "
-            f"Esperados: {SORDO_GGUF_DIR if channel.name == 'sordo' else OYENTE_GGUF_DIR}"
+            f"[semantic] No hay {PRIMARY_GGUF} ni {BACKUP_GGUF} en {folder}."
         )
     loaded: list[LoadedEngine] = []
     for path in paths:
         item = _try_init(path, n_threads, channel.name)
         if item is not None:
             loaded.append(item)
-            # El primero que carga es el activo (Qwen si existió y arrancó).
             if len(loaded) == 1:
-                print(f"[semantic] Activo {channel.name}: {item.path}")
+                print(f"[semantic] Activo {channel.name}: {item.path}", flush=True)
     if not loaded:
         names = ", ".join(p.name for p in paths)
         raise RuntimeError(f"[semantic] Ningún GGUF de {channel.name} cargó ({names}).")
@@ -307,55 +320,46 @@ def _load_channel(channel: Channel, paths: list[Path], n_threads: int) -> None:
 
 
 def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False):
-    """Carga Qwen (principal) y Llama (backup) por canal, solo desde models/."""
-    global SYSTEM_PROMPT, SYSTEM_PROMPT_OYENTE, _LOADED
+    """Carga GGUF y sys_prompt de cada carpeta, sin compartir entre canales."""
+    global SYSTEM_PROMPT, SYSTEM_PROMPT_OYENTE, _LOADED, _LOADING, _LOAD_ERROR
     del model_id
-    if _LOADED and _SORDO.current is not None and not force:
-        return
-    if _LOADED:
-        unload_model()
+    with _LOAD_LOCK:
+        if (
+            _LOADED
+            and _SORDO.current is not None
+            and _OYENTE.current is not None
+            and not force
+        ):
+            return
+        if _LOADED:
+            unload_model()
+        _LOADING = True
+        _LOAD_ERROR = None
+        try:
+            n_threads = max(1, min(4, os.cpu_count() or 2))
+            SYSTEM_PROMPT = load_prompt()
+            SYSTEM_PROMPT_OYENTE = load_prompt_oyente()
 
-    n_threads = max(1, min(8, (os.cpu_count() or 4) // 2))
-    SYSTEM_PROMPT = load_prompt()
-    SYSTEM_PROMPT_OYENTE = load_prompt_oyente()
+            print("[semantic] Warmup: GGUF locales por canal.", flush=True)
+            for label, folder in (("sordo", SORDO_GGUF_DIR), ("oyente", OYENTE_GGUF_DIR)):
+                names = []
+                if folder.is_dir():
+                    names = sorted(p.name for p in folder.iterdir())
+                print(
+                    f"[semantic] Dir {label} {folder}: {names or '(vacío o no existe)'}",
+                    flush=True,
+                )
+            _load_channel(_SORDO, sordo_candidates(), n_threads)
+            _load_channel(_OYENTE, oyente_candidates(), n_threads)
 
-    print("[semantic] Warmup: buscando GGUF locales (sin Ollama / HF / GitHub).")
-    _load_channel(_SORDO, sordo_candidates(), n_threads)
-    oyente_paths = oyente_candidates()
-    if oyente_paths:
-        _load_channel(_OYENTE, oyente_paths, n_threads)
-    else:
-        print(
-            f"[semantic] Sin {PRIMARY_GGUF}/{BACKUP_GGUF} en {OYENTE_GGUF_DIR}; "
-            "oyente usa los motores de sordo."
-        )
-        _OYENTE.engines = list(_SORDO.engines)
-        _OYENTE.index = _SORDO.index
-
-    _LOADED = True
-    sordo = _SORDO.current
-    oyente = _OYENTE.current
-    print(f"[semantic] Cargado sordo → {sordo.path if sordo else '—'}")
-    print(f"[semantic] Cargado oyente → {oyente.path if oyente else '—'}")
-    print("[semantic] Calentando primera inferencia…")
-    t0 = time.perf_counter()
-    try:
-        prompt = _format_prompt(
-            [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": "Glosas: HOLA"},
-            ],
-            sordo.chat if sordo else "chatml",
-        )
-        if sordo is None:
-            raise RuntimeError("sin motor sordo")
-        sordo.engine.create_completion(
-            prompt, max_tokens=1, temperature=0.0, stop=_stop_tokens(sordo.chat)
-        )
-    except Exception as exc:
-        print(f"[semantic] Warmup omitido: {exc}")
-    else:
-        print(f"[semantic] Warmup listo en {time.perf_counter() - t0:.1f}s")
+            _LOADED = True
+            print(f"[semantic] Cargado sordo → {_SORDO.path_str()}", flush=True)
+            print(f"[semantic] Cargado oyente → {_OYENTE.path_str()}", flush=True)
+        except Exception as exc:
+            _LOAD_ERROR = str(exc)
+            raise
+        finally:
+            _LOADING = False
 
 
 def translate_glosses(
@@ -374,36 +378,7 @@ def translate_glosses(
         messages.extend(history_messages)
     messages.append({"role": "user", "content": f"Glosas: {raw}"})
 
-    last_err = None
-    start = _SORDO.index
-    for step in range(len(_SORDO.engines)):
-        idx = (start + step) % len(_SORDO.engines)
-        item = _SORDO.engines[idx]
-        prompt = _format_prompt(messages, item.chat)
-        print(f"[semantic] /sordo con {item.path.name} para {raw!r}")
-        t0 = time.perf_counter()
-        try:
-            response = item.engine.create_completion(
-                prompt,
-                max_tokens=int(MAX_NEW_TOKENS),
-                temperature=float(TEMPERATURE),
-                repeat_penalty=float(REPETITION_PENALTY),
-                stop=_stop_tokens(item.chat),
-            )
-            text = (response["choices"][0].get("text") or "").strip()
-            if not text:
-                raise RuntimeError("respuesta vacía")
-            _SORDO.index = idx
-            print(
-                f"[semantic] Inferencia {item.path.name} en {time.perf_counter() - t0:.1f}s → {text!r}"
-            )
-            return text, item.path.name
-        except Exception as exc:
-            last_err = exc
-            print(f"[semantic] Fallo sordo {item.path.name}: {exc}")
-            if item.path.name.lower() == PRIMARY_GGUF:
-                print(f"[semantic] Conmutando sordo a {BACKUP_GGUF}")
-    raise RuntimeError(f"[semantic] /sordo sin modelo usable: {last_err}")
+    return _complete_channel(_SORDO, messages, raw, "sordo")
 
 
 def translate_spanish_to_glosses(spanish_input: str) -> tuple[str, str]:
@@ -412,16 +387,25 @@ def translate_spanish_to_glosses(spanish_input: str) -> tuple[str, str]:
 
     raw = spanish_input.strip()
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT_OYENTE or load_prompt_oyente()},
+        {"role": "system", "content": SYSTEM_PROMPT_OYENTE},
         {"role": "user", "content": f"Español: {raw}"},
     ]
+    return _complete_channel(_OYENTE, messages, raw, "oyente")
+
+
+def _complete_channel(
+    channel: Channel,
+    messages: list[dict],
+    raw: str,
+    label: str,
+) -> tuple[str, str]:
     last_err = None
-    start = _OYENTE.index
-    for step in range(len(_OYENTE.engines)):
-        idx = (start + step) % len(_OYENTE.engines)
-        item = _OYENTE.engines[idx]
+    start = channel.index
+    for step in range(len(channel.engines)):
+        idx = (start + step) % len(channel.engines)
+        item = channel.engines[idx]
         prompt = _format_prompt(messages, item.chat)
-        print(f"[semantic] /oyente con {item.path.name} para {raw!r}")
+        print(f"[semantic] /{label} con {item.path.name} para {raw!r}", flush=True)
         t0 = time.perf_counter()
         try:
             response = item.engine.create_completion(
@@ -434,23 +418,25 @@ def translate_spanish_to_glosses(spanish_input: str) -> tuple[str, str]:
             text = (response["choices"][0].get("text") or "").strip()
             if not text:
                 raise RuntimeError("respuesta vacía")
-            _OYENTE.index = idx
+            channel.index = idx
             print(
-                f"[semantic] Oyente {item.path.name} en {time.perf_counter() - t0:.1f}s → {text!r}"
+                f"[semantic] {label} {item.path.name} en {time.perf_counter() - t0:.1f}s → {text!r}",
+                flush=True,
             )
             return text, item.path.name
         except Exception as exc:
             last_err = exc
-            print(f"[semantic] Fallo oyente {item.path.name}: {exc}")
+            print(f"[semantic] Fallo {label} {item.path.name}: {exc}", flush=True)
             if item.path.name.lower() == PRIMARY_GGUF:
-                print(f"[semantic] Conmutando oyente a {BACKUP_GGUF}")
-    raise RuntimeError(f"[semantic] /oyente sin modelo usable: {last_err}")
+                print(f"[semantic] Conmutando {label} a {BACKUP_GGUF}", flush=True)
+    raise RuntimeError(f"[semantic] /{label} sin modelo usable: {last_err}")
 
 
 __all__ = [
     "get_active_model_id",
     "infer_slot",
     "loaded_paths",
+    "load_status",
     "load_model_and_tokenizer",
     "translate_glosses",
     "translate_spanish_to_glosses",

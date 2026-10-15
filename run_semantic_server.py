@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-import threading
 from pathlib import Path
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -41,9 +40,11 @@ def main(argv=None) -> None:
     from semantic.http_server import app, warmup
     import uvicorn
 
-    # Escuchar el puerto YA: el GGUF se carga en paralelo (health-check de Cloud Run).
-    threading.Thread(target=warmup, daemon=True, name="gguf-warmup").start()
-    print(f"[semantic-http] Escuchando {host}:{port}")
+    # Min-instances 0: el mmap usa CPU de arranque (--cpu-boost). El puerto
+    # se abre recién cuando ready=true. ILSA reintenta /health hasta 200+ready.
+    print("[semantic-http] Cargando GGUF antes de abrir el puerto…", flush=True)
+    warmup()
+    print(f"[semantic-http] Escuchando {host}:{port}", flush=True)
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 

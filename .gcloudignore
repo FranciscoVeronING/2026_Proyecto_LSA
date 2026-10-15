@@ -1,0 +1,16 @@
+.git/
+.gitignore
+.gcloudignore
+__pycache__/
+**/__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+src/semantic/outputs/
+src/semantic/bin/
+extension/
+dataset/
+docs/
+*.md
+!README.md

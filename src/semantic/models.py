@@ -14,12 +14,26 @@ from semantic.config import (
 
 
 def gguf_candidates(folder: Path) -> list[Path]:
-    """Principal (Qwen) y backup (Llama), en ese orden, si el archivo existe."""
+    """Principal (Qwen) y backup (Llama), luego cualquier otro ``*.gguf`` del folder."""
     out: list[Path] = []
+    seen: set[Path] = set()
     for name in (PRIMARY_GGUF, BACKUP_GGUF):
         path = folder / name
         if path.is_file():
-            out.append(path.resolve())
+            resolved = path.resolve()
+            out.append(resolved)
+            seen.add(resolved)
+    extras: list[Path] = []
+    if folder.is_dir():
+        for path in folder.glob("*.gguf"):
+            if not path.is_file():
+                continue
+            resolved = path.resolve()
+            if resolved in seen:
+                continue
+            extras.append(resolved)
+    extras.sort(key=lambda p: (0 if "qwen" in p.name.lower() else 1 if "llama" in p.name.lower() else 2, p.name.lower()))
+    out.extend(extras)
     return out
 
 
