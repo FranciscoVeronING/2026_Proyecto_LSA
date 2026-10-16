@@ -1,36 +1,18 @@
-
 % ====================================================================
 \chapter{Objetivos}
 % ====================================================================
 
 \section{Objetivo general}
-Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y el español rioplatense con procesamiento en tiempo pseudo-real, diseñado para operar sobre plataformas de videoconferencia mediante una arquitectura híbrida cliente-nube, con el fin de mitigar la asimetría en la comunicación expresiva y fomentar la autonomía de las personas sordas al interactuar con interlocutores oyentes no señantes.
+Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y el español rioplatense con procesamiento en tiempo pseudo-real, diseñado para operar sobre plataformas de videoconferencia mediante una arquitectura híbrida cliente-nube, con el fin de mitigar la asimetría en la comunicación expresiva y receptiva, fomentando la autonomía de las personas sordas en la interacción con interlocutores oyentes no señantes.
 
 \section{Objetivos específicos}
 \begin{itemize}
     \item Implementar un módulo local de visión computacional y clasificación gestual basado en la extracción de puntos de referencia corporales para el reconocimiento de un vocabulario de 100 señas de LSA.
-    \item Diseñar e integrar el servicio semántico del canal directo (LSA $\rightarrow$ Español) para transformar secuencias de glosas aisladas en oraciones fluidas y gramaticalmente correctas en español rioplatense en relacion con el contexto conversacional.
-    \item Diseñar e integrar el servicio semántico del canal inverso (Español $\rightarrow$ LSA) para reestructurar oraciones del español oral a secuencias de glosas alineadas con la gramática \textit{Topic-Comment} de la LSA.
-    \item Implementar un módulo de visualización gestual inversa mediante un avatar tridimensional capaz de animar las señas resultantes y ejecutar deletreo dactilológico para términos ausentes en el vocabulario.
+    \item Diseñar e integrar el servicio semántico del canal directo (LSA $\rightarrow$ Español) para transformar secuencias de glosas aisladas en oraciones fluidas y gramaticalmente correctas en español rioplatense en relación con el contexto conversacional.
+    \item Diseñar e integrar el servicio semántico del canal inverso (Español $\rightarrow$ LSA) para reestructurar oraciones del español oral a secuencias de glosas alineadas con las reglas morfosintácticas y la estructura canónica \textit{Topic-Comment} de la LSA.
+    \item Implementar un módulo de visualización gestual inversa mediante un avatar capaz de animar las señas resultantes y ejecutar deletreo dactilológico para términos ausentes en el vocabulario.
     \item Diseñar una arquitectura escalable en la nube para el aprovisionamiento concurrente de los servicios semánticos, lo que desacopla el procesamiento del hardware cliente.
-    \item Garantizar la privacidad de los usuarios al ejecutar la extracción de características y clasificación de forma local en el dispositivo cliente y transmitir hacia la nube únicamente cargas textuales.
-    \item Desarrollar la arquitectura de software de una extensión para navegadores basados en Chromium articulada con un motor de ejecución en segundo plano (ILSA).
+    \item Resguardar la privacidad de los datos biométricos de los usuarios al ejecutar la extracción de características y la clasificación de forma local en el dispositivo cliente, limitando la transmisión hacia la nube a cargas puramente textuales.
+    \item Desarrollar la arquitectura de software de una extensión para navegadores basados en la tecnología Chromium (tales como Google Chrome, Microsoft Edge, Brave, Opera o Vivaldi) articulada con un motor de ejecución en segundo plano (ILSA).
+    \item Evaluar el desempeño integral del prototipo en términos de exactitud de clasificación con personas no vistas en el entrenamiento, fidelidad semántica bidireccional (métricas BLEU y ROUGE-L), latencia de respuesta y consumo de recursos de hardware, conforme a las métricas y criterios de aceptación definidos en el marco metodológico.
 \end{itemize}
-
-
-- se menciona el concepto de glosas, pero antes no se explica. Se va a explicar en las palabras claves y despues lo mencionariamos en cap 3 donde hablamos de LSA.
--  la extension solo en google meet por ahora? onda es para google nomas? me olvide de preguntarte
-
-es compatible con cualquier navegador basado en Chromium. No lo queria dejar de la otra forma porq era muy general y tecnicamente no funciona en todos los navegadores, pero los q usan chromium son bastantes: Google Chrome, Microsoft Edge, Brave, Opera, Vivaldi. No funcionarian en Mozilla o en Safari (El de apple)
- 
-
-
-
-
-
-
-
-
-
-
-

@@ -26,12 +26,6 @@
   howpublished = {\url{https://senas.inju.gob.ar/}}
 }
 
-@misc{unmdp2024protocolo,
-  author       = {{Universidad Nacional de Mar del Plata, Facultad de Ingenier{\'i}a}},
-  title        = {Protocolo de Trabajo Final --- Ingenier{\'i}a en Inform{\'a}tica},
-  year         = {2024}
-}
-
 @article{wu2020lite,
   author  = {Wu, Ying and Lu, Shuang and Gan, Zhiqiang and Gan, Chuang and Shen, Yu and Chen, Yen-Chun and Smith, Lawrence and Ren, Shanghang and Carin, Lawrence and He, Xiaodong and others},
   title   = {Lite Transformer with Long-Short Range Attention},
@@ -68,12 +62,7 @@
   howpublished = {\url{https://huggingface.co/docs/transformers}}
 }
 
-@misc{github2026proyectolsa,
-  author       = {Ver{\'o}n, Francisco and Nigro, Maite},
-  title        = {2026\_Proyecto\_LSA},
-  year         = {2026},
-  howpublished = {\url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA}}
-}
+% --- Estado del arte ---
 
 @misc{signall2026linkedin,
   author       = {{SignAll Technologies}},
@@ -82,7 +71,7 @@
   howpublished = {\url{https://www.linkedin.com/company/signall-technologies/about/}}
 }
 
-@misc{signall2018techcrunch,
+@misc{signall2026linkedin,
   author       = {Coldewey, Devin},
   title        = {{SignAll} is slowly but surely building a sign language translation platform},
   year         = {2018},
@@ -94,13 +83,6 @@
   title        = {Acessibilidade digital em l{\'\i}nguas de sinais},
   year         = {2025},
   howpublished = {\url{https://www.handtalk.me/br/}}
-}
-
-@misc{sorenson2025handtalk,
-  author       = {{Sorenson Communications}},
-  title        = {Sorenson Communications acquires {OmniBridge} and {Hand Talk}},
-  year         = {2025},
-  howpublished = {\url{https://sorenson.com/newsroom/sorenson-acquires-omnibridge-and-hand-talk-to-develop-automated-sign-language-translation-capabilities/}}
 }
 
 @misc{lsapp2018,
@@ -164,7 +146,7 @@
 }
 
 % --- Lingüística de LSA y morfología ---
-@article{massone1993numero,
+@article{massoneparte1,
   author    = {Massone, Mar{\'i}a Ignacia},
   title     = {El n{\'u}mero y el g{\'e}nero en la {Lengua de Se{\~n}as Argentina}},
   journal   = {Signo \& Se{\~n}a},
@@ -174,12 +156,21 @@
   publisher = {Facultad de Filosof{\'i}a y Letras, Universidad de Buenos Aires}
 }
 
-@book{massone2012curso,
+@book{massoneparte2,
   author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
   title     = {Curso de {Lengua de Se{\~n}as Argentina}: Parte 1 y 2},
   publisher = {Cultura Sorda},
   year      = {2012},
   url       = {http://www.cultura-sorda.eu}
+}
+
+@book{massone1993lengua,
+  author    = {Massone, María Ignacia and Machado, Emilia Margarita},
+  title     = {Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe},
+  year      = {1993},
+  publisher = {Edicial},
+  address   = {Buenos Aires, Argentina},
+  isbn      = {950-506-213-3}
 }
 
 @article{fischer1993terminar,
@@ -191,6 +182,7 @@
   year      = {1993},
   publisher = {Facultad de Filosof{\'i}a y Letras, Universidad de Buenos Aires}
 }
+
 
 % --- Inferencia y Cuantización (llama.cpp y GGUF) ---
 @software{gerganov2023llamacpp,
@@ -268,4 +260,55 @@
   title        = {Overview of {Manifest V3}},
   year         = {2024},
   howpublished = {\url{https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3}}
+}
+
+@inproceedings{lugaresi2019mediapipe,
+  author    = {Lugaresi, Camillo and Tang, Jiuqiang and Nash, Hadon and McClanahan, Chris and Uboweja, Esha and Hays, Michael and Zhang, Fan and Chang, Chuo-Ling and Yong, Ming Guang and Lee, Juhyun and Chang, Wan-Teh and Hua, Wei and Georg, Manfred and Grundmann, Matthias},
+  title     = {{MediaPipe}: A Framework for Building Perception Pipelines},
+  booktitle = {Third Workshop on Computer Vision for {AR/VR} at {IEEE} {CVPR}},
+  year      = {2019}
+}
+
+@misc{bazarevsky2020blazepose,
+  author       = {Bazarevsky, Valentin and Grishchenko, Ivan and Raveendran, Karthik and Zhu, Tyler and Zhang, Fan and Grundmann, Matthias},
+  title        = {{BlazePose}: On-device Real-time Body Pose Tracking},
+  year         = {2020},
+  eprint       = {2006.10204},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CV}
+}
+
+@misc{zhang2020mediapipehands,
+  author       = {Zhang, Fan and Bazarevsky, Valentin and Vakunov, Andrey and Tkachenka, Andrei and Sung, George and Chang, Chuo-Ling and Grundmann, Matthias},
+  title        = {{MediaPipe} Hands: On-device Real-time Hand Tracking},
+  year         = {2020},
+  eprint       = {2006.10214},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CV}
+}
+
+% --- Calculos de huella de memoria de modelo semantico quantizado ---
+
+@article{gerganov2023llamacpp,
+  author    = {Gerganov, Georgi},
+  title     = {llama.cpp: Inference of LLaMA model in C/C++},
+  journal   = {GitHub repository},
+  year      = {2023},
+  url       = {https://github.com/ggerganov/llama.cpp}
+}
+
+@article{frantar2022gptq,
+  title     = {GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers},
+  author    = {Frantar, Elias and Ashkboos, Saleh and Torfi, Coleman and Alistarh, Dan},
+  journal   = {arXiv preprint arXiv:2210.17323},
+  year      = {2022}
+}
+
+@article{pope2023efficiently,
+  title     = {Efficiently scaling transformer inference},
+  author    = {Pope, Reiner and Douglas, Sholto and Chowdhery, Aakanksha and Devlin, Jacob and Bradbury, James and Levskaya, Anselm and Zhang, Chenggang and Nado, Zachary and Jaitly, Navdeep and Vaswani, Ashish and others},
+  journal   = {Proceedings of Machine Learning and Systems},
+  volume    = {5},
+  pages     = {606--624},
+  year      = {2023}
 }
