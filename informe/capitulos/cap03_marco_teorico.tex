@@ -205,6 +205,8 @@ A partir del binario consolidado en precisión de 16 bits, se aplica el algoritm
 El canal inverso requiere transformar las glosas sintácticas en representaciones visuales comprensibles para el usuario sordo. Un avatar tridimensional ejecuta las animaciones asociadas a cada glosa del vocabulario base mediante interpolación de huesos o textit{blendshapes}. Ante términos inexistentes en el diccionario léxico (como nombres propios o tecnicismos), el módulo recurre al subsistema de deletreo manual dactilológico y anima letra por letra la palabra involucrada.
 
 \subsection{Arquitectura híbrida de partición Cliente-Nube}
+El concepto de \textbf{tiempo pseudo-real} designa a aquellos sistemas de procesamiento interactivo donde la respuesta computacional no ocurre de forma estrictamente instantánea ni en el orden de los microsegundos, pero cuyos retardos temporales permanecen dentro de un umbral operativo tolerable para la interacción humana. A diferencia de los sistemas de tiempo real estricto (\textit{hard real-time}), el tiempo pseudo-real admite una latencia acotada resultante de la segmentación temporal por pausas de inactividad, el empaquetado de datos y el tiempo de inferencia de los modelos semánticos en la nube, sosteniendo la fluidez del diálogo bilingüe en la videollamada.
+
 Para equilibrar los requerimientos de privacidad, latencia y viabilidad en hardware de consumo masivo, se adoptó una arquitectura de partición cliente-nube.
 
 En el cliente local se ejecutan la captura de video, la extracción de puntos clave corporales y el modelo de clasificación gestual. Este componente presenta un costo computacional acotado y garantiza que el video crudo nunca abandone el equipo del usuario, de esta forma, se resguarda su privacidad e identidad visual. 
