@@ -55,6 +55,11 @@ const LsaApi = {
       method: "POST",
       body: JSON.stringify({ spanish, final: Boolean(final) }),
     }),
+  stt: (wavB64, lang) =>
+    api("/stt", {
+      method: "POST",
+      body: JSON.stringify({ wav_b64: wavB64, lang: lang || "es-ES" }),
+    }),
   activity: () => api("/activity", { method: "POST", body: "{}" }),
   endUtterance: () => api("/utterance/end", { method: "POST", body: "{}" }),
   clearConversation: () => api("/conversation/clear", { method: "POST", body: "{}" }),

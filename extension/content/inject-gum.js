@@ -33,11 +33,13 @@
     [0, 17], [17, 18], [18, 19], [19, 20], [5, 9], [9, 13], [13, 17],
   ];
   let enabled = false;
+  let hearingMode = false;
   let showSubtitles = true;
   let showLandmarks = false;
   let landmarks = null;
   let caption = { spanish: "", glosses: "" };
   let pipeline = null;
+  let extraAudio = null;
 
   window.addEventListener("message", (event) => {
     if (event.source !== window) return;
@@ -45,7 +47,20 @@
     if (!data || data.source !== "lsa-ext") return;
     if (data.type === "LSA_SET_ENABLED") {
       enabled = Boolean(data.enabled);
-      if (!enabled) stopPageSpeech();
+      hearingMode = Boolean(data.enabled && data.hearing);
+      if (!hearingMode) stopHearingTap();
+      if (hearingMode) {
+        wrapExistingMeetCamera();
+        startHearingTap();
+        [300, 1000, 2500].forEach((ms) => {
+          setTimeout(() => {
+            if (hearingMode) {
+              wrapExistingMeetCamera();
+              startHearingTap();
+            }
+          }, ms);
+        });
+      }
       syncCanvasToMeet();
     }
     if (data.type === "LSA_PREFS") {
@@ -58,92 +73,179 @@
     if (data.type === "LSA_LANDMARKS") {
       landmarks = data.landmarks || null;
     }
-    if (data.type === "LSA_SPEECH_START") startPageSpeech();
-    if (data.type === "LSA_SPEECH_STOP") stopPageSpeech();
+    if (data.type === "LSA_SPEECH_STOP") stopHearingTap();
     if (data.type === "LSA_CAPTION") {
-      if (typeof data.spanish === "string" && data.spanish.length) {
-        caption.spanish = data.spanish;
+      // Solo `line`: oyente manda glosas del semántico; sordo manda el español.
+      // Nunca usar `glosses` crudas del clasificador.
+      const line = typeof data.line === "string" ? data.line.trim() : "";
+      if (line) {
+        caption.spanish = line;
         if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
         window.__lsaCaptionTimer = setTimeout(() => {
           caption.spanish = "";
         }, SUBTITLE_HOLD_MS);
       }
-      if (typeof data.glosses === "string") caption.glosses = data.glosses;
     }
   });
 
-  let recognizer = null;
+  let hearingTap = null;
 
-  function stopPageSpeech() {
-    if (!recognizer) return;
-    recognizer.onend = null;
-    try {
-      recognizer.stop();
-    } catch (_) {}
-    recognizer = null;
+  function liveAudioTracks() {
+    const tracks = [];
+    const seen = new Set();
+    const add = (stream) => {
+      if (!stream) return;
+      stream.getAudioTracks().forEach((t) => {
+        if (t.readyState !== "live" || seen.has(t.id)) return;
+        seen.add(t.id);
+        tracks.push(t);
+      });
+    };
+    if (pipeline) add(pipeline.real);
+    add(extraAudio);
+    return tracks;
   }
 
-  function startPageSpeech() {
-    stopPageSpeech();
-    const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Rec) {
+  function stopHearingTap() {
+    if (!hearingTap) return;
+    try {
+      hearingTap.proc.disconnect();
+    } catch (_) {}
+    try {
+      hearingTap.src.disconnect();
+    } catch (_) {}
+    try {
+      hearingTap.ctx.close();
+    } catch (_) {}
+    hearingTap = null;
+  }
+
+  function downsample(input, fromRate, toRate) {
+    if (fromRate === toRate) return input;
+    const ratio = fromRate / toRate;
+    const n = Math.max(1, Math.floor(input.length / ratio));
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) out[i] = input[Math.min(input.length - 1, Math.floor(i * ratio))];
+    return out;
+  }
+
+  function encodeWav16k(float32) {
+    const n = float32.length;
+    const buf = new ArrayBuffer(44 + n * 2);
+    const view = new DataView(buf);
+    const writeStr = (offset, s) => {
+      for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+    };
+    writeStr(0, "RIFF");
+    view.setUint32(4, 36 + n * 2, true);
+    writeStr(8, "WAVE");
+    writeStr(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, 16000, true);
+    view.setUint32(28, 16000 * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, "data");
+    view.setUint32(40, n * 2, true);
+    let o = 44;
+    for (let i = 0; i < n; i++) {
+      const s = Math.max(-1, Math.min(1, float32[i]));
+      view.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      o += 2;
+    }
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(bin);
+  }
+
+  function flushUtterance(chunks, ctxRate) {
+    if (!chunks.length) return;
+    const total = chunks.reduce((n, a) => n + a.length, 0);
+    const merged = new Float32Array(total);
+    let o = 0;
+    for (let i = 0; i < chunks.length; i++) {
+      merged.set(chunks[i], o);
+      o += chunks[i].length;
+    }
+    const pcm = downsample(merged, ctxRate, 16000);
+    if (pcm.length < 16000 * 0.4) return;
+    const wavB64 = encodeWav16k(pcm);
+    window.postMessage({ source: "lsa-page", type: "LSA_AUDIO_WAV", wavB64 }, "*");
+  }
+
+  function startHearingTap() {
+    const tracks = liveAudioTracks();
+    if (!tracks.length) {
       window.postMessage(
-        { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "Este Chrome no tiene reconocimiento de voz" },
+        {
+          source: "lsa-page",
+          type: "LSA_SPEECH_ERROR",
+          error: "Meet no está enviando tu mic. Prendé el micrófono de la llamada.",
+        },
         "*"
       );
       return;
     }
-    recognizer = new Rec();
-    recognizer.lang = "es-AR";
-    recognizer.continuous = true;
-    recognizer.interimResults = true;
-    recognizer.onresult = (event) => {
-      let interim = "";
-      let finalText = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const piece = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalText += piece;
-        else interim += piece;
+    if (hearingTap && hearingTap.trackId === tracks[0].id) return;
+    stopHearingTap();
+    const stream = new MediaStream([tracks[0]]);
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = ctx.createMediaStreamSource(stream);
+    const proc = ctx.createScriptProcessor(4096, 1, 1);
+    const mute = ctx.createGain();
+    mute.gain.value = 0;
+    const chunks = [];
+    let voiced = false;
+    let silence = 0;
+    const rmsOn = 0.018;
+    const rmsOff = 0.008;
+    proc.onaudioprocess = (ev) => {
+      if (!hearingMode) return;
+      const input = ev.inputBuffer.getChannelData(0);
+      let sum = 0;
+      for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
+      const rms = Math.sqrt(sum / input.length);
+      if (rms >= rmsOn) {
+        voiced = true;
+        silence = 0;
+        chunks.push(new Float32Array(input));
+      } else if (voiced) {
+        chunks.push(new Float32Array(input));
+        silence += 1;
+        const ms = (silence * input.length * 1000) / ctx.sampleRate;
+        const dur = chunks.reduce((n, a) => n + a.length, 0) / ctx.sampleRate;
+        if (ms > 750 || dur > 4.5) {
+          const copy = chunks.splice(0, chunks.length);
+          voiced = false;
+          silence = 0;
+          flushUtterance(copy, ctx.sampleRate);
+        }
       }
-      const spanish = (finalText || interim).trim();
-      if (!spanish) return;
-      caption.spanish = spanish;
-      if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
-      window.__lsaCaptionTimer = setTimeout(() => {
-        caption.spanish = "";
-      }, SUBTITLE_HOLD_MS);
-      window.postMessage(
-        {
-          source: "lsa-page",
-          type: "LSA_SPEECH",
-          spanish,
-          final: Boolean(finalText),
+    };
+    src.connect(proc);
+    proc.connect(mute);
+    mute.connect(ctx.destination);
+    ctx.resume().catch(() => {});
+    if (!window.__lsaResumeTap) {
+      window.__lsaResumeTap = true;
+      window.addEventListener(
+        "click",
+        () => {
+          if (hearingTap && hearingTap.ctx && hearingTap.ctx.state === "suspended") {
+            hearingTap.ctx.resume().catch(() => {});
+          }
         },
-        "*"
-      );
-    };
-    recognizer.onerror = (event) => {
-      if (event.error === "no-speech" || event.error === "aborted") return;
-      window.postMessage(
-        { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: event.error || "error" },
-        "*"
-      );
-    };
-    recognizer.onend = () => {
-      if (recognizer) {
-        try {
-          recognizer.start();
-        } catch (_) {}
-      }
-    };
-    try {
-      recognizer.start();
-    } catch (_) {
-      window.postMessage(
-        { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "No se pudo iniciar el micrófono de transcripción" },
-        "*"
+        true
       );
     }
+    hearingTap = { ctx, src, proc, trackId: tracks[0].id };
+    window.postMessage({ source: "lsa-page", type: "LSA_SPEECH_UI", debug: "Escuchando el mic de Meet" }, "*");
   }
 
   /**
@@ -152,8 +254,11 @@
    */
   function wantsVideo(constraints) {
     if (constraints == null) return true;
-    if (constraints.video === undefined) return true;
-    return Boolean(constraints.video);
+    if (Object.prototype.hasOwnProperty.call(constraints, "video")) {
+      return Boolean(constraints.video);
+    }
+    if (constraints.audio) return false;
+    return true;
   }
 
   /**
@@ -358,6 +463,7 @@
     handle.out = out;
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: true }, "*");
     syncCanvasToMeet();
+    if (hearingMode) startHearingTap();
     return handle;
   }
 
@@ -390,6 +496,27 @@
     });
   }
 
+  function wrapExistingMeetCamera() {
+    if (pipeline && pipeline.alive()) {
+      syncCanvasToMeet();
+      return;
+    }
+    const videos = document.querySelectorAll("video");
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i];
+      if (v.id === "lsa-real-cam") continue;
+      const src = v.srcObject;
+      if (!(src instanceof MediaStream)) continue;
+      if (!src.getVideoTracks().some((t) => t.readyState === "live")) continue;
+      try {
+        pipeline = createPipeline(src);
+        v.srcObject = pipeline.out;
+        syncCanvasToMeet();
+        return;
+      } catch (_) {}
+    }
+  }
+
   /**
    * Reusa el canvas. Nunca devolvemos DroidCam cruda: ahí no hay subtítulos.
    */
@@ -402,7 +529,11 @@
 
   MediaDevices.prototype.getUserMedia = function (constraints) {
     if (!wantsVideo(constraints)) {
-      return origGetUserMedia.call(this, constraints);
+      return origGetUserMedia.call(this, constraints).then((stream) => {
+        extraAudio = stream;
+        if (hearingMode) startHearingTap();
+        return stream;
+      });
     }
     const reuse = existingStream();
     if (reuse) return Promise.resolve(reuse);

@@ -4,7 +4,7 @@ Interpretación de LSA en tiempo real. **Empezá a leer el código por**
 [`docs/ORDEN_DE_LECTURA.md`](docs/ORDEN_DE_LECTURA.md).
 
 Este repositorio traduce **señas LSA a español** en Google Meet (extensión
-Chrome + motor ILSA). El modo oyente (voz → glosas) queda para más adelante.
+Chrome + motor ILSA). En modo oyente, voz o chat → glosas pintadas en el video.
 
 La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
 (pose + dos manos). Ese esqueleto se recorta en **una seña a la vez**, se
@@ -115,6 +115,9 @@ Qué ocurre:
   última glosa, español.
 - En modo sordo los JPEG van al *service worker* → offscreen → sandbox
   MediaPipe → `POST /sign`.
+- En modo oyente el mic de Meet (y el chat) van a `POST /stt` / `POST /hearing`;
+  las glosas se pintan en el video.
+
 El español **desaparece solo a los 8 segundos**. Si llega una oración nueva,
 el reloj se reinicia.
 
@@ -172,6 +175,7 @@ docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 | GET | `/semantic/models` | Estado del traductor remoto |
 | POST | `/session` | Nueva sesión (`left_handed`) |
 | POST | `/sign` | Lista de frames de una seña |
+| POST | `/stt` | Modo oyente: WAV del mic de Meet → español |
 | POST | `/hearing` | Modo oyente: español → glosas |
 | POST | `/activity` | “Sigo señando” (retrasa el cierre) |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |

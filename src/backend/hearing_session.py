@@ -57,24 +57,23 @@ class HearingSession:
         self.spanish_text = text
         if not final:
             return {**self.snapshot(), "closed": False}
-        glosses = text
-        if self.semantic_ready:
-            try:
-                from semantic.remote import last_timing, translate_oyente
-                import time
+        glosses = ""
+        remote_ms = 0.0
+        timing = {}
+        try:
+            from semantic.remote import last_timing, ping, translate_oyente
+            import time
 
-                t0 = time.perf_counter()
-                glosses = translate_oyente(text) or text
-                remote_ms = (time.perf_counter() - t0) * 1000
-                timing = last_timing()
-            except Exception as exc:
-                print(f"[backend] Oyente remoto falló: {exc}")
-                glosses = text
-                remote_ms = 0.0
-                timing = {}
-        else:
-            remote_ms = 0.0
-            timing = {}
+            if not self.semantic_ready:
+                self.semantic_ready = ping()
+            t0 = time.perf_counter()
+            glosses = translate_oyente(text)
+            remote_ms = (time.perf_counter() - t0) * 1000
+            timing = last_timing()
+            print(f"[backend] /hearing español={text!r} glosas={glosses!r} {remote_ms:.0f}ms")
+        except Exception as exc:
+            print(f"[backend] Oyente remoto falló: {exc}")
+            self.semantic_error = str(exc)
         self.gloss_text = glosses
         snap = self.snapshot()
         snap.update({"closed": True, "spanish": text, "glosses": glosses, "caption": glosses})

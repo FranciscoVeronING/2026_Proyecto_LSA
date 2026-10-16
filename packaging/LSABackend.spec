@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 block_cipher = None
 repo = Path(SPECPATH).resolve().parent
@@ -12,12 +12,17 @@ src = repo / "src"
 datas = [
     (str(src / "classifier" / "weights"), "classifier/weights"),
 ]
+try:
+    _vosk_d, _vosk_b, _vosk_h = collect_all("vosk")
+except Exception:
+    _vosk_d, _vosk_b, _vosk_h = [], [], []
 
 hidden = (
     collect_submodules("classifier")
     + collect_submodules("core")
     + collect_submodules("backend")
-    + ["core.utterance", "semantic.remote", "semantic.config"]
+    + ["core.utterance", "semantic.remote", "semantic.config", "vosk", "cffi", "_cffi_backend"]
+    + list(_vosk_h)
 )
 
 _EXCLUDES = [
@@ -75,8 +80,8 @@ for _dll in (
 a = Analysis(
     [str(repo / "run_backend.py")],
     pathex=[str(src), str(repo)],
-    binaries=_vc_binaries,
-    datas=datas,
+    binaries=_vc_binaries + list(_vosk_b),
+    datas=datas + list(_vosk_d),
     hiddenimports=hidden + ["tkinter", "tkinter.ttk", "tkinter.font", "torch.distributed"],
     hookspath=[],
     hooksconfig={},

@@ -18,6 +18,11 @@ class HearingIn(BaseModel):
     final: bool = True
 
 
+class SttIn(BaseModel):
+    wav_b64: str = ""
+    lang: str = "es-ES"
+
+
 class SignIn(BaseModel):
 
     frames: list[dict] = Field(default_factory=list, max_length=MAX_SIGN_FRAMES)

@@ -30,7 +30,7 @@ ILSA pide modo (sordo / oyente) y Encender. El GGUF no corre en esta rama.
 
 Empezá por lo que une ambos procesos. Es corto y no tiene MediaPipe.
 
-1. `extension/lib/api.js` — cliente: `sign`, `endUtterance`, `health`.
+1. `extension/lib/api.js` — cliente: `sign`, `endUtterance`, `hearing`, `stt`, `health`.
 2. `src/backend/http_schemas.py` — qué se acepta (tope de frames / puntos).
 3. `src/backend/server.py` — las mismas rutas del otro lado.
 4. `run_backend.py` — cómo arranca el servidor. La ventana es `iris_app.py`.

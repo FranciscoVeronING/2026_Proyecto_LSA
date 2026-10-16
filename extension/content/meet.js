@@ -1,6 +1,6 @@
 /**
- * Meet, mundo aislado: HUD + JPEG al SW.
- * getUserMedia y el micrófono del oyente viven en inject-gum.js.
+ * Meet, mundo aislado: HUD + JPEG al SW (sordo).
+ * Oyente: audio de Meet + chat → POST /stt y /hearing → glosas en el canvas.
  */
 
 const SUBTITLE_HOLD_MS = 8000;
@@ -14,6 +14,7 @@ let rafId = 0;
 const grab = document.createElement("canvas");
 const grabCtx = grab.getContext("2d", { alpha: false, willReadFrequently: true });
 let lastSpoken = "";
+let lastHearingSent = { text: "", at: 0 };
 let prefs = { showLandmarks: false, outputMode: "subtitles" };
 const hudState = {
   capturing: false,
@@ -50,6 +51,115 @@ function stopVoice() {
   try {
     window.speechSynthesis.cancel();
   } catch (_) {}
+}
+
+function transcribeMeetAudio(wavB64) {
+  if (!running || meetMode !== "hearing" || !wavB64) return;
+  setHud({ debug: "Transcribiendo tu voz…", capturing: true, lastGloss: "voz" });
+  LsaApi.stt(wavB64, "es-ES")
+    .then((s) => {
+      const spanish = String((s && s.spanish) || "").trim();
+      if (!spanish) {
+        setHud({ debug: "No se entendió el audio; repetí o usá el chat", capturing: false });
+        return;
+      }
+      sendToOyente(spanish, "voz");
+    })
+    .catch((err) => {
+      setHud({
+        debug: "STT: " + ((err && err.message) || "error"),
+        capturing: false,
+      });
+    });
+}
+
+/** Español (voz o chat) → POST /hearing → glosas quemadas en el video. */
+function sendToOyente(spanish, source) {
+  const text = String(spanish || "").trim();
+  if (!text || !running || meetMode !== "hearing") return;
+  const now = Date.now();
+  if (text === lastHearingSent.text && now - lastHearingSent.at < 2500) return;
+  lastHearingSent = { text, at: now };
+  setHud({ debug: "Traduciendo a glosas…", capturing: true, lastGloss: source });
+  LsaApi.hearing(text, true)
+    .then((s) => {
+      const glosses = String((s && (s.caption || s.glosses)) || "").trim();
+      if (!glosses) {
+        setHud({ debug: "El traductor no devolvió glosas", capturing: false });
+        return;
+      }
+      setHud({
+        spanish: glosses,
+        debug: "Glosas en tu video",
+        capturing: false,
+        lastGloss: source,
+      });
+      postToPage({
+        type: "LSA_CAPTION",
+        line: glosses,
+        spanish: glosses,
+        glosses,
+      });
+    })
+    .catch((err) => {
+      setHud({
+        debug: "Sin traductor: " + ((err && err.message) || "error"),
+        capturing: false,
+      });
+    });
+}
+
+function chatBoxText(el) {
+  if (!el) return "";
+  if (typeof el.value === "string" && el.value.trim()) return el.value.trim();
+  const dt = el.getAttribute && el.getAttribute("data-initial-value");
+  if (dt && dt.trim()) return dt.trim();
+  return String(el.innerText || el.textContent || "").trim();
+}
+
+function chatRoot(el) {
+  if (!el || !el.closest) return null;
+  return el.closest("textarea, input[type='text'], [contenteditable='true'], [role='textbox']");
+}
+
+function isMeetChatBox(el) {
+  const root = chatRoot(el);
+  if (!root) return false;
+  if (root.closest && root.closest("#lsa-meet-root")) return false;
+  return true;
+}
+
+function hookMeetChat() {
+  if (window.__lsaChatHookedV2) return;
+  window.__lsaChatHookedV2 = true;
+  document.addEventListener(
+    "keydown",
+    (ev) => {
+      if (!running || meetMode !== "hearing") return;
+      if (ev.key !== "Enter" || ev.shiftKey) return;
+      const root = chatRoot(ev.target);
+      if (!root || !isMeetChatBox(root)) return;
+      const text = chatBoxText(root);
+      if (text) sendToOyente(text, "chat");
+    },
+    true
+  );
+  document.addEventListener(
+    "click",
+    (ev) => {
+      if (!running || meetMode !== "hearing") return;
+      const btn = ev.target && ev.target.closest && ev.target.closest("button");
+      if (!btn) return;
+      const lab = ((btn.getAttribute("aria-label") || "") + " " + (btn.textContent || "")).toLowerCase();
+      if (!/enviar|send message|send/.test(lab)) return;
+      const root =
+        chatRoot(document.activeElement) ||
+        document.querySelector("[role='textbox'], textarea, [contenteditable='true']");
+      const text = chatBoxText(root);
+      if (text) sendToOyente(text, "chat");
+    },
+    true
+  );
 }
 
 function extAlive() {
@@ -242,12 +352,15 @@ function startBridge(mode) {
   hudState.capturing = false;
   hudState.lastGloss = "—";
   ensureHud();
-  postToPage({ type: "LSA_SET_ENABLED", enabled: true });
+  postToPage({ type: "LSA_SET_ENABLED", enabled: true, hearing: meetMode === "hearing" });
   applyPrefsToPage();
   cancelAnimationFrame(rafId);
   if (meetMode === "hearing") {
-    setHud({ debug: "Hablá: el texto se pinta en tu cámara", capturing: false });
-    postToPage({ type: "LSA_SPEECH_START" });
+    setHud({
+      debug: "Hablá (mic de Meet) o escribí en el chat",
+      capturing: false,
+    });
+    hookMeetChat();
     return;
   }
   postToPage({ type: "LSA_SPEECH_STOP" });
@@ -276,24 +389,14 @@ window.addEventListener("message", (event) => {
   if (event.source !== window) return;
   const data = event.data;
   if (!data || data.source !== "lsa-page") return;
-  if (data.type === "LSA_PIPELINE" && running && !framesSeen) {
+  if (data.type === "LSA_PIPELINE" && running && meetMode !== "hearing" && !framesSeen) {
     setHud({ debug: "Mostrá las manos para capturar", capturing: false });
   }
-  if (data.type === "LSA_SPEECH" && running && meetMode === "hearing") {
-    const spanish = data.spanish;
-    if (!spanish) return;
-    setHud({ spanish, debug: "Transcribiendo…", capturing: true, lastGloss: "voz" });
-    if (!data.final) return;
-    LsaApi.hearing(spanish, true)
-      .then((s) => {
-        const caption = (s && (s.caption || s.glosses)) || spanish;
-        setHud({ spanish: caption, debug: "Glosas en tu video", capturing: false, lastGloss: "voz" });
-        postToPage({ type: "LSA_CAPTION", spanish: caption, glosses: s && s.glosses });
-      })
-      .catch(() => {
-        setHud({ spanish, debug: "Sin traductor: español crudo", capturing: false });
-        postToPage({ type: "LSA_CAPTION", spanish, glosses: "" });
-      });
+  if (data.type === "LSA_AUDIO_WAV" && running && meetMode === "hearing") {
+    transcribeMeetAudio(data.wavB64);
+  }
+  if (data.type === "LSA_SPEECH_UI" && meetMode === "hearing" && data.debug) {
+    setHud({ debug: data.debug, capturing: false });
   }
   if (data.type === "LSA_SPEECH_ERROR") {
     setHud({ debug: "Voz: " + (data.error || "error"), capturing: false });
@@ -362,14 +465,13 @@ try {
       postToPage({ type: "LSA_LANDMARKS", landmarks: msg.landmarks || null });
     }
     if (msg.type === "lsa-caption") {
+      if (meetMode === "hearing") return;
       setHud(msg);
-      postToPage({
-        type: "LSA_CAPTION",
-        spanish: msg.spanish,
-        glosses: msg.glosses,
-        status: msg.status,
-      });
-      if (msg.spanish) speakSpanish(msg.spanish);
+      const spanish = typeof msg.spanish === "string" ? msg.spanish.trim() : "";
+      if (spanish) {
+        postToPage({ type: "LSA_CAPTION", line: spanish });
+        speakSpanish(spanish);
+      }
     }
   });
 } catch (_) {}

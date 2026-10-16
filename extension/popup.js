@@ -134,7 +134,7 @@ LsaApi.health()
     lastHealth = h;
     dot.classList.add("on");
     const signer = h.mode !== "hearing";
-    metaMode.textContent = signer ? "Sordo (LSA → español)" : "Oyente (voz → subtítulos)";
+    metaMode.textContent = signer ? "Sordo (LSA → español)" : "Oyente (voz/chat → glosas)";
     healthText.textContent = "Motor conectado";
     if (signer) {
       debugBlock.hidden = false;

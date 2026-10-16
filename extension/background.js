@@ -333,6 +333,8 @@ async function startMeet(tabId, leftHanded) {
   if (meetTabId && (meetTabId !== tabId || meetModeOn !== mode)) {
     await stopMeet();
   }
+  meetTabId = tabId;
+  meetModeOn = mode;
   try {
     await chrome.tabs.sendMessage(tabId, { type: "lsa-meet-content-start", mode });
   } catch (_) {
@@ -351,8 +353,6 @@ async function startMeet(tabId, leftHanded) {
       throw new Error(started.error || "No se pudo iniciar el intérprete.");
     }
   }
-  meetTabId = tabId;
-  meetModeOn = mode;
 }
 
 /** Para captura y HUD; no corta los tracks de la cámara de Meet. */

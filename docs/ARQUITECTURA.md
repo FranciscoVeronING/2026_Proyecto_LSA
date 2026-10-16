@@ -55,7 +55,7 @@ ILSA tiene dos modos, elegidos en la ventana **antes** de Encender:
 | Modo | Quién | Qué hace |
 |------|--------|----------|
 | **Sordo** | Quien seña | LSA → español (clasificador + Llama 1B). |
-| **Oyente** | Quien habla | Voz en esta PC → subtítulos pintados en la cámara de Meet. |
+| **Oyente** | Quien habla | Voz (mic de Meet) o chat → glosas pintadas en la cámara. |
 
 Con ILSA encendido, Meet arranca la traducción solo. El popup muestra estado
 y ajustes; no enciende el motor.

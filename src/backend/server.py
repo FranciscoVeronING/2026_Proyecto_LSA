@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import HearingIn, SessionIn, SignIn
+from backend.http_schemas import HearingIn, SessionIn, SignIn, SttIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -153,6 +153,30 @@ def ingest_sign(body: SignIn):
         raise HTTPException(status_code=400, detail="Falta el conjunto de frames de la seña.")
     print(f"[backend] POST /sign: {len(body.frames)} frames")
     return get_session().ingest_sign(body.frames, client=body.client)
+
+
+@app.post("/stt")
+def stt_wav(body: SttIn):
+    if _mode != "hearing":
+        raise HTTPException(status_code=400, detail="Solo en modo oyente.")
+    import base64
+
+    raw = (body.wav_b64 or "").strip()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Falta el audio.")
+    try:
+        wav = base64.b64decode(raw)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="WAV inválido") from exc
+    from backend.stt import transcribe_wav
+
+    try:
+        text = transcribe_wav(wav, lang=body.lang or "es-ES")
+    except Exception as exc:
+        print(f"[backend] /stt error: {exc}")
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    print(f"[backend] /stt → {text!r}")
+    return {"spanish": text, "ok": True}
 
 
 @app.post("/hearing")
