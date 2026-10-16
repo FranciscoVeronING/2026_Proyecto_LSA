@@ -322,11 +322,12 @@ function grabJpeg() {
 }
 
 let lastSendAt = 0;
+let meetCamOpen = true;
 /** Loop rAF: como máximo un JPEG cada ~70 ms, espera ACK implícito de `pending`. */
 function loop() {
   if (!running || !extAlive()) return;
   const now = performance.now();
-  if (!pending && now - lastSendAt >= 70) {
+  if (meetMode === "signer" && meetCamOpen && !pending && now - lastSendAt >= 70) {
     const frame = grabJpeg();
     if (frame) {
       pending = true;
@@ -389,6 +390,20 @@ window.addEventListener("message", (event) => {
   if (event.source !== window) return;
   const data = event.data;
   if (!data || data.source !== "lsa-page") return;
+  if (data.type === "LSA_CAMERA") {
+    const open = data.open !== false;
+    if (open !== meetCamOpen) {
+      meetCamOpen = open;
+      if (!open) {
+        sendExt({ type: "lsa-capture-reset" });
+        if (running && meetMode === "signer") {
+          setHud({ debug: "Cámara de Meet apagada", capturing: false });
+        }
+      } else if (running && meetMode === "signer") {
+        setHud({ status: "escuchando", capturing: false });
+      }
+    }
+  }
   if (data.type === "LSA_PIPELINE" && running && meetMode !== "hearing" && !framesSeen) {
     setHud({ debug: "Mostrá las manos para capturar", capturing: false });
   }

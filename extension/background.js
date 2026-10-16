@@ -140,6 +140,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return;
   }
 
+  if (msg.type === "lsa-capture-reset") {
+    if (offscreenPort) {
+      try {
+        offscreenPort.postMessage({ type: "lsa-capture-reset" });
+      } catch (_) {}
+    }
+    sendResponse({ ok: true });
+    return;
+  }
+
   if (msg.type === "lsa-frame" && sender.tab) {
     meetTabId = sender.tab.id;
     const frame = {

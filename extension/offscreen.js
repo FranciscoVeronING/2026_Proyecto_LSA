@@ -371,6 +371,11 @@ function handleControlMessage(msg, reply) {
     reply({ ok: true });
     return true;
   }
+  if (msg.type === "lsa-capture-reset") {
+    if (engine) engine.reset();
+    reply({ ok: true });
+    return true;
+  }
   if (msg.type === "lsa-frame" || msg.type === "lsa-offscreen-frame") {
     handleFrame(msg);
     reply({ ok: true });

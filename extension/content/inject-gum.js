@@ -128,22 +128,46 @@
     return null;
   }
 
-  function senderAudioActive(sender) {
+  /** true = cámara apagada en la UI de Meet. */
+  function meetUiCamOff() {
+    const els = document.querySelectorAll("button, [role='button']");
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const lab = (
+        (el.getAttribute("aria-label") || "") +
+        " " +
+        (el.getAttribute("data-tooltip") || "") +
+        " " +
+        (el.getAttribute("title") || "")
+      ).toLowerCase();
+      if (!/cámara|camara|camera/.test(lab)) continue;
+      if (/micrófono|microfono|microphone|\bmic\b/.test(lab)) continue;
+      const flagged = el.getAttribute("data-is-muted");
+      if (flagged === "true") return true;
+      if (flagged === "false") return false;
+      if (/desactivar cám|desactivar cam|turn off cam/.test(lab)) return false;
+      if (/activar cám|activar cam|turn on cam/.test(lab)) return true;
+    }
+    return null;
+  }
+
+  function senderKindActive(sender, kind) {
     if (!sender) return false;
     try {
       const enc = sender.getParameters().encodings;
       if (enc && enc.length && enc.every((e) => e.active === false)) return false;
     } catch (_) {}
     const t = sender.track;
-    return Boolean(t && t.kind === "audio" && t.readyState === "live" && t.enabled !== false);
+    return Boolean(t && t.kind === kind && t.readyState === "live" && t.enabled !== false);
   }
 
   /**
-   * true = hay audio saliendo a la llamada; false = mute WebRTC;
+   * true = hay media de `kind` saliendo a la llamada; false = mute WebRTC;
    * null = todavía no hay senders (antes de unirse).
+   * @param {"audio"|"video"} kind
    */
-  function outboundMicLive() {
-    let sawAudio = false;
+  function outboundKindLive(kind) {
+    let saw = false;
     for (const pc of peerConnections) {
       let transceivers = [];
       try {
@@ -155,13 +179,13 @@
         const tr = transceivers[i];
         const recv = tr.receiver && tr.receiver.track;
         const send = tr.sender && tr.sender.track;
-        const audio =
-          (send && send.kind === "audio") ||
-          (recv && recv.kind === "audio") ||
-          tr.kind === "audio";
-        if (!audio) continue;
-        sawAudio = true;
-        if (senderAudioActive(tr.sender)) return true;
+        const match =
+          (send && send.kind === kind) ||
+          (recv && recv.kind === kind) ||
+          tr.kind === kind;
+        if (!match) continue;
+        saw = true;
+        if (senderKindActive(tr.sender, kind)) return true;
       }
       if (transceivers.length) continue;
       let senders = [];
@@ -172,24 +196,54 @@
       }
       for (let j = 0; j < senders.length; j++) {
         const sender = senders[j];
-        if (!(sender.track && sender.track.kind === "audio")) continue;
-        sawAudio = true;
-        if (senderAudioActive(sender)) return true;
+        if (!(sender.track && sender.track.kind === kind)) continue;
+        saw = true;
+        if (senderKindActive(sender, kind)) return true;
       }
     }
-    if (sawAudio) return false;
+    if (saw) return false;
     return null;
   }
 
   function meetMicOpen() {
     if (meetUiMicMuted() === true) return false;
-    const rtc = outboundMicLive();
+    const rtc = outboundKindLive("audio");
     if (rtc === false) return false;
     const tracks = liveAudioTracks();
     if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
     if (meetUiMicMuted() === false) return true;
     if (rtc === true) return true;
     return tracks.some((t) => t.enabled !== false);
+  }
+
+  function liveVideoTracks() {
+    const tracks = [];
+    if (!pipeline || !pipeline.real) return tracks;
+    pipeline.real.getVideoTracks().forEach((t) => {
+      if (t.readyState === "live") tracks.push(t);
+    });
+    return tracks;
+  }
+
+  function meetCamOpen() {
+    if (meetUiCamOff() === true) return false;
+    const rtc = outboundKindLive("video");
+    if (rtc === false) return false;
+    const tracks = liveVideoTracks();
+    if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
+    if (meetUiCamOff() === false) return true;
+    if (rtc === true) return true;
+    return tracks.some((t) => t.enabled !== false);
+  }
+
+  let lastPostedCam = null;
+  function publishCamOpen() {
+    const open = meetCamOpen();
+    if (open !== lastPostedCam) {
+      lastPostedCam = open;
+      window.postMessage({ source: "lsa-page", type: "LSA_CAMERA", open }, "*");
+    }
+    return open;
   }
 
   function stopHearingTap() {
@@ -533,6 +587,15 @@
 
     const draw = () => {
       if (!handle.running) return;
+      const camOn = publishCamOpen();
+      if (!camOn) {
+        if (!video.paused) video.pause();
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
+        requestAnimationFrame(draw);
+        return;
+      }
       if (video.paused) video.play().catch(() => {});
       if (video.readyState >= 2 && video.videoWidth) {
         if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
@@ -565,6 +628,7 @@
    */
   function syncCanvasToMeet() {
     if (!pipeline || !pipeline.out) return;
+    if (!meetCamOpen()) return;
     const canvasTrack = pipeline.out.getVideoTracks()[0];
     if (!canvasTrack || canvasTrack.readyState !== "live") return;
     document.querySelectorAll("video").forEach((v) => {
