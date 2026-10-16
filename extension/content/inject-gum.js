@@ -106,6 +106,92 @@
     return tracks;
   }
 
+  /** true = muteado en la UI de Meet (el label del botón es “activar”). */
+  function meetUiMicMuted() {
+    const els = document.querySelectorAll("button, [role='button']");
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const lab = (
+        (el.getAttribute("aria-label") || "") +
+        " " +
+        (el.getAttribute("data-tooltip") || "") +
+        " " +
+        (el.getAttribute("title") || "")
+      ).toLowerCase();
+      if (!/micrófono|microfono|microphone|\bmic\b/.test(lab)) continue;
+      const flagged = el.getAttribute("data-is-muted");
+      if (flagged === "true") return true;
+      if (flagged === "false") return false;
+      if (/desactivar mic|turn off mic|mute mic|silenciar mic/.test(lab)) return false;
+      if (/activar mic|turn on mic|unmute mic|unmute microphone/.test(lab)) return true;
+    }
+    return null;
+  }
+
+  function senderAudioActive(sender) {
+    if (!sender) return false;
+    try {
+      const enc = sender.getParameters().encodings;
+      if (enc && enc.length && enc.every((e) => e.active === false)) return false;
+    } catch (_) {}
+    const t = sender.track;
+    return Boolean(t && t.kind === "audio" && t.readyState === "live" && t.enabled !== false);
+  }
+
+  /**
+   * true = hay audio saliendo a la llamada; false = mute WebRTC;
+   * null = todavía no hay senders (antes de unirse).
+   */
+  function outboundMicLive() {
+    let sawAudio = false;
+    for (const pc of peerConnections) {
+      let transceivers = [];
+      try {
+        transceivers = pc.getTransceivers() || [];
+      } catch (_) {
+        transceivers = [];
+      }
+      for (let i = 0; i < transceivers.length; i++) {
+        const tr = transceivers[i];
+        const recv = tr.receiver && tr.receiver.track;
+        const send = tr.sender && tr.sender.track;
+        const audio =
+          (send && send.kind === "audio") ||
+          (recv && recv.kind === "audio") ||
+          tr.kind === "audio";
+        if (!audio) continue;
+        sawAudio = true;
+        if (senderAudioActive(tr.sender)) return true;
+      }
+      if (transceivers.length) continue;
+      let senders = [];
+      try {
+        senders = pc.getSenders() || [];
+      } catch (_) {
+        senders = [];
+      }
+      for (let j = 0; j < senders.length; j++) {
+        const sender = senders[j];
+        if (!(sender.track && sender.track.kind === "audio")) continue;
+        sawAudio = true;
+        if (senderAudioActive(sender)) return true;
+      }
+    }
+    if (sawAudio) return false;
+    return null;
+  }
+
+  function meetMicOpen() {
+    if (meetUiMicMuted() === true) return false;
+    const rtc = outboundMicLive();
+    if (rtc === false) return false;
+    const tracks = liveAudioTracks();
+    if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
+    if (meetUiMicMuted() === false) return true;
+    if (rtc === true) return true;
+    return tracks.some((t) => t.enabled !== false);
+  }
+
   function stopHearingTap() {
     if (!hearingTap) return;
     try {
@@ -207,6 +293,12 @@
     const rmsOff = 0.008;
     proc.onaudioprocess = (ev) => {
       if (!hearingMode) return;
+      if (!meetMicOpen()) {
+        chunks.length = 0;
+        voiced = false;
+        silence = 0;
+        return;
+      }
       const input = ev.inputBuffer.getChannelData(0);
       let sum = 0;
       for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
