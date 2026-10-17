@@ -1,5 +1,11 @@
 dataset/
 *.mp4
+extraction/*.pdf
+extraction/out/pdf_preview/
+extraction/out/pdf_images_p32/
+extraction/out/qr_clips/
+extraction/out/videos/
+extraction/out/poses/
 
 __pycache__/
 *.pyc
