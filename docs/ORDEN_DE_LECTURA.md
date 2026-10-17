@@ -72,8 +72,7 @@ Pregunta: *¿qué cierra el enunciado, la seña o el reloj de 4 s?*
 
 1. `src/core/repeat_policy.py` otra vez — `format_literal_utterance` (deletreo).
 2. `src/semantic/remote.py` — cliente HTTP de Cloud Run (`POST /sordo`, `/oyente`).
-3. `src/core/conversation_memory.py` — contexto de turnos previos.
-4. `LSASession.close_utterance` en `session.py`.
+3. `LSASession.close_utterance` en `session.py`.
 
 Pregunta: *¿cuándo ni siquiera se llama a la LLM?*
 

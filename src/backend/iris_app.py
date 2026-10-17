@@ -10,6 +10,7 @@ import threading
 import tkinter as tk
 import webbrowser
 from collections import deque
+from pathlib import Path
 from tkinter import font as tkfont
 
 from backend.log_bridge import QueueLogHandler, QueueWriter
@@ -32,6 +33,21 @@ from semantic.config import DEFAULT_MODEL_ID
 
 REPO_URL = "https://github.com/FranciscoVeronING/2026_Proyecto_LSA"
 AUTHORS = "Maite Nigro · Francisco Veron"
+WIN_W = 420
+WIN_H = 560
+SENARIO_1_URL = (
+    "https://cas.org.ar/senario-de-terminos-y-expresiones-en-lengua-de-senas-argentina/"
+)
+SENARIO_2_URL = (
+    "https://cas.org.ar/senario-de-terminos-y-expresiones-en-lengua-de-senas-argentina-vol-2/"
+)
+LSA_FAMILIA_URL = "https://play.google.com/store/apps/details?id=com.proyectossolidarios&hl=es-AR"
+
+
+def _app_root() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parents[2]
 
 
 class IlsaWindow:
@@ -47,48 +63,43 @@ class IlsaWindow:
         self.log_text: tk.Text | None = None
         self._boot_q: queue.Queue = queue.Queue()
         self._ready = False
+        self._icon_images: list[tk.PhotoImage] = []
 
         self.root = tk.Tk()
         self.root.title("ILSA")
         self.root.configure(bg=BG)
+        self._set_window_icon()
         self.root.resizable(False, False)
+        self.root.minsize(WIN_W, WIN_H)
+        self.root.maxsize(WIN_W, WIN_H)
+        self.root.geometry(f"{WIN_W}x{WIN_H}")
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        self._splash = tk.Frame(self.root, bg=BG, padx=28, pady=28)
-        self._splash.pack(fill="both")
-        title_f = tkfont.Font(family="Segoe UI", size=22, weight="bold")
         body_f = tkfont.Font(family="Segoe UI", size=10)
-        small_f = tkfont.Font(family="Segoe UI", size=9)
-        tk.Label(self._splash, text="ILSA", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
+        self._splash = tk.Frame(self.root, bg=BG)
+        self._splash.pack(fill="both", expand=True)
+        splash_inner = tk.Frame(self._splash, bg=BG)
+        splash_inner.place(relx=0.5, rely=0.5, anchor="center")
+        splash_logo = self._load_photo(5)
+        if splash_logo is not None:
+            tk.Label(splash_inner, image=splash_logo, bg=BG, bd=0).pack(pady=(0, 18))
+        self._spin_canvas = tk.Canvas(
+            splash_inner, width=44, height=44, bg=BG, highlightthickness=0
+        )
+        self._spin_canvas.pack()
+        self._spin_angle = 0
+        self._spin_job = None
+        self._splash_status = tk.StringVar(value="Conectando con el servidor…")
         tk.Label(
-            self._splash,
-            text="Intérprete de Lengua de Señas Argentina",
-            font=small_f,
-            fg=MUTED,
-            bg=BG,
-        ).pack(anchor="w", pady=(0, 16))
-        self._splash_status = tk.StringVar(value="Preparando…")
-        self._splash_detail = tk.StringVar(value="Comprobando el traductor.")
-        tk.Label(
-            self._splash,
+            splash_inner,
             textvariable=self._splash_status,
             font=body_f,
             fg=TEXT,
             bg=BG,
-            wraplength=360,
-            justify="left",
-        ).pack(anchor="w")
-        tk.Label(
-            self._splash,
-            textvariable=self._splash_detail,
-            font=small_f,
-            fg=MUTED,
-            bg=BG,
-            wraplength=360,
-            justify="left",
-        ).pack(anchor="w", pady=(8, 16))
+            justify="center",
+        ).pack(pady=(16, 0))
         self._retry_btn = tk.Button(
-            self._splash,
+            splash_inner,
             text="Reintentar",
             font=body_f,
             padx=16,
@@ -96,42 +107,103 @@ class IlsaWindow:
             command=self._start_bootstrap,
             **BTN_LIVE["start"],
         )
+        self._tick_spin()
         self.root.after(200, self._drain_logs)
         self.root.after(80, self._start_bootstrap)
         self.root.after(120, self._poll_boot)
 
+    def _logo_png(self) -> Path | None:
+        root = _app_root()
+        for path in (
+            root / "assets" / "ilsa-logo.png",
+            root / "extension" / "icons" / "icon128.png",
+        ):
+            if path.is_file():
+                return path
+        return None
+
+    def _load_photo(self, subsample: int) -> tk.PhotoImage | None:
+        path = self._logo_png()
+        if path is None:
+            return None
+        try:
+            img = tk.PhotoImage(file=str(path))
+            if subsample > 1:
+                img = img.subsample(subsample, subsample)
+            self._icon_images.append(img)
+            return img
+        except tk.TclError:
+            return None
+
+    def _set_window_icon(self) -> None:
+        root = _app_root()
+        ico = root / "ilsa.ico"
+        if not ico.is_file():
+            ico = root / "packaging" / "ilsa.ico"
+        try:
+            if ico.is_file():
+                self.root.iconbitmap(default=str(ico))
+            elif getattr(sys, "frozen", False):
+                self.root.iconbitmap(default=sys.executable)
+        except tk.TclError:
+            pass
+        photo = self._load_photo(8)
+        if photo is not None:
+            try:
+                self.root.iconphoto(True, photo)
+            except tk.TclError:
+                pass
+
+    def _tick_spin(self) -> None:
+        if self._ready or self._splash is None:
+            return
+        try:
+            if not self._spin_canvas.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        c = self._spin_canvas
+        c.delete("all")
+        c.create_arc(
+            4,
+            4,
+            40,
+            40,
+            start=self._spin_angle,
+            extent=300,
+            style="arc",
+            outline=ACCENT,
+            width=4,
+        )
+        self._spin_angle = (self._spin_angle + 14) % 360
+        self._spin_job = self.root.after(40, self._tick_spin)
+
+    def _stop_spin(self) -> None:
+        if self._spin_job is not None:
+            try:
+                self.root.after_cancel(self._spin_job)
+            except Exception:
+                pass
+            self._spin_job = None
+
     def _start_bootstrap(self) -> None:
         self._retry_btn.pack_forget()
-        self._splash_status.set("Preparando…")
-        self._splash_detail.set("Comprobando el traductor remoto.")
+        self._splash_status.set("Conectando con el servidor…")
+        if self._spin_job is None:
+            self._tick_spin()
         threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-semantic").start()
 
     def _bootstrap_worker(self) -> None:
         try:
-            from semantic.remote import configured, ping, semantic_url
+            from semantic.remote import configured, ping
 
             if self.args.no_llm:
                 self._boot_q.put(("ok",))
                 return
             if not configured():
-                self._boot_q.put(
-                    (
-                        "msg",
-                        "Sin URL del traductor",
-                        "ILSA clasifica igual; las glosas no se traducen.",
-                    )
-                )
                 self._boot_q.put(("ok",))
                 return
-            self._boot_q.put(("msg", "Buscando el traductor…", semantic_url()))
-            if not ping():
-                self._boot_q.put(
-                    (
-                        "msg",
-                        "Traductor no responde",
-                        "Podés Encender igual. Revisá Cloud Run.",
-                    )
-                )
+            ping()
             self._boot_q.put(("ok",))
         except Exception as exc:
             self._boot_q.put(("err", str(exc)))
@@ -141,17 +213,12 @@ class IlsaWindow:
             while True:
                 item = self._boot_q.get_nowait()
                 kind = item[0]
-                if kind == "msg":
-                    self._splash_status.set(item[1])
-                    if item[2]:
-                        self._splash_detail.set(item[2])
-                elif kind == "ok":
+                if kind == "ok":
                     self._show_main()
                     return
                 elif kind == "err":
-                    self._splash_status.set("No se pudo preparar ILSA")
-                    self._splash_detail.set(item[1])
-                    self._retry_btn.pack(anchor="w")
+                    self._splash_status.set("No se pudo conectar")
+                    self._retry_btn.pack(pady=(16, 0))
         except queue.Empty:
             pass
         if not self._ready:
@@ -161,8 +228,11 @@ class IlsaWindow:
         if self._ready:
             return
         self._ready = True
+        self._stop_spin()
         self._splash.destroy()
+        self._splash = None
         self._build()
+        self.root.geometry(f"{WIN_W}x{WIN_H}")
         self.root.after(800, self._poll_health)
 
     def _hook_logs(self) -> None:
@@ -176,14 +246,28 @@ class IlsaWindow:
 
     def _build(self) -> None:
         pad = tk.Frame(self.root, bg=BG, padx=28, pady=22)
-        pad.pack(fill="both")
+        pad.pack(fill="both", expand=True)
 
         title_f = tkfont.Font(family="Segoe UI", size=22, weight="bold")
         body_f = tkfont.Font(family="Segoe UI", size=10)
         small_f = tkfont.Font(family="Segoe UI", size=9)
         tiny_f = tkfont.Font(family="Segoe UI", size=8)
 
-        tk.Label(pad, text="ILSA", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
+        head = tk.Frame(pad, bg=BG)
+        head.pack(fill="x")
+        title_logo = self._load_photo(10)
+        if title_logo is not None:
+            tk.Label(head, image=title_logo, bg=BG, bd=0).pack(side="left", padx=(0, 10))
+        tk.Label(head, text="ILSA", font=title_f, fg=TEXT, bg=BG).pack(side="left")
+        info_btn = tk.Button(
+            head,
+            text="i",
+            font=body_f,
+            width=3,
+            command=self._open_sources,
+            **BTN_LIVE["secondary"],
+        )
+        info_btn.pack(side="right")
         tk.Label(
             pad,
             text="Intérprete de Lengua de Señas Argentina",
@@ -238,7 +322,10 @@ class IlsaWindow:
             fg=MUTED,
             bg=BG,
             justify="left",
-            wraplength=340,
+            wraplength=360,
+            width=48,
+            height=3,
+            anchor="nw",
         ).pack(anchor="w", pady=(8, 0))
 
         card = tk.Frame(pad, bg=BG2, highlightbackground=LINE, highlightthickness=1, padx=16, pady=14)
@@ -263,6 +350,7 @@ class IlsaWindow:
             font=body_f,
             relief="flat",
             bd=0,
+            width=12,
             padx=16,
             pady=8,
             command=self._on_toggle,
@@ -275,6 +363,7 @@ class IlsaWindow:
             font=body_f,
             relief="flat",
             bd=0,
+            width=16,
             padx=16,
             pady=8,
             command=self._on_reset,
@@ -310,9 +399,61 @@ class IlsaWindow:
         logs.bind("<Button-1>", lambda _e: self._toggle_logs())
 
         self.detail_var = tk.StringVar(value="")
-        tk.Label(pad, textvariable=self.detail_var, font=tiny_f, fg=MUTED, bg=BG, wraplength=340, justify="left").pack(
-            anchor="w", pady=(6, 0)
-        )
+        tk.Label(
+            pad,
+            textvariable=self.detail_var,
+            font=tiny_f,
+            fg=MUTED,
+            bg=BG,
+            wraplength=360,
+            width=48,
+            height=2,
+            justify="left",
+            anchor="nw",
+        ).pack(anchor="w", pady=(6, 0))
+
+    def _link_label(self, parent, text: str, url: str, font) -> None:
+        lab = tk.Label(parent, text=text, font=font, fg=ACCENT, bg=BG, cursor="hand2", justify="left", wraplength=340)
+        lab.pack(anchor="w", pady=(4, 0))
+        lab.bind("<Button-1>", lambda _e, u=url: webbrowser.open(u))
+
+    def _open_sources(self) -> None:
+        win = tk.Toplevel(self.root)
+        win.title("Fuentes de las señas")
+        win.configure(bg=BG)
+        win.resizable(False, False)
+        win.transient(self.root)
+        body = tk.Frame(win, bg=BG, padx=24, pady=20)
+        body.pack(fill="both")
+        title_f = tkfont.Font(family="Segoe UI", size=12, weight="bold")
+        body_f = tkfont.Font(family="Segoe UI", size=10)
+        small_f = tkfont.Font(family="Segoe UI", size=9)
+        tk.Label(body, text="Fuentes de las señas", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
+        tk.Label(
+            body,
+            text=(
+                "Las señas que toma ILSA siguen la implementación del Señario CAS "
+                "(tomos 1 y 2). Si alguna seña no está ahí, recurrimos a la aplicación "
+                "LSA en familia."
+            ),
+            font=body_f,
+            fg=TEXT,
+            bg=BG,
+            wraplength=340,
+            justify="left",
+        ).pack(anchor="w", pady=(10, 8))
+        self._link_label(body, "Señario CAS · tomo 1", SENARIO_1_URL, small_f)
+        self._link_label(body, "Señario CAS · tomo 2", SENARIO_2_URL, small_f)
+        self._link_label(body, "LSA en familia (Play Store)", LSA_FAMILIA_URL, small_f)
+        close = tk.Button(body, text="Cerrar", font=body_f, padx=16, pady=6, command=win.destroy, **BTN_LIVE["secondary"])
+        close.pack(anchor="e", pady=(18, 0))
+        win.update_idletasks()
+        w, h = win.winfo_reqwidth(), win.winfo_reqheight()
+        x = self.root.winfo_rootx() + (self.root.winfo_width() - w) // 2
+        y = self.root.winfo_rooty() + (self.root.winfo_height() - h) // 2
+        win.geometry(f"+{max(x, 0)}+{max(y, 0)}")
+        win.grab_set()
+        win.focus_set()
 
     def _mode_choice(self, mode: str) -> tuple[str, str]:
         if mode == "signer":

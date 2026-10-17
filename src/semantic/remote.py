@@ -10,7 +10,6 @@ import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
-from typing import Optional
 
 from semantic.config import CLOUD_SEMANTIC_URL, SEMANTIC_TOKEN
 
@@ -135,8 +134,7 @@ def _ensure_keepalive() -> None:
     threading.Thread(target=_loop, name="semantic-keepalive", daemon=True).start()
 
 
-def translate_sordo(glosses: str, history_messages: Optional[list[dict]] = None) -> str:
-    del history_messages
+def translate_sordo(glosses: str) -> str:
     data = _post("/sordo", {"glosses": glosses})
     return str(data.get("spanish") or "").strip()
 

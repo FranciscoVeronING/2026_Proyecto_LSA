@@ -35,6 +35,15 @@ a { color: var(--accent); }
   margin-bottom: 8px;
 }
 
+.logo {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .brand h1 {
   font-size: 1.45rem;
   margin: 0;
@@ -151,7 +160,17 @@ code, .cmd {
   padding: 14px;
 }
 
-.popup h1 { font-size: 1.05rem; margin: 0 0 8px; }
+.popup-brand {
+  margin-bottom: 10px;
+}
+
+.popup-brand .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.popup h1 { font-size: 1.05rem; margin: 0; }
 
 .hint { color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
 

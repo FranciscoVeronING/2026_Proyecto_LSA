@@ -31,14 +31,13 @@ import classifier.config as cfg
 from core.utterance import UtteranceBuffer, normalize_gloss
 from backend.landmarks_payload import LandmarkSmoother, frames_to_matrix, vector_from_frame
 from classifier.arch import load_classifier_bundle
-from core.conversation_memory import ConversationMemory
 from core.repeat_policy import (
     collapse_literal_runs,
     format_literal_utterance,
     resolve_letter_lookalikes,
     simple_lexical_spanish,
 )
-from semantic.config import CONVERSATION_HISTORY_SIZE, DEFAULT_MODEL_ID, USE_CONVERSATION_HISTORY
+from semantic.config import DEFAULT_MODEL_ID
 
 
 class LSASession:
@@ -58,7 +57,6 @@ class LSASession:
             min_confidence=cfg.CONFIDENCE_THRESHOLD,
             max_letter_consecutive=cfg.LETTER_MAX_CONSECUTIVE,
         )
-        self.memory = ConversationMemory(maxlen=CONVERSATION_HISTORY_SIZE)
         self.last_enqueue_time = 0.0
         self.last_inference_time = 0.0
         self.top3: list[tuple[str, float]] = []
@@ -104,7 +102,6 @@ class LSASession:
                 min_confidence=cfg.CONFIDENCE_THRESHOLD,
                 max_letter_consecutive=cfg.LETTER_MAX_CONSECUTIVE,
             )
-            self.memory.reset_session()
             self.top3 = []
             self.spanish_text = ""
             self.last_utterance = ""
@@ -126,7 +123,6 @@ class LSASession:
                 "pending_text": self.buffer.pending_text(),
                 "spanish": self.spanish_text,
                 "last_utterance": self.last_utterance,
-                "conversation_turns": len(self.memory.turns),
                 "device": str(self.device),
             }
 
@@ -279,7 +275,6 @@ class LSASession:
         with self.lock:
             self.spanish_text = text
             self.semantic_busy = False
-            self.memory.add_signer(text, glosses=" ".join(closed))
 
         snap = self.snapshot()
         snap.update({
@@ -335,19 +330,14 @@ class LSASession:
         try:
             from semantic.remote import last_timing
 
-            history = self.memory.as_messages() if USE_CONVERSATION_HISTORY else None
             t0 = time.perf_counter()
-            text = fn(collapsed, history_messages=history) or collapsed
+            text = fn(collapsed) or collapsed
             remote_ms = (time.perf_counter() - t0) * 1000
             timing = last_timing()
             return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:
             print(f"[backend] Error LLM: {e}")
             return collapsed, "fallback", 0.0, None
-
-    def clear_conversation(self):
-        with self.lock:
-            self.memory.clear()
 
     def capture_config(self) -> dict[str, Any]:
         return {

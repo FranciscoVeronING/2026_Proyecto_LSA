@@ -201,12 +201,6 @@ def utterance_end():
     return get_session().close_utterance()
 
 
-@app.post("/conversation/clear")
-def conversation_clear():
-    get_session().clear_conversation()
-    return get_session().snapshot()
-
-
 @app.get("/mediapipe/{name}")
 def mediapipe_asset(name: str):
     safe = Path(name).name

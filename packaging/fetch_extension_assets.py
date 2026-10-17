@@ -43,10 +43,14 @@ def write_png(path: Path, size: int, rgb: tuple[int, int, int]) -> None:
 def main() -> None:
     VENDOR.mkdir(parents=True, exist_ok=True)
     ICONS.mkdir(parents=True, exist_ok=True)
-    write_png(ICONS / "icon16.png", 16, (255, 159, 28))
-    write_png(ICONS / "icon48.png", 48, (255, 159, 28))
-    write_png(ICONS / "icon128.png", 128, (255, 159, 28))
-    print("Iconos OK")
+    have_logo = all((ICONS / f"icon{n}.png").is_file() for n in (16, 48, 128))
+    if have_logo:
+        print("Iconos OK (logo ILSA)")
+    else:
+        write_png(ICONS / "icon16.png", 16, (255, 159, 28))
+        write_png(ICONS / "icon48.png", 48, (255, 159, 28))
+        write_png(ICONS / "icon128.png", 128, (255, 159, 28))
+        print("Iconos OK")
     for name in FILES:
         dest = VENDOR / name
         if dest.exists() and dest.stat().st_size > 0:

@@ -179,7 +179,6 @@ docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 | POST | `/hearing` | Modo oyente: español → glosas |
 | POST | `/activity` | “Sigo señando” (retrasa el cierre) |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
-| POST | `/conversation/clear` | Vaciar memoria |
 | GET | `/download/exe` | `.exe` o `.bat` si existen en esta PC |
 
 CORS: `https://meet.google.com`, localhost y orígenes `chrome-extension://`.

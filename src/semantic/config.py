@@ -5,9 +5,6 @@ CLOUD_SEMANTIC_URL = (
 DEFAULT_MODEL_ID = "remote"
 SEMANTIC_TOKEN = ""
 
-CONVERSATION_HISTORY_SIZE = 10
-USE_CONVERSATION_HISTORY = True
-
 
 def list_semantic_models() -> list[dict]:
     return [

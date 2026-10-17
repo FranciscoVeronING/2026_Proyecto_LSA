@@ -163,7 +163,6 @@ ILSA no carga GGUF. `src/semantic/remote.py` hace HTTP a Cloud Run:
 
 - Sordo: `POST /sordo` con `{ "glosses": "..." }` → `{ "spanish": "..." }`.
 - Oyente: `POST /oyente` con `{ "spanish": "..." }` → `{ "glosses": "..." }`.
-- Memoria de conversación local: `src/core/conversation_memory.py`.
 
 El código del servidor GGUF vive en la rama `semantic-cloud`, no acá.
 

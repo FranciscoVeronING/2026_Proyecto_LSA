@@ -62,6 +62,5 @@ const LsaApi = {
     }),
   activity: () => api("/activity", { method: "POST", body: "{}" }),
   endUtterance: () => api("/utterance/end", { method: "POST", body: "{}" }),
-  clearConversation: () => api("/conversation/clear", { method: "POST", body: "{}" }),
   exeUrl: `${API_BASE}/download/exe`,
 };

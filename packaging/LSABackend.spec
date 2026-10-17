@@ -11,6 +11,8 @@ src = repo / "src"
 
 datas = [
     (str(src / "classifier" / "weights"), "classifier/weights"),
+    (str(repo / "assets" / "ilsa-logo.png"), "assets"),
+    (str(repo / "packaging" / "ilsa.ico"), "."),
 ]
 try:
     _vosk_d, _vosk_b, _vosk_h = collect_all("vosk")
@@ -107,7 +109,7 @@ exe = EXE(
     strip=False,
     upx=False,
     console=False,
-    icon=None,
+    icon=str(repo / "packaging" / "ilsa.ico"),
 )
 
 coll = COLLECT(

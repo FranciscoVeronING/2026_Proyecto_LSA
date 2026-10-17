@@ -93,8 +93,3 @@ class HearingSession:
 
     def close_utterance(self) -> dict[str, Any]:
         return self.snapshot()
-
-    def clear_conversation(self) -> None:
-        self.spanish_text = ""
-        self.gloss_text = ""
-        return None
