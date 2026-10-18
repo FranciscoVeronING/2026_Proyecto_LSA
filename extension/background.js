@@ -271,7 +271,7 @@ async function injectMeetScripts(tabId) {
   try {
     await chrome.scripting.executeScript({
       target: { tabId },
-      files: ["content/inject-gum.js"],
+      files: ["content/skeleton.js", "content/inject-gum.js"],
       world: "MAIN",
     });
   } catch (_) {}

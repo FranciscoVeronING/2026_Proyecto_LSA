@@ -15,6 +15,11 @@
   padding: 8px 12px 10px;
   box-shadow: 0 8px 24px rgba(22, 48, 64, 0.5);
   min-width: 280px;
+  cursor: grab;
+  touch-action: none;
+}
+#lsa-meet-root .lsa-card.lsa-dragging {
+  cursor: grabbing;
 }
 
 #lsa-meet-root .lsa-cap {
@@ -66,6 +71,38 @@
 #lsa-meet-root .lsa-status {
   color: #EAF4FA;
   font-size: 12px;
+}
+
+#lsa-meet-root .lsa-hear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+#lsa-meet-root .lsa-hear[hidden] {
+  display: none;
+}
+#lsa-meet-root .lsa-hear-label {
+  color: #EAF4FA;
+  font-size: 11px;
+  font-weight: 700;
+}
+#lsa-meet-root .lsa-hear-btn {
+  appearance: none;
+  border: 1px solid #1A4A63;
+  background: #152A38;
+  color: #EAF4FA;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+#lsa-meet-root .lsa-hear-btn.on {
+  background: #5BCBE8;
+  color: #1D3E53;
+  border-color: #5BCBE8;
 }
 
 #lsa-meet-root.lsa-hidden {

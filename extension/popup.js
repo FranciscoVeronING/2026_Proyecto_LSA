@@ -16,6 +16,8 @@ const reportText = document.getElementById("report-text");
 const reportHint = document.getElementById("report-hint");
 const outputHint = document.getElementById("output-hint");
 const outputField = document.getElementById("output-field");
+const inputHint = document.getElementById("input-hint");
+const inputField = document.getElementById("input-field");
 const pauseField = document.getElementById("pause-field");
 const pauseSelect = document.getElementById("pause-select");
 
@@ -47,11 +49,36 @@ document.querySelectorAll("[data-output]").forEach((btn) => {
   });
 });
 
+document.querySelectorAll("[data-input]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const hearingInput = btn.getAttribute("data-input");
+    paintInput(hearingInput);
+    LsaPrefs.set({ hearingInput });
+  });
+});
+
 pauseSelect.addEventListener("change", () => {
   const utterancePauseSec = normalizePauseSec(pauseSelect.value);
   pauseSelect.value = String(utterancePauseSec);
   LsaPrefs.set({ utterancePauseSec });
 });
+
+/**
+ * @param {string} hearingInput
+ */
+function paintInput(hearingInput) {
+  const mode = hearingInput === "voice" || hearingInput === "text" ? hearingInput : "both";
+  document.querySelectorAll("[data-input]").forEach((btn) => {
+    btn.classList.toggle("on", btn.getAttribute("data-input") === mode);
+  });
+  if (mode === "voice") {
+    inputHint.textContent = "Solo el micrófono de Meet. Lo que escribas en el chat no se traduce.";
+  } else if (mode === "text") {
+    inputHint.textContent = "Solo el chat de Meet. El micrófono no se transcribe.";
+  } else {
+    inputHint.textContent = "El micrófono de Meet y el chat se traducen a señas.";
+  }
+}
 
 /**
  * @param {string} outputMode
@@ -125,6 +152,7 @@ function openReport() {
 LsaPrefs.get().then((prefs) => {
   chkLandmarks.checked = prefs.showLandmarks;
   paintOutput(prefs.outputMode);
+  paintInput(prefs.hearingInput);
   pauseSelect.value = String(normalizePauseSec(prefs.utterancePauseSec));
 });
 
@@ -140,10 +168,13 @@ LsaApi.health()
       debugBlock.hidden = false;
       outputField.hidden = false;
       pauseField.hidden = false;
+      inputField.hidden = false;
+      inputHint.textContent = "La captura de voz o chat se usa con ILSA en modo oyente.";
     } else {
       debugBlock.hidden = true;
       outputField.hidden = true;
       pauseField.hidden = true;
+      inputField.hidden = false;
     }
     return inspectTab(true);
   })
@@ -153,5 +184,6 @@ LsaApi.health()
     metaMode.textContent = "—";
     outputField.hidden = true;
     pauseField.hidden = true;
+    inputField.hidden = false;
     return inspectTab(false);
   });
