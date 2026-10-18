@@ -16,7 +16,7 @@ El cuadro se parte al medio, las dos mitades con la misma altura:
 
 | Izquierda | Derecha |
 |---|---|
-| La cámara real, recortada para llenar la mitad sin estirarse | El esqueleto, quieto, con los brazos colgando |
+| La cámara real, recortada para llenar la mitad sin estirarse | El esqueleto en espera: torso de un cuadro real, manos adelante |
 
 Ese quieto es el **idle**. El esqueleto no seña “por las dudas”. Espera.
 
@@ -28,7 +28,7 @@ La persona oyente dice *hola mamá* con el micrófono de Meet (o lo escribe en e
 2. ILSA manda ese español al traductor (`POST /hearing`). Vuelve una lista de glosas, por ejemplo `HOLA MAMÁ`.
 3. Esa lista se pinta abajo del video, para que quien recibe la llamada la lea.
 4. Al mismo tiempo ILSA busca los clips `HOLA.pose` y `MAMÁ.pose`, los limpia y los empalma **en memoria**. No graba un mp4.
-5. Devuelve los fotogramas (`POST /avatar`). El canvas los dibuja en la mitad derecha y, al terminar, el esqueleto vuelve a los brazos colgados.
+5. Devuelve los fotogramas (`POST /avatar`). El canvas los dibuja en la mitad derecha y, al terminar, el esqueleto vuelve a la espera.
 
 Si una palabra no tiene clip, no se salta: se deletrea. *Francisco* sin `FRANCISCO.pose` se seña `F`, `R`, `A`, `N`, `C`, `I`, `S`, `C`, `O`. `CH` y `Ñ` son una sola letra. Si el diccionario entero no está en el disco, no hay ni letras: el esqueleto se queda en idle y el HUD avisa que falta.
 
@@ -44,7 +44,7 @@ Meet espeja tu miniatura con CSS. El canvas no: la cámara queda a la izquierda 
 
 ## 2. Voz, texto o las dos
 
-En el popup, con ILSA en modo oyente, **Qué se capta** tiene tres posiciones. Se guarda en `chrome.storage.local` (`hearingInput`) y se puede cambiar con la llamada abierta.
+**Qué se capta** tiene tres posiciones. Está en el popup de la extensión y, con ILSA en modo oyente, también en el cartel LSA de la llamada (Voz, Texto, Ambas). Se guarda en `chrome.storage.local` (`hearingInput`) y se puede cambiar con la llamada abierta.
 
 | Elección | Qué entra | Qué no entra |
 |---|---|---|
@@ -52,7 +52,9 @@ En el popup, con ILSA en modo oyente, **Qué se capta** tiene tres posiciones. S
 | Texto | Lo que escribís en el chat de Meet y enviás (Enter o el botón Enviar) | El micrófono. Se corta la escucha |
 | Ambas | Micrófono y chat | — |
 
-Ambas es el valor inicial. El control queda en el popup también con el motor apagado; en modo sordo se esconde.
+Ambas es el valor inicial. En el popup el control se ve también con el motor apagado o en modo sordo (ahí no se usa: la pista lo dice). En el cartel de Meet los tres botones aparecen solo en modo oyente.
+
+El cartel se arrastra desde cualquier parte que no sea un botón. Al soltarlo, el lugar queda en `hudLeft` y `hudTop`. La próxima llamada abre en ese sitio. Si no lo moviste, sigue arriba a la derecha.
 
 Por voz, la frase se cierra cuando pasa **1 segundo** sin audio después de haber detectado voz (energía del micrófono). Si seguís hablando sin pausa, se corta igual a los 4,5 segundos para no mandar un audio eterno.
 
@@ -104,8 +106,9 @@ Del mundo MAIN hacia la extensión salen `LSA_AUDIO_WAV` (el wav en base64), `LS
 | `extension/content/inject-gum.js` | Hook de `getUserMedia`, canvas, 50/50, subtítulo, tap del mic |
 | `extension/content/skeleton.js` | `window.LsaAvatar`: idle, lerp de entrada y salida, dibujo |
 | `extension/content/meet.js` | HUD, chat, `POST /stt`, `POST /hearing`, `POST /avatar` |
-| `extension/popup.html` / `popup.js` | “Qué se capta” cuando el modo es oyente |
-| `extension/lib/prefs.js` | `hearingInput` en `chrome.storage.local` |
+| `extension/content/meet.css` | Cartel: colores, botones de captura y cursor de arrastre |
+| `extension/popup.html` / `popup.js` | “Qué se capta”. Visible también si el motor está apagado |
+| `extension/lib/prefs.js` | `hearingInput`, y `hudLeft` / `hudTop` del cartel |
 | `extension/lib/api.js` | Cliente HTTP a `127.0.0.1:8765` |
 | `src/backend/server.py` | `POST /avatar` |
 | `extraction/meet_sequence.py` | Glosas → frames, sin escribir video |
@@ -183,5 +186,5 @@ El pipeline que fabrica los `.pose` (PDF, QR, YouTube, Holistic, recorte de mosa
 | Esqueleto quieto y el HUD dice que falta el diccionario | No están los `.pose` en `extraction/out/poses/`, o ILSA no corre desde esta carpeta |
 | Glosas en pantalla y el esqueleto deletrea | Esa palabra no tiene `.pose`. Se parte en letras (`CH` y `Ñ` son una seña). Si una letra tampoco está, queda en «Sin clip» |
 | “Falta una librería del compositor” | El Python de ILSA no tiene `pose-format` u `opencv-python`, o no es 3.11 |
-| El naranja está “del lado equivocado” | Recargá la extensión y Meet. El preview local se endereza; quien recibe ya veía el esqueleto sin espejo |
-| Cambiaste Voz / Texto y no pasa nada | Recargá la extensión una vez. Después el cambio entra en la llamada abierta |
+| El subtítulo o el esqueleto se ven al revés en tu miniatura | Recargá la extensión y Meet. El canvas ya va derecho; la extensión cancela el espejo de CSS solo en tu video |
+| Cambiaste Voz / Texto y no pasa nada | Recargá la extensión una vez. Después el cambio entra en la llamada abierta, desde el popup o desde el cartel |
