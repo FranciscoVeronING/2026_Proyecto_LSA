@@ -27,10 +27,15 @@ La persona oyente dice *hola mamá* con el micrófono de Meet (o lo escribe en e
 1. La extensión manda el audio a ILSA (`POST /stt`). ILSA devuelve el texto `hola mamá`. Si vino del chat, este paso no existe: el texto ya está.
 2. ILSA manda ese español al traductor (`POST /hearing`). Vuelve una lista de glosas, por ejemplo `HOLA MAMÁ`.
 3. Esa lista se pinta abajo del video, para que quien recibe la llamada la lea.
-4. Al mismo tiempo ILSA busca los clips `HOLA.pose` y `MAMÁ.pose`, los limpia y los empalma **en memoria**. No graba un mp4.
-5. Devuelve los fotogramas (`POST /avatar`). El canvas los dibuja en la mitad derecha y, al terminar, el esqueleto vuelve a los brazos colgados.
+4. Con esas glosas ILSA pide el clip al **servidor de T-pose** (Cloud Run, rama
+   `avatar-cloud`). Los `.pose` no están en esta PC.
+5. El canvas dibuja los fotogramas en la mitad derecha y, al terminar, el
+   esqueleto vuelve a los brazos colgados.
 
-Si una palabra no tiene clip, no se salta: se deletrea. *Francisco* sin `FRANCISCO.pose` se seña `F`, `R`, `A`, `N`, `C`, `I`, `S`, `C`, `O`. `CH` y `Ñ` son una sola letra. Si el diccionario entero no está en el disco, no hay ni letras: el esqueleto se queda en idle y el HUD avisa que falta.
+Si una palabra no tiene clip en el servidor, no se salta: se deletrea.
+*Francisco* sin `FRANCISCO` se seña `F`, `R`, `A`, `N`, `C`, `I`, `S`, `C`, `O`.
+`CH` y `Ñ` son una sola letra. Si el servidor no responde, el esqueleto se
+queda en idle y el HUD avisa.
 
 ### Qué hace cada mano
 
@@ -73,11 +78,9 @@ Mic de Meet                         Chat de Meet
     → POST /stt                         → (sin STT)
          └──────── español ────────────┘
                       → POST /hearing
-                      → glosas (string)
-                      → LSA_CAPTION (el texto de abajo)
-                      → POST /avatar
-                      → frames en JSON
-                      → LSA_AVATAR
+                      → glosas
+                      → GET T-pose /tposes/{GLOSA}.pose
+                      → LSA_CAPTION + LSA_AVATAR
                       → el canvas reproduce y vuelve a idle
 ```
 
@@ -107,16 +110,20 @@ Del mundo MAIN hacia la extensión salen `LSA_AUDIO_WAV` (el wav en base64), `LS
 | `extension/popup.html` / `popup.js` | “Qué se capta” cuando el modo es oyente |
 | `extension/lib/prefs.js` | `hearingInput` en `chrome.storage.local` |
 | `extension/lib/api.js` | Cliente HTTP a `127.0.0.1:8765` |
-| `src/backend/server.py` | `POST /avatar` |
-| `extraction/meet_sequence.py` | Glosas → frames, sin escribir video |
-| `extraction/render_pose_pair.py` | El compositor: trim, relleno, park, EMA, canvas, puente |
-| `extraction/out/poses/*.pose` | El diccionario. No está en git (~672 MB) |
+| `src/backend/server.py` | `POST /hearing` pide T-pose; `POST /avatar` por si hace falta |
+| `src/avatar/remote.py` | `GET /tposes/{GLOSA}.pose` y caché en `%LOCALAPPDATA%\\ILSA\\tposes` |
+| `src/avatar/names.py` | Stem de igualdad: mayúsculas, masculino, sin tildes |
+| `extraction/meet_sequence.py` | Compositor: `.pose` bajados → frames del canvas |
 
 `skeleton.js` se inyecta en el mundo MAIN **antes** que `inject-gum.js` (`manifest.json` y `background.js`).
 
 ### Qué hace `POST /avatar`
 
-`sequence_for_glosses` parte el string en tokens. Prueba de a tres, dos y una palabra, para que `BUENAS TARDES` pueda ser una sola glosa. Un dígito suelto (`1`) se busca como `UNO`. Cada glosa se resuelve a un archivo con `resolve_sign` (la letra `F` busca el `.pose` del abecedario, no cualquier seña que contenga esa letra).
+ILSA no guarda el diccionario. Por cada glosa pide
+`GET https://tpose-server-705664945052.southamerica-east1.run.app/tposes/{GLOSA}.pose`
+(el stem sale de `avatar.names.tpose_stem`: mayúsculas, forma masculina,
+sin tildes ni signos; `Ñ` → `ENIE`, `PAPA` → `PADRE`). El compositor local
+arma los frames del canvas.
 
 Cada clip pasa por `prepare_sign`, en este orden: fps 30, recorte, detección de mano idle, relleno de huecos cortos, park o snap, EMA, canvas 720×780 con los hombros a 250 px. Los clips ya preparados quedan en un caché en memoria. Entre clip y clip, `compose_sequence` fabrica el puente (4 a 8 frames, smoothstep, según la distancia de las muñecas).
 
@@ -132,7 +139,7 @@ La respuesta no manda los 543 puntos. Manda lo que el canvas dibuja:
 | `face_edges` | Qué pares unir, una sola vez por respuesta |
 | `fps`, `w`, `h`, `shoulder`, `shoulder_y` | Para reproducir y para que el idle use el mismo cuerpo |
 | `played` / `missing` | Glosas que se animan. Si la palabra no tiene archivo, `played` trae sus letras. `missing` es lo que ni deletreando se encontró |
-| `ok: false` | No hay glosas, no está la carpeta de `.pose`, o falta `pose-format` / OpenCV |
+| `ok: false` | No hay glosas, el servidor de T-pose no respondió, o no hay clip |
 
 Un punto con confianza menor a 0,15 viaja como `-1` y no se dibuja.
 
@@ -165,11 +172,9 @@ Fondo del compositor en el mp4 de prueba: `(18, 18, 22)` en OpenCV. El de Meet e
 
 ### El diccionario
 
-Los `.pose` se copian a mano en:
-
-`extraction/out/poses/`
-
-Esa carpeta está en `.gitignore`. ILSA tiene que arrancar **desde este worktree** (`2026_Proyecto_LSA-extension`), porque `POST /avatar` importa `extraction/meet_sequence.py` de acá. El Python es 3.11, con `pose-format` y `opencv-python`. Esas dos no están en el `requirements.txt` del clasificador: el modo sordo no las carga. Se importan recién en el primer `/avatar`.
+El diccionario de movimiento vive en el servidor de T-pose, no en
+`extraction/out/poses/`. Si el HUD dice que falta el clip, el remoto no
+reconoció esas glosas o no responde.
 
 El pipeline que fabrica los `.pose` (PDF, QR, YouTube, Holistic, recorte de mosaico, ventanas) es el de `docs/Rama_avatar.md`. Este documento no lo repite. Acá solo se **reproducen**.
 
@@ -180,8 +185,8 @@ El pipeline que fabrica los `.pose` (PDF, QR, YouTube, Holistic, recorte de mosa
 | Lo que ves | Dónde está |
 |---|---|
 | Cámara entera, sin esqueleto | ILSA no está en modo oyente, o la extensión que cargaste no es la de este worktree |
-| Esqueleto quieto y el HUD dice que falta el diccionario | No están los `.pose` en `extraction/out/poses/`, o ILSA no corre desde esta carpeta |
+| Esqueleto quieto y el HUD dice que falta el clip | El servidor de T-pose no respondió, o esas glosas no tienen clip |
 | Glosas en pantalla y el esqueleto deletrea | Esa palabra no tiene `.pose`. Se parte en letras (`CH` y `Ñ` son una seña). Si una letra tampoco está, queda en «Sin clip» |
-| “Falta una librería del compositor” | El Python de ILSA no tiene `pose-format` u `opencv-python`, o no es 3.11 |
+| “Esqueleto en reposo” | El servidor de T-pose no respondió o `LSA_AVATAR_URL` está mal |
 | El naranja está “del lado equivocado” | Recargá la extensión y Meet. El preview local se endereza; quien recibe ya veía el esqueleto sin espejo |
 | Cambiaste Voz / Texto y no pasa nada | Recargá la extensión una vez. Después el cambio entra en la llamada abierta |

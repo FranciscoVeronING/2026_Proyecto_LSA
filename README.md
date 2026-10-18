@@ -153,6 +153,7 @@ src/
   core/                Landmarks, enunciado, política de repeticiones
   classifier/          TinySkeleton + pesos + lista de clases
   semantic/            Cliente HTTP de Cloud Run (`remote.py`)
+  avatar/              Cliente T-pose (`GET /tposes/{GLOSA}.pose`)
 docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 ```
 
@@ -176,7 +177,8 @@ docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
 | POST | `/session` | Nueva sesión (`left_handed`) |
 | POST | `/sign` | Lista de frames de una seña |
 | POST | `/stt` | Modo oyente: WAV del mic de Meet → español |
-| POST | `/hearing` | Modo oyente: español → glosas |
+| POST | `/hearing` | Modo oyente: español → glosas (y clip T-pose remoto) |
+| POST | `/avatar` | Modo oyente: glosas → frames del esqueleto (servidor T-pose) |
 | POST | `/activity` | “Sigo señando” (retrasa el cierre) |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
 | GET | `/download/exe` | `.exe` o `.bat` si existen en esta PC |

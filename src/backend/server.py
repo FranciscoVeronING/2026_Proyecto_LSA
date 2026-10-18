@@ -192,15 +192,13 @@ def hearing_speech(body: HearingIn):
 
 @app.post("/avatar")
 def avatar_clip(body: AvatarIn):
-    """Glosas del oyente → frames del esqueleto. No escribe mp4."""
+    """Glosas del oyente → frames del esqueleto remoto (T-pose en Cloud Run)."""
     if _mode != "hearing":
         raise HTTPException(status_code=400, detail="Solo en modo oyente.")
-    if str(REPO_ROOT) not in sys.path:
-        sys.path.insert(0, str(REPO_ROOT))
-    from extraction.meet_sequence import sequence_for_glosses
+    from avatar.remote import clip_for_glosses
 
     try:
-        payload = sequence_for_glosses(body.glosses)
+        payload = clip_for_glosses(body.glosses)
     except Exception as exc:
         print(f"[backend] /avatar error: {exc}")
         return {"ok": False, "error": str(exc), "frames": [], "missing": []}

@@ -4,35 +4,19 @@ No escribe mp4. Reusa el compositor (`render_pose_pair.prepare_sign` y
 `compose_sequence`): trim, park, EMA, canvas y puentes. El navegador dibuja
 los frames con `canvas.captureStream`.
 
-Los `.pose` viven en `extraction/out/poses/` (no están en git).
+Los `.pose` los baja `avatar.remote` del servidor de T-pose.
 """
 
 from __future__ import annotations
 
 import importlib.util
-import re
 import threading
 from pathlib import Path
 
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent
-POSE_DIR = ROOT / "out" / "poses"
-_MAX_SIGNS = 24
 _MAX_FRAMES = 1200
-_TOKEN = re.compile(r"[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
-_DIGITS = {
-    "0": "CERO",
-    "1": "UNO",
-    "2": "DOS",
-    "3": "TRES",
-    "4": "CUATRO",
-    "5": "CINCO",
-    "6": "SEIS",
-    "7": "SIETE",
-    "8": "OCHO",
-    "9": "NUEVE",
-}
 
 # Contornos de FaceMesh (sin iris: Holistic tiene 468 puntos, el iris empieza en 468).
 # Óvalo, cejas, ojos, nariz y labios. La teselación completa no se lee en medio Meet.
@@ -85,10 +69,6 @@ def _fail(error: str, missing: list[str] | None = None) -> dict:
     }
 
 
-def _tokens(text: str) -> list[str]:
-    return _TOKEN.findall(text or "")
-
-
 def _load_rp():
     global _RP
     if _RP is not None:
@@ -131,70 +111,6 @@ def _args(rp):
     )
 
 
-def _append_sign(found: list[tuple[str, Path]], query: str, path: Path) -> bool:
-    if len(found) >= _MAX_SIGNS:
-        return False
-    found.append((query, path))
-    return True
-
-
-def _spell_fallback(rp, query: str) -> list[str]:
-    """Una palabra sin clip se parte en letras. Una letra sola no se vuelve a partir."""
-    try:
-        letters = rp.expand_spell(query)
-    except ValueError:
-        return []
-    if len(letters) < 2:
-        return []
-    return letters
-
-
-def _resolve_chain(rp, tokens: list[str]) -> tuple[list[tuple[str, Path]], list[str]]:
-    """Junta tokens de a lo más largo (BUENAS TARDES). Si no hay clip, deletrea."""
-    found: list[tuple[str, Path]] = []
-    missing: list[str] = []
-    index = 0
-    while index < len(tokens):
-        if len(found) >= _MAX_SIGNS:
-            missing.extend(tokens[index:])
-            break
-        matched = False
-        for size in (3, 2, 1):
-            if index + size > len(tokens):
-                continue
-            raw = " ".join(tokens[index : index + size])
-            query = _DIGITS.get(raw, raw)
-            try:
-                path = rp.resolve_sign(query)
-            except FileNotFoundError:
-                continue
-            if not _append_sign(found, query, path):
-                missing.append(query)
-            index += size
-            matched = True
-            break
-        if matched:
-            continue
-        query = _DIGITS.get(tokens[index], tokens[index])
-        letters = _spell_fallback(rp, query)
-        if not letters:
-            missing.append(tokens[index])
-            index += 1
-            continue
-        for letter in letters:
-            if len(found) >= _MAX_SIGNS:
-                missing.append(letter)
-                continue
-            try:
-                path = rp.resolve_sign(letter)
-            except FileNotFoundError:
-                missing.append(letter)
-                continue
-            _append_sign(found, letter, path)
-        index += 1
-    return found, missing
-
-
 def _prepare(rp, path: Path, args):
     key = str(path.resolve())
     with _LOCK:
@@ -231,29 +147,20 @@ def _pack(data: np.ndarray, conf: np.ndarray, indices: list[int] | tuple[int, ..
     return flat.tolist()
 
 
-def sequence_for_glosses(text: str) -> dict:
-    """Glosas → frames dibujables. `ok: false` si no hay diccionario o no matchea nada."""
-    tokens = _tokens(text)
-    if not tokens:
-        return _fail("No llegaron glosas.")
-    if not any(POSE_DIR.glob("*.pose")):
-        return _fail(
-            "Falta el diccionario en extraction/out/poses (no está en git).",
-            missing=tokens,
-        )
+def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None = None) -> dict:
+    """Clips `.pose` bajados del servidor de T-pose → frames del canvas."""
+    missing = list(missing or [])
+    if not found:
+        return _fail("Ninguna glosa tiene clip.", missing=missing)
     try:
         rp = _load_rp()
     except ImportError as exc:
         return _fail(
             f"Falta una librería del compositor ({exc}). Hace falta Python 3.11 con pose-format y opencv-python.",
-            missing=tokens,
+            missing=missing,
         )
     except Exception as exc:
-        return _fail(f"No se pudo cargar el compositor: {exc}", missing=tokens)
-
-    found, missing = _resolve_chain(rp, tokens)
-    if not found:
-        return _fail("Ninguna glosa tiene clip.", missing=missing)
+        return _fail(f"No se pudo cargar el compositor: {exc}", missing=missing)
 
     args = _args(rp)
     poses = []
@@ -261,7 +168,7 @@ def sequence_for_glosses(text: str) -> dict:
     for query, path in found:
         try:
             poses.append(_prepare(rp, path, args))
-            names.append(rp.label_for(query, path))
+            names.append(rp.label_for(query, path) if hasattr(rp, "label_for") else str(query))
         except Exception:
             missing.append(query)
     if not poses:
@@ -276,7 +183,7 @@ def sequence_for_glosses(text: str) -> dict:
     if len(data) == 0:
         return _fail("El compositor no devolvió frames.", missing=missing)
     face_order, face_edges = _face_layout()
-    face_abs = [ _FACE_START + i for i in face_order ]
+    face_abs = [_FACE_START + i for i in face_order]
     hand = list(range(21))
     return {
         "ok": True,
@@ -298,8 +205,8 @@ def sequence_for_glosses(text: str) -> dict:
             for row_p, row_f, row_l, row_r in zip(
                 _pack(data, conf, _POSE_IDX),
                 _pack(data, conf, face_abs),
-                _pack(data, conf, [ _LEFT_HAND + i for i in hand ]),
-                _pack(data, conf, [ _RIGHT_HAND + i for i in hand ]),
+                _pack(data, conf, [_LEFT_HAND + i for i in hand]),
+                _pack(data, conf, [_RIGHT_HAND + i for i in hand]),
             )
         ],
     }

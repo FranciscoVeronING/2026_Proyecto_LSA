@@ -23,7 +23,7 @@ hidden = (
     collect_submodules("classifier")
     + collect_submodules("core")
     + collect_submodules("backend")
-    + ["core.utterance", "semantic.remote", "semantic.config", "vosk", "cffi", "_cffi_backend"]
+    + ["core.utterance", "semantic.remote", "semantic.config", "avatar.remote", "avatar.config", "avatar.names", "vosk", "cffi", "_cffi_backend"]
     + list(_vosk_h)
 )
 

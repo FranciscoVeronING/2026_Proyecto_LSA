@@ -99,6 +99,29 @@ function transcribeMeetAudio(wavB64) {
     });
 }
 
+function applyAvatarClip(clip, glosses) {
+  const play = (got) => {
+    if (!got || got.ok === false || !(got.frames && got.frames.length)) {
+      setHud({ debug: "Esqueleto en reposo: " + ((got && got.error) || "sin clips") });
+      return;
+    }
+    postToPage({ type: "LSA_AVATAR", clip: got });
+    const miss = (got.missing || []).filter(Boolean);
+    setHud({
+      debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
+    });
+  };
+  if (clip) {
+    play(clip);
+    return;
+  }
+  LsaApi.avatar(glosses)
+    .then(play)
+    .catch((err) => {
+      setHud({ debug: "Esqueleto: " + ((err && err.message) || "error") });
+    });
+}
+
 /** Español (voz o chat) → POST /hearing → glosas quemadas en el video. */
 function sendToOyente(spanish, source) {
   const text = String(spanish || "").trim();
@@ -126,21 +149,7 @@ function sendToOyente(spanish, source) {
         spanish: glosses,
         glosses,
       });
-      LsaApi.avatar(glosses)
-        .then((clip) => {
-          if (!clip || clip.ok === false) {
-            setHud({ debug: "Esqueleto en reposo: " + ((clip && clip.error) || "sin clips") });
-            return;
-          }
-          postToPage({ type: "LSA_AVATAR", clip });
-          const miss = (clip.missing || []).filter(Boolean);
-          setHud({
-            debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
-          });
-        })
-        .catch((err) => {
-          setHud({ debug: "Esqueleto: " + ((err && err.message) || "error") });
-        });
+      applyAvatarClip(s.avatar, glosses);
     })
     .catch((err) => {
       setHud({

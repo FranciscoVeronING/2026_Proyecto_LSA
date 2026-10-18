@@ -75,8 +75,23 @@ class HearingSession:
             print(f"[backend] Oyente remoto falló: {exc}")
             self.semantic_error = str(exc)
         self.gloss_text = glosses
+        clip = None
+        if glosses:
+            try:
+                from avatar.remote import clip_for_glosses
+
+                clip = clip_for_glosses(glosses)
+            except Exception as exc:
+                print(f"[backend] T-pose remoto falló: {exc}")
+                clip = {"ok": False, "error": str(exc), "frames": [], "missing": []}
         snap = self.snapshot()
-        snap.update({"closed": True, "spanish": text, "glosses": glosses, "caption": glosses})
+        snap.update({
+            "closed": True,
+            "spanish": text,
+            "glosses": glosses,
+            "caption": glosses,
+            "avatar": clip,
+        })
         from backend.metrics import log_event
 
         log_event(

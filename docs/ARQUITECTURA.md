@@ -163,6 +163,11 @@ ILSA no carga GGUF. `src/semantic/remote.py` hace HTTP a Cloud Run:
 
 - Sordo: `POST /sordo` con `{ "glosses": "..." }` → `{ "spanish": "..." }`.
 - Oyente: `POST /oyente` con `{ "spanish": "..." }` → `{ "glosses": "..." }`.
+- Esqueleto oyente: `src/avatar/remote.py` pide
+  `GET /tposes/{GLOSA}.pose` a
+  `https://tpose-server-705664945052.southamerica-east1.run.app`.
+  El stem es igualdad de nombre (`avatar.names.tpose_stem`).
+  Los `.pose` no viven en esta PC.
 
 El código del servidor GGUF vive en la rama `semantic-cloud`, no acá.
 
