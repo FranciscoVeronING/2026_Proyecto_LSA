@@ -55,6 +55,11 @@ const LsaApi = {
       method: "POST",
       body: JSON.stringify({ spanish, final: Boolean(final) }),
     }),
+  avatar: (glosses) =>
+    api("/avatar", {
+      method: "POST",
+      body: JSON.stringify({ glosses: glosses || "" }),
+    }),
   stt: (wavB64, lang) =>
     api("/stt", {
       method: "POST",

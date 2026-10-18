@@ -313,6 +313,16 @@ class IlsaWindow:
         tk.Label(pad, textvariable=self.detail_var, font=tiny_f, fg=MUTED, bg=BG, wraplength=340, justify="left").pack(
             anchor="w", pady=(6, 0)
         )
+        self._fit_window()
+
+    def _fit_window(self) -> None:
+        """El splash fija el alto. Sin esto, Encender queda debajo del borde."""
+        self.root.resizable(True, True)
+        self.root.update_idletasks()
+        width = max(self.root.winfo_reqwidth(), 420)
+        height = self.root.winfo_reqheight()
+        self.root.geometry(f"{width}x{height}")
+        self.root.resizable(False, False)
 
     def _mode_choice(self, mode: str) -> tuple[str, str]:
         if mode == "signer":

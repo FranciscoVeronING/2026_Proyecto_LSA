@@ -1,7 +1,8 @@
 /**
  * Hook de getUserMedia en el mundo MAIN.
  * Con LSA off deja el stream nativo (si no, Meet dice cámara bloqueada).
- * Con LSA on Meet recibe un canvas: subtítulo espejado por el CSS mirror.
+ * Con LSA on Meet recibe un canvas (captureStream).
+ * Modo oyente: mitad izquierda cámara, mitad derecha esqueleto, misma altura.
  */
 (function () {
   if (window.__lsaGumHooked) return;
@@ -34,10 +35,12 @@
   ];
   let enabled = false;
   let hearingMode = false;
+  let hearingInput = "both";
   let showSubtitles = true;
   let showLandmarks = false;
   let landmarks = null;
   let caption = { spanish: "", glosses: "" };
+  let avatarClip = null;
   let pipeline = null;
   let extraAudio = null;
 
@@ -48,15 +51,18 @@
     if (data.type === "LSA_SET_ENABLED") {
       enabled = Boolean(data.enabled);
       hearingMode = Boolean(data.enabled && data.hearing);
-      if (!hearingMode) stopHearingTap();
+      if (!hearingMode) {
+        stopHearingTap();
+        avatarClip = null;
+      }
       if (hearingMode) {
         wrapExistingMeetCamera();
-        startHearingTap();
+        syncHearingCapture();
         [300, 1000, 2500].forEach((ms) => {
           setTimeout(() => {
             if (hearingMode) {
               wrapExistingMeetCamera();
-              startHearingTap();
+              syncHearingCapture();
             }
           }, ms);
         });
@@ -65,6 +71,10 @@
     }
     if (data.type === "LSA_PREFS") {
       if (typeof data.showSubtitles === "boolean") showSubtitles = data.showSubtitles;
+      if (data.hearingInput === "voice" || data.hearingInput === "text" || data.hearingInput === "both") {
+        hearingInput = data.hearingInput;
+        syncHearingCapture();
+      }
       if (typeof data.showLandmarks === "boolean") {
         showLandmarks = data.showLandmarks;
         if (!showLandmarks) landmarks = null;
@@ -74,6 +84,14 @@
       landmarks = data.landmarks || null;
     }
     if (data.type === "LSA_SPEECH_STOP") stopHearingTap();
+    if (data.type === "LSA_AVATAR" && data.clip && data.clip.ok && window.LsaAvatar) {
+      avatarClip = window.LsaAvatar.start(data.clip);
+      const ms = Math.max(SUBTITLE_HOLD_MS, window.LsaAvatar.durationMs(avatarClip) + 600);
+      if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
+      window.__lsaCaptionTimer = setTimeout(() => {
+        caption.spanish = "";
+      }, ms);
+    }
     if (data.type === "LSA_CAPTION") {
       // Solo `line`: oyente manda glosas del semántico; sordo manda el español.
       // Nunca usar `glosses` crudas del clasificador.
@@ -106,26 +124,46 @@
     return tracks;
   }
 
-  /** true = muteado en la UI de Meet (el label del botón es “activar”). */
+  /**
+   * true = el botón de Meet dice que el micrófono está silenciado.
+   * false = el botón lo muestra prendido. null = no se encontró el control.
+   * “Desactivar / silenciar” es la acción: el mic está prendido.
+   * “Activar el micrófono” también cuenta (hay un “el” en el medio).
+   */
   function meetUiMicMuted() {
     const els = document.querySelectorAll("button, [role='button']");
+    let fallback = null;
     for (let i = 0; i < els.length; i++) {
       const el = els[i];
+      const box = el.getBoundingClientRect();
+      if (box.width < 2 || box.height < 2) continue;
       const lab = (
         (el.getAttribute("aria-label") || "") +
         " " +
         (el.getAttribute("data-tooltip") || "") +
         " " +
-        (el.getAttribute("title") || "")
-      ).toLowerCase();
-      if (!/micrófono|microfono|microphone|\bmic\b/.test(lab)) continue;
+        (el.getAttribute("title") || "") +
+        " " +
+        (el.innerText || "").slice(0, 80)
+      )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      const looksMic = /microfono|microphone|\bmic\b|mic_off|mic_none/.test(lab);
+      if (!looksMic) continue;
       const flagged = el.getAttribute("data-is-muted");
       if (flagged === "true") return true;
       if (flagged === "false") return false;
-      if (/desactivar mic|turn off mic|mute mic|silenciar mic/.test(lab)) return false;
-      if (/activar mic|turn on mic|unmute mic|unmute microphone/.test(lab)) return true;
+      const willUnmute = /\bactivar\b|\bturn on\b|\bunmute\b|\bsilenciado\b|\bmuted\b|mic_off/.test(lab);
+      const willMute = /\bdesactivar\b|\bturn off\b|\bsilenciar\b|\bmute\b/.test(lab);
+      if (willMute && !willUnmute) {
+        fallback = false;
+        continue;
+      }
+      if (willUnmute && !/\bdesactivar\b|\bturn off\b|\bsilenciar\b/.test(lab)) return true;
+      if (willUnmute) fallback = true;
     }
-    return null;
+    return fallback;
   }
 
   /** true = cámara apagada en la UI de Meet. */
@@ -205,17 +243,6 @@
     return null;
   }
 
-  function meetMicOpen() {
-    if (meetUiMicMuted() === true) return false;
-    const rtc = outboundKindLive("audio");
-    if (rtc === false) return false;
-    const tracks = liveAudioTracks();
-    if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
-    if (meetUiMicMuted() === false) return true;
-    if (rtc === true) return true;
-    return tracks.some((t) => t.enabled !== false);
-  }
-
   function liveVideoTracks() {
     const tracks = [];
     if (!pipeline || !pipeline.real) return tracks;
@@ -244,6 +271,11 @@
       window.postMessage({ source: "lsa-page", type: "LSA_CAMERA", open }, "*");
     }
     return open;
+  }
+
+  function syncHearingCapture() {
+    if (hearingMode && hearingInput !== "text") startHearingTap();
+    else stopHearingTap();
   }
 
   function stopHearingTap() {
@@ -305,7 +337,7 @@
   }
 
   function flushUtterance(chunks, ctxRate) {
-    if (!chunks.length) return;
+    if (!chunks.length || !voiceCaptureAllowed()) return;
     const total = chunks.reduce((n, a) => n + a.length, 0);
     const merged = new Float32Array(total);
     let o = 0;
@@ -344,10 +376,25 @@
     let voiced = false;
     let silence = 0;
     const rmsOn = 0.018;
-    const rmsOff = 0.008;
+    const silenceEndMs = 1000;
+    let announced = null;
+    const noteMic = (open) => {
+      if (announced === open) return;
+      announced = open;
+      window.postMessage(
+        {
+          source: "lsa-page",
+          type: "LSA_SPEECH_UI",
+          debug: open ? "Escuchando el mic de Meet" : "Micrófono de Meet silenciado",
+        },
+        "*"
+      );
+    };
     proc.onaudioprocess = (ev) => {
-      if (!hearingMode) return;
-      if (!meetMicOpen()) {
+      if (!hearingMode || hearingInput === "text") return;
+      const open = voiceCaptureAllowed();
+      noteMic(open);
+      if (!open) {
         chunks.length = 0;
         voiced = false;
         silence = 0;
@@ -366,7 +413,7 @@
         silence += 1;
         const ms = (silence * input.length * 1000) / ctx.sampleRate;
         const dur = chunks.reduce((n, a) => n + a.length, 0) / ctx.sampleRate;
-        if (ms > 750 || dur > 4.5) {
+        if (ms >= silenceEndMs || dur > 4.5) {
           const copy = chunks.splice(0, chunks.length);
           voiced = false;
           silence = 0;
@@ -391,7 +438,23 @@
       );
     }
     hearingTap = { ctx, src, proc, trackId: tracks[0].id };
-    window.postMessage({ source: "lsa-page", type: "LSA_SPEECH_UI", debug: "Escuchando el mic de Meet" }, "*");
+  }
+
+  /**
+   * Por voz solo se guarda audio si Meet no tiene el micrófono silenciado.
+   * El track crudo de getUserMedia sigue sonando aunque el botón esté en mute:
+   * manda la UI del botón y, si no aparece, el sender de la llamada.
+   */
+  function voiceCaptureAllowed() {
+    if (!hearingMode || hearingInput === "text") return false;
+    if (meetUiMicMuted() === true) return false;
+    const rtc = outboundKindLive("audio");
+    if (rtc === false) return false;
+    const tracks = liveAudioTracks();
+    if (tracks.some((t) => t.muted === true)) return false;
+    if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
+    if (meetUiMicMuted() === false) return true;
+    return rtc === true;
   }
 
   /**
@@ -433,6 +496,86 @@
     ctx.drawImage(video, 0, 0, w, h);
   }
 
+  /** Cámara recortada (cover) dentro de un rectángulo, sin deformar. */
+  function drawCover(ctx, video, x, y, w, h) {
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    if (!vw || !vh) return;
+    const scale = Math.max(w / vw, h / vh);
+    const dw = vw * scale;
+    const dh = vh * scale;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    ctx.drawImage(video, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+    ctx.restore();
+  }
+
+  function drawSkeletonPanel(ctx, w, h) {
+    if (!window.LsaAvatar) return;
+    const half = Math.floor(w / 2);
+    const view = window.LsaAvatar.sample(avatarClip, performance.now());
+    if (view && view.done) avatarClip = null;
+    window.LsaAvatar.draw(ctx, view, half, 0, w - half, h);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.fillRect(half, 0, 1, h);
+  }
+
+  /** Cuántos espejos en X tiene el elemento (transform y la propiedad scale). */
+  function flipCount(el) {
+    let count = 0;
+    let cs;
+    try {
+      cs = getComputedStyle(el);
+    } catch (_) {
+      return 0;
+    }
+    const scale = (cs.scale || "none").trim();
+    if (scale && scale !== "none" && parseFloat(scale.split(/\s+/)[0]) < 0) count += 1;
+    const transform = cs.transform || "";
+    const match = transform.match(/matrix(?:3d)?\(\s*(-?[\d.eE+-]+)/);
+    if (match && parseFloat(match[1]) < 0) count += 1;
+    return count;
+  }
+
+  /**
+   * Meet espeja solo tu miniatura. El canvas ya va derecho: cámara, esqueleto
+   * y subtítulo. Este contrarresto es CSS del video local; quien recibe no lo ve.
+   */
+  function straightenPreview(video) {
+    if (!video) return;
+    const mine = video.dataset.lsaFix || "";
+    if (mine === "scale") video.style.removeProperty("scale");
+    if (mine === "transform") video.style.removeProperty("transform");
+    let flips = flipCount(video);
+    for (let el = video.parentElement; el && el !== document.documentElement; el = el.parentElement) {
+      flips += flipCount(el);
+    }
+    if (flips % 2 === 0) {
+      video.dataset.lsaFix = "";
+      return;
+    }
+    const scaleNow = (getComputedStyle(video).scale || "none").trim();
+    const scaleFlipped = scaleNow !== "none" && parseFloat(scaleNow.split(/\s+/)[0]) < 0;
+    if (scaleFlipped) {
+      video.style.setProperty("transform", "scaleX(-1)", "important");
+      video.dataset.lsaFix = "transform";
+    } else {
+      video.style.setProperty("scale", "-1 1", "important");
+      video.dataset.lsaFix = "scale";
+    }
+  }
+
+  /** Izquierda: cámara. Derecha: esqueleto. Las dos mitades ocupan toda la altura. */
+  function drawSplit(ctx, video, w, h) {
+    const half = Math.floor(w / 2);
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, w, h);
+    drawCover(ctx, video, 0, 0, half, h);
+    drawSkeletonPanel(ctx, w, h);
+  }
+
   function drawLandmarks(ctx, w, h) {
     if (!showLandmarks || !landmarks) return;
     const drawSet = (pts, edges, color) => {
@@ -469,19 +612,22 @@
   }
 
   /**
-   * Subtítulo abajo, espejado para el CSS mirror de Meet.
-   * Meet puede recortar bordes si el encuadre automático sigue activo.
+   * Subtítulo abajo. En modo sordo se espeja para el CSS mirror del preview local.
+   * En modo oyente queda derecho: lo lee quien recibe el video.
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} w
    * @param {number} h
+   * @param {boolean} forReceiver
    */
-  function drawSubtitles(ctx, w, h) {
+  function drawSubtitles(ctx, w, h, forReceiver) {
     const text = caption.spanish;
     if (!text) return;
     const fontSize = Math.max(18, Math.round(h * 0.042));
     ctx.save();
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
+    if (!forReceiver) {
+      ctx.translate(w, 0);
+      ctx.scale(-1, 1);
+    }
     ctx.font = `700 ${fontSize}px "Segoe UI", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -584,6 +730,7 @@
     const out = canvas.captureStream(24);
     const capTrack = out.getVideoTracks()[0];
     if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
+    let previewTick = 0;
 
     const draw = () => {
       if (!handle.running) return;
@@ -602,13 +749,24 @@
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
         }
-        drawVideoFrame(ctx, video, canvas.width, canvas.height);
-        if (enabled && showLandmarks) drawLandmarks(ctx, canvas.width, canvas.height);
-        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
+        if (enabled && hearingMode && window.LsaAvatar) {
+          drawSplit(ctx, video, canvas.width, canvas.height);
+        } else {
+          drawVideoFrame(ctx, video, canvas.width, canvas.height);
+          if (enabled && showLandmarks) drawLandmarks(ctx, canvas.width, canvas.height);
+        }
+        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height, hearingMode);
       } else {
         ctx.fillStyle = "#111";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
+        if (enabled && hearingMode && window.LsaAvatar) drawSkeletonPanel(ctx, canvas.width, canvas.height);
+        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height, hearingMode);
+      }
+      if (hearingMode && previewTick++ % 20 === 0) {
+        document.querySelectorAll("video").forEach((v) => {
+          if (v.id === "lsa-real-cam") return;
+          if (v.srcObject === out) straightenPreview(v);
+        });
       }
       if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
       requestAnimationFrame(draw);
@@ -618,7 +776,7 @@
     handle.out = out;
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: true }, "*");
     syncCanvasToMeet();
-    if (hearingMode) startHearingTap();
+    if (hearingMode) syncHearingCapture();
     return handle;
   }
 
@@ -635,11 +793,11 @@
       if (v.id === "lsa-real-cam") return;
       const src = v.srcObject;
       if (!(src instanceof MediaStream)) return;
-      if (src === pipeline.out) return;
       const fromReal =
         pipeline.real &&
         src.getVideoTracks().some((t) => pipeline.real.getVideoTracks().indexOf(t) !== -1);
-      if (fromReal || src === pipeline.real) v.srcObject = pipeline.out;
+      if (src !== pipeline.out && (fromReal || src === pipeline.real)) v.srcObject = pipeline.out;
+      if (v.srcObject === pipeline.out) straightenPreview(v);
     });
     peerConnections.forEach((pc) => {
       try {
@@ -687,7 +845,7 @@
     if (!wantsVideo(constraints)) {
       return origGetUserMedia.call(this, constraints).then((stream) => {
         extraAudio = stream;
-        if (hearingMode) startHearingTap();
+        if (hearingMode) syncHearingCapture();
         return stream;
       });
     }

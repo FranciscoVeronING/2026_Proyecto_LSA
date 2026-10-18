@@ -1,5 +1,8 @@
 dataset/
 *.mp4
+extraction/*.pdf
+extraction/out/videos/
+extraction/out/poses/
 
 __pycache__/
 *.pyc

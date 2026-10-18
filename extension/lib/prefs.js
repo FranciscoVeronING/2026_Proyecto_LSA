@@ -1,6 +1,7 @@
 /**
  * Preferencias del popup (chrome.storage.local).
  * `outputMode`: subtitles | audio | both
+ * `hearingInput`: voice | text | both  (oyente: mic de Meet, chat, o los dos)
  * `utterancePauseSec`: 2 | 3 | 4
  *
  * En offscreen a veces no hay `chrome.storage`; nunca hay que tirar el script.
@@ -11,7 +12,10 @@ const LSA_PREFS_KEY = "lsaPrefs";
 const LSA_PREFS_DEFAULTS = {
   showLandmarks: false,
   outputMode: "subtitles",
+  hearingInput: "both",
   utterancePauseSec: 4,
+  hudLeft: null,
+  hudTop: null,
 };
 
 /**
@@ -39,7 +43,21 @@ function normalizePauseSec(value) {
 }
 
 /**
- * @returns {{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }}
+ * @param {unknown} value
+ * @returns {number|null}
+ */
+function normalizeHudPos(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  return Math.round(n);
+}
+function normalizeHearingInput(value) {
+  if (value === "voice" || value === "text" || value === "both") return value;
+  return "both";
+}
+
+/**
+ * @returns {{ showLandmarks: boolean, outputMode: string, hearingInput: string, utterancePauseSec: number }}
  */
 function normalizeLsaPrefs(raw) {
   const src = raw && typeof raw === "object" ? raw : {};
@@ -47,7 +65,10 @@ function normalizeLsaPrefs(raw) {
   return {
     showLandmarks: Boolean(src.showLandmarks),
     outputMode: mode === "audio" || mode === "both" ? mode : "subtitles",
+    hearingInput: normalizeHearingInput(src.hearingInput),
     utterancePauseSec: normalizePauseSec(src.utterancePauseSec),
+    hudLeft: normalizeHudPos(src.hudLeft),
+    hudTop: normalizeHudPos(src.hudTop),
   };
 }
 

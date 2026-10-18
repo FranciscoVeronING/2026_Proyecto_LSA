@@ -15,7 +15,7 @@ const grab = document.createElement("canvas");
 const grabCtx = grab.getContext("2d", { alpha: false, willReadFrequently: true });
 let lastSpoken = "";
 let lastHearingSent = { text: "", at: 0 };
-let prefs = { showLandmarks: false, outputMode: "subtitles" };
+let prefs = { showLandmarks: false, outputMode: "subtitles", hearingInput: "both" };
 const hudState = {
   capturing: false,
   lastGloss: "—",
@@ -23,11 +23,32 @@ const hudState = {
   statusText: "Buscando ILSA…",
 };
 
+function hearingInputMode() {
+  const value = prefs.hearingInput;
+  return value === "voice" || value === "text" ? value : "both";
+}
+
+function wantsHearingVoice() {
+  return hearingInputMode() !== "text";
+}
+
+function wantsHearingText() {
+  return hearingInputMode() !== "voice";
+}
+
+function hearingHint() {
+  const mode = hearingInputMode();
+  if (mode === "voice") return "Hablá con el mic de Meet";
+  if (mode === "text") return "Escribí en el chat de Meet";
+  return "Hablá (mic de Meet) o escribí en el chat";
+}
+
 function applyPrefsToPage() {
   postToPage({
     type: "LSA_PREFS",
     showSubtitles: meetMode === "hearing" || prefs.outputMode !== "audio",
     showLandmarks: Boolean(prefs.showLandmarks) && meetMode !== "hearing",
+    hearingInput: hearingInputMode(),
   });
 }
 
@@ -54,13 +75,18 @@ function stopVoice() {
 }
 
 function transcribeMeetAudio(wavB64) {
-  if (!running || meetMode !== "hearing" || !wavB64) return;
+  if (!running || meetMode !== "hearing" || !wantsHearingVoice() || !wavB64) return;
   setHud({ debug: "Transcribiendo tu voz…", capturing: true, lastGloss: "voz" });
   LsaApi.stt(wavB64, "es-ES")
     .then((s) => {
       const spanish = String((s && s.spanish) || "").trim();
       if (!spanish) {
-        setHud({ debug: "No se entendió el audio; repetí o usá el chat", capturing: false });
+        setHud({
+          debug: wantsHearingText()
+            ? "No se entendió el audio; repetí o usá el chat"
+            : "No se entendió el audio; repetí",
+          capturing: false,
+        });
         return;
       }
       sendToOyente(spanish, "voz");
@@ -100,6 +126,21 @@ function sendToOyente(spanish, source) {
         spanish: glosses,
         glosses,
       });
+      LsaApi.avatar(glosses)
+        .then((clip) => {
+          if (!clip || clip.ok === false) {
+            setHud({ debug: "Esqueleto en reposo: " + ((clip && clip.error) || "sin clips") });
+            return;
+          }
+          postToPage({ type: "LSA_AVATAR", clip });
+          const miss = (clip.missing || []).filter(Boolean);
+          setHud({
+            debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
+          });
+        })
+        .catch((err) => {
+          setHud({ debug: "Esqueleto: " + ((err && err.message) || "error") });
+        });
     })
     .catch((err) => {
       setHud({
@@ -135,7 +176,7 @@ function hookMeetChat() {
   document.addEventListener(
     "keydown",
     (ev) => {
-      if (!running || meetMode !== "hearing") return;
+      if (!running || meetMode !== "hearing" || !wantsHearingText()) return;
       if (ev.key !== "Enter" || ev.shiftKey) return;
       const root = chatRoot(ev.target);
       if (!root || !isMeetChatBox(root)) return;
@@ -147,7 +188,7 @@ function hookMeetChat() {
   document.addEventListener(
     "click",
     (ev) => {
-      if (!running || meetMode !== "hearing") return;
+      if (!running || meetMode !== "hearing" || !wantsHearingText()) return;
       const btn = ev.target && ev.target.closest && ev.target.closest("button");
       if (!btn) return;
       const lab = ((btn.getAttribute("aria-label") || "") + " " + (btn.textContent || "")).toLowerCase();
@@ -218,6 +259,9 @@ try {
     if (area !== "local" || !changes[LSA_PREFS_KEY]) return;
     prefs = normalizeLsaPrefs(changes[LSA_PREFS_KEY].newValue);
     applyPrefsToPage();
+    if (running && meetMode === "hearing") {
+      setHud({ debug: hearingHint(), capturing: false });
+    }
   });
 } catch (_) {}
 
@@ -247,11 +291,86 @@ function ensureHud() {
         <span class="lsa-status" id="lsa-status">Listo</span>
       </div>
       <div class="lsa-gloss" id="lsa-gloss">Última glosa: —</div>
+      <div class="lsa-hear" id="lsa-hear" hidden>
+        <span class="lsa-hear-label">Captura</span>
+        <button type="button" class="lsa-hear-btn" data-hear="voice">Voz</button>
+        <button type="button" class="lsa-hear-btn" data-hear="text">Texto</button>
+        <button type="button" class="lsa-hear-btn" data-hear="both">Ambas</button>
+      </div>
       <div class="lsa-spanish" id="lsa-spanish"></div>
     </div>
   `;
   (document.body || document.documentElement).appendChild(root);
+  root.querySelectorAll("[data-hear]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const hearingInput = btn.getAttribute("data-hear");
+      if (hearingInput !== "voice" && hearingInput !== "text" && hearingInput !== "both") return;
+      LsaPrefs.set({ hearingInput });
+    });
+  });
+  bindHudDrag(root);
+  LsaPrefs.get()
+    .then((p) => {
+      if (p.hudLeft == null || p.hudTop == null) return;
+      placeHud(root, p.hudLeft, p.hudTop);
+    })
+    .catch(() => {});
   return root;
+}
+
+/**
+ * @param {HTMLElement} root
+ * @param {number} left
+ * @param {number} top
+ */
+function placeHud(root, left, top) {
+  const card = root.querySelector(".lsa-card");
+  const width = (card && card.offsetWidth) || 280;
+  const height = (card && card.offsetHeight) || 72;
+  const x = Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8));
+  const y = Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8));
+  root.style.left = x + "px";
+  root.style.top = y + "px";
+  root.style.right = "auto";
+}
+
+/**
+ * Arrastra el cartel desde cualquier parte que no sea un botón.
+ * @param {HTMLElement} root
+ */
+function bindHudDrag(root) {
+  if (root.dataset.lsaDrag === "1") return;
+  root.dataset.lsaDrag = "1";
+  const card = root.querySelector(".lsa-card");
+  if (!card) return;
+  let drag = null;
+  card.addEventListener("pointerdown", (ev) => {
+    if (ev.button !== 0) return;
+    const target = ev.target;
+    if (target && target.closest && target.closest("button, a, input, textarea, select")) return;
+    const rect = root.getBoundingClientRect();
+    drag = { dx: ev.clientX - rect.left, dy: ev.clientY - rect.top };
+    card.classList.add("lsa-dragging");
+    if (card.setPointerCapture) card.setPointerCapture(ev.pointerId);
+  });
+  card.addEventListener("pointermove", (ev) => {
+    if (!drag) return;
+    placeHud(root, ev.clientX - drag.dx, ev.clientY - drag.dy);
+  });
+  const end = () => {
+    if (!drag) return;
+    drag = null;
+    card.classList.remove("lsa-dragging");
+    const rect = root.getBoundingClientRect();
+    LsaPrefs.set({ hudLeft: Math.round(rect.left), hudTop: Math.round(rect.top) });
+  };
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", end);
+  window.addEventListener("resize", () => {
+    if (root.style.left === "") return;
+    const rect = root.getBoundingClientRect();
+    placeHud(root, rect.left, rect.top);
+  });
 }
 
 /** Pinta `hudState` en el DOM. Siempre visible en Meet. */
@@ -265,6 +384,11 @@ function paintHud() {
   root.querySelector("#lsa-gloss").textContent = "Última glosa: " + (hudState.lastGloss || "—");
   const sp = root.querySelector("#lsa-spanish");
   if (sp) sp.textContent = hudState.spanish || "";
+  const hear = root.querySelector("#lsa-hear");
+  if (hear) hear.hidden = meetMode !== "hearing";
+  root.querySelectorAll("[data-hear]").forEach((btn) => {
+    btn.classList.toggle("on", btn.getAttribute("data-hear") === hearingInputMode());
+  });
 }
 
 /**
@@ -358,7 +482,7 @@ function startBridge(mode) {
   cancelAnimationFrame(rafId);
   if (meetMode === "hearing") {
     setHud({
-      debug: "Hablá (mic de Meet) o escribí en el chat",
+      debug: hearingHint(),
       capturing: false,
     });
     hookMeetChat();
@@ -407,13 +531,14 @@ window.addEventListener("message", (event) => {
   if (data.type === "LSA_PIPELINE" && running && meetMode !== "hearing" && !framesSeen) {
     setHud({ debug: "Mostrá las manos para capturar", capturing: false });
   }
-  if (data.type === "LSA_AUDIO_WAV" && running && meetMode === "hearing") {
+  if (data.type === "LSA_AUDIO_WAV" && running && meetMode === "hearing" && wantsHearingVoice()) {
     transcribeMeetAudio(data.wavB64);
   }
-  if (data.type === "LSA_SPEECH_UI" && meetMode === "hearing" && data.debug) {
+  if (data.type === "LSA_SPEECH_UI" && meetMode === "hearing" && wantsHearingVoice() && data.debug) {
     setHud({ debug: data.debug, capturing: false });
   }
   if (data.type === "LSA_SPEECH_ERROR") {
+    if (meetMode === "hearing" && !wantsHearingVoice()) return;
     setHud({ debug: "Voz: " + (data.error || "error"), capturing: false });
   }
 });
