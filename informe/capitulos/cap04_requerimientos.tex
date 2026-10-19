@@ -12,7 +12,6 @@
     \item \textbf{RF-06 --- Traducción semántica inversa remota (Español $\rightarrow$ LSA):} Transmitir el texto en español emitido por el oyente hacia el servicio semántico en la nube y obtener una secuencia ordenada de glosas bajo la estructura gramatical \textit{Topic-Comment} canónica de la LSA.
     \item \textbf{RF-07 --- Representación visual mediante Avatar LSA:} Recibir las glosas generadas por el canal inverso y renderizar localmente en pantalla la animación tridimensional de la seña correspondiente, y ejecutar deletreo manual dactilológico en términos fuera del léxico.
     \item \textbf{RF-08 --- Integración con Google Meet:} Inyectar el video procesado y los canales de comunicación dentro de la pestaña de videollamada.
-    \item \textbf{RF-09 --- Memoria conversacional de turnos:} Preservar un historial con los últimos turnos de diálogo entre ambos participantes para resolver ambigüedades deícticas y pronombres.
 \end{itemize}
 
 \section{Requerimientos no funcionales}
@@ -27,7 +26,7 @@
 \section{Restricciones}
 \begin{itemize}
     \item \textbf{RC-01 --- Alcance léxico:} El vocabulario reconocido por el clasificador está acotado a 100 señas validadas por profesionales de LSA, enmarcadas en las pautas pedagógicas y lingüísticas vigentes.
-    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} La validación del backend semántico remoto se efectúa mediante una instancia dedicada expuesta a través de un túnel seguro (ngrok), debido a restricciones presupuestarias para el sostenimiento de infraestructura elástica de CPU en proveedores comerciales de nube.
+    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Las pruebas no despliegan la arquitectura elástica del servicio semántico. La validación usa Cloud Run, de Google Cloud.
     \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y la extension estan diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes.
     \item \textbf{RC-04 --- Dependencia de visión:} El clasificador depende del correcto funcionamiento de MediaPipe Holistic para la extraccion de landmarks.
     \item \textbf{RC-05 --- Recursos del cliente objetivo:} El componente local del prototipo debe ser capaz de operar en laptops estándar (procesadores de 4 núcleos y 8 GB de memoria RAM, sin placa gráfica dedicada).

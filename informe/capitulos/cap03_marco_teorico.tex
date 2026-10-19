@@ -174,7 +174,6 @@ La convolución temporal antecede al transformador por una razón de escala. Los
 
 El cierre no es un promedio uniforme de los 16 estados. Una capa lineal produce un puntaje por fotograma, el softmax lo convierte en un peso y la secuencia se resume como suma ponderada. En el alfabeto y en los dígitos, la pose sostenida aporta más que los cuadros en los que la mano entra o sale del gesto. El promedio uniforme mezcla ambas cosas. El peso aprendido concentra la decisión en los instantes informativos. El vector resultante, de 128 dimensiones, entra en la capa de clasificación.
 
-
 \subsection{Modelos de lenguaje pequeños y adaptación LoRA}
 Para la traducción semántica bidireccional se emplean SLM de las familias Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3}. Estos modelos se adaptan mediante la técnica LoRA \parencite{hu2022lora} la cual congela los pesos base del modelo e inserta matrices de descomposición de bajo rango en las proyecciones de atención y en las capas de entrada y salida (\texttt{embed\_tokens} y \texttt{lm\_head}) \parencite{hu2022lora, huggingface2024transformers}. Para asegurar su ejecución eficiente en CPU o aceleradores en la nube, los modelos resultantes se cuantizan a 4 bits bajo el formato GGUF mediante \texttt{llama.cpp} \parencite{gerganov2023llamacpp, frantar2022gptq}.
 
@@ -201,16 +200,41 @@ A partir del binario consolidado en precisión de 16 bits, se aplica el algoritm
     \item \textbf{Capas críticas de alimentación hacia adelante y normalización:} Se retienen en una precisión mixta de 6 bits (\textit{medium variant}) para proteger las capas más propensas a generar desviaciones sintácticas o degradación en métricas de generación.
 \end{itemize}
 
-\subsection{Animación y representación visual mediante Avatar} % TODO: SI termino hoy el avatar, compleo aca
-El canal inverso requiere transformar las glosas sintácticas en representaciones visuales comprensibles para el usuario sordo. Un avatar tridimensional ejecuta las animaciones asociadas a cada glosa del vocabulario base mediante interpolación de huesos o textit{blendshapes}. Ante términos inexistentes en el diccionario léxico (como nombres propios o tecnicismos), el módulo recurre al subsistema de deletreo manual dactilológico y anima letra por letra la palabra involucrada.
+\subsection{Animación y representación visual mediante Avatar}
+El canal inverso exige, para cada glosa, una forma visual que conserve la configuración de la mano, el punto de articulación y la trayectoria. En la síntesis de lenguas de señas conviven tres familias de representación.
+
+La primera es el avatar paramétrico. El personaje posee una malla, un esqueleto de huesos de longitud fija y, en el rostro, \textit{blendshapes}: pesos que mezclan expresiones sobre la misma geometría. La animación interpola rotaciones de esos huesos o esos pesos. Conducir el muñeco desde una persona filmada exige un \textit{retarget}, esto es, el paso de posiciones de \textit{landmarks} a rotaciones de otro cuerpo \parencite{cabello2010threejs}. Origen y destino difieren en representación. MediaPipe Holistic entrega coordenadas en el plano de la imagen y una profundidad de la mano relativa a la muñeca, en una escala distinta de una distancia en metros. El esqueleto del avatar exige rotaciones sobre sus propias longitudes. Si esas longitudes se respetan, las yemas quedan fuera de los puntos medidos. Si una cinemática inversa alarga el miembro hasta el punto, la mano pierde su configuración. En el alfabeto manual esa diferencia cambia la letra. Los estimadores pensados para avatares de cámara, como Kalidokit, resumen cada dedo en un único ángulo de rizo y confunden configuraciones próximas. Los personajes tridimensionales de Hand Talk y de HETAH pertenecen a esta familia \parencite{handtalk2025,hetah2024avatar}.
+
+La segunda familia reproduce un diccionario medido. Cada glosa corresponde a un clip de \textit{landmarks} estimado sobre un video de referencia, archivado por ejemplo en formato \texttt{.pose} \parencite{moryossef2021poseformat}. El enunciado es la concatenación de esos clips: el sistema vuelve a dibujar una seña ya registrada. El Señario de la CAS y aplicaciones de consulta como LSApp operan sobre esta lógica léxica. La fonología de las lenguas de señas separa el núcleo significativo de la preparación y de la retracción \parencite{liddell1989phonological}. Entre el final de un clip y el inicio del siguiente, una interpolación breve de los puntos cubre el salto visual. Ese puente es un recurso gráfico. La coarticulación pertenece a la lengua: el final de una seña anticipa la siguiente, y un puente cartesiano deja ese fenómeno fuera de su alcance.
+
+La tercera familia genera el movimiento a partir del texto, sin un clip léxico, mediante un cuerpo paramétrico o un modelo de difusión. La seña resulta entonces una muestra del modelo.
+
+La Tabla~\ref{tab:familias_avatar} contrapone las dos familias cuya fuente es un video ya señado. Un término ausente del léxico, como un nombre propio o un tecnicismo, se resuelve en las lenguas de señas por deletreo manual: la palabra se articula letra por letra con el alfabeto dactilológico. El deletreo es productivo; el diccionario, cerrado. La representación adoptada en este trabajo, y el controlador que la ejecuta, se describen en la Sección~\ref{sec:repr_inversa}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Familias de representación visual de una glosa.}
+    \label{tab:familias_avatar}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}
+                                 >{\raggedright\arraybackslash}X
+                                 >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Criterio} & \textbf{Avatar paramétrico} & \textbf{Diccionario de poses} \\
+        \midrule
+        Unidad de animación & Rotación de hueso o peso de \textit{blendshape}. & Trayectoria de \textit{landmarks}. \\
+        \addlinespace[2pt]
+        Cuerpo & Esqueleto de longitudes fijas. & Proporciones de la persona filmada. \\
+        \addlinespace[2pt]
+        Glosa fuera del léxico & Animación nueva o \textit{retarget}. & Deletreo sobre clips del alfabeto. \\
+        \addlinespace[2pt]
+        Límite propio & La configuración manual puede quedar fuera del esqueleto. & Un punto perdido arrastra la interpolación. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
 \subsection{Arquitectura híbrida de partición Cliente-Nube}
 El concepto de \textbf{tiempo pseudo-real} designa a aquellos sistemas de procesamiento interactivo donde la respuesta computacional no ocurre de forma estrictamente instantánea ni en el orden de los microsegundos, pero cuyos retardos temporales permanecen dentro de un umbral operativo tolerable para la interacción humana. A diferencia de los sistemas de tiempo real estricto (\textit{hard real-time}), el tiempo pseudo-real admite una latencia acotada resultante de la segmentación temporal por pausas de inactividad, el empaquetado de datos y el tiempo de inferencia de los modelos semánticos en la nube, sosteniendo la fluidez del diálogo bilingüe en la videollamada.
-
-Para equilibrar los requerimientos de privacidad, latencia y viabilidad en hardware de consumo masivo, se adoptó una arquitectura de partición cliente-nube.
-
-En el cliente local se ejecutan la captura de video, la extracción de puntos clave corporales y el modelo de clasificación gestual. Este componente presenta un costo computacional acotado y garantiza que el video crudo nunca abandone el equipo del usuario, de esta forma, se resguarda su privacidad e identidad visual. 
-Por el contrario, los SLM de 0.5B a 3B parámetros imponen demandas de procesamiento autorregresivo y memoria RAM incompatibles con computadoras estándar que ejecutan simultáneamente una videollamada. Estos módulos se desacoplan y encapsulan como servicios de inferencia en la nube que reciben exclusivamente cargas de texto livianas (vectores de glosas o texto transcripto) y devuelven respuestas contextualizadas con tiempos de transmisión despreciables frente a la latencia de red.
 
 \subsection{Captura de medios en la Web y aislamiento en extensiones (Manifest V3)}
 La transmisión y el procesamiento de video en tiempo pseudo-real dentro del navegador web se fundamentan en las especificaciones del estándar W3C Media Capture \parencite{w3c2024mediacapture}. La interfaz nativa \texttt{navigator.mediaDevices.getUserMedia()} permite solicitar al sistema operativo el acceso al flujo de la cámara física. No obstante, los motores de los navegadores modernos gestionan el hardware de captura bajo un esquema de acceso exclusivo: cuando una aplicación web (como la plataforma Google Meet) toma el control del dispositivo de video, el hardware queda bloqueado y no admite el consumo concurrente por parte de otros procesos sin generar conflictos de permisos o interrupciones en la transmisión.
@@ -242,9 +266,9 @@ El proyecto se rigió bajo un modelo de ciclo de vida iterativo e incremental \p
 \begin{enumerate}
     \item \textbf{Curación de datos y formalización léxica:} delimitación de 100 señas de LSA junto a Miriam Rolls; diseño del set de grabación; captura de clips en video 1080p (16:9); y generación del dataset de coordenadas vectoriales normalizadas.
     \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} experimentación de arquitecturas temporales (pruebas desde 8 a 32 frames); optimización de hiperparámetros mediante marcos automatizados \parencite{akiba2019optuna}; desarrollo de instrumentación de diagnóstico de confusiones mediante análisis AUC de Mann-Whitney.
-    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} ingeniería de prompts; fine-tuning con LoRA sobre modelos Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3} (traducción directa e inversa \textit{Topic-Comment} \parencite{massoneparte2}); cuantización a binarios GGUF \parencite{gerganov2023llamacpp}; evaluación de fidelidad sintáctica (BLEU, ROUGE-L, METEOR); y diseño conceptual de la arquitectura elástica en la nube.
+    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} ingeniería de prompts; fine-tuning con LoRA sobre modelos Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3} (traducción directa e inversa \textit{Topic-Comment} \parencite{massoneparte2}); cuantización a binarios GGUF \parencite{gerganov2023llamacpp}; evaluación de fidelidad sintáctica (BLEU, ROUGE-L, METEOR); diseño conceptual de la arquitectura elástica en la nube; y prueba del servicio semántico con Cloud Run.
     \item \textbf{Integración y renderizado gestual:} acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados \parencite{gamma1994design}; comunicación con el servidor semántico desacoplado; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{w3c2024mediacapture, chrome2024manifestv3}.
-    \item \textbf{Avatar e integración visual inversa:} desarrollo del controlador del avatar 3D para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico ante términos ausentes en el léxico; integracion en la extension.
+    \item \textbf{Avatar e integración visual inversa:} desarrollo del controlador del avatar para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico ante términos ausentes en el léxico; integracion en la extension.
     \item \textbf{Fase de pruebas y evaluación de campo:} pruebas integrales de latencia, usabilidad y robustez frente a escenarios reales de videoconferencia.
 \end{enumerate}
 
@@ -259,10 +283,10 @@ Durante las fases de diseño, implementación y redacción se utilizaron exclusi
 \paragraph{Alcance y propósito de su utilización}
 La intervención de dichas herramientas se limitó a:
 \begin{itemize}
-    % TODO: Fran agrega algunas cosas de clasificador y avatar aca
     \item \textbf{Aprendizaje guiado y asimilación conceptual:} Utilización de Gemini como interlocutor de estudio y consulta técnica para comprender en profundidad conceptos que excedían la currícula tradicional de grado, tales como las complejidades de la cuantización GGUF Q4\_K\_M con \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, los fundamentos de adaptación de bajo rango (LoRA) en capas densas de modelos autorregresivos \parencite{hu2022lora}, y los esquemas de comunicación asíncrona entre contextos aislados (\textit{offscreen} y \textit{sandbox}) exigidos por Chrome Manifest V3 \parencite{chrome2024manifestv3}.
     \item \textbf{Asistencia en el desarrollo de software:} Sugerencias de refactorización de código, resolución de incompatibilidades de sintaxis en el entorno Chrome Extensions Manifest V3 (aislamiento de páginas \textit{offscreen} y \textit{sandbox}) \parencite{chrome2024manifestv3} y resolución de dependencias concurrentes en Python.
     \item \textbf{Consultas sobre APIs y formatos:} Apoyo en la parametrización de llamadas a MediaPipe Holistic \parencite{google2020mediapipe} y en la sintaxis de cuantización a formato GGUF mediante herramientas de línea de comandos \parencite{gerganov2023llamacpp}.
+    \item \textbf{Avatar:} Consulta sobre la diferencia entre un esqueleto medido y el \textit{retarget} hacia huesos VRM, el archivo \texttt{.pose} \parencite{moryossef2021poseformat} y el empalme de clips.
     \item \textbf{Edición y formato del documento:} Corrección resolución de errores en la redacción del informe.
 \end{itemize}
 
@@ -283,7 +307,7 @@ Se deja constancia de que ninguna de las herramientas generativas reemplazó la 
 \toprule
 \textbf{Categoría} & \textbf{Herramienta} & \textbf{Rol en el sistema} \\
 \midrule
-Entorno y Lenguajes & Python 3.10, JavaScript & Lógica de backend, motor local, servidor semántico y extensión web. \\
+Entorno y Lenguajes & Python 3.11, JavaScript & Lógica de backend, motor local, servidor semántico y extensión web. \\
 \addlinespace[3pt]
 Visión Computacional & MediaPipe Holistic \parencite{google2020mediapipe}, OpenCV & Extracción de coordenadas articulares corporales y manipulación de video. \\
 \addlinespace[3pt]
@@ -295,11 +319,11 @@ Inferencia de Lenguaje & \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, GG
 \addlinespace[3pt]
 Comunicación y Backend & FastAPI \parencite{tiangolo2018fastapi}, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
 \addlinespace[3pt]
-Túnel de Desarrollo & ngrok / Cloudflare Tunnel & Exposición de la instancia semántica remota para validación del prototipo. \\
+Servicio en la nube & Google Cloud Run & Instancia única del servicio semántico usada en las pruebas. El clúster elástico de producción no forma parte de esa instancia. \\
 \addlinespace[3pt]
 Integración Web & Chrome Extensions (MV3) \parencite{chrome2024manifestv3} & Intercepción de media mediante Canvas \texttt{captureStream()} en Google Meet \parencite{w3c2024mediacapture}. \\
 \addlinespace[3pt]
-Síntesis de Salida & pyttsx3, Avatar 3D & Emisión de voz local hacia el oyente y animación visual gestual hacia el señante. \\
+Síntesis de Salida & pyttsx3, Avatar & Emisión de voz local hacia el oyente y animación visual gestual hacia el señante. \\
 \bottomrule
 \end{tabularx}
 \end{table}

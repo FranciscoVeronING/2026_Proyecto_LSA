@@ -20,8 +20,73 @@
 \usepackage{csquotes}
 \usepackage{tabularx}
 \usepackage{multirow}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage[style=apa,backend=biber,sortcites=true,language=spanish]{biblatex}
 \addbibresource{referencias.bib}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Definición de paleta de colores para bloques de código
+\definecolor{codegray}{rgb}{0.96,0.96,0.96}
+\definecolor{codeborder}{rgb}{0.85,0.85,0.85}
+\definecolor{stringcolor}{rgb}{0.1,0.5,0.1}
+\definecolor{keywordcolor}{rgb}{0.0,0.3,0.7}
+\definecolor{numbercolor}{rgb}{0.5,0.5,0.5}
+
+% Configuración global del paquete listings
+\lstset{
+  backgroundcolor=\color{codegray},
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{codeborder},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=none,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  keywordstyle=\color{keywordcolor}\bfseries,
+  stringstyle=\color{stringcolor},
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=
+    {á}{{\'a}}1
+    {é}{{\'e}}1
+    {í}{{\'i}}1
+    {ó}{{\'o}}1
+    {ú}{{\'u}}1
+    {Á}{{\'A}}1
+    {É}{{\'E}}1
+    {Í}{{\'I}}1
+    {Ó}{{\'O}}1
+    {Ú}{{\'U}}1
+    {ñ}{{\~n}}1
+    {Ñ}{{\~N}}1
+    {¿}{{\textquestiondown}}1
+    {?}{{?}}1
+    {¡}{{\textexclamdown}}1
+}
+
+% Entorno personalizado para resaltar bloques JSON
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny\color{numbercolor},
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    stringstyle=\color{stringcolor},
+    morestring=[b]",
+    morestring=[d]'
+}
 
 \graphicspath{{figuras/}{figuras/clasificador/}{figuras/semantico/}{figuras/integracion/}}
 \hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black}
@@ -55,9 +120,10 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 \include{capitulos/cap02_objetivos}
 \include{capitulos/cap03_marco_teorico}
 \include{capitulos/cap04_requerimientos}
-\include{capitulos/cap05_arquitectura}
-\include{capitulos/cap06_experimentacion}
-\include{capitulos/cap07_conclusiones}
+\include{capitulos/cap05_diseño}
+\include{capitulos/cap06_implementacion}
+\include{capitulos/cap07_experimentacion}
+\include{capitulos/cap08_conclusiones}
 
 % --- Bibliografía ---
 \printbibliography

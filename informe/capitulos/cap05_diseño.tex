@@ -1,0 +1,440 @@
+% ====================================================================
+\chapter{Diseño del Sistema}
+% ====================================================================
+
+\section{Arquitectura del sistema}
+
+El diseño adopta una arquitectura híbrida. La extracción de puntos y la clasificación gestual corren en el equipo del usuario. El módulo semántico corre como servicio remoto.
+
+\subsection{Justificación de la partición y modelo de privacidad}
+
+Se probó una primera configuración con las tres etapas en el cliente: extracción, clasificación y traducción semántica. La extracción y la clasificación conviven con la videollamada. La demanda de memoria RAM del modelo de lenguaje obliga a retirarlo del equipo del usuario y a publicarlo como servicio en la nube. Se utiliza un filtro para evitar repeticiones ilógicas, y hacia el servicio sale solo el texto del turno en curso, ya cerrado, en forma de glosas o de oración. El video y los puntos articulares permanecen en el equipo.
+
+
+\subsection{Flujo integral de datos entre componentes.}
+
+La dinámica operativa del sistema involucra procesos asíncronos y desacoplados que conectan el navegador web, el entorno de ejecución local en el cliente y los microservicios semánticos remotos alojados en la infraestructura en la nube. La Figura~\ref{fig:diagrama_arquitectura} ilustra la topología física y funcional de la solución y delimita las fronteras de red y las responsabilidades asignadas a cada entorno.
+% TODO: Hay que agregar el servicio de .pose en el diagrama? no lo puedo ver xd
+% Figura 5.1: Arquitectura global
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{integracion/Diagrama-arquitectura.pdf}
+    \caption{Arquitectura global de integración: partición entre el dispositivo cliente (captura, extracción de \textit{landmarks}, clasificación y avatar) y el servidor semántico desacoplado en la nube.}
+    \label{fig:diagrama_arquitectura}
+\end{figure}
+
+Para modelar la interacción temporal y la secuencia de mensajes se analizan a continuación los dos canales comunicacionales de manera independiente.
+
+\subsubsection{Dinámica temporal del Canal Señante $\rightarrow$ Oyente (Modo Sordo)}
+En la Figura~\ref{fig:secuencia_senante} se modela el ciclo de vida completo de un enunciado en LSA, desde la articulación gestual frente a la cámara web hasta la emisión de subtítulos y voz sintética hacia el interlocutor oyente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{integracion/Diagrama-secuencia-senante.pdf}
+    \caption{Diagrama de secuencia del Canal Señante $\rightarrow$ Oyente: bucle continuo de clasificación de señas en el borde, delimitación de pausas e invocación al servidor semántico remoto.}
+    \label{fig:secuencia_senante}
+\end{figure}
+
+\subsubsection{Dinámica temporal del Canal Oyente $\rightarrow$ Señante (Modo Oyente)}
+En la Figura~\ref{fig:secuencia_oyente} se describe la secuencia temporal que transforma el mensaje oral o escrito del oyente en representaciones visuales comprensibles en LSA para el usuario sordo.
+
+% Figura 5.3: Secuencia oyente -> señante
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{integracion/Diagrama-secuencia-oyente.pdf}
+    \caption{Diagrama de secuencia del Canal Oyente $\rightarrow$ Señante: transcripción del habla o mensaje, reestructuración gramatical Topic-Comment en la nube y animación o deletreo dactilológico en el cliente.}
+    \label{fig:secuencia_oyente}
+\end{figure}
+
+\section{Diseño de contratos de API REST}
+
+La comunicación entre el cliente y los servicios se rige por contratos tipados en formato JSON.
+
+\subsection{API local del motor ILSA}
+
+El motor ILSA expone una interfaz HTTP de alcance local. El contrato queda restringido al bucle de retorno del equipo anfitrión: la extensión de Meet actúa como cliente y el proceso del motor actúa como servidor. El diseño cubre diagnóstico, consulta de estado, apertura de sesión gestual, ingesta de una seña recortada, aviso de actividad y cierre de enunciado. El cuerpo de las peticiones y respuestas usa JSON.
+
+Los métodos admitidos son \texttt{GET} y \texttt{POST}. Una respuesta correcta usa el código \texttt{200 OK}. Un cuerpo JSON inválido o incompleto produce \texttt{400 Bad Request}. Si el motor aún no posee una sesión activa, las rutas de operación responden \texttt{503 Service Unavailable}.
+
+\subsubsection{Cuadro resumen de endpoints}
+
+El Cuadro~\ref{tab:api-ilsa-local} reúne las rutas del contrato de interpretación gestual (modo sordo). Cada ruta es independiente en el método HTTP; el estado conversacional de glosas reside en el búfer de enunciado del motor, no en el cliente.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Endpoints de la API local del motor ILSA.}
+  \label{tab:api-ilsa-local}
+  \footnotesize
+  \begin{tabular}{|p{0.12\textwidth}|p{0.22\textwidth}|p{0.42\textwidth}|p{0.14\textwidth}|}
+    \hline
+    \textbf{Método} & \textbf{Ruta} & \textbf{Contrato} & \textbf{Códigos} \\ \hline
+    GET & \texttt{/health} & Diagnóstico de disponibilidad del clasificador local y de la conexión con el servicio semántico remoto. & 200 \\ \hline
+    GET & \texttt{/state} & Consulta de las glosas acumuladas en el búfer temporal y del último texto traducido. & 200, 503 \\ \hline
+    POST & \texttt{/session} & Inicio de sesión gestual y fijación de lateralidad mediante \texttt{\{"left\_handed": bool\}}. & 200, 503 \\ \hline
+    POST & \texttt{/sign} & Ingesta de la secuencia cinemática de 16 fotogramas (matriz de $16 \times 225$ flotantes normalizados) y retorno del estado de validación con la glosa detectada. & 200, 400, 503 \\ \hline
+    POST & \texttt{/activity} & Notificación de movimiento gestual activo. El aviso restablece el temporizador de inactividad (del orden de 4\,s) y aplaza el cierre del enunciado. & 200, 503 \\ \hline
+    POST & \texttt{/utterance/end} & Cierre forzado de la frase en curso, envío de las glosas acumuladas al servicio semántico y limpieza del búfer. & 200, 503 \\ \hline
+  \end{tabular}
+\end{table}
+
+\texttt{GET /health} no altera estado. El cuerpo de respuesta indica, al menos, si el clasificador local está listo y si el traductor remoto responde. \texttt{GET /state} describe el búfer de glosas pendientes y el español (o ausencia de español) del último cierre. \texttt{POST /activity} no transporta cuerpo útil: el efecto es únicamente temporal sobre el reloj de pausa. \texttt{POST /utterance/end} culmina el enunciado aun cuando el temporizador de inactividad no haya vencido.
+
+\subsubsection{Contrato POST \texttt{/session}}
+
+La apertura de sesión declara la lateralidad del señante. El valor \texttt{false} corresponde a ejecución diestra; \texttt{true} invierte el eje horizontal de los puntos de pose y manos antes de la clasificación. Una petición válida recibe \texttt{200 OK} y un cuerpo de confirmación con la lateralidad efectiva.
+
+Petición:
+\begin{lstlisting}[language=json]
+POST /session HTTP/1.1
+Host: 127.0.0.1:8765
+Content-Type: application/json
+
+{
+  "left_handed": false
+}
+\end{lstlisting}
+
+Respuesta \texttt{200 OK}:
+
+\begin{lstlisting}[language=json]
+{
+  "ok": true,
+  "left_handed": false
+}
+\end{lstlisting}
+
+\subsubsection{Contrato POST \texttt{/sign}}
+
+La ruta recibe una seña ya recortada. El campo \texttt{frames} es la secuencia cinemática: dieciséis vectores de 225 flotantes normalizados ($33\times 3$ de pose, $21\times 3$ de mano izquierda y $21\times 3$ de mano derecha). El campo \texttt{source\_fps} declara la cadencia de muestreo de origen, de modo que el motor interprete la duración temporal de la seña con independencia del reloj del cliente.
+
+Petición (secuencia abreviada):
+
+\begin{lstlisting}[language=json]
+POST /sign HTTP/1.1
+Host: 127.0.0.1:8765
+Content-Type: application/json
+
+{
+  "source_fps": 24,
+  "frames": [
+    [0.12, 0.41, -0.03, 0.18, 0.40, 0.00],
+    [0.12, 0.42, -0.03, 0.19, 0.41, 0.00]
+  ]
+}
+\end{lstlisting}
+
+En el contrato completo, cada uno de los 16 elementos de \texttt{frames} posee longitud 225. Un arreglo vacío o una dimensionalidad distinta de $16 \times 225$ constituye error de validación (\texttt{400 Bad Request}).
+
+Respuesta \texttt{200 OK} con seña aceptada:
+
+\begin{lstlisting}[language=json]
+{
+  "status": "accepted",
+  "gloss": "HOLA",
+  "confidence": 0.91,
+  "top3": [
+    {"gloss": "HOLA", "confidence": 0.91},
+    {"gloss": "BIEN", "confidence": 0.04},
+    {"gloss": "GRACIAS", "confidence": 0.02}
+  ],
+  "utterance_closed": false
+}
+\end{lstlisting}
+
+El campo \texttt{status} admite \texttt{accepted} o \texttt{rejected}. El valor \texttt{rejected} corresponde a una secuencia que no supera el umbral de confianza o las reglas de validez de la seña; en ese caso \texttt{gloss} queda vacío o nulo y \texttt{utterance\_closed} permanece en \texttt{false}. El arreglo \texttt{top3} ordena las tres clases de mayor probabilidad. El booleano \texttt{utterance\_closed} vale \texttt{true} solo cuando el motor, tras esta ingesta, considera cerrado el enunciado y dispara el mismo efecto de \texttt{POST /utterance/end} (despacho semántico y búfer vacío). En el flujo habitual de una seña intermedia el valor es \texttt{false}: la glosa ingresa al búfer y el enunciado sigue abierto.
+
+\subsection{API del servicio semántico remoto}
+\label{sec:api-semantico-remoto}
+
+La arquitectura local se comunica con el microservicio semántico en la nube mediante una API REST sobre HTTPS. Cada petición es independiente: el contrato no incluye memoria de turnos previos, es \textit{serverless}. El canal directo corresponde a la traducción de glosas LSA a una oración en español rioplatense. El canal inverso corresponde a la traducción de una oración en español a una secuencia de glosas con orden \textit{Topic-Comment}, apta para la animación del avatar.
+
+El Cuadro~\ref{tab:api-semantico-endpoints} resume los endpoints del diseño.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Endpoints del servicio semántico remoto.}
+  \label{tab:api-semantico-endpoints}
+  \begin{tabular}{@{}llp{8.2cm}@{}}
+    \toprule
+    Método & Ruta & Función \\
+    \midrule
+    GET & \texttt{/health} &
+    Consulta de disponibilidad: indica si los modelos de lenguaje (SLM) residen en memoria RAM y si el servicio admite inferencia. \\
+    POST & \texttt{/translate} &
+    Canal directo (LSA $\rightarrow$ español rioplatense). Recibe una secuencia de glosas y devuelve una oración cohesiva. \\
+    POST & \texttt{/hearing} &
+    Canal inverso (español $\rightarrow$ LSA Topic-Comment). Recibe el texto del interlocutor oyente y devuelve la secuencia de glosas. Esas glosas alimentan después el servicio de archivos del avatar. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Contrato de \texttt{POST /translate} (canal directo)}
+
+La petición transporta las glosas reconocidas en el edge como una única cadena, con tokens en mayúsculas separados por espacios. La respuesta, en caso de éxito (código 200), incluye la oración en español, el identificador del SLM y el tiempo de inferencia en milisegundos (\texttt{ms}).
+
+Petición:
+
+\begin{lstlisting}[language=json]
+{
+  "glosses": "APELLIDO MIO PIÑON"
+}
+\end{lstlisting}
+
+Respuesta (200 OK):
+
+\begin{lstlisting}[language=json]
+{
+  "spanish": "Mi apellido es Piñon.",
+  "glosses": "APELLIDO MIO PIÑON",
+  "model_used": "qwen2.5-1.5b.gguf",
+  "ms": 412.3,
+  "queued_ms": 0.0
+}
+\end{lstlisting}
+
+\subsubsection{Contrato de \texttt{POST /hearing} (canal inverso)}
+
+La petición transporta la oración en español rioplatense, ya transcripta en el edge. La respuesta, en caso de éxito (código 200), incluye la secuencia de glosas en una cadena de tokens en mayúsculas, el SLM empleado y el tiempo de inferencia.
+
+Petición:
+
+\begin{lstlisting}[language=json]
+{
+  "spanish": "Hola, ¿cómo estás?"
+}
+\end{lstlisting}
+
+Respuesta (200 OK):
+
+\begin{lstlisting}[language=json]
+{
+  "glosses": "HOLA VOS COMO",
+  "spanish": "Hola, ¿cómo estás?",
+  "model_used": "qwen2.5-1.5b.gguf",
+  "ms": 380.1,
+  "queued_ms": 0.0
+}
+\end{lstlisting}
+
+El campo \texttt{queued\_ms} registra la espera en cola si el SLM atiende otra inferencia; no forma parte del texto traducido. Un código 503 indica que el modelo no está listo en RAM. El endpoint \texttt{GET /health} permite al \textit{edge} diferir el encendido del clasificador local hasta que el atributo \texttt{ready} sea verdadero.
+
+\subsection{API del servicio de archivos del avatar}
+\label{sec:api-avatar}
+
+El canal inverso no anima por sí solo. Un segundo servicio remoto entrega el archivo de movimiento de cada glosa. No traduce y no carga un modelo de lenguaje. El nombre del archivo, sin la extensión, es la glosa ya normalizada. El proceso escucha en todas las interfaces. Toma el puerto de la variable de entorno del contenedor y, si esa variable no existe, usa el puerto 8080.
+
+El Cuadro~\ref{tab:api-avatar-endpoints} resume las rutas. La de salud responde JSON. La del archivo responde el binario, no un documento JSON.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Endpoints del servicio de archivos del avatar.}
+  \label{tab:api-avatar-endpoints}
+  \begin{tabular}{@{}llp{7.6cm}@{}}
+    \toprule
+    Método & Ruta & Función \\
+    \midrule
+    GET & \texttt{/health} &
+    Disponibilidad del proceso. Responde 200 con \texttt{\{"status": "ok"\}}. No comprueba si una glosa existe. \\
+    GET & \texttt{/tposes/\{glosa\}.pose} &
+    Archivo de esa glosa. El nombre debe coincidir de forma exacta, extensión incluida. 200 y cuerpo binario si existe. 404 si no existe. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+El servicio acepta \texttt{GET}, \texttt{HEAD} y \texttt{OPTIONS} desde cualquier origen. Un cliente en otro dominio puede pedir el archivo sin que el navegador bloquee la respuesta. La misma carpeta puede servir, si más adelante se agregan, archivos \texttt{.json}, \texttt{.gltf}, \texttt{.bin} y \texttt{.fbx}, cada uno con su tipo de contenido. Al arranque, la carpeta de poses es obligatoria. Si falta, el proceso termina y no abre el puerto.
+
+ILSA arma el nombre antes de la solicitud. El resultado es una sola cadena de letras mayúsculas y números, sin tildes, sin espacios y sin otros signos. Las reglas se aplican en este orden:
+\begin{enumerate}
+    \item Toda la glosa pasa a mayúsculas.
+    \item Queda la forma masculina. El sufijo \texttt{\_A} o \texttt{\_RA} se quita. Por ejemplo: \texttt{ABOGADO\_A} queda \texttt{ABOGADO}. \texttt{PROFESOR\_RA} queda \texttt{PROFESOR}.
+    \item Las vocales con tilde pasan a la vocal simple. \texttt{CAFÉ} queda \texttt{CAFE}.
+    \item Se borran espacios, guiones bajos, guiones y cualquier carácter que no sea letra o número. Si una seña tiene más de una glosa, los nombres se concatenan sin separador. Hoy y ahora se piden como \texttt{HOYAHORA.pose}, no como dos archivos.
+    \item La letra \texttt{Ñ}, cuando esa es toda la glosa, se pide como \texttt{ENIE}. Una \texttt{Ñ} dentro de la palabra pasa a \texttt{N}. \texttt{ESPAÑA} queda \texttt{ESPANA}. La letra \texttt{N} sigue en \texttt{N.pose}. % TODO: Esta ultima aclaracion la volaria
+    \item La glosa de parentesco \texttt{PAPA} se pide como \texttt{PADRE}. El archivo \texttt{PAPA.pose} existe y corresponde al alimento. ILSA no lo usa para esa glosa. % TODO : no entendila 2da oracion. y en la tercera, ILSA usa PADRE o no lo usa:?
+\end{enumerate}
+
+ILSA prueba el nombre de tres tokens, después el de dos y después el de uno, porque varias palabras pueden compartir un archivo. Un dígito suelto se busca por su nombre, de cero a nueve. Si no hay archivo, pide cada letra. \texttt{CH} y \texttt{Ñ} cuentan como una seña. El tope es 24 archivos por enunciado. Una copia queda en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red. % TODO : no entiendo la aclaracion de ch y ñ ahi, queda desubicada cono chupete en el orto. la de ch esta bien, no se si es el lugar, pero la de ñ ... xd, se sabe que es una seña
+
+En el motor local, el modo oyente agrega dos rutas sobre \texttt{127.0.0.1:8765}. \texttt{POST /hearing} recibe la oración y un indicador de cierre. ILSA consulta el canal inverso y, con las glosas ya obtenidas, pide los archivos. La respuesta trae la oración, la cadena de glosas y el clip. \texttt{POST /avatar} recibe solo la cadena de glosas y repite la descarga, sin una traducción nueva. En modo señante ambas rutas responden 400.
+
+\section{Diseño de la representación gestual inversa}
+\label{sec:repr_inversa}
+
+El canal oyente recibe del traductor inverso una lista de glosas en mayúsculas. Esa lista, por sí sola, es texto: la persona sorda todavía no ve la seña. El diseño convierte cada glosa en el movimiento correspondiente, tomado de un archivo que ya contiene la seña medida sobre un video de referencia. El archivo no guarda una malla ni las rotaciones de un muñeco. Guarda, fotograma a fotograma, la posición de puntos articulares (\textit{landmarks}): hombros, codos, muñecas, las dos manos y un contorno de cara. El servicio de la Sección~\ref{sec:api-avatar} entrega ese archivo. Lo que sigue establece cómo se prepara antes de mostrarlo, cómo se une una seña con la siguiente y qué ocurre cuando la glosa no tiene archivo.
+
+\subsection{Clip de referencia}
+
+El archivo de cada glosa funciona como el negativo de la seña. Para cada fotograma del video de origen conserva tres cosas: la posición de los puntos en píxeles de esa imagen, la cantidad de fotogramas por segundo y una confianza entre 0 y 1. La confianza dice cuán seguro está el estimador de haber visto ese punto. Esos datos quedan a la resolución del video original, sin achicarlos de antemano.
+
+La escala al tamaño del lienzo se aplica en el momento de dibujar, y no dentro del archivo. El clasificador, en cambio, guarda las coordenadas como fracción del ancho y del alto, porque a la red le alcanza la forma del gesto. Si ese mismo número fraccionario se archivara para el avatar, el visor lo leería como una cantidad de píxeles: un valor $0{,}5$ pasaría a significar medio píxel, y el cuerpo quedaría comprimido contra la esquina del cuadro. El diccionario animable archiva por eso píxeles de imagen. La reducción a un tamaño común ocurre después, cuando ya se conoce el recuadro en el que la seña se va a mostrar.
+
+
+El archivo crudo tampoco se recorta. Un video de diccionario muestra a la persona desde antes de la seña: levanta la mano, realiza el gesto y vuelve a una postura de reposo. El significado está en el tramo del medio, que aquí se llama núcleo. El levantamiento inicial es la preparación y el regreso al reposo es la retracción. El instante en que empieza el núcleo y el instante en que termina se anotan en un índice aparte, con un tiempo de entrada y un tiempo de salida por glosa. La reproducción lee ese índice. El negativo queda entero, de modo que un cambio del recorte no obliga a estimar el video otra vez.
+
+Al dibujar no entran todos los puntos que el estimador produjo. MediaPipe Holistic marca 33 puntos de cuerpo, 468 de cara y 21 en cada mano. El diseño conserva el torso, de la cintura hacia arriba, y las dos manos completas. Las piernas se apagan, porque en este recuadro la seña se lee de medio cuerpo. Dentro de los 33 puntos de cuerpo también hay una cara gruesa y unas puntas de dedos muy simples. Esos puntos se apagan en el dibujo. Si se trazan junto con los 21 puntos de cada mano y con el contorno fino de la cara, el espectador ve una mano encima de la otra y una cara encima de la otra.
+
+La posición del cuerpo expresada en metros, que el estimador entrega además de la posición en la imagen, se deja de lado por una razón distinta. Esa posición en metros no incluye las 21 articulaciones de la mano. Usarla como si fuera el esqueleto completo deja las manos pegadas al pecho aunque en el video estén junto a la cara. La lectura del avatar es frontal, y lo que importa es el lugar de cada punto en el plano de la imagen. La profundidad de cada mano, además, está medida respecto de su propia muñeca y en una escala mucho menor que el desplazamiento horizontal y vertical. Es un dato interno del estimador, y no una distancia en metros hasta la cámara.
+
+
+\subsection{Preparación y empalme}
+
+Dos archivos recién descargados todavía no pueden reproducirse uno detrás del otro. Cada video trae su propia velocidad, su propio encuadre y sus propios huecos allí donde el estimador perdió una mano. El diseño obliga a que todo clip atraviese la misma preparación, siempre en el mismo orden. El orden importa porque cada paso deja el material en condiciones para el siguiente: un hueco que no se rellena antes del empalme se convierte, en el empalme, en un salto.
+
+\paragraph{Cadencia común.}
+Los videos de origen no comparten necesariamente la misma cantidad de fotogramas por segundo. Si un clip trae 24 y el siguiente trae 30, una espera de seis fotogramas dura más en el primero que en el segundo, y el empalme pierde la noción de tiempo. Antes de cualquier otro retoque, todos los clips se llevan a una misma tasa. A partir de ahí, un fotograma significa la misma duración en todas las señas.
+
+\paragraph{Recorte del núcleo.}
+La reproducción usa el índice de entrada y de salida, y deja fuera la preparación y la retracción. Si se mostrara el video completo, quien mira vería a la persona llegar a la seña y retirarse de ella, y el final de una glosa se confundiría con el comienzo de la otra. El núcleo, que es el tramo donde la configuración y el movimiento distinguen esa seña de las demás, es lo único que pasa a la secuencia visible.
+
+\paragraph{Relleno de huecos breves.}
+Cuando el estimador deja de ver una mano durante unos pocos fotogramas, suele escribir el punto en el origen, es decir en la coordenada $(0, 0)$, o dejar un vacío entre dos fotogramas válidos. Si ese vacío es corto y está rodeado de fotogramas en los que la mano sí se vio, el diseño completa la posición con los vecinos válidos. El hueco largo, en el que la mano realmente no participa de la seña, no se inventa: lo resuelve el paso siguiente.
+
+\paragraph{Mano en espera.}
+Hay señas de una sola mano. En esos clips, el estimador puede copiar la mano visible sobre el lugar de la mano ausente, de modo que las dos manos quedan casi en el mismo sitio, o puede dejar la mano ausente en el origen. El diseño distingue esos dos casos de una mano que sí participa. Si las dos manos coinciden en una seña de una sola mano, la copia se retira. La mano que no participa se estaciona al costado del torso, y el antebrazo se dibuja como una línea continua desde el codo hasta la muñeca, para que la muñeca no aparezca quebrada en un ángulo que la seña no tiene. Esa postura de costado es la espera de la mano, y es distinta de la espera de todo el cuerpo, que se describe más abajo.
+
+\paragraph{Suavizado.}
+Aunque la mano esté bien seguida, la posición estimada tiembla de un fotograma al siguiente. El diseño mezcla cada medición nueva con la pose ya aceptada en el fotograma anterior, mediante un promedio exponencial. Si $x_t$ es la posición recién medida y $p_{t-1}$ es la pose anterior, la pose que se conserva es
+\begin{equation}
+p_t = \alpha\, x_t + (1 - \alpha)\, p_{t-1},
+\label{eq:ema_pose}
+\end{equation}
+con $\alpha = 0{,}50$. Con ese valor, la medición nueva y la pose anterior pesan lo mismo. Un factor más alto seguiría al estimador con mayor fidelidad y dejaría pasar el temblor. Un factor más bajo alisaría de más y retrasaría el gesto respecto del núcleo. El valor $0{,}50$ es el equilibrio que el diseño fija para todo el diccionario.
+
+\paragraph{Lienzo común.}
+Los videos no comparten resolución ni tamaño de cuerpo. Si cada clip se dibujara a su escala original, al pasar de una glosa a la otra el esqueleto cambiaría de tamaño en medio de la frase. Después del suavizado, el cuerpo se lleva a un recuadro de $720 \times 780$ píxeles y se escala para que el ancho de hombros mida $250$ píxeles. Dos señantes de distinta talla, y dos tomas de distinto encuadre, ocupan entonces el mismo espacio, y el empalme no produce un salto de escala.
+
+Recién después de esos seis pasos el clip está en condiciones de unirse a otro. El dato que más daño hace, si se le deja llegar, es la coordenada nula. Supóngase que el último fotograma útil de \texttt{HOLA} tiene la muñeca en un punto interior del cuadro, y que el primero de \texttt{MAMÁ} trae esa misma muñeca en $(0, 0)$ porque el estimador no la vio. Una interpolación de unos pocos fotogramas entre esos dos puntos dibuja la mano en viaje hacia la esquina, como si la seña la llevara hasta allí. El relleno y la mano en espera existen para que el empalme reciba solo coordenadas válidas.
+Entre el último fotograma del núcleo de una glosa y el primero del núcleo de la siguiente, el diseño inserta un puente: una serie de fotogramas nuevos, que no estaban en ninguno de los dos archivos. Su cantidad va de cuatro a ocho, y crece con la distancia entre las muñecas de un extremo y del otro. Si las muñecas ya están cerca, bastan cuatro fotogramas. Si están lejos, el puente llega a ocho, para que el recorrido no sea un salto. La curva con la que se reparte ese recorrido se llama \textit{smoothstep}: el punto sale despacio, acelera en la mitad y llega despacio, de modo que la unión no arranca con un tirón. Cada punto viaja en línea recta, en el plano de la imagen, desde donde está hasta donde tiene que estar. El archivo no contiene ángulos de huesos, y por eso el puente no gira una articulación: traslada los puntos.
+
+Ese puente es un recurso gráfico. En la lengua, la coarticulación es otra cosa: el final de una seña ya anticipa la configuración de la siguiente. El puente no modela ese anticipo. Toma la pose final de un núcleo ya recortado y la pose inicial del núcleo siguiente, y cubre el espacio que hay entre ambas para que el ojo no vea un corte. El interior de cada seña llega al empalme tal como quedó después de la preparación.
+La preparación de un clip tiene un costo de cálculo, y la descarga del archivo tiene un costo de red. Una vez que un clip quedó preparado, el diseño lo conserva en una caché en memoria. Si la misma glosa vuelve a aparecer en el enunciado, o en un enunciado posterior de la misma sesión, se reutiliza esa copia: no se vuelve a preparar y no se vuelve a pedir por la red. Además, la secuencia visible tiene un techo de 24 glosas y de 1200 fotogramas. Por encima de ese techo, un texto largo ocuparía el turno de la llamada con una animación que no termina. El diseño corta la secuencia en el techo. El Cuadro~\ref{tab:salvaguardas_pose} resume estas previsiones. El detalle de cada una está en los párrafos anteriores.
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Previsiones del diseño frente a fallos del estimador y del léxico.}
+    \label{tab:salvaguardas_pose}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth}
+                                 >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Situación} & \textbf{Previsión} \\
+        \midrule
+        La mano desaparece durante unos pocos fotogramas y el estimador escribe $(0, 0)$. &
+        Completa el hueco con los fotogramas vecinos en los que la mano sí se vio. \\
+        \addlinespace[2pt]
+        En una seña de una sola mano, las dos manos quedan en el mismo lugar. &
+        Retira la copia y estaciona ese brazo al costado del torso. \\
+        \addlinespace[2pt]
+        La confianza de un punto es inferior a $0{,}15$. &
+        Omite ese punto en el trazo. \\
+        \addlinespace[2pt]
+        La posición estimada tiembla de un fotograma al otro. &
+        Mezcla la medición nueva con la pose anterior, a partes iguales. \\
+        \addlinespace[2pt]
+        La muñeca final de una glosa queda lejos de la muñeca inicial de la siguiente. &
+        Inserta de 4 a 8 fotogramas nuevos entre los dos núcleos, sin alterar el interior de cada seña. \\
+        \addlinespace[2pt]
+        La glosa no tiene archivo. &
+        La deletrea con los clips del alfabeto manual. \\
+        \addlinespace[2pt]
+        Tampoco están los archivos de las letras. &
+        Deja el esqueleto en la postura de espera y avisa en la interfaz. \\
+        \addlinespace[2pt]
+        El enunciado supera 24 glosas o 1200 fotogramas. &
+        Corta la secuencia en ese techo. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Presentación en la videollamada}
+
+Quien está del otro lado de la llamada ve la imagen que el navegador entrega como cámara. El diseño sustituye esa imagen por un lienzo partido en dos mitades de la misma altura. La mitad izquierda muestra la cámara de la persona, recortada para llenar su mitad sin estirar la figura. La mitad derecha muestra el esqueleto. Las dos mitades comparten la altura para que el intérprete y la persona queden a la misma escala.
+
+Mientras no llega una lista de glosas, el esqueleto permanece en espera y no adelanta ninguna seña. El cuerpo y las manos de esa espera salen de los primeros fotogramas de una seña de referencia, allí donde la persona todavía no empezó el gesto, y se escalan al mismo ancho de hombros del lienzo. El antebrazo queda casi horizontal, levemente hacia abajo, y la mano sigue esa línea. La cara de la espera es un óvalo con cejas, ojos, nariz y boca, suficiente para situar la cabeza respecto de las manos.
+
+Cuando la lista de glosas ya está resuelta y los fotogramas están empalmados, la reproducción no avanza un fotograma del clip por cada imagen que publica la llamada. La llamada puede publicar 24 imágenes por segundo mientras el clip quedó preparado a otra tasa. Si se avanzara al ritmo de la llamada, la seña saldría más lenta o más rápida que el video de origen. El diseño mide el tiempo transcurrido y elige el fotograma del clip que corresponde a ese tiempo.
+
+Esa reproducción tiene tres tramos. En la entrada, de cerca de seis fotogramas a la tasa del clip, la postura de espera se transforma en el primer fotograma de la seña, y el contorno de cara de la seña aparece de a poco. En el tramo central corre la secuencia ya preparada, con los puentes entre glosas incluidos: el navegador no los recalcula, porque ya vienen armados en la lista de fotogramas. En la salida, de la misma duración que la entrada, el último fotograma vuelve a la espera, el contorno de la seña se apaga y queda la cara simple de la espera. La curva de la entrada y de la salida es la misma \textit{smoothstep} del puente, de modo que el esqueleto no aparece ni desaparece de golpe. Al terminar, el clip se suelta y el esqueleto queda otra vez en espera, listo para la frase siguiente.
+
+Hacia el lienzo no viajan los cientos de puntos del archivo. Viaja solo lo que hace falta para leer la seña en una mitad de cuadro: ocho puntos de pose, que son los dos hombros, los dos codos, las dos muñecas y las dos caderas; los 21 puntos de cada mano; y un contorno de cara formado por el óvalo, las cejas, los ojos, la nariz y los labios. En el recuadro pequeño de la llamada, esa malla se ve como una mancha densa y aporta poco a la configuración de los dedos, que es lo que la persona sorda necesita distinguir. Un punto cuya confianza queda por debajo de $0{,}15$ se envía como ausente. El trazo lo saltea, en lugar de unir el punto anterior con una posición en la que el estimador casi no cree.
+Cada dedo lleva un color fijo, y ese color es el mismo en las dos manos: pulgar rojo, índice naranja, medio amarillo, anular verde y meñique azul. La palma es blanca. El color permite seguir un dedo cuando las manos se cruzan delante del cuerpo y, sin él, los trazos de una y otra mano se confundirían.
+La orientación también está fijada. En una toma de frente, la mano derecha de la persona aparece del lado izquierdo de la imagen, porque la cámara la ve de frente. El lienzo respeta esa orientación y no da vuelta el esqueleto para que la mano hábil quede del lado que el espectador llamaría derecho. La miniatura propia de la videollamada, en cambio, suele mostrarse espejada, como un reflejo. Ese espejo se deshace solo en el video local de quien usa el sistema, de manera que esa persona y quien está del otro lado vean lo mismo: la cámara en la mitad izquierda y el esqueleto, sin invertir, en la mitad derecha.
+
+\subsection{Contingencia léxica}
+
+El nombre con el que se pide cada archivo sigue las reglas de la Sección~\ref{sec:api-avatar}: mayúsculas, sin tildes y sin espacios. Aquí el problema es otro. Una lista de glosas puede nombrar una seña con una palabra o con varias, y también puede nombrar algo que el diccionario no tiene.
+
+La búsqueda prueba primero el grupo más largo. Toma tres glosas seguidas y pregunta si existe un archivo para ese grupo. Si no existe, prueba las dos primeras. Si tampoco existe, prueba una sola. El motivo es que una expresión como \texttt{BUENAS TARDES} puede ser una única seña, con un único archivo, y partirla de entrada en \texttt{BUENAS} y \texttt{TARDES} mostraría dos gestos distintos del que corresponde. Un dígito aislado, como el carácter \texttt{1}, se busca por el nombre de ese número, \texttt{UNO}, porque el diccionario nombra el número y no el signo con el que se escribe.
+
+Cuando ni el grupo ni la palabra tienen archivo, el diseño deletrea la palabra con los clips del alfabeto manual. Así, un nombre propio como \texttt{FRANCISCO}, si no tiene seña propia, se muestra como la secuencia \texttt{F}, \texttt{R}, \texttt{A}, \texttt{N}, \texttt{C}, \texttt{I}, \texttt{S}, \texttt{C}, \texttt{O}. En ese alfabeto, \texttt{CH} es una sola letra, y no la letra \texttt{C} seguida de la letra \texttt{H}. \texttt{Ñ} también es una sola letra. Esta regla pertenece al deletreo. Es independiente de la regla del nombre de archivo, que solo decide cómo se escribe la cadena en el pedido.
+
+Si falta el diccionario entero, faltan también las letras. En ese caso no hay con qué deletrear. El esqueleto permanece en la postura de espera, y la interfaz informa que el diccionario no está disponible. La palabra no se omite sin aviso, y tampoco se reemplaza por un movimiento aproximado: lo único que el lienzo puede mostrar es un clip que existe.
+
+
+\section{Patrones de diseño de software aplicados}
+
+El diseño separa las responsabilidades del cliente local, de la extensión y del servicio remoto. Cada patrón acota un problema distinto: la política de admisión de glosas, la interfaz única hacia el motor, la conversión entre contratos y el modo de la sesión. El efecto de cada decisión queda en el componente dueño. La red no filtra rebotes, la extensión no llama a la nube y el servicio remoto no altera el estado de la sesión local. La referencia de estos patrones es \parencite{gamma1994design}.
+
+\begin{itemize}
+    \item \textbf{Estrategia (\textit{Strategy}), en el filtro de repetición.}
+    El clasificador propone una glosa y una confianza. No decide si esa glosa entra al enunciado. Esa decisión queda en un objeto de política, independiente de la red. La política distingue tres categorías del léxico: los dígitos admiten repetición, las letras admiten hasta dos apariciones consecutivas y el resto del vocabulario rechaza la repetición inmediata. El acumulador de enunciado consulta la política y conserva el reloj de pausa Un cambio de la regla de repetición no altera el modelo ni el contrato remoto.
+
+    \item \textbf{Fachada (\textit{Facade}), en la API local de ILSA.}
+    La extensión no invoca por separado al clasificador, a la compuerta, al acumulador ni al cliente de la nube. El motor expone un único contrato HTTP en el bucle local: sesión, ingesta de la seña, aviso de actividad, cierre de enunciado, estado y diagnóstico. La fachada oculta el orden interno del pipeline y concentra el acceso del navegador.
+
+    \item \textbf{Adaptador (\textit{Adapter}), en dos fronteras.}
+    La extensión adapta los medios de Google Meet al contrato local. La cámara y el lienzo de la llamada se presentan como fotogramas y subtítulos, y el audio o el texto del oyente se presentan como una oración. En la otra frontera, ILSA adapta el enunciado cerrado al contrato del servicio remoto: una cadena de glosas en \texttt{/translate}, o una oración en \texttt{/hearing}. Con las glosas del canal inverso, ILSA arma el nombre de archivo y consulta \texttt{/tposes}. La respuesta remota vuelve a entrar por ILSA. Ni el traductor ni el servicio de archivos conocen Meet ni la extensión.
+
+    \item \textbf{Estado (\textit{State}), en el modo de sesión.}
+    La sesión admite dos modos excluyentes: señante y oyente. En modo señante el motor acepta señas y cierra enunciados hacia el canal directo. En modo oyente acepta el texto del interlocutor, consulta el canal inverso y pide los archivos de seña. La misma fachada cambia de comportamiento según el modo, sin una segunda extensión. El temporizador de pausa no es un estado del clasificador: pertenece al acumulador y solo declara el cierre del enunciado.
+\end{itemize}
+
+\section{Diseño conceptual de la arquitectura escalable en la nube} % TODO : este titulo sigue vigente?, en teoria ya esta en la nube varias cosas, no? ya no es tan "conceptual"
+
+El módulo semántico queda fuera de la computadora del usuario. El cliente procesa la cámara, la extracción de puntos y la clasificación, y envía el texto del turno en curso al servicio remoto.
+
+Esa partición admite, ante varias videollamadas simultáneas, una infraestructura elástica. Este trabajo la fija como proyección de producción. Las pruebas del prototipo no la despliegan: corren sobre una instancia única de Cloud Run, de Google Cloud. La subsección siguiente describe la proyección.
+
+\subsection{Especificación para entornos de producción concurrente}
+
+Para garantizar alta disponibilidad y bajos tiempos de respuesta por turno frente a múltiples usuarios concurrentes, se proyectó una arquitectura modular basada en microservicios contenerizados y auto-escalado elástico. La topología de recursos y el flujo de balanceo se describen en la Figura~\ref{fig:arquitectura_nube_produccion}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{integracion/Diagrama-arquitectura-escalable.pdf}
+    \caption{Diseño conceptual de la infraestructura en la nube: balanceo de carga y clúster elástico de inferencia semántica con escalado horizontal.}
+    \label{fig:arquitectura_nube_produccion}
+\end{figure}
+
+El diseño contempla tres capas principales de infraestructura:
+
+\paragraph{Capa de acceso perimetral y balanceo:}
+Las solicitudes HTTPS enviadas por las computadoras clientes son recibidas por una capa perimetral que incluye resolución DNS, certificados de seguridad TLS y filtrado de tráfico básico para prevenir saturaciones maliciosas. Detrás de esta capa opera un balanceador de carga (\textit{API Gateway} o \textit{Application Load Balancer}): % TODO : Explicar la resolucion DNS, certiifcados de seguridad y el filtrado decis que lo deberiamos hacer?
+\begin{itemize}
+    \item Recibe y valida los esquemas JSON de las rutas \texttt{/translate} y \texttt{/hearing}.
+    \item Distribuye las peticiones hacia las réplicas del microservicio semántico mediante un criterio de menor número de conexiones activas (\textit{Least Connections}) para evitar sobrecargar instancias que se encuentren resolviendo enunciados largos.
+\end{itemize}
+
+\paragraph{Clúster de cómputo y escalado elástico:}
+El microservicio semántico se empaqueta en imágenes de contenedor Docker. Estos contenedores se despliegan sobre un clúster gestionado:
+\begin{itemize}
+    \item \textbf{Almacenamiento compartido de modelos:} Los archivos binarios cuantizados en formato GGUF (Q4\_K\_M) se almacenan en un volumen persistente de solo lectura montado en cada instancia para evitar transferencias repetitivas de red al iniciar nuevos contenedores.
+    \item \textbf{Auto-escalado por demanda:} Mediante un controlador de escalado horizontal, el clúster monitorea la longitud de la cola de peticiones y los tiempos de generación de respuesta. Cuando la cantidad de turnos simultáneos supera el umbral operativo de las réplicas activas, el orquestador provisiona automáticamente nuevos contenedores para absorber el pico de uso.
+    \item \textbf{Eficiencia de hardware y costos:} Gracias a la cuantización a 4 bits (GGUF Q4\_K\_M), cada réplica requiere menos de 2\,GB de memoria RAM y puede ejecutarse sobre procesadores estándar en la nube, lo que quita la necesidad de servidores dedicados con placa de video.
+\end{itemize}
+
+\paragraph{Monitoreo y telemetría:}
+Se prevé un sistema de recopilación de métricas (como Prometheus y Grafana o AWS CloudWatch) para supervisar la latencia por oración, la memoria ocupada por contenedor y la tasa de errores de red lo que permite calibrar con precisión las reglas de escalado.
+
+\subsection{Instancia de prueba en Cloud Run}
+
+La arquitectura de la figura anterior exige un clúster con balanceo y auto-escalado. Ese esquema queda fuera de las pruebas de este Trabajo Final, en coincidencia con la restricción RC-02. En su lugar, el motor local ILSA consulta una instancia del servicio semántico publicada en Cloud Run. La instancia expone las rutas \texttt{/translate} y \texttt{/hearing} y concentra los dos canales en un único proceso. El comportamiento bajo carga concurrente y el auto-escalado no entran en la validación del prototipo. % TODO : Aclaracion final no contradice muchas cosas? con respecto al escalado
+
+\subsection{Servicio de archivos del avatar}
+
+Los archivos de seña no siguen el clúster del modelo de lenguaje. Cada petición es una lectura, no una generación. No hay cola de inferencia ni placa de video.
+
+En las pruebas, el servicio se publica como una instancia de Cloud Run, con el nombre \texttt{tpose-server}, en la región \texttt{southamerica-east1} y en el proyecto \texttt{ilsa-511622}. La imagen parte de Python 3.10 en su variante reducida. El contenedor copia el programa y la carpeta de poses. El código viejo de captura y clasificación no entra en la imagen. El despliegue se hace desde la raíz del repositorio, donde está la definición de la imagen. Cloud Run queda avisado de que el contenedor escucha en el puerto 8080. El proceso, igual, lee el puerto que la plataforma inyecta al arrancar. Las llamadas no exigen un token de usuario, porque el cliente es ILSA desde la computadora de la videollamada. Los nombres de archivo tienen que ser ASCII. Un nombre con eñe o con tilde hace fallar la importación del contenedor, aunque la construcción de la imagen termine bien. Por eso la letra \texttt{Ñ} vive en \texttt{ENIE.pose} y el resto de las eñes del nombre quedó escrito con \texttt{N}.
+
+Para un despliegue de producción, la proyección es un conjunto de réplicas sin estado detrás del balanceador de la plataforma. Todas leen la misma carpeta, de solo lectura. Un paso posterior puede mover los archivos a un almacén de objetos y dejar el proceso como un lector delgado, con una red de contenido delante para las glosas repetidas. La ruta de salud sigue aparte de la ruta del archivo. La caché del cliente permanece como primer recurso. Esta proyección no forma parte de la instancia única con la que se prueba el prototipo.
+
+% TODO : Habria que agregar diagramas que hayamos visto en Soriano 1 y 2, para mi, que muestren bien la infra, y quiza algunas partes puntuales
