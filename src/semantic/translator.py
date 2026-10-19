@@ -84,6 +84,8 @@ class LoadedEngine:
     path: Path
     engine: object
     chat: str
+    sys_n: int = 0
+    sys_tokens: list[int] = field(default_factory=list)
 
 
 @dataclass
@@ -195,15 +197,20 @@ def _make_engine(model_path: str, n_threads: int):
             flush=True,
         )
         t0 = time.perf_counter()
-        engine = Llama(
+        kwargs = dict(
             model_path=model_path,
             n_gpu_layers=0,
             n_ctx=int(N_CTX),
-            n_batch=256,
+            n_batch=512,
             n_threads=n_threads,
             n_threads_batch=n_threads,
             verbose=False,
+            use_mmap=True,
         )
+        try:
+            engine = Llama(**kwargs, use_mlock=True)
+        except (TypeError, RuntimeError, OSError):
+            engine = Llama(**kwargs)
         print(
             f"[semantic] Llama() listo en {time.perf_counter() - t0:.1f}s",
             flush=True,
@@ -259,6 +266,53 @@ def _format_prompt(messages: list[dict], chat_format: str) -> str:
     return _to_chatml(messages)
 
 
+def _system_prefix(system: str, chat_format: str) -> str:
+    if chat_format == "llama3":
+        return (
+            "<|begin_of_text|>"
+            f"<|start_header_id|>system<|end_header_id|>\n\n{system}<|eot_id|>"
+        )
+    return f"<|im_start|>system\n{system}<|im_end|>\n"
+
+
+def _tok(llm: object, text: str) -> list[int]:
+    tokenize = getattr(llm, "tokenize", None)
+    if not callable(tokenize):
+        return []
+    raw = text.encode("utf-8")
+    try:
+        return list(tokenize(raw, add_bos=False, special=True))
+    except TypeError:
+        return list(tokenize(raw))
+
+
+def _pin_system(item: LoadedEngine, system: str) -> None:
+    llm = item.engine
+    if not callable(getattr(llm, "eval", None)):
+        return
+    tokens = _tok(llm, _system_prefix(system, item.chat))
+    if not tokens:
+        return
+    t0 = time.perf_counter()
+    llm.eval(tokens)
+    item.sys_tokens = tokens
+    item.sys_n = len(tokens)
+    print(
+        f"[semantic] Sys anclado {item.path.name}: {item.sys_n} tokens "
+        f"en {time.perf_counter() - t0:.1f}s",
+        flush=True,
+    )
+
+
+def _rewind_system(item: LoadedEngine) -> None:
+    if item.sys_n <= 0 or not hasattr(item.engine, "n_tokens"):
+        return
+    item.engine.n_tokens = item.sys_n
+    ctx = getattr(item.engine, "_ctx", None)
+    if ctx is not None and hasattr(ctx, "kv_cache_seq_rm"):
+        ctx.kv_cache_seq_rm(-1, item.sys_n, -1)
+
+
 def _stop_tokens(chat_format: str) -> list[str]:
     if chat_format == "llama3":
         return _LLAMA3_STOP
@@ -310,8 +364,8 @@ def _load_channel(channel: Channel, paths: list[Path], n_threads: int) -> None:
         item = _try_init(path, n_threads, channel.name)
         if item is not None:
             loaded.append(item)
-            if len(loaded) == 1:
-                print(f"[semantic] Activo {channel.name}: {item.path}", flush=True)
+            print(f"[semantic] Activo {channel.name}: {item.path}", flush=True)
+            break
     if not loaded:
         names = ", ".join(p.name for p in paths)
         raise RuntimeError(f"[semantic] Ningún GGUF de {channel.name} cargó ({names}).")
@@ -336,7 +390,7 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
         _LOADING = True
         _LOAD_ERROR = None
         try:
-            n_threads = max(1, min(4, os.cpu_count() or 2))
+            n_threads = max(1, os.cpu_count() or 2)
             SYSTEM_PROMPT = load_prompt()
             SYSTEM_PROMPT_OYENTE = load_prompt_oyente()
 
@@ -355,6 +409,10 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
             _LOADED = True
             print(f"[semantic] Cargado sordo → {_SORDO.path_str()}", flush=True)
             print(f"[semantic] Cargado oyente → {_OYENTE.path_str()}", flush=True)
+            for item in _SORDO.engines:
+                _pin_system(item, SYSTEM_PROMPT)
+            for item in _OYENTE.engines:
+                _pin_system(item, SYSTEM_PROMPT_OYENTE)
         except Exception as exc:
             _LOAD_ERROR = str(exc)
             raise
@@ -362,9 +420,7 @@ def load_model_and_tokenizer(model_id: Optional[str] = None, force: bool = False
             _LOADING = False
 
 
-def translate_glosses(
-    glosses_input: str, history_messages: Optional[list[dict]] = None
-) -> tuple[str, str]:
+def translate_glosses(glosses_input: str) -> tuple[str, str]:
     if not _LOADED or _SORDO.current is None:
         load_model_and_tokenizer()
 
@@ -373,10 +429,10 @@ def translate_glosses(
     raw = " ".join(collapsed)
     if raw != glosses_input.strip():
         print(f"[semantic] Deletreo/números juntados: {glosses_input.strip()!r} → {raw!r}")
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    if history_messages:
-        messages.extend(history_messages)
-    messages.append({"role": "user", "content": f"Glosas: {raw}"})
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": f"Glosas: {raw}"},
+    ]
 
     return _complete_channel(_SORDO, messages, raw, "sordo")
 
@@ -401,15 +457,40 @@ def _complete_channel(
 ) -> tuple[str, str]:
     last_err = None
     start = channel.index
-    for step in range(len(channel.engines)):
+    step = 0
+    while step < len(channel.engines):
         idx = (start + step) % len(channel.engines)
         item = channel.engines[idx]
+        step += 1
         prompt = _format_prompt(messages, item.chat)
-        print(f"[semantic] /{label} con {item.path.name} para {raw!r}", flush=True)
+        prompt_arg: object = prompt
+        extra = ""
+        tokens = _tok(item.engine, prompt)
+        if tokens and item.sys_n and item.sys_tokens:
+            if tokens[: item.sys_n] != item.sys_tokens:
+                print(
+                    f"[semantic] Prefijo sys no coincide {item.path.name}; "
+                    f"re-eval completo ({len(tokens)} tokens)",
+                    flush=True,
+                )
+                item.sys_n = 0
+            else:
+                _rewind_system(item)
+                prompt_arg = tokens
+                extra = (
+                    f" prompt_tokens={len(tokens)} sys={item.sys_n} "
+                    f"eval={len(tokens) - item.sys_n}"
+                )
+        elif tokens:
+            extra = f" prompt_tokens={len(tokens)}"
+        print(
+            f"[semantic] /{label} con {item.path.name} para {raw!r}{extra}",
+            flush=True,
+        )
         t0 = time.perf_counter()
         try:
             response = item.engine.create_completion(
-                prompt,
+                prompt_arg,
                 max_tokens=int(MAX_NEW_TOKENS),
                 temperature=float(TEMPERATURE),
                 repeat_penalty=float(REPETITION_PENALTY),
@@ -429,6 +510,19 @@ def _complete_channel(
             print(f"[semantic] Fallo {label} {item.path.name}: {exc}", flush=True)
             if item.path.name.lower() == PRIMARY_GGUF:
                 print(f"[semantic] Conmutando {label} a {BACKUP_GGUF}", flush=True)
+                paths = sordo_candidates() if label == "sordo" else oyente_candidates()
+                n_threads = max(1, os.cpu_count() or 2)
+                have = {e.path.resolve() for e in channel.engines}
+                system = SYSTEM_PROMPT if label == "sordo" else SYSTEM_PROMPT_OYENTE
+                for path in paths:
+                    if path.resolve() in have:
+                        continue
+                    nxt = _try_init(path, n_threads, channel.name)
+                    if nxt is None:
+                        continue
+                    _pin_system(nxt, system)
+                    channel.engines.append(nxt)
+                    break
     raise RuntimeError(f"[semantic] /{label} sin modelo usable: {last_err}")
 
 

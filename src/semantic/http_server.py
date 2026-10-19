@@ -5,15 +5,14 @@ from __future__ import annotations
 import os
 from typing import Optional
 
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import time
 
-from semantic.config import BACKUP_GGUF, PRIMARY_GGUF, SEMANTIC_TOKEN, USE_CONVERSATION_HISTORY
+from semantic.config import BACKUP_GGUF, PRIMARY_GGUF, SEMANTIC_TOKEN
 from semantic.models import describe_slot
 from semantic.config import OYENTE_GGUF_DIR, SORDO_GGUF_DIR
-from semantic.sessions import client_key, memory_for, n_clients
 from semantic.translator import (
     infer_slot,
     load_model_and_tokenizer,
@@ -75,49 +74,31 @@ def health():
         "oyente_gguf": paths.get("oyente"),
         "model_used_sordo": paths.get("sordo_model"),
         "model_used_oyente": paths.get("oyente_model"),
-        "clients": n_clients(),
     }
 
 
-def _key(request: Request, x_lsa_client: Optional[str]) -> str:
-    peer = request.client.host if request.client else None
-    return client_key(x_lsa_client, request.headers.get("x-forwarded-for"), peer)
-
-
-def _sordo_impl(body: SordoIn, request: Request, authorization, x_lsa_token, x_lsa_client):
+def _sordo_impl(body: SordoIn, authorization, x_lsa_token):
     _check_token(authorization, x_lsa_token)
-    key = _key(request, x_lsa_client)
     with infer_slot() as queued_s:
-        mem = memory_for(key)
-        history = mem.as_messages() if USE_CONVERSATION_HISTORY else None
         t0 = time.perf_counter()
         try:
-            spanish, model_used = translate_glosses(
-                body.glosses, history_messages=history
-            )
+            spanish, model_used = translate_glosses(body.glosses)
         except (RuntimeError, FileNotFoundError, OSError) as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         spanish = spanish or ""
         ms = (time.perf_counter() - t0) * 1000
-        if spanish:
-            mem.add_signer(spanish, glosses=body.glosses.strip())
-        turns = len(mem.turns)
     return {
         "spanish": spanish,
         "glosses": body.glosses.strip(),
         "model_used": model_used,
         "ms": round(ms, 1),
         "queued_ms": round(queued_s * 1000, 1),
-        "client": key,
-        "turns": turns,
     }
 
 
-def _oyente_impl(body: OyenteIn, request: Request, authorization, x_lsa_token, x_lsa_client):
+def _oyente_impl(body: OyenteIn, authorization, x_lsa_token):
     _check_token(authorization, x_lsa_token)
-    key = _key(request, x_lsa_client)
     with infer_slot() as queued_s:
-        mem = memory_for(key)
         t0 = time.perf_counter()
         try:
             glosses, model_used = translate_spanish_to_glosses(body.spanish)
@@ -125,61 +106,49 @@ def _oyente_impl(body: OyenteIn, request: Request, authorization, x_lsa_token, x
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         glosses = glosses or ""
         ms = (time.perf_counter() - t0) * 1000
-        mem.add_hearing(body.spanish.strip())
-        turns = len(mem.turns)
     return {
         "glosses": glosses,
         "spanish": body.spanish.strip(),
         "model_used": model_used,
         "ms": round(ms, 1),
         "queued_ms": round(queued_s * 1000, 1),
-        "client": key,
-        "turns": turns,
     }
 
 
 @app.post("/sordo")
 def sordo(
     body: SordoIn,
-    request: Request,
     authorization: Optional[str] = Header(None),
     x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-    x_lsa_client: Optional[str] = Header(None, alias="X-LSA-Client"),
 ):
-    return _sordo_impl(body, request, authorization, x_lsa_token, x_lsa_client)
+    return _sordo_impl(body, authorization, x_lsa_token)
 
 
 @app.post("/translate")
 def translate(
     body: SordoIn,
-    request: Request,
     authorization: Optional[str] = Header(None),
     x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-    x_lsa_client: Optional[str] = Header(None, alias="X-LSA-Client"),
 ):
-    return _sordo_impl(body, request, authorization, x_lsa_token, x_lsa_client)
+    return _sordo_impl(body, authorization, x_lsa_token)
 
 
 @app.post("/oyente")
 def oyente(
     body: OyenteIn,
-    request: Request,
     authorization: Optional[str] = Header(None),
     x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-    x_lsa_client: Optional[str] = Header(None, alias="X-LSA-Client"),
 ):
-    return _oyente_impl(body, request, authorization, x_lsa_token, x_lsa_client)
+    return _oyente_impl(body, authorization, x_lsa_token)
 
 
 @app.post("/hearing")
 def hearing(
     body: OyenteIn,
-    request: Request,
     authorization: Optional[str] = Header(None),
     x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-    x_lsa_client: Optional[str] = Header(None, alias="X-LSA-Client"),
 ):
-    return _oyente_impl(body, request, authorization, x_lsa_token, x_lsa_client)
+    return _oyente_impl(body, authorization, x_lsa_token)
 
 
 def warmup() -> None:
