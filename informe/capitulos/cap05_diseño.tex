@@ -13,13 +13,32 @@ Se probó una primera configuración con las tres etapas en el cliente: extracci
 
 \subsection{Flujo integral de datos entre componentes.}
 
-La dinámica operativa del sistema involucra procesos asíncronos y desacoplados que conectan el navegador web, el entorno de ejecución local en el cliente y los microservicios semánticos remotos alojados en la infraestructura en la nube. La Figura~\ref{fig:diagrama_arquitectura} ilustra la topología física y funcional de la solución y delimita las fronteras de red y las responsabilidades asignadas a cada entorno.
-% TODO: Hay que agregar el servicio de .pose en el diagrama? no lo puedo ver xd
-% Figura 5.1: Arquitectura global
+La dinámica operativa del sistema conecta el navegador, el motor local y dos servicios remotos. La Figura~\ref{fig:diagrama_arquitectura} fija esa partición. El video y los puntos articulares quedan en el equipo. Hacia la nube sale texto: glosas en el canal directo, u oración en el canal inverso. El servicio de poses no traduce. Devuelve el archivo de la glosa.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{integracion/Diagrama-arquitectura.pdf}
-    \caption{Arquitectura global de integración: partición entre el dispositivo cliente (captura, extracción de \textit{landmarks}, clasificación y avatar) y el servidor semántico desacoplado en la nube.}
+    \begin{tikzpicture}[
+        font=\footnotesize,
+        box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt, fill=white, text width=3.5cm},
+        arr/.style={-{Stealth[length=2.2mm]}, thick},
+        grp/.style={draw, rounded corners=3pt, inner sep=8pt}
+    ]
+        \node[box] (meet) {Google Meet};
+        \node[box, below=0.85cm of meet] (ext) {Extensión\\lienzo y subtítulos};
+        \node[box, below=1.05cm of ext] (ilsa) {Motor ILSA\\clasificador y sesión oyente};
+        \node[box, right=4.6cm of ext] (sem) {Servicio semántico\\canal directo e inverso};
+        \node[box, below=1.15cm of sem] (pose) {Servicio de poses\\\texttt{GET /tposes/\{glosa\}.pose}};
+        \node[grp, fit=(meet)(ext)(ilsa), label={[font=\scriptsize]above:Equipo del usuario}] (cli) {};
+        \node[grp, fit=(sem)(pose), label={[font=\scriptsize]above:Nube}] (nube) {};
+        \draw[arr] (meet) -- node[right, font=\scriptsize] {fotogramas} (ext);
+        \draw[arr] (ext) -- node[right, font=\scriptsize, align=center] {video y puntos\\locales} (ilsa);
+        \draw[arr] (ilsa.north) -- node[left, font=\scriptsize] {clip} (ext.south);
+        \draw[arr] (ilsa.70) to[out=25,in=180] node[above, font=\scriptsize] {glosas u oración} (sem.west);
+        \draw[arr] (sem.200) to[out=200,in=15] node[below, font=\scriptsize] {oración o glosas} (ilsa.40);
+        \draw[arr] (ilsa.east) -- node[above, font=\scriptsize] {nombre de glosa} (pose.west);
+        \draw[arr] (pose.200) to[out=185,in=-15] node[below, font=\scriptsize] {archivo \texttt{.pose}} (ilsa.350);
+    \end{tikzpicture}
+    \caption{Diagrama de componentes. El servicio de poses queda aparte del traductor y entrega el archivo de seña.}
     \label{fig:diagrama_arquitectura}
 \end{figure}
 
@@ -44,6 +63,31 @@ En la Figura~\ref{fig:secuencia_oyente} se describe la secuencia temporal que tr
     \includegraphics[width=\textwidth]{integracion/Diagrama-secuencia-oyente.pdf}
     \caption{Diagrama de secuencia del Canal Oyente $\rightarrow$ Señante: transcripción del habla o mensaje, reestructuración gramatical Topic-Comment en la nube y animación o deletreo dactilológico en el cliente.}
     \label{fig:secuencia_oyente}
+\end{figure}
+
+La Figura~\ref{fig:secuencia_oyente_comp} baja al interior de ese canal. ILSA pide el archivo, y arma la lista de fotogramas. El lienzo no recalcula el puente: elige el fotograma según el tiempo transcurrido. Si el archivo no existe, ILSA pide las letras al mismo servicio.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[x=2.55cm, y=0.62cm, font=\scriptsize]
+        \node (ext) at (0,0) {Extensión};
+        \node (ilsa) at (1,0) {ILSA};
+        \node (sem) at (2,0) {Traductor};
+        \node (pose) at (3,0) {Poses};
+        \node (lienzo) at (4,0) {Lienzo};
+        \foreach \x in {0,1,2,3,4}
+            \draw (\x,-0.35) -- (\x,-7.4);
+        \draw[-{Stealth[length=1.8mm]}] (0,-1) -- node[above] {\texttt{POST /hearing}} (1,-1);
+        \draw[-{Stealth[length=1.8mm]}] (1,-1.8) -- node[above] {oración} (2,-1.8);
+        \draw[-{Stealth[length=1.8mm]}] (2,-2.6) -- node[above] {glosas} (1,-2.6);
+        \draw[-{Stealth[length=1.8mm]}] (1,-3.4) -- node[above] {\texttt{GET /tposes}} (3,-3.4);
+        \draw[-{Stealth[length=1.8mm]}] (3,-4.2) -- node[above] {\texttt{.pose} o 404} (1,-4.2);
+        \draw[-{Stealth[length=1.8mm]}, dashed] (1,-5.0) -- node[above] {letras, si falta el archivo} (3,-5.0);
+        \draw[-{Stealth[length=1.8mm]}] (1,-5.8) -- node[above] {lista de fotogramas} (0,-5.8);
+        \draw[-{Stealth[length=1.8mm]}] (0,-6.6) -- node[above] {fotograma según el reloj} (4,-6.6);
+    \end{tikzpicture}
+    \caption{Secuencia de componentes del canal oyente. El servicio de poses responde el archivo o un 404.}
+    \label{fig:secuencia_oyente_comp}
 \end{figure}
 
 \section{Diseño de contratos de API REST}
@@ -221,7 +265,7 @@ El campo \texttt{queued\_ms} registra la espera en cola si el SLM atiende otra i
 \subsection{API del servicio de archivos del avatar}
 \label{sec:api-avatar}
 
-El canal inverso no anima por sí solo. Un segundo servicio remoto entrega el archivo de movimiento de cada glosa. No traduce y no carga un modelo de lenguaje. El nombre del archivo, sin la extensión, es la glosa ya normalizada. El proceso escucha en todas las interfaces. Toma el puerto de la variable de entorno del contenedor y, si esa variable no existe, usa el puerto 8080.
+El canal inverso no anima por sí solo. Un segundo servicio remoto entrega el archivo de movimiento de cada glosa. No traduce y no carga un modelo de lenguaje. El nombre del archivo, sin la extensión, es la glosa ya normalizada. El puerto, la imagen y la plataforma de ese servicio quedan en la Sección~\ref{sec:impl_tpose}.
 
 El Cuadro~\ref{tab:api-avatar-endpoints} resume las rutas. La de salud responde JSON. La del archivo responde el binario, no un documento JSON.
 
@@ -241,26 +285,22 @@ El Cuadro~\ref{tab:api-avatar-endpoints} resume las rutas. La de salud responde 
   \end{tabular}
 \end{table}
 
-El servicio acepta \texttt{GET}, \texttt{HEAD} y \texttt{OPTIONS} desde cualquier origen. Un cliente en otro dominio puede pedir el archivo sin que el navegador bloquee la respuesta. La misma carpeta puede servir, si más adelante se agregan, archivos \texttt{.json}, \texttt{.gltf}, \texttt{.bin} y \texttt{.fbx}, cada uno con su tipo de contenido. Al arranque, la carpeta de poses es obligatoria. Si falta, el proceso termina y no abre el puerto.
-
 ILSA arma el nombre antes de la solicitud. El resultado es una sola cadena de letras mayúsculas y números, sin tildes, sin espacios y sin otros signos. Las reglas se aplican en este orden:
 \begin{enumerate}
     \item Toda la glosa pasa a mayúsculas.
     \item Queda la forma masculina. El sufijo \texttt{\_A} o \texttt{\_RA} se quita. Por ejemplo: \texttt{ABOGADO\_A} queda \texttt{ABOGADO}. \texttt{PROFESOR\_RA} queda \texttt{PROFESOR}.
     \item Las vocales con tilde pasan a la vocal simple. \texttt{CAFÉ} queda \texttt{CAFE}.
     \item Se borran espacios, guiones bajos, guiones y cualquier carácter que no sea letra o número. Si una seña tiene más de una glosa, los nombres se concatenan sin separador. Hoy y ahora se piden como \texttt{HOYAHORA.pose}, no como dos archivos.
-    \item La letra \texttt{Ñ}, cuando esa es toda la glosa, se pide como \texttt{ENIE}. Una \texttt{Ñ} dentro de la palabra pasa a \texttt{N}. \texttt{ESPAÑA} queda \texttt{ESPANA}. La letra \texttt{N} sigue en \texttt{N.pose}. % TODO: Esta ultima aclaracion la volaria
-    \item La glosa de parentesco \texttt{PAPA} se pide como \texttt{PADRE}. El archivo \texttt{PAPA.pose} existe y corresponde al alimento. ILSA no lo usa para esa glosa. % TODO : no entendila 2da oracion. y en la tercera, ILSA usa PADRE o no lo usa:?
+    \item La letra \texttt{Ñ}, cuando esa es toda la glosa, se pide como \texttt{ENIE}. Una \texttt{Ñ} dentro de la palabra pasa a \texttt{N}. \texttt{ESPAÑA} queda \texttt{ESPANA}.
+    \item La glosa de parentesco \texttt{PAPA} se pide como \texttt{PADRE}. El archivo \texttt{PAPA.pose} corresponde al alimento. Para el parentesco, ILSA usa \texttt{PADRE}.
 \end{enumerate}
 
-ILSA prueba el nombre de tres tokens, después el de dos y después el de uno, porque varias palabras pueden compartir un archivo. Un dígito suelto se busca por su nombre, de cero a nueve. Si no hay archivo, pide cada letra. \texttt{CH} y \texttt{Ñ} cuentan como una seña. El tope es 24 archivos por enunciado. Una copia queda en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red. % TODO : no entiendo la aclaracion de ch y ñ ahi, queda desubicada cono chupete en el orto. la de ch esta bien, no se si es el lugar, pero la de ñ ... xd, se sabe que es una seña
-
-En el motor local, el modo oyente agrega dos rutas sobre \texttt{127.0.0.1:8765}. \texttt{POST /hearing} recibe la oración y un indicador de cierre. ILSA consulta el canal inverso y, con las glosas ya obtenidas, pide los archivos. La respuesta trae la oración, la cadena de glosas y el clip. \texttt{POST /avatar} recibe solo la cadena de glosas y repite la descarga, sin una traducción nueva. En modo señante ambas rutas responden 400.
+En el motor local, el modo oyente agrega dos operaciones sobre el mismo contrato. \texttt{POST /hearing} recibe la oración y un indicador de cierre. ILSA consulta el canal inverso y, con las glosas ya obtenidas, pide los archivos. La respuesta trae la oración, la cadena de glosas y el clip. \texttt{POST /avatar} recibe solo la cadena de glosas y repite la descarga, sin una traducción nueva. En modo señante ambas rutas responden 400. La dirección del servicio, la caché local y el tratamiento de un nombre sin archivo se describen en la Sección~\ref{sec:impl_tpose}. La búsqueda de una glosa compuesta y el deletreo quedan en la Sección~\ref{sec:repr_inversa}.
 
 \section{Diseño de la representación gestual inversa}
 \label{sec:repr_inversa}
 
-El canal oyente recibe del traductor inverso una lista de glosas en mayúsculas. Esa lista, por sí sola, es texto: la persona sorda todavía no ve la seña. El diseño convierte cada glosa en el movimiento correspondiente, tomado de un archivo que ya contiene la seña medida sobre un video de referencia. El archivo no guarda una malla ni las rotaciones de un muñeco. Guarda, fotograma a fotograma, la posición de puntos articulares (\textit{landmarks}): hombros, codos, muñecas, las dos manos y un contorno de cara. El servicio de la Sección~\ref{sec:api-avatar} entrega ese archivo. Lo que sigue establece cómo se prepara antes de mostrarlo, cómo se une una seña con la siguiente y qué ocurre cuando la glosa no tiene archivo.
+El canal oyente recibe del traductor inverso una lista de glosas en mayúsculas. Esa lista, por sí sola, es texto: la persona sorda todavía no ve la seña. El diseño convierte cada glosa en el movimiento correspondiente, tomado de un archivo que ya contiene la seña medida sobre un video de referencia. El archivo no guarda una malla ni las rotaciones de un muñeco. Guarda, fotograma a fotograma, la posición de puntos articulares (\textit{landmarks}): hombros, codos, muñecas, las dos manos y un contorno de cara. El servicio de la Sección~\ref{sec:api-avatar} entrega ese archivo. Lo que sigue fija cómo se prepara antes de mostrarlo, cómo se une una seña con la siguiente y qué ocurre cuando la glosa no tiene archivo. La tasa común, el peso del suavizado, el tamaño del lienzo, el umbral de confianza, la longitud del puente y la duración de la entrada y de la salida quedan en la Sección~\ref{sec:impl_esqueleto}.
 
 \subsection{Clip de referencia}
 
@@ -293,18 +333,13 @@ Cuando el estimador deja de ver una mano durante unos pocos fotogramas, suele es
 Hay señas de una sola mano. En esos clips, el estimador puede copiar la mano visible sobre el lugar de la mano ausente, de modo que las dos manos quedan casi en el mismo sitio, o puede dejar la mano ausente en el origen. El diseño distingue esos dos casos de una mano que sí participa. Si las dos manos coinciden en una seña de una sola mano, la copia se retira. La mano que no participa se estaciona al costado del torso, y el antebrazo se dibuja como una línea continua desde el codo hasta la muñeca, para que la muñeca no aparezca quebrada en un ángulo que la seña no tiene. Esa postura de costado es la espera de la mano, y es distinta de la espera de todo el cuerpo, que se describe más abajo.
 
 \paragraph{Suavizado.}
-Aunque la mano esté bien seguida, la posición estimada tiembla de un fotograma al siguiente. El diseño mezcla cada medición nueva con la pose ya aceptada en el fotograma anterior, mediante un promedio exponencial. Si $x_t$ es la posición recién medida y $p_{t-1}$ es la pose anterior, la pose que se conserva es
-\begin{equation}
-p_t = \alpha\, x_t + (1 - \alpha)\, p_{t-1},
-\label{eq:ema_pose}
-\end{equation}
-con $\alpha = 0{,}50$. Con ese valor, la medición nueva y la pose anterior pesan lo mismo. Un factor más alto seguiría al estimador con mayor fidelidad y dejaría pasar el temblor. Un factor más bajo alisaría de más y retrasaría el gesto respecto del núcleo. El valor $0{,}50$ es el equilibrio que el diseño fija para todo el diccionario.
+Aunque la mano esté bien seguida, la posición estimada tiembla de un fotograma al siguiente. El diseño mezcla cada medición nueva con la pose ya aceptada en el fotograma anterior, por un promedio exponencial. Un peso alto sigue al estimador con mayor fidelidad y deja pasar el temblor. Un peso bajo alisa de más y retrasa el gesto respecto del núcleo. El peso es el mismo para todo el diccionario. Su valor, y la ecuación, están en la Sección~\ref{sec:impl_esqueleto}.
 
 \paragraph{Lienzo común.}
-Los videos no comparten resolución ni tamaño de cuerpo. Si cada clip se dibujara a su escala original, al pasar de una glosa a la otra el esqueleto cambiaría de tamaño en medio de la frase. Después del suavizado, el cuerpo se lleva a un recuadro de $720 \times 780$ píxeles y se escala para que el ancho de hombros mida $250$ píxeles. Dos señantes de distinta talla, y dos tomas de distinto encuadre, ocupan entonces el mismo espacio, y el empalme no produce un salto de escala.
+Los videos no comparten resolución ni tamaño de cuerpo. Si cada clip se dibujara a su escala original, al pasar de una glosa a la otra el esqueleto cambiaría de tamaño en medio de la frase. Después del suavizado, el cuerpo se lleva a un recuadro común y se escala hasta un mismo ancho de hombros. Dos señantes de distinta talla, y dos tomas de distinto encuadre, ocupan entonces el mismo espacio, y el empalme no produce un salto de escala.
 
 Recién después de esos seis pasos el clip está en condiciones de unirse a otro. El dato que más daño hace, si se le deja llegar, es la coordenada nula. Supóngase que el último fotograma útil de \texttt{HOLA} tiene la muñeca en un punto interior del cuadro, y que el primero de \texttt{MAMÁ} trae esa misma muñeca en $(0, 0)$ porque el estimador no la vio. Una interpolación de unos pocos fotogramas entre esos dos puntos dibuja la mano en viaje hacia la esquina, como si la seña la llevara hasta allí. El relleno y la mano en espera existen para que el empalme reciba solo coordenadas válidas.
-Entre el último fotograma del núcleo de una glosa y el primero del núcleo de la siguiente, el diseño inserta un puente: una serie de fotogramas nuevos, que no estaban en ninguno de los dos archivos. Su cantidad va de cuatro a ocho, y crece con la distancia entre las muñecas de un extremo y del otro. Si las muñecas ya están cerca, bastan cuatro fotogramas. Si están lejos, el puente llega a ocho, para que el recorrido no sea un salto. La curva con la que se reparte ese recorrido se llama \textit{smoothstep}: el punto sale despacio, acelera en la mitad y llega despacio, de modo que la unión no arranca con un tirón. Cada punto viaja en línea recta, en el plano de la imagen, desde donde está hasta donde tiene que estar. El archivo no contiene ángulos de huesos, y por eso el puente no gira una articulación: traslada los puntos.
+Entre el último fotograma del núcleo de una glosa y el primero del núcleo de la siguiente, el diseño inserta un puente: una serie breve de fotogramas nuevos, que no estaban en ninguno de los dos archivos. La serie es más larga cuando las muñecas de un extremo y del otro quedan más lejos, para que el recorrido no sea un salto. La curva con la que se reparte ese recorrido se llama \textit{smoothstep}: el punto sale despacio, acelera en la mitad y llega despacio, de modo que la unión no arranca con un tirón. Cada punto viaja en línea recta, en el plano de la imagen, desde donde está hasta donde tiene que estar. El archivo no contiene ángulos de huesos, y por eso el puente no gira una articulación: traslada los puntos.
 
 Ese puente es un recurso gráfico. En la lengua, la coarticulación es otra cosa: el final de una seña ya anticipa la configuración de la siguiente. El puente no modela ese anticipo. Toma la pose final de un núcleo ya recortado y la pose inicial del núcleo siguiente, y cubre el espacio que hay entre ambas para que el ojo no vea un corte. El interior de cada seña llega al empalme tal como quedó después de la preparación.
 La preparación de un clip tiene un costo de cálculo, y la descarga del archivo tiene un costo de red. Una vez que un clip quedó preparado, el diseño lo conserva en una caché en memoria. Si la misma glosa vuelve a aparecer en el enunciado, o en un enunciado posterior de la misma sesión, se reutiliza esa copia: no se vuelve a preparar y no se vuelve a pedir por la red. Además, la secuencia visible tiene un techo de 24 glosas y de 1200 fotogramas. Por encima de ese techo, un texto largo ocuparía el turno de la llamada con una animación que no termina. El diseño corta la secuencia en el techo. El Cuadro~\ref{tab:salvaguardas_pose} resume estas previsiones. El detalle de cada una está en los párrafos anteriores.
@@ -324,14 +359,14 @@ La preparación de un clip tiene un costo de cálculo, y la descarga del archivo
         En una seña de una sola mano, las dos manos quedan en el mismo lugar. &
         Retira la copia y estaciona ese brazo al costado del torso. \\
         \addlinespace[2pt]
-        La confianza de un punto es inferior a $0{,}15$. &
+        La confianza de un punto es demasiado baja. &
         Omite ese punto en el trazo. \\
         \addlinespace[2pt]
         La posición estimada tiembla de un fotograma al otro. &
-        Mezcla la medición nueva con la pose anterior, a partes iguales. \\
+        Mezcla la medición nueva con la pose anterior, con un peso fijo. \\
         \addlinespace[2pt]
         La muñeca final de una glosa queda lejos de la muñeca inicial de la siguiente. &
-        Inserta de 4 a 8 fotogramas nuevos entre los dos núcleos, sin alterar el interior de cada seña. \\
+        Inserta un puente breve de fotogramas nuevos entre los dos núcleos, sin alterar el interior de cada seña. \\
         \addlinespace[2pt]
         La glosa no tiene archivo. &
         La deletrea con los clips del alfabeto manual. \\
@@ -349,15 +384,15 @@ La preparación de un clip tiene un costo de cálculo, y la descarga del archivo
 
 Quien está del otro lado de la llamada ve la imagen que el navegador entrega como cámara. El diseño sustituye esa imagen por un lienzo partido en dos mitades de la misma altura. La mitad izquierda muestra la cámara de la persona, recortada para llenar su mitad sin estirar la figura. La mitad derecha muestra el esqueleto. Las dos mitades comparten la altura para que el intérprete y la persona queden a la misma escala.
 
-Mientras no llega una lista de glosas, el esqueleto permanece en espera y no adelanta ninguna seña. El cuerpo y las manos de esa espera salen de los primeros fotogramas de una seña de referencia, allí donde la persona todavía no empezó el gesto, y se escalan al mismo ancho de hombros del lienzo. El antebrazo queda casi horizontal, levemente hacia abajo, y la mano sigue esa línea. La cara de la espera es un óvalo con cejas, ojos, nariz y boca, suficiente para situar la cabeza respecto de las manos.
+Mientras no llega una lista de glosas, el esqueleto permanece en espera y no adelanta ninguna seña. La postura de espera se toma de un tramo en el que la persona todavía no empezó el gesto, y se escala al mismo ancho de hombros del lienzo. El antebrazo queda casi horizontal, levemente hacia abajo, y la mano sigue esa línea. La cara de la espera es un óvalo con cejas, ojos, nariz y boca, suficiente para situar la cabeza respecto de las manos.
 
 Cuando la lista de glosas ya está resuelta y los fotogramas están empalmados, la reproducción no avanza un fotograma del clip por cada imagen que publica la llamada. La llamada puede publicar 24 imágenes por segundo mientras el clip quedó preparado a otra tasa. Si se avanzara al ritmo de la llamada, la seña saldría más lenta o más rápida que el video de origen. El diseño mide el tiempo transcurrido y elige el fotograma del clip que corresponde a ese tiempo.
 
-Esa reproducción tiene tres tramos. En la entrada, de cerca de seis fotogramas a la tasa del clip, la postura de espera se transforma en el primer fotograma de la seña, y el contorno de cara de la seña aparece de a poco. En el tramo central corre la secuencia ya preparada, con los puentes entre glosas incluidos: el navegador no los recalcula, porque ya vienen armados en la lista de fotogramas. En la salida, de la misma duración que la entrada, el último fotograma vuelve a la espera, el contorno de la seña se apaga y queda la cara simple de la espera. La curva de la entrada y de la salida es la misma \textit{smoothstep} del puente, de modo que el esqueleto no aparece ni desaparece de golpe. Al terminar, el clip se suelta y el esqueleto queda otra vez en espera, listo para la frase siguiente.
+Esa reproducción tiene tres tramos. En la entrada, un tramo breve a la tasa del clip, la postura de espera se transforma en el primer fotograma de la seña, y el contorno de cara de la seña aparece de a poco. En el tramo central corre la secuencia ya preparada, con los puentes entre glosas ya incluidos en la lista de fotogramas. En la salida, de la misma duración que la entrada, el último fotograma vuelve a la espera, el contorno de la seña se apaga y queda la cara simple de la espera. La curva de la entrada y de la salida es la misma \textit{smoothstep} del puente, de modo que el esqueleto no aparece ni desaparece de golpe. Al terminar, el clip se suelta y el esqueleto queda otra vez en espera, listo para la frase siguiente.
 
-Hacia el lienzo no viajan los cientos de puntos del archivo. Viaja solo lo que hace falta para leer la seña en una mitad de cuadro: ocho puntos de pose, que son los dos hombros, los dos codos, las dos muñecas y las dos caderas; los 21 puntos de cada mano; y un contorno de cara formado por el óvalo, las cejas, los ojos, la nariz y los labios. En el recuadro pequeño de la llamada, esa malla se ve como una mancha densa y aporta poco a la configuración de los dedos, que es lo que la persona sorda necesita distinguir. Un punto cuya confianza queda por debajo de $0{,}15$ se envía como ausente. El trazo lo saltea, en lugar de unir el punto anterior con una posición en la que el estimador casi no cree.
+Hacia el lienzo no viajan los cientos de puntos del archivo. Viaja solo lo que hace falta para leer la seña en una mitad de cuadro: ocho puntos de pose, que son los dos hombros, los dos codos, las dos muñecas y las dos caderas; los 21 puntos de cada mano; y un contorno de cara formado por el óvalo, las cejas, los ojos, la nariz y los labios. En el recuadro pequeño de la llamada, esa malla se ve como una mancha densa y aporta poco a la configuración de los dedos, que es lo que la persona sorda necesita distinguir. Un punto de confianza baja se envía como ausente. El trazo lo saltea, en lugar de unir el punto anterior con una posición en la que el estimador casi no cree.
 Cada dedo lleva un color fijo, y ese color es el mismo en las dos manos: pulgar rojo, índice naranja, medio amarillo, anular verde y meñique azul. La palma es blanca. El color permite seguir un dedo cuando las manos se cruzan delante del cuerpo y, sin él, los trazos de una y otra mano se confundirían.
-La orientación también está fijada. En una toma de frente, la mano derecha de la persona aparece del lado izquierdo de la imagen, porque la cámara la ve de frente. El lienzo respeta esa orientación y no da vuelta el esqueleto para que la mano hábil quede del lado que el espectador llamaría derecho. La miniatura propia de la videollamada, en cambio, suele mostrarse espejada, como un reflejo. Ese espejo se deshace solo en el video local de quien usa el sistema, de manera que esa persona y quien está del otro lado vean lo mismo: la cámara en la mitad izquierda y el esqueleto, sin invertir, en la mitad derecha.
+La orientación también está fijada. En una toma de frente, la mano derecha de la persona aparece del lado izquierdo de la imagen, porque la cámara la ve de frente. El lienzo respeta esa orientación y no da vuelta el esqueleto para que la mano hábil quede del lado que el espectador llamaría derecho. La miniatura propia de la videollamada, en cambio, suele mostrarse espejada, como un reflejo. El diseño exige que esa persona y quien está del otro lado vean lo mismo: la cámara en la mitad izquierda y el esqueleto, sin invertir, en la mitad derecha. El mecanismo que deshace el espejo solo en la vista local queda en la Sección~\ref{sec:impl_esqueleto}.
 
 \subsection{Contingencia léxica}
 
@@ -431,10 +466,8 @@ La arquitectura de la figura anterior exige un clúster con balanceo y auto-esca
 
 \subsection{Servicio de archivos del avatar}
 
-Los archivos de seña no siguen el clúster del modelo de lenguaje. Cada petición es una lectura, no una generación. No hay cola de inferencia ni placa de video.
+Los archivos de seña no siguen el clúster del modelo de lenguaje. Cada petición es una lectura, no una generación. No hay cola de inferencia ni placa de video. El contrato de esa lectura es el de la Sección~\ref{sec:api-avatar}.
 
-En las pruebas, el servicio se publica como una instancia de Cloud Run, con el nombre \texttt{tpose-server}, en la región \texttt{southamerica-east1} y en el proyecto \texttt{ilsa-511622}. La imagen parte de Python 3.10 en su variante reducida. El contenedor copia el programa y la carpeta de poses. El código viejo de captura y clasificación no entra en la imagen. El despliegue se hace desde la raíz del repositorio, donde está la definición de la imagen. Cloud Run queda avisado de que el contenedor escucha en el puerto 8080. El proceso, igual, lee el puerto que la plataforma inyecta al arrancar. Las llamadas no exigen un token de usuario, porque el cliente es ILSA desde la computadora de la videollamada. Los nombres de archivo tienen que ser ASCII. Un nombre con eñe o con tilde hace fallar la importación del contenedor, aunque la construcción de la imagen termine bien. Por eso la letra \texttt{Ñ} vive en \texttt{ENIE.pose} y el resto de las eñes del nombre quedó escrito con \texttt{N}.
-
-Para un despliegue de producción, la proyección es un conjunto de réplicas sin estado detrás del balanceador de la plataforma. Todas leen la misma carpeta, de solo lectura. Un paso posterior puede mover los archivos a un almacén de objetos y dejar el proceso como un lector delgado, con una red de contenido delante para las glosas repetidas. La ruta de salud sigue aparte de la ruta del archivo. La caché del cliente permanece como primer recurso. Esta proyección no forma parte de la instancia única con la que se prueba el prototipo.
+Para un despliegue de producción, la proyección es un conjunto de réplicas sin estado detrás del balanceador de la plataforma. Todas leen la misma carpeta, de solo lectura. Un paso posterior puede mover los archivos a un almacén de objetos y dejar el proceso como un lector delgado, con una red de contenido delante para las glosas repetidas. La ruta de salud sigue aparte de la ruta del archivo. La caché del cliente permanece como primer recurso. Esta proyección no forma parte de la instancia única con la que se prueba el prototipo. El despliegue de esa instancia de prueba se describe en la Sección~\ref{sec:impl_tpose}.
 
 % TODO : Habria que agregar diagramas que hayamos visto en Soriano 1 y 2, para mi, que muestren bien la infra, y quiza algunas partes puntuales

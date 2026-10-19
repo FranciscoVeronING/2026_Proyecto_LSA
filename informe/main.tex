@@ -7,7 +7,7 @@
 \usepackage[spanish, es-noshorthands]{babel}
 \usepackage{graphicx}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta}
+\usetikzlibrary{positioning, arrows.meta, fit, calc}
 \usepackage{amsmath, amssymb}
 \usepackage{geometry}
 \geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
@@ -116,14 +116,15 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 % --- Capítulos modulares vinculados ---
 \include{capitulos/cap00_resumen_palabras_clave}
 \pagenumbering{arabic}
+
 \include{capitulos/cap01_introduccion}
 \include{capitulos/cap02_objetivos}
 \include{capitulos/cap03_marco_teorico}
 \include{capitulos/cap04_requerimientos}
 \include{capitulos/cap05_diseño}
 \include{capitulos/cap06_implementacion}
-\include{capitulos/cap07_experimentacion}
-\include{capitulos/cap08_conclusiones}
+\include{capitulos/cap06_experimentacion}
+\include{capitulos/cap07_conclusiones}
 
 % --- Bibliografía ---
 \printbibliography

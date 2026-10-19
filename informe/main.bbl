@@ -180,6 +180,68 @@
       \field{title}{{LSApp}: Uniendo dos mundos}
       \field{year}{2018}
     \endentry
+    \entry{bazarevsky2020blazepose}{misc}{}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=dfb2aa3f22269786162c9a57cea77fe8}{%
+           family={Bazarevsky},
+           familyi={B\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5bb8e21aa48dc99a977a72e130704fe}{%
+           family={Grishchenko},
+           familyi={G\bibinitperiod},
+           given={Ivan},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00821d21b98f6ba602fb8b5b8900bf21}{%
+           family={Raveendran},
+           familyi={R\bibinitperiod},
+           given={Karthik},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c6db18c5801e610209672dd9ad86131a}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Tyler},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{1bd15b089228fd239d9cd7e38d190e14}
+      \strng{fullhash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{fullhashraw}{702429e7bbf509350a61ca1f7830f982}
+      \strng{bibnamehash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authorbibnamehash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authornamehash}{1bd15b089228fd239d9cd7e38d190e14}
+      \strng{authorfullhash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authorfullhashraw}{702429e7bbf509350a61ca1f7830f982}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CV}
+      \field{eprinttype}{arXiv}
+      \field{title}{{BlazePose}: On-device Real-time Body Pose Tracking}
+      \field{year}{2020}
+      \verb{eprint}
+      \verb 2006.10204
+      \endverb
+    \endentry
     \entry{blessit2024interpretes}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2452563d59b5d4c341e47ff394af3a2c}{%
@@ -204,34 +266,6 @@
       \field{howpublished}{\url{https://www.blessit.net/interpretacion-lengua-de-senas}}
       \field{title}{Interpretación Lengua de Señas --- Central de intérpretes}
       \field{year}{2024}
-    \endentry
-    \entry{signall2018techcrunch}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=078e04180e33e6040a08e6a4476d5005}{%
-           family={Coldewey},
-           familyi={C\bibinitperiod},
-           given={Devin},
-           giveni={D\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{fullhash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{fullhashraw}{078e04180e33e6040a08e6a4476d5005}
-      \strng{bibnamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorbibnamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authornamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorfullhash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorfullhashraw}{078e04180e33e6040a08e6a4476d5005}
-      \field{sortinit}{C}
-      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://techcrunch.com/2018/02/14/signall-is-slowly-but-surely-building-a-sign-language-translation-platform/}}
-      \field{title}{{SignAll} is slowly but surely building a sign language translation platform}
-      \field{year}{2018}
     \endentry
     \entry{cas2024senario}{misc}{}{}
       \name{author}{1}{}{%
@@ -707,6 +741,112 @@
       \field{pages}{1459\bibrangedash 1469}
       \range{pages}{11}
     \endentry
+    \entry{lugaresi2019mediapipe}{article}{}{}
+      \name{author}{14}{}{%
+        {{un=0,uniquepart=base,hash=ec152126f5b7712b4664db54b34b4645}{%
+           family={Lugaresi},
+           familyi={L\bibinitperiod},
+           given={Camillo},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ac68c9c2cdd3f35d3081f63bbff53f4}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Jiuqiang},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5ffdaa304dcd72834225b0118f1bcafe}{%
+           family={Nash},
+           familyi={N\bibinitperiod},
+           given={Hadon},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1f3300784d32984e9ecd83fc5a802b42}{%
+           family={McClanahan},
+           familyi={M\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45e413ffcaa4c9502fa2324ff7119a96}{%
+           family={Uboweja},
+           familyi={U\bibinitperiod},
+           given={Esha},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=08c98dbfe4aa3b8cf880d282aa412f88}{%
+           family={Hays},
+           familyi={H\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=570d1b661550e4426ad790a065b53790}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Chuo-Ling},
+           giveni={C\bibinithyphendelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c96625f13ef34649dd2787aa5040e50f}{%
+           family={Yong},
+           familyi={Y\bibinitperiod},
+           given={Ming\bibnamedelima Guang},
+           giveni={M\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=34ea7cffda58c3dbe4f6a54a086b1f5f}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Juhyun},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=11990ea061aa31072060a31f843bd78b}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Wan-Teh},
+           giveni={W\bibinithyphendelim T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7b00c7dc9cbab46c36fc743e18a178a1}{%
+           family={Hua},
+           familyi={H\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=971231705f3e0945b9e8e24bcd3780bd}{%
+           family={Georg},
+           familyi={G\bibinitperiod},
+           given={Manfred},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{61a5cc34be11c6018e3b2391e9ea2937}
+      \strng{fullhash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{fullhashraw}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{bibnamehash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authorbibnamehash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authornamehash}{61a5cc34be11c6018e3b2391e9ea2937}
+      \strng{authorfullhash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authorfullhashraw}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Third Workshop on Computer Vision for {AR/VR} at {IEEE} {CVPR}}
+      \field{title}{{MediaPipe}: A Framework for Building Perception Pipelines}
+      \field{year}{2019}
+    \endentry
     \entry{mann1947test}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=5cf19aa5110d49e31bafd83ce394b092}{%
@@ -745,7 +885,7 @@
       \field{pages}{50\bibrangedash 60}
       \range{pages}{11}
     \endentry
-    \entry{massone1993numero}{article}{}{}
+    \entry{massoneparte1}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -779,7 +919,47 @@
       \field{pages}{73\bibrangedash 99}
       \range{pages}{27}
     \endentry
-    \entry{massone2012curso}{book}{}{}
+    \entry{massone1993lengua}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
+           family={Massone},
+           familyi={M\bibinitperiod},
+           given={María\bibnamedelima Ignacia},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=02e0ad8d6e86851af3642b3d90179714}{%
+           family={Machado},
+           familyi={M\bibinitperiod},
+           given={Emilia\bibnamedelima Margarita},
+           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Buenos Aires, Argentina}%
+      }
+      \list{publisher}{1}{%
+        {Edicial}%
+      }
+      \strng{namehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{fullhash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{fullhashraw}{2a4a383b3fd800438b8c303905be8490}
+      \strng{bibnamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorbibnamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authornamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorfullhash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorfullhashraw}{2a4a383b3fd800438b8c303905be8490}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{950-506-213-3}
+      \field{title}{Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe}
+      \field{year}{1993}
+    \endentry
+    \entry{massoneparte2}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -882,6 +1062,93 @@
       \field{howpublished}{\url{https://www.argentina.gob.ar/caracteristicas-de-la-comunicacion-por-videollamadas}}
       \field{title}{Características de la comunicación por videollamadas --- Línea 144}
       \field{year}{2024}
+    \endentry
+    \entry{pope2023efficiently}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=d8be19e523fa307d44a1fddbff485f5c}{%
+           family={Pope},
+           familyi={P\bibinitperiod},
+           given={Reiner},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5f9ac8488ec08b42c64992884a30aef4}{%
+           family={Douglas},
+           familyi={D\bibinitperiod},
+           given={Sholto},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fd55b702c004c13506e70bb76a4e987c}{%
+           family={Chowdhery},
+           familyi={C\bibinitperiod},
+           given={Aakanksha},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=13202969e372bc82318f9629cbdd199b}{%
+           family={Devlin},
+           familyi={D\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b75383e6b48c8360c7a60031424c85cf}{%
+           family={Bradbury},
+           familyi={B\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=738351d7ac35edab0cd231cb64407ab4}{%
+           family={Levskaya},
+           familyi={L\bibinitperiod},
+           given={Anselm},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=f597916b9c626b6e1a519e757e97b3de}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Chenggang},
+           giveni={C\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=f42b0f2cefb8f54e220b8df5fc3a3ce1}{%
+           family={Nado},
+           familyi={N\bibinitperiod},
+           given={Zachary},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5a9f30e0c0441d2aea255916ff375e8c}{%
+           family={Jaitly},
+           familyi={J\bibinitperiod},
+           given={Navdeep},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
+           family={Vaswani},
+           familyi={V\bibinitperiod},
+           given={Ashish},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{fullhash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{fullhashraw}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{bibnamehash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authorbibnamehash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authornamehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{authorfullhash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authorfullhashraw}{c1608f028e1d5834a4ee483870a517a5}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of Machine Learning and Systems}
+      \field{title}{Efficiently scaling transformer inference}
+      \field{volume}{5}
+      \field{year}{2023}
+      \field{pages}{606\bibrangedash 624}
+      \range{pages}{19}
     \endentry
     \entry{pressman2014software}{book}{}{}
       \name{author}{2}{}{%
@@ -1057,55 +1324,6 @@
       \field{title}{About {SignAll Technologies}}
       \field{year}{2026}
     \endentry
-    \entry{sorenson2025handtalk}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=c217684be96ef0b95ac51b6d3c5d552a}{%
-           family={{Sorenson Communications}},
-           familyi={S\bibinitperiod}}}%
-      }
-      \strng{namehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{fullhash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{fullhashraw}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{bibnamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorbibnamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authornamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorfullhash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorfullhashraw}{c217684be96ef0b95ac51b6d3c5d552a}
-      \field{sortinit}{S}
-      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://sorenson.com/newsroom/sorenson-acquires-omnibridge-and-hand-talk-to-develop-automated-sign-language-translation-capabilities/}}
-      \field{title}{Sorenson Communications acquires {OmniBridge} and {Hand Talk}}
-      \field{year}{2025}
-    \endentry
-    \entry{unmdp2024protocolo}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=f87783be616db5fe7e46f074529198c5}{%
-           family={{Universidad Nacional de Mar del Plata, Facultad de Ingeniería}},
-           familyi={U\bibinitperiod}}}%
-      }
-      \strng{namehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{fullhash}{f87783be616db5fe7e46f074529198c5}
-      \strng{fullhashraw}{f87783be616db5fe7e46f074529198c5}
-      \strng{bibnamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorbibnamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authornamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorfullhash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorfullhashraw}{f87783be616db5fe7e46f074529198c5}
-      \field{sortinit}{U}
-      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Protocolo de Trabajo Final --- Ingeniería en Informática}
-      \field{year}{2024}
-    \endentry
     \entry{vaswani2017attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -1175,40 +1393,6 @@
       \field{journaltitle}{arXiv preprint arXiv:1706.03762}
       \field{title}{Attention Is All You Need}
       \field{year}{2017}
-    \endentry
-    \entry{github2026proyectolsa}{misc}{}{}
-      \name{author}{2}{}{%
-        {{un=0,uniquepart=base,hash=8b9267ffa21057c67bb76834d31e8232}{%
-           family={Verón},
-           familyi={V\bibinitperiod},
-           given={Francisco},
-           giveni={F\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=5e54c0c54732252facb04083d8f41732}{%
-           family={Nigro},
-           familyi={N\bibinitperiod},
-           given={Maite},
-           giveni={M\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{fullhash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{fullhashraw}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{bibnamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorbibnamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authornamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorfullhash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorfullhashraw}{14f3c40682b9cc4adb6c91a366484661}
-      \field{sortinit}{V}
-      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA}}
-      \field{title}{2026\_Proyecto\_LSA}
-      \field{year}{2026}
     \endentry
     \entry{w3c2024mediacapture}{misc}{}{}
       \name{author}{1}{}{%
@@ -1318,6 +1502,74 @@
       \field{journaltitle}{arXiv preprint arXiv:2004.11886}
       \field{title}{Lite Transformer with Long-Short Range Attention}
       \field{year}{2020}
+    \endentry
+    \entry{zhang2020mediapipehands}{misc}{}{}
+      \name{author}{7}{}{%
+        {{un=1,uniquepart=given,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=dfb2aa3f22269786162c9a57cea77fe8}{%
+           family={Bazarevsky},
+           familyi={B\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1dd0e6dedc8fc6459e7f328d6a50f578}{%
+           family={Vakunov},
+           familyi={V\bibinitperiod},
+           given={Andrey},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d03e634b401026233ad6899d8b0aad1b}{%
+           family={Tkachenka},
+           familyi={T\bibinitperiod},
+           given={Andrei},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8bd9f1a06fcb0e0569720484293239c4}{%
+           family={Sung},
+           familyi={S\bibinitperiod},
+           given={George},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=570d1b661550e4426ad790a065b53790}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Chuo-Ling},
+           giveni={C\bibinithyphendelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b34ec7ee85af98aed1e55ed4599fbd0e}
+      \strng{fullhash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{fullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{bibnamehash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authorbibnamehash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authornamehash}{b34ec7ee85af98aed1e55ed4599fbd0e}
+      \strng{authorfullhash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authorfullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CV}
+      \field{eprinttype}{arXiv}
+      \field{title}{{MediaPipe} Hands: On-device Real-time Hand Tracking}
+      \field{year}{2020}
+      \verb{eprint}
+      \verb 2006.10214
+      \endverb
     \endentry
   \enddatalist
   \datalist[entry]{apa/global//global/global/global}
@@ -1482,6 +1734,68 @@
       \field{title}{{LSApp}: Uniendo dos mundos}
       \field{year}{2018}
     \endentry
+    \entry{bazarevsky2020blazepose}{misc}{}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=dfb2aa3f22269786162c9a57cea77fe8}{%
+           family={Bazarevsky},
+           familyi={B\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5bb8e21aa48dc99a977a72e130704fe}{%
+           family={Grishchenko},
+           familyi={G\bibinitperiod},
+           given={Ivan},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00821d21b98f6ba602fb8b5b8900bf21}{%
+           family={Raveendran},
+           familyi={R\bibinitperiod},
+           given={Karthik},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c6db18c5801e610209672dd9ad86131a}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Tyler},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{1bd15b089228fd239d9cd7e38d190e14}
+      \strng{fullhash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{fullhashraw}{702429e7bbf509350a61ca1f7830f982}
+      \strng{bibnamehash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authorbibnamehash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authornamehash}{1bd15b089228fd239d9cd7e38d190e14}
+      \strng{authorfullhash}{702429e7bbf509350a61ca1f7830f982}
+      \strng{authorfullhashraw}{702429e7bbf509350a61ca1f7830f982}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CV}
+      \field{eprinttype}{arXiv}
+      \field{title}{{BlazePose}: On-device Real-time Body Pose Tracking}
+      \field{year}{2020}
+      \verb{eprint}
+      \verb 2006.10204
+      \endverb
+    \endentry
     \entry{blessit2024interpretes}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2452563d59b5d4c341e47ff394af3a2c}{%
@@ -1506,34 +1820,6 @@
       \field{howpublished}{\url{https://www.blessit.net/interpretacion-lengua-de-senas}}
       \field{title}{Interpretación Lengua de Señas --- Central de intérpretes}
       \field{year}{2024}
-    \endentry
-    \entry{signall2018techcrunch}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=078e04180e33e6040a08e6a4476d5005}{%
-           family={Coldewey},
-           familyi={C\bibinitperiod},
-           given={Devin},
-           giveni={D\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{fullhash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{fullhashraw}{078e04180e33e6040a08e6a4476d5005}
-      \strng{bibnamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorbibnamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authornamehash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorfullhash}{078e04180e33e6040a08e6a4476d5005}
-      \strng{authorfullhashraw}{078e04180e33e6040a08e6a4476d5005}
-      \field{sortinit}{C}
-      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://techcrunch.com/2018/02/14/signall-is-slowly-but-surely-building-a-sign-language-translation-platform/}}
-      \field{title}{{SignAll} is slowly but surely building a sign language translation platform}
-      \field{year}{2018}
     \endentry
     \entry{cas2024senario}{misc}{}{}
       \name{author}{1}{}{%
@@ -2009,6 +2295,112 @@
       \field{pages}{1459\bibrangedash 1469}
       \range{pages}{11}
     \endentry
+    \entry{lugaresi2019mediapipe}{article}{}{}
+      \name{author}{14}{}{%
+        {{un=0,uniquepart=base,hash=ec152126f5b7712b4664db54b34b4645}{%
+           family={Lugaresi},
+           familyi={L\bibinitperiod},
+           given={Camillo},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ac68c9c2cdd3f35d3081f63bbff53f4}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Jiuqiang},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5ffdaa304dcd72834225b0118f1bcafe}{%
+           family={Nash},
+           familyi={N\bibinitperiod},
+           given={Hadon},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1f3300784d32984e9ecd83fc5a802b42}{%
+           family={McClanahan},
+           familyi={M\bibinitperiod},
+           given={Chris},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45e413ffcaa4c9502fa2324ff7119a96}{%
+           family={Uboweja},
+           familyi={U\bibinitperiod},
+           given={Esha},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=08c98dbfe4aa3b8cf880d282aa412f88}{%
+           family={Hays},
+           familyi={H\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=570d1b661550e4426ad790a065b53790}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Chuo-Ling},
+           giveni={C\bibinithyphendelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c96625f13ef34649dd2787aa5040e50f}{%
+           family={Yong},
+           familyi={Y\bibinitperiod},
+           given={Ming\bibnamedelima Guang},
+           giveni={M\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=34ea7cffda58c3dbe4f6a54a086b1f5f}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Juhyun},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=11990ea061aa31072060a31f843bd78b}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Wan-Teh},
+           giveni={W\bibinithyphendelim T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7b00c7dc9cbab46c36fc743e18a178a1}{%
+           family={Hua},
+           familyi={H\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=971231705f3e0945b9e8e24bcd3780bd}{%
+           family={Georg},
+           familyi={G\bibinitperiod},
+           given={Manfred},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{61a5cc34be11c6018e3b2391e9ea2937}
+      \strng{fullhash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{fullhashraw}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{bibnamehash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authorbibnamehash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authornamehash}{61a5cc34be11c6018e3b2391e9ea2937}
+      \strng{authorfullhash}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \strng{authorfullhashraw}{9ebb3dd5b2419c3295bc0873d51d1ff1}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Third Workshop on Computer Vision for {AR/VR} at {IEEE} {CVPR}}
+      \field{title}{{MediaPipe}: A Framework for Building Perception Pipelines}
+      \field{year}{2019}
+    \endentry
     \entry{mann1947test}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=5cf19aa5110d49e31bafd83ce394b092}{%
@@ -2047,7 +2439,7 @@
       \field{pages}{50\bibrangedash 60}
       \range{pages}{11}
     \endentry
-    \entry{massone1993numero}{article}{}{}
+    \entry{massoneparte1}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -2081,7 +2473,47 @@
       \field{pages}{73\bibrangedash 99}
       \range{pages}{27}
     \endentry
-    \entry{massone2012curso}{book}{}{}
+    \entry{massone1993lengua}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
+           family={Massone},
+           familyi={M\bibinitperiod},
+           given={María\bibnamedelima Ignacia},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=02e0ad8d6e86851af3642b3d90179714}{%
+           family={Machado},
+           familyi={M\bibinitperiod},
+           given={Emilia\bibnamedelima Margarita},
+           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Buenos Aires, Argentina}%
+      }
+      \list{publisher}{1}{%
+        {Edicial}%
+      }
+      \strng{namehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{fullhash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{fullhashraw}{2a4a383b3fd800438b8c303905be8490}
+      \strng{bibnamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorbibnamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authornamehash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorfullhash}{2a4a383b3fd800438b8c303905be8490}
+      \strng{authorfullhashraw}{2a4a383b3fd800438b8c303905be8490}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{950-506-213-3}
+      \field{title}{Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe}
+      \field{year}{1993}
+    \endentry
+    \entry{massoneparte2}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -2184,6 +2616,93 @@
       \field{howpublished}{\url{https://www.argentina.gob.ar/caracteristicas-de-la-comunicacion-por-videollamadas}}
       \field{title}{Características de la comunicación por videollamadas --- Línea 144}
       \field{year}{2024}
+    \endentry
+    \entry{pope2023efficiently}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=d8be19e523fa307d44a1fddbff485f5c}{%
+           family={Pope},
+           familyi={P\bibinitperiod},
+           given={Reiner},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5f9ac8488ec08b42c64992884a30aef4}{%
+           family={Douglas},
+           familyi={D\bibinitperiod},
+           given={Sholto},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fd55b702c004c13506e70bb76a4e987c}{%
+           family={Chowdhery},
+           familyi={C\bibinitperiod},
+           given={Aakanksha},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=13202969e372bc82318f9629cbdd199b}{%
+           family={Devlin},
+           familyi={D\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b75383e6b48c8360c7a60031424c85cf}{%
+           family={Bradbury},
+           familyi={B\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=738351d7ac35edab0cd231cb64407ab4}{%
+           family={Levskaya},
+           familyi={L\bibinitperiod},
+           given={Anselm},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=f597916b9c626b6e1a519e757e97b3de}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Chenggang},
+           giveni={C\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=f42b0f2cefb8f54e220b8df5fc3a3ce1}{%
+           family={Nado},
+           familyi={N\bibinitperiod},
+           given={Zachary},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5a9f30e0c0441d2aea255916ff375e8c}{%
+           family={Jaitly},
+           familyi={J\bibinitperiod},
+           given={Navdeep},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
+           family={Vaswani},
+           familyi={V\bibinitperiod},
+           given={Ashish},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{fullhash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{fullhashraw}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{bibnamehash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authorbibnamehash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authornamehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{authorfullhash}{c1608f028e1d5834a4ee483870a517a5}
+      \strng{authorfullhashraw}{c1608f028e1d5834a4ee483870a517a5}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of Machine Learning and Systems}
+      \field{title}{Efficiently scaling transformer inference}
+      \field{volume}{5}
+      \field{year}{2023}
+      \field{pages}{606\bibrangedash 624}
+      \range{pages}{19}
     \endentry
     \entry{pressman2014software}{book}{}{}
       \name{author}{2}{}{%
@@ -2359,55 +2878,6 @@
       \field{title}{About {SignAll Technologies}}
       \field{year}{2026}
     \endentry
-    \entry{sorenson2025handtalk}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=c217684be96ef0b95ac51b6d3c5d552a}{%
-           family={{Sorenson Communications}},
-           familyi={S\bibinitperiod}}}%
-      }
-      \strng{namehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{fullhash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{fullhashraw}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{bibnamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorbibnamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authornamehash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorfullhash}{c217684be96ef0b95ac51b6d3c5d552a}
-      \strng{authorfullhashraw}{c217684be96ef0b95ac51b6d3c5d552a}
-      \field{sortinit}{S}
-      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://sorenson.com/newsroom/sorenson-acquires-omnibridge-and-hand-talk-to-develop-automated-sign-language-translation-capabilities/}}
-      \field{title}{Sorenson Communications acquires {OmniBridge} and {Hand Talk}}
-      \field{year}{2025}
-    \endentry
-    \entry{unmdp2024protocolo}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=f87783be616db5fe7e46f074529198c5}{%
-           family={{Universidad Nacional de Mar del Plata, Facultad de Ingeniería}},
-           familyi={U\bibinitperiod}}}%
-      }
-      \strng{namehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{fullhash}{f87783be616db5fe7e46f074529198c5}
-      \strng{fullhashraw}{f87783be616db5fe7e46f074529198c5}
-      \strng{bibnamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorbibnamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authornamehash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorfullhash}{f87783be616db5fe7e46f074529198c5}
-      \strng{authorfullhashraw}{f87783be616db5fe7e46f074529198c5}
-      \field{sortinit}{U}
-      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Protocolo de Trabajo Final --- Ingeniería en Informática}
-      \field{year}{2024}
-    \endentry
     \entry{vaswani2017attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -2477,40 +2947,6 @@
       \field{journaltitle}{arXiv preprint arXiv:1706.03762}
       \field{title}{Attention Is All You Need}
       \field{year}{2017}
-    \endentry
-    \entry{github2026proyectolsa}{misc}{}{}
-      \name{author}{2}{}{%
-        {{un=0,uniquepart=base,hash=8b9267ffa21057c67bb76834d31e8232}{%
-           family={Verón},
-           familyi={V\bibinitperiod},
-           given={Francisco},
-           giveni={F\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=5e54c0c54732252facb04083d8f41732}{%
-           family={Nigro},
-           familyi={N\bibinitperiod},
-           given={Maite},
-           giveni={M\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{fullhash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{fullhashraw}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{bibnamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorbibnamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authornamehash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorfullhash}{14f3c40682b9cc4adb6c91a366484661}
-      \strng{authorfullhashraw}{14f3c40682b9cc4adb6c91a366484661}
-      \field{sortinit}{V}
-      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA}}
-      \field{title}{2026\_Proyecto\_LSA}
-      \field{year}{2026}
     \endentry
     \entry{w3c2024mediacapture}{misc}{}{}
       \name{author}{1}{}{%
@@ -2621,8 +3057,78 @@
       \field{title}{Lite Transformer with Long-Short Range Attention}
       \field{year}{2020}
     \endentry
+    \entry{zhang2020mediapipehands}{misc}{}{}
+      \name{author}{7}{}{%
+        {{un=1,uniquepart=given,hash=ae021641a8f85fd2607152ab99ed115b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=dfb2aa3f22269786162c9a57cea77fe8}{%
+           family={Bazarevsky},
+           familyi={B\bibinitperiod},
+           given={Valentin},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1dd0e6dedc8fc6459e7f328d6a50f578}{%
+           family={Vakunov},
+           familyi={V\bibinitperiod},
+           given={Andrey},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d03e634b401026233ad6899d8b0aad1b}{%
+           family={Tkachenka},
+           familyi={T\bibinitperiod},
+           given={Andrei},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8bd9f1a06fcb0e0569720484293239c4}{%
+           family={Sung},
+           familyi={S\bibinitperiod},
+           given={George},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=570d1b661550e4426ad790a065b53790}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Chuo-Ling},
+           giveni={C\bibinithyphendelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9b23f96eed985127659775e2b92e3e}{%
+           family={Grundmann},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b34ec7ee85af98aed1e55ed4599fbd0e}
+      \strng{fullhash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{fullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{bibnamehash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authorbibnamehash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authornamehash}{b34ec7ee85af98aed1e55ed4599fbd0e}
+      \strng{authorfullhash}{16cfb3f5ef97452df4f7505f2118712e}
+      \strng{authorfullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CV}
+      \field{eprinttype}{arXiv}
+      \field{title}{{MediaPipe} Hands: On-device Real-time Hand Tracking}
+      \field{year}{2020}
+      \verb{eprint}
+      \verb 2006.10214
+      \endverb
+    \endentry
   \enddatalist
-  \missing{argentina2020ley27710}
+  \missing{cabello2010threejs}
+  \missing{liddell1989phonological}
+  \missing{moryossef2021poseformat}
 \endrefsection
 \endinput
 

@@ -1,0 +1,220 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Implementación y Desarrollo}{44}{chapter.6}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {6.1}Implementación del subsistema de reconocimiento gestual}{44}{section.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.1}Preprocesamiento de datos}{44}{subsection.6.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Pipeline de captura e ingesta con MediaPipe Holistic.}{44}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Normalización geométrica y corrección de aspecto.}{44}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.2}Preprocesamiento y arquitectura neuronal TinySkeletonClassifier}{44}{subsection.6.1.2}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}Implementación del subsistema de traducción semántica bidireccional}{45}{section.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.1}Selección y especificación de la suite de modelos de lenguaje}{45}{subsection.6.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.2}Canal directo (LSA $\rightarrow $ Español)}{45}{subsection.6.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Preparación del corpus.}{45}{section*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ajuste de bajo rango.}{45}{section*.31}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Consigna de traducción.}{46}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Generación.}{46}{section*.33}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.3}Canal inverso (Español $\rightarrow $ LSA)}{47}{subsection.6.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Preparación del corpus.}{47}{section*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ajuste de bajo rango.}{47}{section*.35}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Consigna de glosado.}{48}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Generación.}{48}{section*.37}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.4}Tratamiento de letras y dígitos sueltos}{49}{subsection.6.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.5}Cuantización GGUF Q4\_K\_M y servicio de inferencia}{49}{subsection.6.2.5}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Formulación analítica para la estimación de memoria RAM en tiempo de inferencia.}{50}{section*.38}\protected@file@percent }
+\newlabel{eq:runtime_ram_formula}{{6.1}{50}{Formulación analítica para la estimación de memoria RAM en tiempo de inferencia}{equation.6.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.3}Integración en Google Meet y extensión de navegador}{50}{section.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Paquetes de la extensión. La extracción corre en el \textit  {sandbox}. El lienzo recibe el clip ya armado.}}{50}{figure.6.1}\protected@file@percent }
+\newlabel{fig:paquetes_extension}{{6.1}{50}{Paquetes de la extensión. La extracción corre en el \textit {sandbox}. El lienzo recibe el clip ya armado}{figure.6.1}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}Despliegue en Chrome Manifest V3: aislamiento offscreen y sandbox}{51}{subsection.6.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Intercepción de la captura de cámara y lienzo virtual}{51}{subsection.6.3.2}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.3}Motor local ILSA (FastAPI)}{52}{subsection.6.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.4}Implementación del avatar}{52}{section.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.1}Tecnologías empleadas}{52}{subsection.6.4.1}\protected@file@percent }
+\newlabel{sec:impl_tpose}{{6.4.1}{52}{Tecnologías empleadas}{subsection.6.4.1}{}}
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces Despliegue del prototipo probado. El video no sale del equipo. Cada servicio remoto es una sola instancia.}}{53}{figure.6.2}\protected@file@percent }
+\newlabel{fig:despliegue_prototipo}{{6.2}{53}{Despliegue del prototipo probado. El video no sale del equipo. Cada servicio remoto es una sola instancia}{figure.6.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.2}Vía descartada: retarget hacia un avatar VRM}{53}{subsection.6.4.2}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.3}Estructura del pedido}{54}{subsection.6.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.4}Decisiones técnicas de la reproducción}{54}{subsection.6.4.4}\protected@file@percent }
+\newlabel{sec:impl_esqueleto}{{6.4.4}{54}{Decisiones técnicas de la reproducción}{subsection.6.4.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Valores del compositor.}{54}{section*.39}\protected@file@percent }
+\newlabel{eq:ema_pose}{{6.2}{54}{Valores del compositor}{equation.6.2}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Postura de espera.}{55}{section*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Reflejo de la miniatura local.}{55}{section*.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.5}Instancia de validación del prototipo mediante túnel seguro}{55}{section.6.5}\protected@file@percent }
+\@setckpt{capitulos/cap06_implementacion}{
+\setcounter{page}{56}
+\setcounter{equation}{2}
+\setcounter{enumi}{7}
+\setcounter{enumii}{0}
+\setcounter{enumiii}{0}
+\setcounter{enumiv}{0}
+\setcounter{footnote}{0}
+\setcounter{mpfootnote}{0}
+\setcounter{part}{0}
+\setcounter{chapter}{6}
+\setcounter{section}{5}
+\setcounter{subsection}{0}
+\setcounter{subsubsection}{0}
+\setcounter{paragraph}{0}
+\setcounter{subparagraph}{0}
+\setcounter{figure}{2}
+\setcounter{table}{0}
+\setcounter{parentequation}{0}
+\setcounter{section@level}{1}
+\setcounter{Item}{26}
+\setcounter{Hfootnote}{0}
+\setcounter{bookmark@seq@number}{73}
+\setcounter{float@type}{8}
+\setcounter{FancyVerbLine}{0}
+\setcounter{linenumber}{1}
+\setcounter{LN@truepage}{62}
+\setcounter{FancyVerbWriteLine}{0}
+\setcounter{FancyVerbBufferLine}{0}
+\setcounter{FV@TrueTabGroupLevel}{0}
+\setcounter{FV@TrueTabCounter}{0}
+\setcounter{FV@HighlightLinesStart}{0}
+\setcounter{FV@HighlightLinesStop}{0}
+\setcounter{FancyVerbLineBreakLast}{0}
+\setcounter{FV@BreakBufferDepth}{0}
+\setcounter{tabx@nest}{0}
+\setcounter{listtotal}{0}
+\setcounter{listcount}{0}
+\setcounter{liststart}{0}
+\setcounter{liststop}{0}
+\setcounter{citecount}{0}
+\setcounter{citetotal}{0}
+\setcounter{multicitecount}{0}
+\setcounter{multicitetotal}{0}
+\setcounter{instcount}{106}
+\setcounter{maxnames}{2}
+\setcounter{minnames}{1}
+\setcounter{maxitems}{999}
+\setcounter{minitems}{1}
+\setcounter{citecounter}{0}
+\setcounter{maxcitecounter}{0}
+\setcounter{savedcitecounter}{0}
+\setcounter{uniquelist}{0}
+\setcounter{uniquename}{0}
+\setcounter{refsection}{0}
+\setcounter{refsegment}{0}
+\setcounter{maxextratitle}{0}
+\setcounter{maxextratitleyear}{0}
+\setcounter{maxextraname}{0}
+\setcounter{maxextradate}{0}
+\setcounter{maxextraalpha}{0}
+\setcounter{abbrvpenalty}{50}
+\setcounter{highnamepenalty}{50}
+\setcounter{lownamepenalty}{25}
+\setcounter{maxparens}{3}
+\setcounter{parenlevel}{0}
+\setcounter{blx@maxsection}{0}
+\setcounter{mincomprange}{10}
+\setcounter{maxcomprange}{100000}
+\setcounter{mincompwidth}{1}
+\setcounter{afterword}{0}
+\setcounter{savedafterword}{0}
+\setcounter{annotator}{0}
+\setcounter{savedannotator}{0}
+\setcounter{author}{0}
+\setcounter{savedauthor}{0}
+\setcounter{bookauthor}{0}
+\setcounter{savedbookauthor}{0}
+\setcounter{commentator}{0}
+\setcounter{savedcommentator}{0}
+\setcounter{editor}{0}
+\setcounter{savededitor}{0}
+\setcounter{editora}{0}
+\setcounter{savededitora}{0}
+\setcounter{editorb}{0}
+\setcounter{savededitorb}{0}
+\setcounter{editorc}{0}
+\setcounter{savededitorc}{0}
+\setcounter{foreword}{0}
+\setcounter{savedforeword}{0}
+\setcounter{holder}{0}
+\setcounter{savedholder}{0}
+\setcounter{introduction}{0}
+\setcounter{savedintroduction}{0}
+\setcounter{namea}{0}
+\setcounter{savednamea}{0}
+\setcounter{nameb}{0}
+\setcounter{savednameb}{0}
+\setcounter{namec}{0}
+\setcounter{savednamec}{0}
+\setcounter{translator}{0}
+\setcounter{savedtranslator}{0}
+\setcounter{shortauthor}{0}
+\setcounter{savedshortauthor}{0}
+\setcounter{shorteditor}{0}
+\setcounter{savedshorteditor}{0}
+\setcounter{narrator}{0}
+\setcounter{savednarrator}{0}
+\setcounter{execproducer}{0}
+\setcounter{savedexecproducer}{0}
+\setcounter{execdirector}{0}
+\setcounter{savedexecdirector}{0}
+\setcounter{with}{0}
+\setcounter{savedwith}{0}
+\setcounter{labelname}{0}
+\setcounter{savedlabelname}{0}
+\setcounter{institution}{0}
+\setcounter{savedinstitution}{0}
+\setcounter{lista}{0}
+\setcounter{savedlista}{0}
+\setcounter{listb}{0}
+\setcounter{savedlistb}{0}
+\setcounter{listc}{0}
+\setcounter{savedlistc}{0}
+\setcounter{listd}{0}
+\setcounter{savedlistd}{0}
+\setcounter{liste}{0}
+\setcounter{savedliste}{0}
+\setcounter{listf}{0}
+\setcounter{savedlistf}{0}
+\setcounter{location}{0}
+\setcounter{savedlocation}{0}
+\setcounter{organization}{0}
+\setcounter{savedorganization}{0}
+\setcounter{origlocation}{0}
+\setcounter{savedoriglocation}{0}
+\setcounter{origpublisher}{0}
+\setcounter{savedorigpublisher}{0}
+\setcounter{publisher}{0}
+\setcounter{savedpublisher}{0}
+\setcounter{language}{0}
+\setcounter{savedlanguage}{0}
+\setcounter{origlanguage}{0}
+\setcounter{savedoriglanguage}{0}
+\setcounter{citation}{0}
+\setcounter{savedcitation}{0}
+\setcounter{pageref}{0}
+\setcounter{savedpageref}{0}
+\setcounter{textcitecount}{0}
+\setcounter{textcitetotal}{0}
+\setcounter{textcitemaxnames}{0}
+\setcounter{biburlbigbreakpenalty}{100}
+\setcounter{biburlbreakpenalty}{200}
+\setcounter{biburlnumpenalty}{0}
+\setcounter{biburlucpenalty}{0}
+\setcounter{biburllcpenalty}{0}
+\setcounter{smartand}{0}
+\setcounter{bbx:relatedcount}{0}
+\setcounter{bbx:relatedtotal}{0}
+\setcounter{lstnumber}{8}
+\setcounter{lstlisting}{0}
+}

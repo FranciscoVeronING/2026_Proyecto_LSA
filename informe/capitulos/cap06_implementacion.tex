@@ -145,7 +145,38 @@ donde:
 
 \section{Integración en Google Meet y extensión de navegador}
 
-La integración con la plataforma Google Meet se implementó como una extensión de navegador desarrollada bajo la especificación Manifest V3 de Chromium \parencite{chrome2024manifestv3}. La arquitectura física del código distribuye las responsabilidades en un script en segundo plano (\textit{service worker}), un documento oculto (\textit{offscreen}), una página de entorno aislado (\textit{sandbox}) y dos scripts de contenido (\textit{content scripts}) inyectados sobre el dominio de la videollamada \parencite{chrome2024manifestv3}.
+La integración con la plataforma Google Meet se implementó como una extensión de navegador desarrollada bajo la especificación Manifest V3 de Chromium \parencite{chrome2024manifestv3}. La arquitectura física del código distribuye las responsabilidades en un script en segundo plano (\textit{service worker}), un documento oculto (\textit{offscreen}), una página de entorno aislado (\textit{sandbox}) y dos scripts de contenido (\textit{content scripts}) inyectados sobre el dominio de la videollamada \parencite{chrome2024manifestv3}. La Figura~\ref{fig:paquetes_extension} muestra ese reparto. El motor ILSA queda fuera de la extensión.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\footnotesize,
+        pkg/.style={draw, rounded corners=2pt, align=center, inner sep=4pt, fill=white, text width=3.3cm},
+        arr/.style={-{Stealth[length=2.2mm]}, thick}
+    ]
+        \node[pkg] (sw) {\textit{Service worker}};
+        \node[pkg, below left=0.7cm and 0.15cm of sw] (cs) {Script de contenido\\\texttt{inject-gum.js}};
+        \node[pkg, below=0.7cm of cs] (canvas) {Lienzo\\\texttt{canvas}};
+        \node[pkg, below right=0.7cm and 0.15cm of sw] (off) {Documento \textit{offscreen}};
+        \node[pkg, below=0.7cm of off] (sb) {\textit{Sandbox}\\MediaPipe Holistic};
+        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(sw)(cs)(off)(sb)(canvas),
+              label={[font=\scriptsize]above:Extensión Manifest V3}] (ext) {};
+        \node[pkg, right=2.2cm of off] (ilsa) {Motor ILSA\\\texttt{127.0.0.1:8765}};
+        \draw[arr, dashed] (sw) -- (cs);
+        \draw[arr, dashed] (sw) -- (off);
+        \draw[arr] (cs) -- node[left, font=\scriptsize] {cámara} (canvas);
+        \draw[arr] (off.south) -- (sb.north);
+        \draw[arr] (sb.west) to[out=180, in=180, looseness=1.15]
+            node[left, font=\scriptsize] {225 puntos} (off.west);
+        \draw[arr] (off.east) -- node[above, font=\scriptsize] {\texttt{POST /sign}} (ilsa.west);
+        \coordinate (bajo) at ($(ilsa.south |- ext.south)+(0,-0.45)$);
+        \coordinate (llega) at (bajo -| canvas.south);
+        \draw[arr] (ilsa.south) -- (ilsa.south |- bajo) -- (llega) -- (canvas.south);
+        \node[font=\scriptsize, below] at ($(bajo)!0.5!(llega)$) {clip};
+    \end{tikzpicture}
+    \caption{Paquetes de la extensión. La extracción corre en el \textit{sandbox}. El lienzo recibe el clip ya armado.}
+    \label{fig:paquetes_extension}
+\end{figure}
 
 \subsection{Despliegue en Chrome Manifest V3: aislamiento offscreen y sandbox}
 
@@ -180,22 +211,82 @@ Para cumplir con las políticas de seguridad del navegador, el middleware del se
 
 La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, evitando bloqueos en la atención de las solicitudes HTTP de la API \parencite{pressman2014software}. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) utilizando PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
 
-\section{Servicio de archivos del avatar en la nube}
+\section{Implementación del avatar}
 
-La animación del esqueleto queda fuera de esta sección. Aquí se registra cómo los archivos de seña llegan a la videollamada: un servicio aparte del traductor, publicado en Cloud Run, y el contrato con el que ILSA los pide.
+\subsection{Tecnologías empleadas}
+\label{sec:impl_tpose}
 
-\subsection{Despliegue de la instancia de prueba}
-El servicio se construye como una imagen de contenedor. La base es Python 3.10 en su variante reducida. Dentro van el programa y la carpeta de poses. El código anterior de captura y clasificación no se copia. El directorio de trabajo del contenedor es \texttt{/app}. El proceso arranca con el programa principal y lee el puerto de la variable de entorno. Si esa variable no existe, usa 8080.
+El servicio de archivos es un proceso aparte del traductor. La imagen parte de Python 3.10 en su variante reducida. Dentro van el programa y la carpeta de poses. El código anterior de captura y clasificación no se copia. El directorio de trabajo del contenedor es \texttt{/app}. El proceso arranca con el programa principal y lee el puerto de la variable de entorno. Si esa variable no existe, usa 8080.
 
-La publicación se hizo en Cloud Run, con el nombre \texttt{tpose-server}, en la región \texttt{southamerica-east1} y en el proyecto \texttt{ilsa-511622}. El comando de despliegue parte de la raíz del repositorio, sube el código, construye la imagen y deja el servicio abierto sin token de usuario. El puerto declarado hacia la plataforma es 8080. Los nombres de la carpeta son ASCII. Un archivo con eñe o con tilde en el nombre hace fallar la importación del contenedor, aunque la imagen se construya bien. Por eso la letra suelta \texttt{Ñ} está en \texttt{ENIE.pose} y las eñes interiores quedaron escritas con \texttt{N}.
+La publicación se hizo en Cloud Run, con el nombre \texttt{tpose-server}, en la región \texttt{southamerica-east1} y en el proyecto \texttt{ilsa-511622}. El comando de despliegue parte de la raíz del repositorio, sube el código, construye la imagen y deja el servicio abierto sin token de usuario. El puerto declarado hacia la plataforma es 8080. El proceso, igual, lee el puerto que la plataforma inyecta al arrancar. Los nombres de la carpeta son ASCII. Un archivo con eñe o con tilde en el nombre hace fallar la importación del contenedor, aunque la imagen se construya bien.
 
-\subsection{Contrato en ejecución}
+El dibujo corre en el lienzo de la extensión de Meet. El motor local, el mismo FastAPI de la Sección anterior, arma la lista de fotogramas. La extensión no estima puntos y no pide archivos por su cuenta. La Figura~\ref{fig:despliegue_prototipo} muestra la instancia con la que se probó el prototipo: una sola copia de cada servicio, sin el balanceador de la proyección de producción.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\footnotesize,
+        box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt, fill=white, text width=3.6cm},
+        arr/.style={-{Stealth[length=2.2mm]}, thick}
+    ]
+        \node[box] (chrome) {Chrome\\extensión de Meet};
+        \node[box, below=0.6cm of chrome] (ilsa) {ILSA\\\texttt{127.0.0.1:8765}};
+        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(chrome)(ilsa),
+              label={[font=\scriptsize]above:Equipo del usuario}] (pc) {};
+        \node[box, right=2.4cm of chrome] (sem) {Traductor\\una instancia Cloud Run};
+        \node[box, below=0.6cm of sem] (pose) {\texttt{tpose-server}\\\texttt{southamerica-east1}\\puerto 8080};
+        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(sem)(pose),
+              label={[font=\scriptsize]above:Google Cloud Run}] (cloud) {};
+        \draw[arr] (chrome) -- node[right, font=\scriptsize] {HTTP local} (ilsa);
+        \draw[arr] (ilsa.east) -- node[above, font=\scriptsize] {texto} (sem.west);
+        \draw[arr] (ilsa.south east) -- node[below, font=\scriptsize] {\texttt{GET /tposes}} (pose.west);
+    \end{tikzpicture}
+    \caption{Despliegue del prototipo probado. El video no sale del equipo. Cada servicio remoto es una sola instancia.}
+    \label{fig:despliegue_prototipo}
+\end{figure}
+
+\subsection{Vía descartada: retarget hacia un avatar VRM}
+
+Antes del diccionario de poses se probó la primera familia de la Tabla~\ref{tab:familias_avatar}: un personaje VRM, con malla y huesos de longitud fija, animado por rotaciones. El fundamento del ensayo es el \textit{retarget}. MediaPipe Holistic entrega posiciones, y el avatar exige rotaciones sobre su propio esqueleto. El visor se armó con Three.js. Para la mano se probó Kalidokit, que resume cada dedo en un único ángulo de rizo, y una cinemática inversa que lleva el extremo del hueso hasta el punto medido.
+
+La prueba no se retuvo. El desarrollo no contaba con práctica suficiente de animación tridimensional, y las bibliotecas de \textit{retarget} no sostuvieron de forma estable el paso de la pose al esqueleto VRM. El emparejamiento fallaba con frecuencia porque la pose pierde la profundidad en el eje Z: la coordenada de la mano queda relativa a la muñeca y en una escala distinta del desplazamiento en el plano, de modo que el hueso no recibe una distancia utilizable. Si se respeta la longitud del hueso, la yema no cae sobre el punto medido. Si la cinemática inversa alarga el miembro hasta ese punto, la mano pierde la configuración y, en el alfabeto manual, la letra cambia. Kalidokit, además, confunde configuraciones próximas.
+
+El diccionario de \texttt{.pose} evita ese paso: dibuja los puntos medidos y no los convierte en rotaciones de otro cuerpo. Si más adelante se retoma el avatar tridimensional, una línea de mejora es filmar cada seña desde tres ángulos, para reconstruir la profundidad que una sola toma frontal no conserva.
+
+\subsection{Estructura del pedido}
+
 ILSA, en modo oyente, no lee un diccionario de poses del disco de la videollamada. Después de obtener las glosas del canal inverso, normaliza cada nombre y pide \texttt{GET /tposes/\{glosa\}.pose}. \texttt{GET /health} solo indica que el proceso está arriba. Un 200 del archivo trae el binario. Un 404 indica que esa glosa no tiene clip.
 
-En el motor local, \texttt{POST /hearing} hace las dos consultas: primero la oración hacia el canal inverso y después los archivos. La respuesta incluye la oración, las glosas y el clip. \texttt{POST /avatar} recibe una cadena de glosas y repite solo la descarga. En modo señante las dos rutas responden 400. La dirección del servicio se puede reemplazar por configuración, sin recompilar el motor. Los archivos ya bajados quedan en la caché local del equipo.
+En el motor local, \texttt{POST /hearing} hace las dos consultas: primero la oración hacia el canal inverso y después los archivos. La respuesta trae la oración, las glosas y el clip. \texttt{POST /avatar} recibe una cadena de glosas y repite solo la descarga. En modo señante las dos rutas responden 400. La dirección del servicio se reemplaza por configuración, sin recompilar el motor. Los archivos ya bajados quedan en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red.
 
-\subsection{Archivo ausente}
-Si el nombre de una glosa no tiene archivo, ILSA no inventa el movimiento. Pide las letras de esa glosa al mismo servicio, cada una como un archivo. \texttt{CH} y \texttt{Ñ} cuentan como una seña, y la \texttt{Ñ} suelta se pide como \texttt{ENIE}. Si el servicio no responde, las glosas siguen disponibles como texto y el clip queda vacío. El tope de la cadena es 24 archivos.
+Si el nombre de una glosa no tiene archivo, ILSA no inventa el movimiento. Pide las letras de esa glosa al mismo servicio, cada una como un archivo. Si el servicio no responde, las glosas siguen disponibles como texto y el clip queda vacío. El tope de la cadena es 24 archivos.
+
+\subsection{Decisiones técnicas de la reproducción}
+\label{sec:impl_esqueleto}
+
+La Sección~\ref{sec:repr_inversa} fija qué se muestra y por qué. Aquí quedan los valores con los que esas reglas se programaron, y cuál de los dos programas hace cada paso. La preparación del clip y el empalme entre glosas corren en ILSA, una vez que los archivos ya llegaron del servicio de poses. La extensión de la videollamada no rehace ese empalme. Recibe la lista de fotogramas ya armada y la dibuja en la mitad derecha del lienzo. El navegador, entonces, no vuelve a calcular el puente: elige, según el tiempo transcurrido, cuál de esos fotogramas le toca mostrar.
+
+\paragraph{Valores del compositor.}
+Antes del recorte, todos los clips se llevan a 30 fotogramas por segundo. Con esa tasa común, una espera de seis fotogramas dura lo mismo en cualquier seña. Si se dejara cada video a la cadencia con la que fue filmado, seis fotogramas de un clip a 24 por segundo durarían más que seis fotogramas de un clip a 30, y el empalme perdería la medida del tiempo.
+
+El suavizado es un promedio exponencial. Si $x_t$ es la posición recién medida y $p_{t-1}$ es la pose ya aceptada en el fotograma anterior, la pose que se conserva es
+\begin{equation}
+p_t = \alpha\, x_t + (1 - \alpha)\, p_{t-1},
+\label{eq:ema_pose}
+\end{equation}
+con $\alpha = 0{,}50$. La medición nueva y la pose anterior pesan lo mismo. Ese peso es único para todo el diccionario.
+
+El recuadro común mide $720 \times 780$ píxeles. El cuerpo se escala para que el ancho de hombros quede en $250$ píxeles. Así, dos tomas de distinto encuadre ocupan el mismo espacio cuando se pegan una detrás de la otra.
+
+El puente dura entre 4 y 8 fotogramas. Si las muñecas del final de una seña y del inicio de la siguiente ya están cerca, se usan 4. Si están lejos, se llega a 8, para que la mano no salte. Un punto cuya confianza queda por debajo de $0{,}15$ sale en la lista como ausente, y el trazo del lienzo no lo une con el punto anterior.
+
+La entrada, desde la postura de espera hasta el primer fotograma de la seña, y la salida, de vuelta a esa espera, duran cerca de seis fotogramas de la tasa de 30. A esa cadencia, cada uno de esos tramos ocupa cerca de un quinto de segundo. La secuencia se corta en el techo fijado en el diseño: 24 glosas y 1200 fotogramas.
+
+\paragraph{Postura de espera.}
+No hay un archivo aparte llamado reposo. El cuerpo y las manos de la espera se copian de los primeros fotogramas de una seña de referencia, el tramo en el que la persona todavía no empezó el gesto, y se escalan al mismo ancho de hombros del lienzo. El antebrazo queda casi horizontal, levemente hacia abajo, y la mano sigue esa línea.
+
+\paragraph{Reflejo de la miniatura local.}
+La videollamada muestra la miniatura de quien usa el sistema como un reflejo. La extensión deshace ese reflejo solo en ese video local. El esqueleto que viaja hacia la otra persona no se invierte. Las dos vistas quedan iguales: la cámara en la mitad izquierda y el esqueleto, sin darlo vuelta, en la mitad derecha.
 
 \section{Instancia de validación del prototipo mediante túnel seguro}
 

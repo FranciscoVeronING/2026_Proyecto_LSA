@@ -2,132 +2,141 @@
 \contentsline {chapter}{\numberline {1}Introducción}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Contexto}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Motivación}{1}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Problemática}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.3}Problemática}{1}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Alcance y limitaciones}{2}{section.1.4}%
-\contentsline {chapter}{\numberline {2}Objetivos}{3}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Objetivo general}{3}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Objetivos específicos}{3}{section.2.2}%
-\contentsline {chapter}{\numberline {3}Marco teórico, estado del arte y metodología}{5}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Marco teórico}{5}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}Arquitectura híbrida de partición Cliente-Nube (Edge-Cloud)}{5}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.1.2}Estructura lingüística de la LSA y traducción Topic-Comment}{5}{subsection.3.1.2}%
-\contentsline {subsection}{\numberline {3.1.3}Visión computacional y reconocimiento basado en esqueletos}{6}{subsection.3.1.3}%
-\contentsline {subsection}{\numberline {3.1.4}Arquitectura neuronal temporal: TinySkeletonClassifier}{6}{subsection.3.1.4}%
-\contentsline {subsection}{\numberline {3.1.5}Modelos de lenguaje pequeños (SLM) y adaptación LoRA}{6}{subsection.3.1.5}%
-\contentsline {subsection}{\numberline {3.1.6}Animación y representación visual mediante Avatar 3D}{7}{subsection.3.1.6}%
-\contentsline {section}{\numberline {3.2}Estado del arte}{7}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Desarrollos en Argentina y la región}{7}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Sistemas internacionales de reconocimiento y síntesis}{7}{subsection.3.2.2}%
-\contentsline {section}{\numberline {3.3}Metodología de desarrollo}{8}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Declaración sobre el uso de herramientas de inteligencia artificial}{8}{subsection.3.3.1}%
-\contentsline {paragraph}{Herramientas empleadas}{8}{section*.5}%
-\contentsline {paragraph}{Alcance y propósito de su utilización}{9}{section*.6}%
-\contentsline {paragraph}{Límites y responsabilidad de autoría}{9}{section*.7}%
-\contentsline {section}{\numberline {3.4}Herramientas y tecnologías empleadas}{10}{section.3.4}%
-\contentsline {chapter}{\numberline {4}Análisis de requerimientos}{11}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Requerimientos funcionales}{11}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Requerimientos no funcionales}{12}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Restricciones}{12}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Especificación del entorno de ejecución cliente}{13}{subsection.4.3.1}%
-\contentsline {paragraph}{Criterio técnico de selección del procesador base}{14}{section*.8}%
-\contentsline {section}{\numberline {4.4}Casos de uso}{15}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Casos de uso esenciales en formato breve}{15}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Casos de uso expandidos}{16}{subsection.4.4.2}%
-\contentsline {chapter}{\numberline {5}Diseño e Implementación de la Arquitectura del Sistema}{18}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Arquitectura global y partición Cliente-Nube}{18}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}Justificación de la partición y modelo de privacidad}{18}{subsection.5.1.1}%
-\contentsline {paragraph}{Asimetría de cómputo y viabilidad en CPU cliente.}{18}{section*.9}%
-\contentsline {paragraph}{Optimización del tráfico de red y latencia de realimentación.}{19}{section*.10}%
-\contentsline {paragraph}{Filtrado local de ruido y compuertas anti-rebote.}{19}{section*.11}%
-\contentsline {paragraph}{Modelo de privacidad por diseño (\textit {Privacy by Design}).}{19}{section*.12}%
-\contentsline {subsection}{\numberline {5.1.2}Flujo integral de datos entre componentes.}{19}{subsection.5.1.2}%
-\contentsline {subsubsection}{Dinámica temporal del Canal Señante $\rightarrow $ Oyente (Modo Sordo)}{20}{section*.13}%
-\contentsline {subsubsection}{Dinámica temporal del Canal Oyente $\rightarrow $ Señante (Modo Oyente)}{22}{section*.14}%
-\contentsline {subsection}{\numberline {5.1.3}Esquema de comunicación y contrato de interfaces (API REST)}{23}{subsection.5.1.3}%
-\contentsline {paragraph}{Políticas de seguridad, CORS y enlace de red}{23}{section*.15}%
-\contentsline {subsubsection}{Contratos de la API Local ILSA}{24}{section*.16}%
-\contentsline {paragraph}{Estructura de la carga de entrada para clasificación (\texttt {/sign})}{24}{section*.17}%
-\contentsline {subsubsection}{Contratos de la API del Servicio Semántico Remoto}{25}{section*.18}%
-\contentsline {paragraph}{Contrato del Canal Directo (\texttt {/translate})}{25}{section*.19}%
-\contentsline {paragraph}{Contrato del Canal Inverso (\texttt {/hearing})}{26}{section*.20}%
-\contentsline {section}{\numberline {5.2}Subsistema de reconocimiento gestual (Clasificador)}{26}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Captura e ingesta de video con MediaPipe Holistic}{26}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Normalización geométrica y corrección de distorsión de relación de aspecto}{27}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}Preprocesamiento: recorte temporal, submuestreo e interpolación}{27}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}Arquitectura neuronal TinySkeletonClassifier (Conv1D + transformer + attention pooling)}{28}{subsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.2.5}Segmentación continua y políticas anti-rebote (RepeatGate)}{29}{subsection.5.2.5}%
-\contentsline {section}{\numberline {5.3}Subsistema de traducción semántica bidireccional}{29}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Canal directo (LSA $\rightarrow $ Español): fine-tuning LoRA y loss masking}{29}{subsection.5.3.1}%
-\contentsline {paragraph}{Estructuración léxica y reglas de traducción}{29}{section*.21}%
-\contentsline {paragraph}{Mecanismo de Loss Masking (\texttt {train\_on\_responses\_only}).}{30}{section*.22}%
-\contentsline {paragraph}{Adaptación LoRA profunda y proyecciones de vocabulario.}{30}{section*.23}%
-\contentsline {paragraph}{Configuración hiperparamétrica del entrenamiento}{31}{section*.24}%
-\contentsline {subsection}{\numberline {5.3.2}Canal inverso (Español $\rightarrow $ LSA): estructuración gramatical topic-comment}{31}{subsection.5.3.2}%
-\contentsline {paragraph}{Asimetría de dominios y desafío de generalización abierta.}{31}{section*.25}%
-\contentsline {paragraph}{Metodología de refinamiento impulsada por fallos (\textit {Failure-Driven Loop}).}{31}{section*.26}%
-\contentsline {paragraph}{Estructuración gramatical y reglas del System Prompt.}{32}{section*.27}%
-\contentsline {subsection}{\numberline {5.3.3}Optimización de inferencia: formato GGUF y cuantización a 4 bits}{33}{subsection.5.3.3}%
-\contentsline {paragraph}{Consolidación de adaptadores y exportación.}{33}{section*.28}%
-\contentsline {paragraph}{Mecánica de cuantización Q4\_K\_M}{33}{section*.29}%
-\contentsline {paragraph}{Impacto en huella de memoria y velocidad de procesamiento.}{33}{section*.30}%
-\contentsline {subsection}{\numberline {5.3.4}Manejo de contexto y memoria conversacional deslizante}{34}{subsection.5.3.4}%
-\contentsline {paragraph}{Modelado de turnos y estructura de datos.}{34}{section*.31}%
-\contentsline {paragraph}{Política de ventana deslizante por turnos totales.}{34}{section*.32}%
-\contentsline {paragraph}{Manejo del historial de conversación y contexto.}{34}{section*.33}%
-\contentsline {section}{\numberline {5.4}Integración en Google Meet y extensión de navegador}{35}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Desafíos del entorno Chrome Manifest V3: aislamiento offscreen y sandbox}{35}{subsection.5.4.1}%
-\contentsline {paragraph}{Página en segundo plano (\textit {offscreen})}{35}{section*.34}%
-\contentsline {paragraph}{Entorno aislado (\textit {sandbox})}{35}{section*.35}%
-\contentsline {paragraph}{Canal de mensajería y flujo de datos}{37}{section*.36}%
-\contentsline {subsection}{\numberline {5.4.2}Intercepción de Media y canvas.captureStream()}{37}{subsection.5.4.2}%
-\contentsline {paragraph}{Envoltorio de getUserMedia y desvío a video oculto}{37}{section*.37}%
-\contentsline {paragraph}{Generación de flujo sintético con canvas.captureStream()}{37}{section*.38}%
-\contentsline {paragraph}{Ventajas del lienzo virtual y gestión de subtítulos}{38}{section*.39}%
-\contentsline {subsection}{\numberline {5.4.3}Motor Local ILSA (FastAPI)}{38}{subsection.5.4.3}%
-\contentsline {paragraph}{Recepción de secuencias y ejecución del clasificador}{38}{section*.40}%
-\contentsline {paragraph}{Filtrado con RepeatGate y acumulación en UtteranceBuffer}{38}{section*.41}%
-\contentsline {paragraph}{Manejo de concurrencia y síntesis de voz (pyttsx3)}{38}{section*.42}%
-\contentsline {paragraph}{Empaquetado y distribución ejecutable}{39}{section*.43}%
-\contentsline {section}{\numberline {5.5}Representación gestual Inversa mediante avatar 3D}{39}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Controlador de animaciones esqueléticas por glosas}{39}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Mecanismo de contingencia: deletreo manual dactilológico}{39}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Diseño conceptual de la arquitectura escalable en la nube}{39}{section.5.6}%
-\contentsline {subsection}{\numberline {5.6.1}Especificación para entornos de producción concurrente}{39}{subsection.5.6.1}%
-\contentsline {paragraph}{Capa de acceso perimetral y balanceo:}{40}{section*.44}%
-\contentsline {paragraph}{Clúster de cómputo y escalado elástico:}{40}{section*.45}%
-\contentsline {paragraph}{Monitoreo y telemetría:}{41}{section*.46}%
-\contentsline {subsection}{\numberline {5.6.2}Instancia de validación del prototipo mediante túnel seguro}{41}{subsection.5.6.2}%
-\contentsline {paragraph}{Configuración de la instancia de prueba:}{41}{section*.47}%
-\contentsline {paragraph}{Validez técnica de las pruebas}{41}{section*.48}%
-\contentsline {chapter}{\numberline {6}Experimentación, Resultados y Discusión}{43}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Corpus y metodología de adquisición de Datos de LSA}{43}{section.6.1}%
-\contentsline {subsection}{\numberline {6.1.1}Definición y validación del vocabulario de 100 clases}{43}{subsection.6.1.1}%
-\contentsline {subsection}{\numberline {6.1.2}Protocolo de grabación y curación del dataset propio}{43}{subsection.6.1.2}%
-\contentsline {section}{\numberline {6.2}Evaluación empírica del clasificador gestual}{44}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Métricas offline vs. rendimiento en cámara real}{44}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Impacto de la resolución temporal: 16 vs. 32 fotogramas}{45}{subsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.2.3}Búsqueda automatizada de hiperparámetros con Optuna y Análisis de sobreajuste}{46}{subsection.6.2.3}%
-\contentsline {subsection}{\numberline {6.2.4}Diagnóstico de confusiones mediante feature engineering y separabilidad}{47}{subsection.6.2.4}%
-\contentsline {subsection}{\numberline {6.2.5}Impacto cuantitativo de la corrección de aspect ratio}{48}{subsection.6.2.5}%
-\contentsline {subsection}{\numberline {6.2.6}Desempeño final del clasificador baseline en vivo}{48}{subsection.6.2.6}%
-\contentsline {section}{\numberline {6.3}Evaluación de los módulos de traducción semántica}{51}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Benchmark comparativo de modelos SLM (Familias Qwen2.5, Llama 3.2 y SmolLM2)}{51}{subsection.6.3.1}%
-\contentsline {subsection}{\numberline {6.3.2}Evaluación cuantitativa: BLEU, ROUGE-L, METEOR y exactitud}{51}{subsection.6.3.2}%
-\contentsline {subsection}{\numberline {6.3.3}Análisis de simetría en el aprendizaje: traducción directa vs. estructuración inversa}{51}{subsection.6.3.3}%
-\contentsline {subsection}{\numberline {6.3.4}Compromiso entre calidad lingüística y latencia de inferencia}{51}{subsection.6.3.4}%
-\contentsline {section}{\numberline {6.4}Evaluación del sistema integrado y rendimiento en tiempo real}{51}{section.6.4}%
-\contentsline {subsection}{\numberline {6.4.1}Validación funcional de extremo a extremo en videollamadas reales}{51}{subsection.6.4.1}%
-\contentsline {subsection}{\numberline {6.4.2}Análisis de latencias totales por etapa del pipeline}{51}{subsection.6.4.2}%
-\contentsline {subsection}{\numberline {6.4.3}Consumo de recursos de hardware: máquina de desarrollo vs. máquina objetivo}{51}{subsection.6.4.3}%
-\contentsline {subsection}{\numberline {6.4.4}Discusión técnica y lecciones de ingeniería aprendidas}{51}{subsection.6.4.4}%
-\contentsline {chapter}{\numberline {7}Conclusiones y trabajo futuro}{52}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Conclusiones}{52}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}Cumplimiento de objetivos del proyecto}{52}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}Aportes técnicos y de accesibilidad}{52}{subsection.7.1.2}%
-\contentsline {subsection}{\numberline {7.1.3}Impacto social en el marco de la Ley 27.710}{52}{subsection.7.1.3}%
-\contentsline {section}{\numberline {7.2}Trabajo futuro}{52}{section.7.2}%
-\contentsline {subsection}{\numberline {7.2.1}Implementación física del clúster semántico escalable}{52}{subsection.7.2.1}%
-\contentsline {subsection}{\numberline {7.2.2}Expansión del corpus multiseñante y mitigación de variabilidad}{52}{subsection.7.2.2}%
-\contentsline {subsection}{\numberline {7.2.3}Incorporación de rasgos no manuales (expresiones faciales)}{52}{subsection.7.2.3}%
-\contentsline {subsection}{\numberline {7.2.4}Generalización a nuevas plataformas de comunicación virtual}{52}{subsection.7.2.4}%
-\contentsline {chapter}{\numberline {A}Detalle del vocabulario de 100 señas de LSA}{55}{appendix.A}%
+\contentsline {subsection}{\numberline {1.4.1}Delimitación del vocabulario y asesoramiento lingüístico}{3}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Límites operativos y comportamiento ante entradas no contempladas}{4}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Infraestructura de despliegue}{4}{subsection.1.4.3}%
+\contentsline {chapter}{\numberline {2}Objetivos}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Objetivo general}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Objetivos específicos}{5}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Marco teórico, estado del arte y metodología}{7}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Marco teórico}{7}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Componentes articulatorios de la LSA}{7}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Estructura lingüística de la LSA y traducción \textit {Topic-Comment}}{7}{subsection.3.1.2}%
+\contentsline {paragraph}{Delimitación del prototipo y alcance de captura.}{8}{section*.5}%
+\contentsline {subsection}{\numberline {3.1.3}Visión computacional y reconocimiento basado en esqueletos}{8}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}Arquitectura neuronal temporal: TinySkeletonClassifier}{10}{subsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.1.5}Modelos de lenguaje pequeños y adaptación LoRA}{12}{subsection.3.1.5}%
+\contentsline {paragraph}{Adaptación LoRA profunda y proyecciones de vocabulario.}{12}{section*.6}%
+\contentsline {paragraph}{Mecánica de cuantización Q4\_K\_M}{12}{section*.7}%
+\contentsline {subsection}{\numberline {3.1.6}Animación y representación visual mediante Avatar}{13}{subsection.3.1.6}%
+\contentsline {subsection}{\numberline {3.1.7}Arquitectura híbrida de partición Cliente-Nube}{14}{subsection.3.1.7}%
+\contentsline {subsection}{\numberline {3.1.8}Captura de medios en la Web y aislamiento en extensiones (Manifest V3)}{14}{subsection.3.1.8}%
+\contentsline {section}{\numberline {3.2}Estado del arte}{15}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Desarrollos en Argentina y la región}{15}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Sistemas internacionales de reconocimiento y síntesis}{15}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Metodología de desarrollo}{16}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Declaración sobre el uso de herramientas de inteligencia artificial}{16}{subsection.3.3.1}%
+\contentsline {paragraph}{Herramientas empleadas.}{16}{section*.8}%
+\contentsline {paragraph}{Alcance y propósito de su utilización}{17}{section*.9}%
+\contentsline {paragraph}{Límites y responsabilidad de autoría.}{17}{section*.10}%
+\contentsline {section}{\numberline {3.4}Herramientas y tecnologías empleadas}{18}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Análisis de requerimientos}{19}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Requerimientos funcionales}{19}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Requerimientos no funcionales}{20}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Restricciones}{20}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Especificación del entorno de ejecución cliente}{21}{subsection.4.3.1}%
+\contentsline {paragraph}{Criterio técnico de selección del procesador base}{21}{section*.11}%
+\contentsline {section}{\numberline {4.4}Casos de uso}{22}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Casos de uso esenciales en formato breve}{22}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Casos de uso expandidos}{22}{subsection.4.4.2}%
+\contentsline {chapter}{\numberline {5}Diseño del Sistema}{27}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Arquitectura del sistema}{27}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Justificación de la partición y modelo de privacidad}{27}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Flujo integral de datos entre componentes.}{27}{subsection.5.1.2}%
+\contentsline {subsubsection}{Dinámica temporal del Canal Señante $\rightarrow $ Oyente (Modo Sordo)}{28}{section*.12}%
+\contentsline {subsubsection}{Dinámica temporal del Canal Oyente $\rightarrow $ Señante (Modo Oyente)}{29}{section*.13}%
+\contentsline {section}{\numberline {5.2}Diseño de contratos de API REST}{31}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}API local del motor ILSA}{31}{subsection.5.2.1}%
+\contentsline {subsubsection}{Cuadro resumen de endpoints}{31}{section*.14}%
+\contentsline {subsubsection}{Contrato POST \texttt {/session}}{32}{section*.15}%
+\contentsline {subsubsection}{Contrato POST \texttt {/sign}}{32}{section*.16}%
+\contentsline {subsection}{\numberline {5.2.2}API del servicio semántico remoto}{33}{subsection.5.2.2}%
+\contentsline {subsubsection}{Contrato de \texttt {POST /translate} (canal directo)}{33}{section*.17}%
+\contentsline {subsubsection}{Contrato de \texttt {POST /hearing} (canal inverso)}{34}{section*.18}%
+\contentsline {subsection}{\numberline {5.2.3}API del servicio de archivos del avatar}{34}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Diseño de la representación gestual inversa}{35}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Clip de referencia}{36}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Preparación y empalme}{36}{subsection.5.3.2}%
+\contentsline {paragraph}{Cadencia común.}{36}{section*.19}%
+\contentsline {paragraph}{Recorte del núcleo.}{37}{section*.20}%
+\contentsline {paragraph}{Relleno de huecos breves.}{37}{section*.21}%
+\contentsline {paragraph}{Mano en espera.}{37}{section*.22}%
+\contentsline {paragraph}{Suavizado.}{37}{section*.23}%
+\contentsline {paragraph}{Lienzo común.}{37}{section*.24}%
+\contentsline {subsection}{\numberline {5.3.3}Presentación en la videollamada}{38}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Contingencia léxica}{39}{subsection.5.3.4}%
+\contentsline {section}{\numberline {5.4}Patrones de diseño de software aplicados}{40}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Diseño conceptual de la arquitectura escalable en la nube}{41}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Especificación para entornos de producción concurrente}{41}{subsection.5.5.1}%
+\contentsline {paragraph}{Capa de acceso perimetral y balanceo:}{42}{section*.25}%
+\contentsline {paragraph}{Clúster de cómputo y escalado elástico:}{42}{section*.26}%
+\contentsline {paragraph}{Monitoreo y telemetría:}{42}{section*.27}%
+\contentsline {subsection}{\numberline {5.5.2}Instancia de prueba en Cloud Run}{42}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Servicio de archivos del avatar}{42}{subsection.5.5.3}%
+\contentsline {chapter}{\numberline {6}Implementación y Desarrollo}{44}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Implementación del subsistema de reconocimiento gestual}{44}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Preprocesamiento de datos}{44}{subsection.6.1.1}%
+\contentsline {paragraph}{Pipeline de captura e ingesta con MediaPipe Holistic.}{44}{section*.28}%
+\contentsline {paragraph}{Normalización geométrica y corrección de aspecto.}{44}{section*.29}%
+\contentsline {subsection}{\numberline {6.1.2}Preprocesamiento y arquitectura neuronal TinySkeletonClassifier}{44}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}Implementación del subsistema de traducción semántica bidireccional}{45}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Selección y especificación de la suite de modelos de lenguaje}{45}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Canal directo (LSA $\rightarrow $ Español)}{45}{subsection.6.2.2}%
+\contentsline {paragraph}{Preparación del corpus.}{45}{section*.30}%
+\contentsline {paragraph}{Ajuste de bajo rango.}{45}{section*.31}%
+\contentsline {paragraph}{Consigna de traducción.}{46}{section*.32}%
+\contentsline {paragraph}{Generación.}{46}{section*.33}%
+\contentsline {subsection}{\numberline {6.2.3}Canal inverso (Español $\rightarrow $ LSA)}{47}{subsection.6.2.3}%
+\contentsline {paragraph}{Preparación del corpus.}{47}{section*.34}%
+\contentsline {paragraph}{Ajuste de bajo rango.}{47}{section*.35}%
+\contentsline {paragraph}{Consigna de glosado.}{48}{section*.36}%
+\contentsline {paragraph}{Generación.}{48}{section*.37}%
+\contentsline {subsection}{\numberline {6.2.4}Tratamiento de letras y dígitos sueltos}{49}{subsection.6.2.4}%
+\contentsline {subsection}{\numberline {6.2.5}Cuantización GGUF Q4\_K\_M y servicio de inferencia}{49}{subsection.6.2.5}%
+\contentsline {paragraph}{Formulación analítica para la estimación de memoria RAM en tiempo de inferencia.}{50}{section*.38}%
+\contentsline {section}{\numberline {6.3}Integración en Google Meet y extensión de navegador}{50}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Despliegue en Chrome Manifest V3: aislamiento offscreen y sandbox}{51}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Intercepción de la captura de cámara y lienzo virtual}{51}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Motor local ILSA (FastAPI)}{52}{subsection.6.3.3}%
+\contentsline {section}{\numberline {6.4}Implementación del avatar}{52}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Tecnologías empleadas}{52}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Vía descartada: retarget hacia un avatar VRM}{53}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}Estructura del pedido}{54}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}Decisiones técnicas de la reproducción}{54}{subsection.6.4.4}%
+\contentsline {paragraph}{Valores del compositor.}{54}{section*.39}%
+\contentsline {paragraph}{Postura de espera.}{55}{section*.40}%
+\contentsline {paragraph}{Reflejo de la miniatura local.}{55}{section*.41}%
+\contentsline {section}{\numberline {6.5}Instancia de validación del prototipo mediante túnel seguro}{55}{section.6.5}%
+\contentsline {chapter}{\numberline {7}Experimentación, Resultados y Discusión}{56}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Corpus y metodología de adquisición de Datos de LSA}{56}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Definición y validación del vocabulario de 100 clases}{56}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Protocolo de grabación y curación del dataset propio}{56}{subsection.7.1.2}%
+\contentsline {section}{\numberline {7.2}Evaluación empírica del clasificador gestual}{57}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Métricas offline vs. rendimiento en cámara real}{57}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Impacto de la resolución temporal: 16 vs. 32 fotogramas}{58}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Búsqueda automatizada de hiperparámetros con Optuna y Análisis de sobreajuste}{59}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}Diagnóstico de confusiones mediante feature engineering y separabilidad}{60}{subsection.7.2.4}%
+\contentsline {subsection}{\numberline {7.2.5}Impacto cuantitativo de la corrección de aspect ratio}{61}{subsection.7.2.5}%
+\contentsline {subsection}{\numberline {7.2.6}Desempeño final del clasificador baseline en vivo}{61}{subsection.7.2.6}%
+\contentsline {section}{\numberline {7.3}Evaluación de los módulos de traducción semántica}{64}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Benchmark comparativo de modelos SLM (Familias Qwen2.5, Llama 3.2 y SmolLM2)}{64}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Evaluación cuantitativa: BLEU, ROUGE-L, METEOR y exactitud}{64}{subsection.7.3.2}%
+\contentsline {subsection}{\numberline {7.3.3}Análisis de simetría en el aprendizaje: traducción directa vs. estructuración inversa}{64}{subsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.3.4}Compromiso entre calidad lingüística y latencia de inferencia}{64}{subsection.7.3.4}%
+\contentsline {section}{\numberline {7.4}Evaluación del sistema integrado y rendimiento en tiempo real}{64}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Validación funcional de extremo a extremo en videollamadas reales}{64}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Análisis de latencias totales por etapa del pipeline}{64}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}Consumo de recursos de hardware: máquina de desarrollo vs. máquina objetivo}{64}{subsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.4.4}Discusión técnica y lecciones de ingeniería aprendidas}{64}{subsection.7.4.4}%
+\contentsline {chapter}{\numberline {8}Conclusiones y trabajo futuro}{65}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Conclusiones}{65}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}Cumplimiento de objetivos del proyecto}{65}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}Aportes técnicos y de accesibilidad}{65}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {8.1.3}Impacto social en el marco de la Ley 27.710}{65}{subsection.8.1.3}%
+\contentsline {section}{\numberline {8.2}Trabajo futuro}{65}{section.8.2}%
+\contentsline {subsection}{\numberline {8.2.1}Implementación física del clúster semántico escalable}{65}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.2.2}Expansión del corpus multiseñante y mitigación de variabilidad}{65}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.2.3}Incorporación de rasgos no manuales (expresiones faciales)}{65}{subsection.8.2.3}%
+\contentsline {subsection}{\numberline {8.2.4}Generalización a nuevas plataformas de comunicación virtual}{65}{subsection.8.2.4}%
