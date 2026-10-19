@@ -1,37 +1,83 @@
-# Intérprete de Lengua de Señas Argentina (LSA)
+# Intérprete de Lengua de Señas Argentina (ILSA)
 
-Interpretación de LSA en tiempo real. **Empezá a leer el código por**
-[`docs/ORDEN_DE_LECTURA.md`](docs/ORDEN_DE_LECTURA.md).
+Este repositorio es el **cliente de Google Meet**: una extensión Chrome más un
+motor local (`ILSA.exe` o `python run_backend.py`). Traduce **LSA ↔ español**
+en una videollamada. El video no sale de la PC. A la nube van glosas o
+español, nunca JPEG.
 
-Este repositorio traduce **señas LSA a español** en Google Meet (extensión
-Chrome + motor ILSA). En modo oyente, voz o chat → glosas pintadas en el video.
+Leé este archivo primero. El detalle de cada pieza está en `docs/`.
 
-La cámara no envía video al clasificador. MediaPipe Holistic extrae un esqueleto
-(pose + dos manos). Ese esqueleto se recorta en **una seña a la vez**, se
-clasifica como **glosa** (etiqueta léxica: `HOLA`, `MAMA`, `A`, …) y, cuando la
-persona deja de señar unos segundos, ILSA manda las glosas a Cloud Run
-y recibe una **oración en español**. ILSA en la laptop de Meet **solo clasifica**.
+| Documento | Qué cubre |
+|-----------|-----------|
+| [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) | Cómo funciona el producto de punta a punta, API, clasificador, Cloud Run |
+| [docs/EXTENSION.md](docs/EXTENSION.md) | Extensión MV3, Meet, Holistic, mute, canvas, HUD |
+| [docs/AVATAR.md](docs/AVATAR.md) | Esqueleto del oyente: T-pose remoto, stems, compositor, canvas 50/50 |
+| [docs/DICCIONARIO.md](docs/DICCIONARIO.md) | Laboratorio que **fabrica** los `.pose` (PDF, QR, YouTube). No corre en Meet |
+| [docs/archivo/entregable_extension_2026-09.md](docs/archivo/entregable_extension_2026-09.md) | Ficha histórica (septiembre 2026). **No** describe el runtime actual |
 
-Se corre con `python run_backend.py` o `ILSA.exe`, más la extensión
-descomprimida. El mapa de archivos está en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+---
+
+## Qué es y qué no es
+
+**Es** un intérprete en vivo para Meet:
+
+- **Modo sordo.** Quien seña. MediaPipe saca un esqueleto. TinySkeleton nombra
+  cada seña (glosa). Tras ~4 s de pausa, Cloud Run arma una oración en español.
+  Esa oración se pinta abajo del video que Meet ya envía.
+- **Modo oyente.** Quien habla o escribe en el chat. Vosk transcribe el mic de
+  Meet (o se usa el texto del chat). Cloud Run devuelve glosas. El canvas se
+  parte 50/50: cámara a la izquierda, esqueleto T-pose a la derecha.
+
+**No es** un entrenador de redes, un diccionario pedagógico ni un servidor GGUF.
+Los pesos `.pth` se asumen ya exportados. El Llama vive en la rama
+`semantic-cloud` y en Cloud Run. Los `.pose` del diccionario de movimiento
+viven en otro Cloud Run (`tpose-server`). Carpetas tipo `señario1/` con PNG, si
+están en el disco, **el código no las usa**.
+
+---
+
+## Tres procesos
+
+```
+┌─ Chrome (extensión `extension/`) ─────────────────────────────┐
+│  Meet: cámara, mic, chat, canvas, Holistic WASM, HUD          │
+└───────────────────────────┬───────────────────────────────────┘
+                            │ HTTP loopback
+                            ▼
+┌─ ILSA  127.0.0.1:8765  (`run_backend.py` / ILSA.exe) ─────────┐
+│  Sordo: TinySkeleton CPU                                      │
+│  Oyente: Vosk (WAV → español) + compositor de .pose           │
+│  Ambos: clientes HTTP de Cloud Run                            │
+└──────┬────────────────────────────────────────────┬───────────┘
+       │ POST /sordo  POST /oyente                  │ GET /tposes/{GLOSA}.pose
+       ▼                                            ▼
+  ilsa-semantic-service                    tpose-server
+  us-central1                              southamerica-east1
+```
+
+La extensión **no** carga PyTorch ni GGUF. ILSA **no** corre MediaPipe. Meet
+nunca recibe el stream crudo de la cámara cuando ILSA está encendido: recibe un
+`canvas.captureStream`.
 
 ---
 
 ## Qué necesitás
 
-- Windows (ILSA.exe se arma con PyInstaller en esta PC).
-- Python 3.9–3.12 (desarrollo) o el exe empaquetado.
-- Chrome, si vas a usar la extensión.
-- El traductor semántico vive en Cloud Run
-  (`https://ilsa-semantic-service-705664945052.us-central1.run.app`).
-  No hace falta GGUF ni `LSA_SEMANTIC_URL` en la laptop de Meet.
-
-Los pesos del clasificador (`src/classifier/weights/`) suelen ir con **Git LFS**.
-Después de clonar:
+- Windows (el exe se arma con PyInstaller en esta PC).
+- Python 3.9–3.12 para desarrollar. El esqueleto oyente pide el paquete
+  `pose-format` (está en `requirements.txt`; ILSA lo instala si falta).
+- Chrome, para la extensión.
+- Internet en la laptop de Meet (semántico + T-pose).
+- Los pesos (`src/classifier/weights/`) suelen ir con **Git LFS**:
 
 ```bash
 git lfs pull
 ```
+
+No hace falta GGUF en esta PC. Las URLs de Cloud Run están en
+`src/semantic/config.py` y `src/avatar/config.py`. Overrides opcionales:
+`LSA_SEMANTIC_URL`, `LSA_AVATAR_URL`, o el archivo
+`%LOCALAPPDATA%\ILSA\avatar_url.txt`.
 
 ---
 
@@ -42,16 +88,16 @@ pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 
+`requirements.txt` es el runtime de ILSA (Torch CPU, FastAPI, Vosk). MediaPipe
+corre en Chrome, no en este `pip`.
+
 ---
 
-## Extensión Chrome + motor ILSA
+## Cómo correrlo
 
-La extensión **no** clasifica ni traduce sola. Habla con FastAPI en
-`http://127.0.0.1:8765`.
+### 1. MediaPipe de la extensión (una vez)
 
-### 1. Descargar MediaPipe (una vez)
-
-Los WASM/tflite de Holistic no se commitean. Hay que generarlos:
+Los WASM/tflite de Holistic no se commitean.
 
 ```bash
 py -3 packaging/fetch_extension_assets.py
@@ -61,32 +107,27 @@ Eso llena `extension/vendor/mediapipe/` y, si faltan, los íconos.
 
 ### 2. Motor ILSA
 
-**Quien usa el exe:** en la extensión, **Instalar motor → Descargar ILSA**.
-Descomprimí, abrí **ILSA.exe**. El traductor es Cloud Run (está hardcodeado).
-Elegí modo (Sordo u Oyente) y **Encender**. Dejá esa ventana abierta.
+**Desarrollo:**
 
-**Quien publica el zip** (en esta PC, una vez):
+```bash
+python run_backend.py
+```
+
+Ventana Tk: splash (ping a Cloud Run), Sordo / Oyente, Encender. Dejala abierta.
+Opciones: `--headless`, `--mode signer|hearing`, `--port 8765`, `--no-llm`.
+
+**Quien usa el exe:** en el popup de la extensión, **Instalar motor → Descargar
+ILSA**. Descomprimí, abrí **ILSA.exe**. Elegí modo y Encender.
+
+**Quien publica el zip** (en esta PC):
 
 ```bash
 packaging\build_exe.bat
 powershell -File packaging\upload_ilsa_zip.ps1
 ```
 
-El zip es el clasificador. El GGUF corre en Cloud Run, no en este repo.
-
-**Quien desarrolla:**
-
-```bash
-python run_backend.py
-```
-
-Misma ventana, sin empaquetar. Para generar el zip del exe:
-
-```bash
-packaging\build_exe.bat
-```
-
-Hace falta GitHub CLI autenticado (`gh auth login`) para subir el zip.
+Hace falta GitHub CLI autenticado (`gh auth login`) para subir el zip. El zip
+es clasificador + Vosk + cliente HTTP. El GGUF no viaja.
 
 ### 3. Cargar la extensión
 
@@ -94,97 +135,133 @@ Hace falta GitHub CLI autenticado (`gh auth login`) para subir el zip.
 2. Activar **Modo de desarrollador**
 3. **Cargar descomprimida** → carpeta `extension/`
 4. Tras cambiar `manifest.json` o content scripts, **recargar la extensión**.
-   Tras cambiar el hook de cámara de Meet, **recargar la pestaña de Meet**.
+   Tras cambiar el hook de cámara, **recargar la pestaña de Meet**.
 
-Al instalar se abre una guía (`welcome.html`). El popup muestra si el motor
-está conectado y, en modo sordo, la salida en Meet (subtítulo / audio / ambos).
+Al instalar se abre `welcome.html`. El popup muestra si el motor está
+conectado. No enciende ILSA: eso es la ventana del exe.
 
-### Google Meet
+### 4. Google Meet
 
 1. ILSA abierto y Encendido.
 2. Entrá a `https://meet.google.com/...` y permití la cámara.
-3. Con el motor sano, la traducción arranca sola. Para pararla, **Apagá** en
-   el exe.
+3. Con el motor sano, la traducción arranca sola. **Apagá** en ILSA para pararla.
 
-Qué ocurre:
+**Sordo:** Holistic → `POST /sign` → pausa 4 s → español quemado 8 s (el reloj
+se reinicia si llega otra oración). Mute o cámara apagada cortan captura.
 
-- Un script en el mundo MAIN intercepta `getUserMedia` **solo si LSA está
-  habilitado**. Meet recibe un canvas con la imagen de la cámara y el español
-  dibujado abajo.
-- Otro script (mundo aislado) muestra un HUD: ON mientras se graba una seña,
-  última glosa, español.
-- En modo sordo los JPEG van al *service worker* → offscreen → sandbox
-  MediaPipe → `POST /sign`.
-- En modo oyente el mic de Meet (y el chat) van a `POST /stt` / `POST /hearing`;
-  las glosas se pintan en el video.
+**Oyente:** mic de Meet y/o chat → glosas en el video + esqueleto a la derecha.
+Mute corta el STT. Cámara apagada no clasifica (modo sordo) y no alimenta el
+canvas.
 
-El español **desaparece solo a los 8 segundos**. Si llega una oración nueva,
-el reloj se reinicia.
+Detalle de Meet: [docs/EXTENSION.md](docs/EXTENSION.md). Esqueleto:
+[docs/AVATAR.md](docs/AVATAR.md).
 
 ---
 
-## Cómo se decide “una seña”
+## Cómo se decide “una seña” (modo sordo)
 
 Alineado entre `src/classifier/config.py` y `extension/lib/capture.js`:
 
 1. **Empieza** cuando hay al menos una mano usable (modo `auto`).
 2. **Termina** cuando el buffer llega a 60 frames **o** ambas manos desaparecen
-   durante ~0,4 s (se repite el último frame en esa gracia).
-3. Se recorta/submuestrea a **16 frames** y se manda al clasificador.
+   ~0,4 s (se repite el último frame en esa gracia). No se corta por manos
+   quietas: hay señas estáticas.
+3. Se recorta o submuestrea a **16 frames** y se manda al clasificador.
 4. Si la confianza es baja, hay cooldown o la seña es demasiado corta, se
    descarta.
-5. Tras ~**4 s** sin actividad de señado se cierra el enunciado y corre la LLM.
+5. Tras ~**4 s** sin actividad de señado se cierra el enunciado y corre el
+   traductor remoto.
 
-El clasificador espera un tensor de forma `(1, 16, 225)`: 16 frames ×
-(33 puntos de pose × 3 + 21×3 de cada mano).
+El clasificador espera `(1, 16, 225)`: 16 frames × (33×3 pose + 21×3 + 21×3
+manos). La cara de Holistic **no** entra a ese vector. El video **nunca** entra
+a PyTorch.
 
 ---
 
 ## Mapa del repositorio
 
 ```
-run_backend.py         Ventana ILSA + API local
-LSABackend.bat         Atajo Windows al backend
-requirements.txt
-packaging/             WASM MediaPipe, PyInstaller
-extension/             Extensión Manifest V3
+run_backend.py              Arranque: ventana ILSA o --headless
+LSABackend.bat              Atajo Windows
+requirements.txt            pip del motor (sin MediaPipe)
+assets/ilsa-logo.png        Logo de la ventana y de la extensión
+packaging/                  WASM MediaPipe, PyInstaller, íconos, subida del zip
+extension/                  Extensión Manifest V3 (Meet)
+  manifest.json
+  background.js             Service worker
+  popup.html / popup.js
+  welcome.html
+  offscreen.html / .js      Holistic + recorte de seña (sin pestaña)
+  sandbox.html / .js        WASM (CSP relajado)
+  content/inject-gum.js     getUserMedia, canvas, mic, mute
+  content/meet.js           HUD, JPEG, STT/hearing, chat
+  content/skeleton.js       Dibujo del esqueleto oyente
+  lib/                      api, capture, landmarks, prefs
+  vendor/mediapipe/         gitignored; fetch_extension_assets.py
+  bin/                      ILSA.zip de publicación (no versionar)
 src/
-  backend/             FastAPI, ventana ILSA, sesión
-  core/                Landmarks, enunciado, política de repeticiones
-  classifier/          TinySkeleton + pesos + lista de clases
-  semantic/            Cliente HTTP de Cloud Run (`remote.py`)
-  avatar/              Cliente T-pose (`GET /tposes/{GLOSA}.pose`)
-docs/ARQUITECTURA.md   Pipeline, Meet, API, captura
+  backend/                  FastAPI, Tk, sesión sordo/oyente, Vosk
+  classifier/               TinySkeleton + pesos + clases
+  core/                     Landmarks, enunciado, repeticiones
+  semantic/                 Cliente Cloud Run (runtime: remote.py + config.py)
+  avatar/                   Cliente T-pose (stems, GET, caché, compositor)
+extraction/                 Laboratorio de .pose + compositor en vivo
+  meet_sequence.py          .pose bajados → frames del canvas
+  render_pose_pair.py       Trim, park, EMA, puentes (también mp4 de prueba)
+docs/                       Arquitectura, extensión, avatar, diccionario
 ```
 
 **No forma parte del runtime versionado:**
 
-- `señario1/`, `señario2/`: láminas PNG, si las tenés en el disco.
-- `extension/vendor/mediapipe/*.wasm` (y similares): regenerar con `packaging/`.
+- `señario1/`, `señario2/`: láminas, si están en el disco.
+- `extension/vendor/mediapipe/*.wasm`: regenerar con `packaging/`.
 - `extension/bin/ILSA.zip` y `dist/`: salida de PyInstaller.
+- `extraction/out/poses/`: diccionario local de laboratorio (~672 MB, gitignore).
+  Meet **no** lo lee; pide T-pose a Cloud Run.
+- Caché de usuario: `%LOCALAPPDATA%\ILSA\` (Vosk, T-pose, `client_id.txt`).
+
+En `src/semantic/` pueden quedar scripts viejos de entrenamiento/GGUF. El
+**runtime de esta rama** solo usa `remote.py` y `config.py`. El servidor Llama
+está en la rama `semantic-cloud`.
 
 ---
 
 ## API del motor (`127.0.0.1:8765`)
 
+CORS: `https://meet.google.com`, localhost y orígenes `chrome-extension://`.
+El API tiene que escuchar en loopback. Contrato y JSON:
+[docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+
 | Método | Ruta | Uso |
 |--------|------|-----|
-| GET | `/health` | ¿Motor, clasificador y traductor listos? |
-| GET | `/metrics` | Tiempos y conteos de la sesión (JSON) |
+| GET | `/health` | Motor, modo, clasificador, traductor |
+| GET | `/metrics` | Tiempos y conteos de la sesión |
 | GET | `/config` | Umbrales de captura |
-| GET | `/state` | Glosas pendientes y último español |
+| GET | `/state` | Glosas pendientes y último texto |
 | GET | `/semantic/models` | Estado del traductor remoto |
 | POST | `/session` | Nueva sesión (`left_handed`) |
-| POST | `/sign` | Lista de frames de una seña |
-| POST | `/stt` | Modo oyente: WAV del mic de Meet → español |
-| POST | `/hearing` | Modo oyente: español → glosas (y clip T-pose remoto) |
-| POST | `/avatar` | Modo oyente: glosas → frames del esqueleto (servidor T-pose) |
-| POST | `/activity` | “Sigo señando” (retrasa el cierre) |
+| POST | `/sign` | Frames de una seña (solo sordo) |
+| POST | `/stt` | WAV del mic de Meet → español (oyente) |
+| POST | `/hearing` | Español → glosas + clip T-pose (oyente) |
+| POST | `/avatar` | Glosas → frames (oyente; `/hearing` ya lo trae) |
+| POST | `/activity` | Retrasa el cierre del enunciado |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
+| GET | `/mediapipe/{name}` | Sirve WASM locales a la extensión |
 | GET | `/download/exe` | `.exe` o `.bat` si existen en esta PC |
 
-CORS: `https://meet.google.com`, localhost y orígenes `chrome-extension://`.
-El API debe escuchar solo en loopback.
+---
+
+## Servicios remotos
+
+| Rol | URL (default) | Rama / código |
+|-----|---------------|----------------|
+| Español ↔ glosas | `https://ilsa-semantic-service-705664945052.us-central1.run.app` | `semantic-cloud` |
+| Clips `.pose` | `https://tpose-server-705664945052.southamerica-east1.run.app` | `avatar-cloud` |
+
+Sordo: `POST /sordo` `{ "glosses" }` → `{ "spanish" }`.  
+Oyente: `POST /oyente` `{ "spanish" }` → `{ "glosses" }`.  
+T-pose: `GET /tposes/{STEM}.pose` (igualdad de nombre; ver
+[docs/AVATAR.md](docs/AVATAR.md)).
 
 ---
 
@@ -192,7 +269,11 @@ El API debe escuchar solo en loopback.
 
 | Síntoma | Qué probar |
 |---------|------------|
-| Extensión: “motor apagado” | Abrí ILSA, elegí modo, Encender; recargá el popup |
-| ILSA arranca sin traducir | `GET` al `/health` de Cloud Run; Internet en la laptop de Meet |
+| Extensión: “motor apagado” | ILSA abierto, modo elegido, Encender; recargar el popup |
+| ILSA arranca sin traducir | `GET` al `/health` de Cloud Run; Internet en esta PC |
 | Subtítulos que no se van | Recargar extensión **y** la pestaña de Meet |
 | `Extension context invalidated` | Recargaste la extensión con Meet abierto: recargá Meet |
+| Cámara entera, sin esqueleto | Modo oyente + esta carpeta `extension/` |
+| Esqueleto quieto / “sin clip” | T-pose Cloud Run, stem de la glosa, `LSA_AVATAR_URL` |
+| Mute y sigue el STT | Recargar Meet; el tap mira el botón de mic de Meet |
+| Cámara apagada y sigue clasificando | Recargar Meet; el hook mira el botón de cámara |

@@ -25,6 +25,9 @@ def transcribe_wav(wav_bytes: bytes, lang: str = "es-ES") -> str:
         rate = 16000
     if len(pcm) < 16000 * 0.35 * 2:
         return ""
+    from backend.ensure_pkg import ensure_module
+
+    ensure_module("vosk", "vosk==0.3.45")
     _prepare_vosk_native()
     from vosk import KaldiRecognizer
 

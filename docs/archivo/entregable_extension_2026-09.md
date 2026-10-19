@@ -1,3 +1,14 @@
+# Ficha técnica de entrega (13/09/2026) — archivo
+
+**Esto no describe el runtime actual.** Es el punto de control de la primera
+entrega de la extensión (septiembre 2026): GGUF local, oyente sin T-pose,
+semántico en la nube todavía “pendiente”.
+
+El producto vigente está en el [README](../../README.md) y en
+[ARQUITECTURA.md](../ARQUITECTURA.md).
+
+---
+
 # Proyecto LSA 2026
 ## Ficha Técnica de Entrega
 
@@ -56,7 +67,7 @@ Meet y la extensión pelean por la cámara. Si el gancho de `getUserMedia` queda
 
 Recargar la extensión con Meet abierto deja el script viejo inválido. Hay que recargar la pestaña de Meet. Es un límite de Chrome, no del modelo.
 
-Holistic a veces marca una mano que no está (un “fantasma” al mover el torso). Si se abre la seña con un solo tick ruidoso, el clasificador recibe basura. Se pide un instante de mano usable, no un único marco suelto.
+Holistic a veces marca una mano que no está (un “fantasma” al mover el torso). Si se abre la seña con un único tick ruidoso, el clasificador recibe basura. Se pide un instante de mano usable, no un único marco suelto.
 
 El movimiento de píxeles del cuadro completo no sirve en una llamada. Una persona que camina atrás alcanzaba el umbral. La captura quedó atada a landmarks de mano.
 
@@ -90,12 +101,10 @@ Hasta acá el producto integrado **funciona**. Hay extensión, hay motor instala
 
 Lo que no está resuelto es el rendimiento en la laptop objetivo. Seguir agrandando el modelo local no es el camino. Seguir achicándolo también tiene techo: un modelo más chico traduce peor.
 
-**Pendiente (abierto):** evaluar el módulo semántico **en la nube**. La idea es dejar en la PC solo lo que tiene que ser local (cámara, Holistic, clasificador) y mandar la lista de glosas a un servicio remoto que devuelva el español. Esta sección se completa cuando esa prueba exista. Hoy solo se deja el problema planteado y la dirección de trabajo.
-
-No se decide aún proveedor, costo ni arquitectura de red. Primero hay que medir si la nube baja la espera sin romper la privacidad del video. El video no debería salir de la PC. Solo saldrían glosas (texto).
+**Pendiente (abierto en aquella fecha):** evaluar el módulo semántico **en la nube**. Eso ya está hecho en el runtime actual (Cloud Run). Ver [ARQUITECTURA.md](../ARQUITECTURA.md).
 
 ---
 
 ### Tecnologías usadas en esta entrega
 
-Extensión Manifest V3, MediaPipe Holistic en WASM, FastAPI en loopback, PyTorch CPU (TinySkeleton), traductor GGUF en Cloud Run, PyInstaller, Tkinter para la ventana ILSA. En Meet el sordo ve texto; no se lee en voz alta hacia la llamada.
+Extensión Manifest V3, MediaPipe Holistic en WASM, FastAPI en loopback, PyTorch CPU (TinySkeleton), traductor GGUF (entonces local; hoy Cloud Run), PyInstaller, Tkinter para la ventana ILSA. En Meet el sordo ve texto; no se lee en voz alta hacia la llamada.

@@ -156,7 +156,7 @@ def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None
         rp = _load_rp()
     except ImportError as exc:
         return _fail(
-            f"Falta una librería del compositor ({exc}). Hace falta Python 3.11 con pose-format y opencv-python.",
+            f"Falta una librería del compositor ({exc}). pip install pose-format",
             missing=missing,
         )
     except Exception as exc:

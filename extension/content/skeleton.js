@@ -1,7 +1,6 @@
 /**
  * Esqueleto de PoseVisualizer en el canvas de Meet (mundo MAIN).
- * Cada dedo tiene su color. La derecha anatómica cae a la izquierda de la imagen.
- * No se espeja.
+ * Cada dedo tiene su color. `inject-gum.js` espeja el panel al dibujar.
  */
 (function () {
   if (window.LsaAvatar) return;

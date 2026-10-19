@@ -1,248 +1,293 @@
 # Arquitectura del intérprete LSA
 
-Documento para alguien que abre el repo por primera vez. Complementa el
-[README](../README.md) con el *por qué* de cada pieza.
+Cómo funciona **este** repositorio cuando ILSA está encendido en Meet.
+Complementa el [README](../README.md). Chrome:
+[EXTENSION.md](EXTENSION.md). Esqueleto oyente: [AVATAR.md](AVATAR.md).
+Cómo se fabricaron los `.pose`: [DICCIONARIO.md](DICCIONARIO.md).
 
-**Orden de lectura del código** (qué archivo abrir primero):
-[`ORDEN_DE_LECTURA.md`](ORDEN_DE_LECTURA.md).
+---
 
 ## 1. Vocabulario
 
 | Término | Significado aquí |
 |---------|------------------|
-| **Glosa** | Etiqueta de una seña reconocida (`HOLA`, `MAMA`, `A`). No es español fluido. |
-| **Enunciado** | Lista de glosas entre dos pausas largas. Eso es lo que ve la LLM. |
-| **Landmarks** | Coordenadas normalizadas de pose (33 puntos) y manos (21 + 21). |
+| **Glosa** | Etiqueta de una seña (`HOLA`, `MAMA`, `A`). No es español fluido. |
+| **Enunciado** | Lista de glosas entre dos pausas largas. Eso es lo que ve el traductor. |
+| **Landmarks** | Coordenadas de pose (33 puntos) y manos (21 + 21). En el clasificador van normalizadas. |
 | **Frame de seña** | Un instante de landmarks, no un JPEG. |
-| **TinySkeleton** | Red chica (transformer) que clasifica una secuencia de 16 frames. |
-| **Traductor** | FastAPI en Cloud Run (`POST /sordo` y `POST /oyente`). |
-| **Holistic** | Solución MediaPipe: cuerpo + cara + manos en un solo grafo. Usamos pose y manos. |
+| **TinySkeleton** | Transformer chico: 16 frames × 225 números → una clase. |
+| **Traductor / semántico** | FastAPI en Cloud Run: `POST /sordo` y `POST /oyente`. |
+| **T-pose** | Clip `.pose` de una glosa en el servidor de movimiento. |
+| **Holistic** | MediaPipe: cuerpo + cara + manos. El clasificador usa pose y manos. |
 | **ILSA** | Ventana del motor local (`ILSA.exe` o `python run_backend.py`). |
+| **MAIN / aislado** | Dos mundos de content scripts en Meet. Ver [EXTENSION.md](EXTENSION.md). |
 
-La cara se detecta pero **no entra** al vector de 225 dimensiones del
-clasificador.
+La cara se detecta pero **no entra** al vector de 225 dimensiones.
 
-## 2. Pipeline de punta a punta
+---
 
-```
-cámara
-  → MediaPipe Holistic (esqueleto)
-  → detector de “empieza / termina la seña”
-  → 16 frames × 225 números
-  → TinySkeleton  →  glosa + confianza
-  → buffer de glosas (anti-repetición, cooldown)
-  → pausa ~4 s
-  → POST /sordo (Cloud Run)  →  español
-  → (Meet) texto quemado en el video + HUD
-```
+## 2. Dos modos, un mismo motor
 
-El video **nunca** entra a PyTorch. Si MediaPipe falla, el clasificador no
-tiene nada que hacer.
+ILSA pide modo **antes** de Encender. No se cambia a mitad de sesión.
 
-### 2.1 Extensión + FastAPI (`python run_backend.py` o `ILSA.exe`)
+| Modo (`_mode`) | Quién | Entrada | Salida en Meet |
+|----------------|--------|---------|----------------|
+| **Sordo** (`signer`) | Quien seña | Cámara → Holistic → `/sign` | Español (subtítulo; opcional audio TTS local, no hacia la llamada) |
+| **Oyente** (`hearing`) | Quien habla | Mic de Meet y/o chat | Glosas pintadas + esqueleto 50/50 |
 
-Chrome no puede cargar el `.pth` ni el GGUF. La extensión solo:
+El popup de la extensión muestra estado y ajustes. **No** enciende el motor.
 
-1. Detecta landmarks (MediaPipe **WASM** en un iframe sandbox).
-2. Decide cuándo cortar la seña (`extension/lib/capture.js`).
-3. POST JSON al backend.
+Con ILSA encendido, Meet arranca solo. Apagar ILSA corta subtítulos y deja de
+envolver la cámara. Los tracks reales de Meet **no** se `stop()`: eso cortaba
+la llamada.
 
-El backend (`src/backend/`) envuelve TinySkeleton y el cliente de Cloud Run
-en una sesión (`LSASession` o `HearingSession`).
+---
 
-ILSA tiene dos modos, elegidos en la ventana **antes** de Encender:
-
-| Modo | Quién | Qué hace |
-|------|--------|----------|
-| **Sordo** | Quien seña | LSA → español (clasificador + Llama 1B). |
-| **Oyente** | Quien habla | Voz (mic de Meet) o chat → glosas pintadas en la cámara. |
-
-Con ILSA encendido, Meet arranca la traducción solo. El popup muestra estado
-y ajustes; no enciende el motor.
-
-## 3. Por qué un sandbox en la extensión
-
-Manifest V3 bloquea `blob:` / `unsafe-eval` en páginas de extensión.
-MediaPipe Holistic **necesita** crear workers desde blobs.
-
-Solución:
-
-- `sandbox.html` + `sandbox.js` corren Holistic con CSP relajado.
-- `offscreen.html` manda un JPEG al iframe y recibe
-  `{ pose, left_hand, right_hand }`.
-- Los `.wasm` / `.tflite` viven en `extension/vendor/mediapipe/` (gitignored;
-  se bajan con `packaging/fetch_extension_assets.py`).
-
-No uses `holistic.close()` en cada stop de cámara: recargar el WASM es lento
-y frágil. Se reutiliza el grafo.
-
-## 4. Google Meet
-
-Meet pide la cámara con `navigator.mediaDevices.getUserMedia`. Si envolvemos
-ese método **siempre**, Meet puede ver la cámara “bloqueada” o un pipeline
-muerto.
-
-Reglas del hook (`extension/content/inject-gum.js`, mundo **MAIN**,
-`document_start`):
-
-- Solo envuelve cuando LSA está **habilitado**.
-- Crea un `<video id="lsa-real-cam">` oculto con el stream real.
-- Un canvas `captureStream` es lo que Meet muestra como “cámara”.
-- El español se dibuja **abajo** del canvas. Meet espeja el preview local con
-  CSS; el texto se dibuja espejado para que se lea bien.
-- En modo oyente, el reconocimiento de voz corre en ese mismo mundo MAIN (no
-  hay TTS de la transcripción).
-- Desactivar LSA **no** hace `stop()` de los tracks reales (eso cortaba Meet).
-  Solo deja de quemar subtítulos / deja de interceptar si no hay pipeline.
-
-El HUD (`extension/content/meet.js`, mundo **aislado**) no puede tocar el
-prototipo de `getUserMedia`. Habla con el hook por `window.postMessage` y con
-el service worker por `chrome.runtime`. Si se recarga la extensión con Meet
-abierto, el content script corta el poll (`Extension context invalidated`).
-
-Flujo de un frame en Meet (modo sordo):
+## 3. Pipeline sordo
 
 ```
-#lsa-real-cam
-  → JPEG (~320 px, calidad ~0.62)
-  → content script
-  → background.js
-  → offscreen.html (Holistic + capture.js + LsaApi)
-  → POST /sign o /utterance/end
-  → mensaje lsa-caption
-  → HUD + postMessage LSA_CAPTION → canvas de Meet
+cámara (Meet)
+  → inject-gum.js  (video real oculto + canvas que ve Meet)
+  → JPEG chico (~320 px)
+  → meet.js → background.js → offscreen.js
+  → sandbox.js  (Holistic WASM)
+  → capture.js  (empieza / gracia / flush)
+  → POST /sign   { frames: [ { pose, left_hand, right_hand }, ... ] }
+  → landmarks_payload + EMA
+  → trim / subsampleo a 16
+  → TinySkeleton CPU  →  glosa + confianza
+  → UtteranceBuffer + repeat_policy
+  → pausa ~4 s  o  POST /utterance/end
+  → POST Cloud Run /sordo  { glosses } → { spanish }
+  → HUD + LSA_CAPTION  (caduca 8 s)
 ```
 
-MediaPipe en Meet rinde **pocos FPS**. El fin de seña es **manos fuera de
-cámara** ~0,4 s (`missing_hands_limit / 30`). No se corta por manos quietas
-(señas estáticas). Durante la gracia se duplica el último frame.
+El video **nunca** entra a PyTorch. Si Holistic no ve manos, no hay seña.
 
-No se usa movimiento de **píxeles de todo el cuadro** para arrancar una seña:
-en Meet hay gente moviéndose atrás y dispara falsos positivos. Solo manos.
+No se usa movimiento de **píxeles de todo el cuadro** para arrancar: en Meet
+hay gente detrás y dispara falsos positivos. Solo manos.
 
-## 5. Captura: empezar, cortar, muestrear
+Holistic en Meet rinde pocos FPS. El fin de seña es **manos fuera** ~0,4 s
+(`MISSING_HANDS_LIMIT / 30`). Durante la gracia se duplica el último frame.
 
-Código canónico JS: `extension/lib/capture.js`.
-Umbrales Python: `src/classifier/config.py`.
+---
+
+## 4. Pipeline oyente
+
+```
+mic de Meet (si no hay mute y captura ≠ solo texto)
+  → PCM 16 kHz en MAIN → WAV base64
+  → POST /stt  →  Vosk (español, en esta PC)
+
+chat de Meet (Enter / Enviar, si captura ≠ solo voz)
+  → texto, sin STT
+
+español
+  → POST /hearing
+  → POST Cloud Run /oyente  { spanish } → { glosses }
+  → GET tpose-server /tposes/{STEM}.pose  (una por glosa / letra)
+  → extraction/meet_sequence.py  (trim, park, EMA, puentes)
+  → JSON de frames  (p, f, l, r)
+  → LSA_CAPTION + LSA_AVATAR
+  → canvas 50/50, idle al terminar
+```
+
+`POST /hearing` ya trae `avatar`. `POST /avatar` queda por si la extensión
+pide el clip aparte.
+
+Mute en Meet corta el tap de audio. Cámara apagada no alimenta el pipeline
+sordo. Detalle: [EXTENSION.md](EXTENSION.md). Stems y canvas:
+[AVATAR.md](AVATAR.md).
+
+No hay memoria de conversación hacia la LLM: cada frase se traduce sola.
+
+---
+
+## 5. Contrato HTTP local
+
+Cliente: `extension/lib/api.js`. Esquemas: `src/backend/http_schemas.py`.
+Rutas: `src/backend/server.py`. Arranque: `run_backend.py` → `iris_app.py`
+(o `--headless`).
+
+Origen típico del `fetch`: `https://meet.google.com` (content script), no
+`chrome-extension://`. Por eso CORS incluye Meet. Header
+`Access-Control-Allow-Private-Network` para Chrome reciente.
+
+### `POST /sign`
+
+Lista de frames ya recortados. Cada punto es `{ x, y, z }` (y a veces
+confianza). Tope de frames y de puntos: `http_schemas.py`.
+
+Respuesta: snapshot de sesión (glosa aceptada o rechazada, buffer, a veces
+español si el cierre coincidió).
+
+En modo oyente responde **400**.
+
+### `POST /stt`
+
+`{ "wav_b64": "...", "lang": "es-ES" }` → `{ "spanish", "ok" }`.
+Vosk `vosk-model-small-es-0.42` (se baja a `%LOCALAPPDATA%\ILSA` la primera
+vez). El `lang` se ignora: el modelo es español.
+
+### `POST /hearing`
+
+`{ "spanish", "final" }` → snapshot con `glosses`, `caption` y `avatar`.
+
+### `POST /avatar`
+
+`{ "glosses" }` → el mismo JSON de frames que arma `avatar.remote.clip_for_glosses`.
+
+### `GET /health`
+
+`ok` (sesión creada), `mode`, `classifier_ready`, `semantic_ready`, errores.
+El splash de ILSA espera esto más un ping a Cloud Run.
+
+---
+
+## 6. Captura y umbrales (sordo)
+
+Canónico JS: `extension/lib/capture.js`. Python: `src/classifier/config.py`.
+La extensión pide un subconjunto con `GET /config`.
 
 | Parámetro | Valor | Rol |
 |-----------|-------|-----|
 | `CAPTURE_BUFFER_SIZE` | 60 | Máximo de frames crudos de una seña |
-| `MAX_FRAMES` | 16 | Lo que ve el modelo (submuestreo uniforme) |
-| `MISSING_HANDS_LIMIT` | 12 | En JS: gracia en segundos ≈ 12/30 |
+| `MAX_FRAMES` | 16 | Lo que ve el modelo (cambiar esto obliga a reentrenar) |
+| `MISSING_HANDS_LIMIT` | 12 | Gracia ≈ 12/30 s |
 | `MIN_CAPTURE_FRAMES` | 5 | Por debajo, se tira la seña |
-| `UTTERANCE_PAUSE_SEC` | 4.0 | Cierra enunciado y llama a la LLM |
+| `UTTERANCE_PAUSE_SEC` | 4.0 | Cierra enunciado y llama al traductor |
 | `CONFIDENCE_THRESHOLD` | 0.75 | Rechazo del clasificador |
 | `INFERENCE_COOLDOWN_SEC` | 1.0 | Evita la misma seña dos veces seguidas |
+| `LETTER_MAX_CONSECUTIVE` | 2 | Letras; dígitos sin tope; léxico no se duplica seguido |
 
-Submuestreo: índices `floor(i * (n-1) / (target-1))`, igual que un `linspace`
-entero. Si hay 16 o menos frames, se mandan todos.
+Submuestreo: índices `floor(i * (n-1) / (target-1))`. Si hay 16 o menos
+frames, se mandan todos.
 
 Modo `auto`: la primera mano usable **empieza** la grabación.
 
-## 6. Clasificador
+---
 
-- Arquitectura: `src/classifier/arch.py` (`TinySkeleton`).
+## 7. Clasificador
+
+- Arquitectura: `src/classifier/arch.py` (`TinySkeletonClassifier`).
 - Pesos: `src/classifier/weights/tinyskeleton_best.pth`.
-- Nombres de clase: `mapeo_clases.json` / lista `SIGN_CLASSES` en `config.py`.
-- Vector por frame: 33×3 pose + 21×3 mano izq. + 21×3 mano der. = **225**.
-- En el motor ILSA (`LSASession`) el clasificador corre en **CPU**.
+- Nombres: `mapeo_clases.json` / `SIGN_CLASSES`.
+- Vector por frame: 33×3 + 21×3 + 21×3 = **225**.
+- En ILSA corre en **CPU** (`CUDA_VISIBLE_DEVICES=""`).
+- Suavizado EMA (`LandmarkSmoother`, α≈0.6) y `frames_to_matrix` en
+  `src/core/landmarks.py`.
+- Alias hacia la LLM: `GLOSS_NORMALIZER` (p. ej. `el_ella` → `EL`). **No**
+  unifica género de hermano/hermana para el clasificador; el stem T-pose sí
+  recorta `_A` / `_RA` (ver [AVATAR.md](AVATAR.md)).
 
-El backend aplica un suavizado EMA (`LandmarkSmoother`, α≈0.6) y luego arma
-el tensor (`frames_to_matrix`).
+Política: `src/core/repeat_policy.py`. Letras hasta 2 iguales; dígitos sin
+tope; glosas léxicas no dos veces seguidas.
 
-Política de repeticiones (`src/core/repeat_policy.py`): letras pueden repetirse
-hasta 2 veces; dígitos sin tope; glosas léxicas no se aceptan dos veces
-seguidas.
+`LSASession.ingest_sign` / `close_utterance`: `src/backend/session.py`.
 
-## 7. Traductor semántico
+---
 
-ILSA no carga GGUF. `src/semantic/remote.py` hace HTTP a Cloud Run:
+## 8. Traductor semántico
+
+ILSA no carga GGUF. `src/semantic/remote.py`:
 
 `https://ilsa-semantic-service-705664945052.us-central1.run.app`
 
-- Sordo: `POST /sordo` con `{ "glosses": "..." }` → `{ "spanish": "..." }`.
-- Oyente: `POST /oyente` con `{ "spanish": "..." }` → `{ "glosses": "..." }`.
-- Esqueleto oyente: `src/avatar/remote.py` pide
-  `GET /tposes/{GLOSA}.pose` a
-  `https://tpose-server-705664945052.southamerica-east1.run.app`.
-  El stem es igualdad de nombre (`avatar.names.tpose_stem`).
-  Los `.pose` no viven en esta PC.
+- Sordo: `POST /sordo` `{ "glosses": "..." }` → `{ "spanish": "..." }`.
+- Oyente: `POST /oyente` `{ "spanish": "..." }` → `{ "glosses": "..." }`.
 
-El código del servidor GGUF vive en la rama `semantic-cloud`, no acá.
+Keepalive cada 4 min para no enfriar Cloud Run. `X-LSA-Client` es un UUID en
+`%LOCALAPPDATA%\ILSA\client_id.txt`. Token opcional: `LSA_SEMANTIC_TOKEN`.
 
-Para publicar el exe: `packaging\build_exe.bat` y `packaging\upload_ilsa_zip.ps1`.
+El código del servidor GGUF vive en la rama `semantic-cloud`.
 
-## 8. Subtítulos que caducan
+---
 
-El español no debe quedar pegado en la videollamada.
+## 9. T-pose (resumen)
 
-- Constante `SUBTITLE_HOLD_MS = 8000` en `inject-gum.js` y `meet.js`.
-- Un texto nuevo **reinicia** el temporizador.
-- El offscreen **no** reenvía el último español en cada tick de debug. Solo
-  lo manda cuando el backend devuelve `spanish` en un cierre de enunciado.
+`src/avatar/remote.py` hace `GET /tposes/{STEM}.pose` a
 
-## 9. Archivos de la extensión
+`https://tpose-server-705664945052.southamerica-east1.run.app`
 
-| Archivo | Rol |
-|---------|-----|
-| `manifest.json` | MV3, permisos Meet, sandbox, CSP |
-| `background.js` | Service worker: offscreen, reenvío de frames y captions |
-| `popup.html` / `popup.js` | Estado del motor, modo, salida Meet, landmarks (debug) |
-| `welcome.html` | Guía: descargar ILSA y comprobar `/health` |
-| `sandbox.html` / `sandbox.js` | Holistic WASM |
-| `offscreen.html` / `offscreen.js` | Captura para Meet (sin pestaña visible) |
-| `lib/api.js` | Cliente HTTP `127.0.0.1:8765` |
-| `lib/prefs.js` | Preferencias (salida, landmarks) |
-| `lib/landmarks.js` | Empaquetado, presencia de manos, dibujo |
-| `lib/capture.js` | Máquina de estados de la seña |
-| `content/inject-gum.js` | Hook `getUserMedia` + canvas con subtítulo + voz (oyente) |
-| `content/meet.js` / `meet.css` | HUD y envío de JPEG |
+Caché en `%LOCALAPPDATA%\ILSA\tposes`. El compositor
+(`extraction/meet_sequence.py` + `render_pose_pair.py`) arma frames en esta
+PC. Hace falta el paquete `pose-format` (ILSA lo instala solo si falta).
+OpenCV solo se usa para mp4 de laboratorio, no en Meet.
 
-Versión actual del manifiesto: ver `extension/manifest.json`.
+Reglas de stem, deletreo, JSON del canvas: [AVATAR.md](AVATAR.md).
 
-## 10. Archivos del backend
+---
+
+## 10. Ventana ILSA y empaquetado
 
 | Archivo | Rol |
 |---------|-----|
-| `run_backend.py` | Entry point (ventana ILSA o `--headless`) |
-| `src/backend/iris_app.py` | Splash (ping remoto), modo sordo/oyente, Encender / Apagar |
-| `src/backend/uvicorn_handle.py` | Hilo uvicorn (sin colgar Tk) |
-| `src/backend/http_schemas.py` | Límites de JSON (`POST /sign`, etc.) |
-| `src/backend/server.py` | Rutas FastAPI; CORS: Meet + `chrome-extension://` + localhost |
-| `src/backend/session.py` | Clasificador CPU, ingestión, cierre de enunciado, HTTP /sordo |
-| `src/backend/hearing_session.py` | Sesión oyente (voz → POST /oyente) |
-| `src/backend/landmarks_payload.py` | JSON de frames → tensores |
-| `src/semantic/remote.py` | Cliente HTTP de Cloud Run |
+| `run_backend.py` | Entry; mete `src/` en `sys.path` |
+| `src/backend/iris_app.py` | Splash, logo PNG, modo, Encender / Apagar, modal CAS |
+| `src/backend/uvicorn_handle.py` | Hilo uvicorn (Tk no se cuelga) |
+| `src/backend/ui_theme.py` | Colores de la ventana |
+| `packaging/build_exe.bat` | `dist/LSABackend/ILSA.exe` + `extension/bin/ILSA.zip` |
+| `packaging/LSABackend.spec` | Hiddenimports: classifier, semantic, avatar, vosk |
+| `packaging/rthook_cpu.py` | PATH de DLLs de Torch en el exe |
 
-Logs útiles al correr el motor: `POST /sign: N frames`, top-3, added/rejected,
-cierre de enunciado.
+`--headless --mode hearing` sirve para scripts. El API en `0.0.0.0` expone
+clasificador y cliente semántico a la LAN: no hacerlo.
 
-El API escucha en loopback (`127.0.0.1`). No bindear `0.0.0.0`.
+Logs útiles: `POST /sign: N frames`, top-3, added/rejected, `/stt → '…'`,
+`/hearing … ms`, `GET /tposes/HOLA.pose … ms`.
 
-## 11. Empaquetado
+---
 
-- `packaging/build_exe.bat` genera `dist/LSABackend/ILSA.exe` y
-  `extension/bin/ILSA.zip` (PyInstaller, sin consola).
-  El zip no se versiona.
-- `packaging/LSABackend.spec` empaqueta clasificador y runtime CPU.
-- En desarrollo: `python run_backend.py` (ventana) o `--headless`.
-- Semántico: Cloud Run; este repo solo tiene el cliente HTTP.
+## 11. Orden de lectura del código
+
+Cada paso asume el anterior. Los comentarios en el código dicen **qué hace**
+cada función. Acá, **por dónde empezar**.
+
+1. **Contrato HTTP** (~20 min). `extension/lib/api.js` →
+   `http_schemas.py` → `server.py` → `run_backend.py`.
+   Pregunta: ¿qué JSON manda un `POST /sign`?
+
+2. **Una seña, sin cámara** (~30 min). `landmarks.js` →
+   `landmarks_payload.py` → `core/landmarks.py` → `classifier/config.py` →
+   `arch.py` → `session.py`.
+   Pregunta: ¿por qué el tensor es `(1, 16, 225)`?
+
+3. **Recortar en el tiempo** (~25 min). `capture.js` → `utterance.py` →
+   `repeat_policy.py`.
+   Pregunta: ¿qué cierra el enunciado, la seña o el reloj de 4 s?
+
+4. **Español** (~20 min). `repeat_policy.format_literal_utterance` →
+   `semantic/remote.py` → `LSASession.close_utterance`.
+   Pregunta: ¿cuándo ni siquiera se llama al remoto?
+
+5. **Meet** (~40 min). `iris_app.py` → `manifest.json` → `popup.js` →
+   `background.js` → `inject-gum.js` → `meet.js` → `offscreen.js` →
+   `sandbox.js`. Luego [EXTENSION.md](EXTENSION.md) y [AVATAR.md](AVATAR.md).
+   Pregunta: ¿por qué Meet ve un canvas solo con ILSA encendido?
+
+**No leer primero:** `extension/vendor/mediapipe/*`, pesos `.pth`, `dist/`,
+caché Unsloth en `src/semantic/`.
+
+---
 
 ## 12. Qué no es este repo
 
-- No es un diccionario pedagógico. Carpetas tipo `señario1/` con PNG, si
-  existen en el disco, **no las usa el código**.
+- No es un diccionario pedagógico en PNG.
 - El clasificador corre en ILSA. La LLM corre en Cloud Run. El video no sale
   de la PC de Meet.
-- No hay entrenamiento aquí. Los `.pth` se asumen ya exportados.
+- No hay entrenamiento de TinySkeleton aquí.
+- `docs/archivo/` es historia de entregas. Si choca con este archivo, gana
+  este archivo.
+
+---
 
 ## 13. Orden mental para debuggear
 
-1. ¿Responde el `/health` de Cloud Run desde esta PC?
+1. ¿Responde el `/health` de Cloud Run semántico desde esta PC?
 2. ¿Elegiste modo y Encendiste? `GET http://127.0.0.1:8765/health` → `ok`.
-3. ¿La extensión está recargada y es la carpeta `extension/` de este clone?
+3. ¿La extensión es la carpeta `extension/` de este clone, recargada?
 4. ¿Existen los WASM en `extension/vendor/mediapipe/`?
 5. ¿Meet está recargado después de tocar `inject-gum.js`?
-6. ¿La consola del motor imprime `/sign` al bajar las manos?
+6. ¿La consola del motor imprime `/sign` al bajar las manos (sordo)?
 7. ¿Tras ~4 s de pausa aparece español y se borra a los 8 s?
+8. ¿Oyente: `/stt` y `/hearing` en el log, y `GET /tposes/…` 200?

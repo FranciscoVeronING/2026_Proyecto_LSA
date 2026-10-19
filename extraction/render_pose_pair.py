@@ -34,13 +34,11 @@ import sys
 import unicodedata
 from pathlib import Path
 
-import cv2
 import numpy as np
 import numpy.ma as ma
 from pose_format import Pose
 from pose_format.numpy import NumPyPoseBody
 from pose_format.pose_header import PoseHeaderDimensions
-from pose_format.pose_visualizer import PoseVisualizer
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
@@ -869,6 +867,9 @@ def write_video(
     speed: float = 1.0,
 ) -> None:
     """Dibuja cada frame (esqueleto + HUD de fase) y lo escribe a mp4v."""
+    import cv2
+    from pose_format.pose_visualizer import PoseVisualizer
+
     if hide_hand_tips or hide_pose_face:
         pose = hide_pose_overlays(pose, hide_hand_tips=hide_hand_tips, hide_face=hide_pose_face)
     play_fps = max(float(pose.body.fps) * float(speed), 1.0)
@@ -1139,6 +1140,8 @@ def print_sign_list(filter_text: str) -> None:
 
 
 def save_previews(video_path: Path, labels: list[str], preview: Path) -> None:
+    import cv2
+
     preview.mkdir(parents=True, exist_ok=True)
     cap = cv2.VideoCapture(str(video_path))
     picks = {0, max(len(labels) - 1, 0)}

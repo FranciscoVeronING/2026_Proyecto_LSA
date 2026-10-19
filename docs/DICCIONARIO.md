@@ -1,3 +1,16 @@
+# Diccionario de movimiento (laboratorio)
+
+Este archivo es el **laboratorio** que fabrica clips `.pose` a partir del
+Señario CAS (PDF → QR → YouTube → Holistic). **No** es el runtime de Meet.
+
+En vivo, ILSA pide esos clips a Cloud Run. Cómo se reproducen en la llamada:
+[AVATAR.md](AVATAR.md). Cómo encaja en el producto: [ARQUITECTURA.md](ARQUITECTURA.md).
+
+El §17 (“cómo se uniría a Meet”) quedó como diseño de aquella rama. La unión
+ya está implementada.
+
+---
+
 # Rama `avatar`: del Señario CAS a un esqueleto que encadena glosas
 
 Apunte técnico-pedagógico de la rama `avatar` del proyecto *Intérprete de Lengua de Señas Argentina* (2026). Está escrito como una clase: primero la analogía, después el contrato del código.
@@ -687,8 +700,8 @@ No conviene generar un mp4 por frase en Python: la latencia mata el turno. El le
 - `@pixiv/three-vrm` — cargador VRM 1.0 para Three.js.
 - Pavlakos, G. et al. SMPL-X. <https://smpl-x.is.tue.mpg.de/>
 - pose-to-video (sign-language-processing). Persona sobre esqueleto con Pix2Pix/ControlNet; offline, GPU.
-- Apunte previo, más corto y anterior al park/dataset/VRM: `docs/Avatar_Senario_CAS.md`.
-- Contexto del visor 3D (otro worktree): `AVATAR_CONTEXT.md`.
+- Runtime de Meet (este repo): [AVATAR.md](AVATAR.md), [EXTENSION.md](EXTENSION.md).
+- Apuntes VRM / `Avatar_Senario_CAS.md` viven en otros worktrees, no acá.
 - Commit de referencia: `2a06b1ac` en <https://github.com/FranciscoVeronING/2026_Proyecto_LSA> rama `avatar`.
 
 ---

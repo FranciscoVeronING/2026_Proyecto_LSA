@@ -18,12 +18,28 @@ try:
     _vosk_d, _vosk_b, _vosk_h = collect_all("vosk")
 except Exception:
     _vosk_d, _vosk_b, _vosk_h = [], [], []
+try:
+    _pose_h = collect_submodules("pose_format")
+except Exception:
+    _pose_h = []
 
 hidden = (
     collect_submodules("classifier")
     + collect_submodules("core")
     + collect_submodules("backend")
-    + ["core.utterance", "semantic.remote", "semantic.config", "avatar.remote", "avatar.config", "avatar.names", "vosk", "cffi", "_cffi_backend"]
+    + _pose_h
+    + [
+        "core.utterance",
+        "semantic.remote",
+        "semantic.config",
+        "avatar.remote",
+        "avatar.config",
+        "avatar.names",
+        "pose_format",
+        "vosk",
+        "cffi",
+        "_cffi_backend",
+    ]
     + list(_vosk_h)
 )
 

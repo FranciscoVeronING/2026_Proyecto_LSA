@@ -9,3 +9,4 @@ torch==2.6.0
 fastapi==0.115.12
 uvicorn==0.32.1
 vosk==0.3.45
+pose-format>=0.3.0

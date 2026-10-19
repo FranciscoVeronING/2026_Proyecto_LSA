@@ -24,6 +24,20 @@
     };
   }
   const SUBTITLE_HOLD_MS = 8000;
+  const HEARING_WORKLET = `
+class LsaHearingProcessor extends AudioWorkletProcessor {
+  process(inputs) {
+    const ch = inputs[0] && inputs[0][0];
+    if (ch && ch.length) {
+      const copy = new Float32Array(ch.length);
+      copy.set(ch);
+      this.port.postMessage(copy, [copy.buffer]);
+    }
+    return true;
+  }
+}
+registerProcessor("lsa-hearing", LsaHearingProcessor);
+`;
   const POSE_EDGES = [
     [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [11, 23], [12, 24],
     [23, 24], [23, 25], [25, 27], [24, 26], [26, 28], [15, 17], [16, 18],
@@ -278,18 +292,33 @@
     else stopHearingTap();
   }
 
+  let hearingTapGen = 0;
+  let hearingWorkletUrl = "";
+
   function stopHearingTap() {
+    hearingTapGen += 1;
     if (!hearingTap) return;
     try {
+      hearingTap.proc.port.onmessage = null;
       hearingTap.proc.disconnect();
     } catch (_) {}
     try {
       hearingTap.src.disconnect();
     } catch (_) {}
     try {
+      hearingTap.mute.disconnect();
+    } catch (_) {}
+    try {
       hearingTap.ctx.close();
     } catch (_) {}
     hearingTap = null;
+  }
+
+  function hearingWorkletModule() {
+    if (!hearingWorkletUrl) {
+      hearingWorkletUrl = URL.createObjectURL(new Blob([HEARING_WORKLET], { type: "application/javascript" }));
+    }
+    return hearingWorkletUrl;
   }
 
   function downsample(input, fromRate, toRate) {
@@ -351,7 +380,7 @@
     window.postMessage({ source: "lsa-page", type: "LSA_AUDIO_WAV", wavB64 }, "*");
   }
 
-  function startHearingTap() {
+  async function startHearingTap() {
     const tracks = liveAudioTracks();
     if (!tracks.length) {
       window.postMessage(
@@ -366,10 +395,38 @@
     }
     if (hearingTap && hearingTap.trackId === tracks[0].id) return;
     stopHearingTap();
+    const gen = hearingTapGen;
+    const trackId = tracks[0].id;
     const stream = new MediaStream([tracks[0]]);
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      await ctx.audioWorklet.addModule(hearingWorkletModule());
+    } catch (err) {
+      try {
+        ctx.close();
+      } catch (_) {}
+      window.postMessage(
+        {
+          source: "lsa-page",
+          type: "LSA_SPEECH_ERROR",
+          error: "No se pudo abrir el tap de audio (AudioWorklet).",
+        },
+        "*"
+      );
+      return;
+    }
+    if (gen !== hearingTapGen || !hearingMode || hearingInput === "text") {
+      try {
+        ctx.close();
+      } catch (_) {}
+      return;
+    }
     const src = ctx.createMediaStreamSource(stream);
-    const proc = ctx.createScriptProcessor(4096, 1, 1);
+    const proc = new AudioWorkletNode(ctx, "lsa-hearing", {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      channelCount: 1,
+    });
     const mute = ctx.createGain();
     mute.gain.value = 0;
     const chunks = [];
@@ -390,7 +447,7 @@
         "*"
       );
     };
-    proc.onaudioprocess = (ev) => {
+    proc.port.onmessage = (ev) => {
       if (!hearingMode || hearingInput === "text") return;
       const open = voiceCaptureAllowed();
       noteMic(open);
@@ -400,16 +457,17 @@
         silence = 0;
         return;
       }
-      const input = ev.inputBuffer.getChannelData(0);
+      const input = ev.data;
+      if (!input || !input.length) return;
       let sum = 0;
       for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
       const rms = Math.sqrt(sum / input.length);
       if (rms >= rmsOn) {
         voiced = true;
         silence = 0;
-        chunks.push(new Float32Array(input));
+        chunks.push(input);
       } else if (voiced) {
-        chunks.push(new Float32Array(input));
+        chunks.push(input);
         silence += 1;
         const ms = (silence * input.length * 1000) / ctx.sampleRate;
         const dur = chunks.reduce((n, a) => n + a.length, 0) / ctx.sampleRate;
@@ -437,7 +495,7 @@
         true
       );
     }
-    hearingTap = { ctx, src, proc, trackId: tracks[0].id };
+    hearingTap = { ctx, src, proc, mute, trackId };
   }
 
   /**
@@ -515,14 +573,19 @@
   function drawSkeletonPanel(ctx, w, h) {
     if (!window.LsaAvatar) return;
     const half = Math.floor(w / 2);
+    const panelW = w - half;
     const view = window.LsaAvatar.sample(avatarClip, performance.now());
     if (view && view.done) avatarClip = null;
-    window.LsaAvatar.draw(ctx, view, half, 0, w - half, h);
+    ctx.save();
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    window.LsaAvatar.draw(ctx, view, 0, 0, panelW, h);
+    ctx.restore();
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.fillRect(half, 0, 1, h);
   }
 
-  /** Cuántos espejos en X tiene el elemento (transform y la propiedad scale). */
+  /** Cuántos espejos en X tiene el elemento (transform, scale, rotateY). */
   function flipCount(el) {
     let count = 0;
     let cs;
@@ -534,14 +597,30 @@
     const scale = (cs.scale || "none").trim();
     if (scale && scale !== "none" && parseFloat(scale.split(/\s+/)[0]) < 0) count += 1;
     const transform = cs.transform || "";
-    const match = transform.match(/matrix(?:3d)?\(\s*(-?[\d.eE+-]+)/);
-    if (match && parseFloat(match[1]) < 0) count += 1;
+    const m3 = transform.match(/matrix3d\(\s*(-?[\d.eE+-]+)(?:,\s*[^,]+){4},\s*(-?[\d.eE+-]+)/);
+    if (m3) {
+      if (parseFloat(m3[1]) < 0) count += 1;
+    } else {
+      const match = transform.match(/matrix\(\s*(-?[\d.eE+-]+)/);
+      if (match && parseFloat(match[1]) < 0) count += 1;
+    }
+    if (/rotateY\(\s*180/.test(transform) || /rotate3d\(\s*0\s*,\s*1/.test(transform)) count += 1;
     return count;
   }
 
+  function isOurPreviewVideo(video) {
+    if (!video || video.id === "lsa-real-cam" || !pipeline || !pipeline.out) return false;
+    const src = video.srcObject;
+    if (!src || !src.getVideoTracks) return false;
+    const ours = new Set(pipeline.out.getVideoTracks().map((t) => t.id));
+    return src.getVideoTracks().some((t) => ours.has(t.id));
+  }
+
   /**
-   * Meet espeja solo tu miniatura. El canvas ya va derecho: cámara, esqueleto
-   * y subtítulo. Este contrarresto es CSS del video local; quien recibe no lo ve.
+   * Meet espeja solo tu miniatura. El canvas: cámara y subtítulo derechos;
+   * esqueleto ya espejado al dibujar. Este contrarresto es CSS del video local;
+   * quien recibe no lo ve. Meet suele clonar el MediaStream: se matchea por
+   * id de track, no por identidad de `srcObject`.
    */
   function straightenPreview(video) {
     if (!video) return;
@@ -762,10 +841,9 @@
         if (enabled && hearingMode && window.LsaAvatar) drawSkeletonPanel(ctx, canvas.width, canvas.height);
         if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height, hearingMode);
       }
-      if (hearingMode && previewTick++ % 20 === 0) {
+      if (hearingMode && previewTick++ % 8 === 0) {
         document.querySelectorAll("video").forEach((v) => {
-          if (v.id === "lsa-real-cam") return;
-          if (v.srcObject === out) straightenPreview(v);
+          if (isOurPreviewVideo(v)) straightenPreview(v);
         });
       }
       if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
@@ -797,7 +875,7 @@
         pipeline.real &&
         src.getVideoTracks().some((t) => pipeline.real.getVideoTracks().indexOf(t) !== -1);
       if (src !== pipeline.out && (fromReal || src === pipeline.real)) v.srcObject = pipeline.out;
-      if (v.srcObject === pipeline.out) straightenPreview(v);
+      if (isOurPreviewVideo(v)) straightenPreview(v);
     });
     peerConnections.forEach((pc) => {
       try {
