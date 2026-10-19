@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    actor Oyente as Usuario Oyente
+    participant Meet as Google Meet
+    participant Ext as Extensión Chrome
+    participant ILSA as Motor local ILSA
+    participant Cloud as Servidor semántico inverso
+    participant Pose as Servidor de poses
+    actor Señante as Usuario Señante
+
+    Oyente->>Meet: Habla o escribe
+    Meet->>Ext: Audio o texto del chat
+    alt Viene del micrófono
+        Ext->>ILSA: POST /stt
+        ILSA-->>Ext: Oración en español
+    end
+    Ext->>ILSA: POST /hearing
+
+    ILSA->>Cloud: POST /oyente
+    Note over Cloud: Orden tema-comentario
+    Cloud-->>ILSA: 200, glosas en una cadena
+
+    loop Por cada tramo de glosas
+        ILSA->>Pose: GET /tposes/{glosa}.pose
+        alt El archivo existe
+            Pose-->>ILSA: 200, archivo de seña
+        else El archivo no existe
+            ILSA->>Pose: GET de cada letra
+            Pose-->>ILSA: Archivo de letra o 404
+        end
+    end
+
+    ILSA-->>Ext: Glosas y clip
+    Ext->>Meet: Subtítulo y esqueleto
+    Meet-->>Señante: Seña en la videollamada

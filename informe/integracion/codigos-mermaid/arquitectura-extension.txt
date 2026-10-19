@@ -1,0 +1,78 @@
+flowchart TD
+    %% Hardware y Entorno Navegador
+    CAM[/"Cámara Web Física"/]
+
+    subgraph CHROME ["Navegador Google Chrome (Manifest V3)"]
+        subgraph MAIN_WORLD ["Contexto de Página (MAIN World: Google Meet)"]
+            INJECT["inject-gum.js<br>(Sobrescritura de getUserMedia)"]
+            V_HIDDEN["video Oculto<br>(Recibe flujo de cámara real)"]
+            CANVAS["canvas Virtual<br>(Renderiza frames + Subtítulos)"]
+            MEET["Google Meet WebRTC<br>(Transmisión de videollamada)"]
+        end
+
+        subgraph BG_OFFSCREEN ["Página en Segundo Plano (Offscreen Document)"]
+            OFF_CTRL["Controlador Offscreen<br>(Recibe frames JPEG 240px)"]
+            TIMER["Lógica de temporización<br>y segmentación de seña"]
+        end
+
+        subgraph SANDBOX ["Entorno Aislado (Sandbox)"]
+            MP["MediaPipe Holistic<br>(WebAssembly + Workers)"]
+        end
+
+        subgraph EXT_WORLD ["Mundo Aislado de la Extensión"]
+            HUD["HUD / Overlay Visual<br>(Estado ON / Última glosa)"]
+        end
+    end
+
+    %% Entorno Local Fuera del Navegador
+    subgraph BACKEND_LOCAL ["Motor Local ILSA (127.0.0.1:8765)"]
+        FASTAPI["FastAPI Server<br>(POST /sign)"]
+        MODEL["TinySkeletonClassifier<br>(PyTorch en CPU &lt; 2 ms)"]
+        GATE["RepeatGate + UtteranceBuffer<br>(Pausa de 4 s = cierre)"]
+        TTS["pyttsx3 en hilo separado<br>(Voz para el oyente)"]
+    end
+
+    %% Relaciones y Flujos de Video / Cámara
+    CAM -->|Flujo de hardware real| INJECT
+    INJECT -->|Conecta flujo directo| V_HIDDEN
+    V_HIDDEN -->|Dibuja cuadro a cuadro| CANVAS
+    CANVAS -->|"canvas.captureStream()"| MEET
+
+    %% Derivación a Visión Computacional
+    V_HIDDEN -.->|Frames comprimidos JPEG| OFF_CTRL
+    OFF_CTRL -->|postMessage| MP
+    MP -->|225 Coordenadas articulares| OFF_CTRL
+    OFF_CTRL -->|Detecta inicio/fin de gesto| TIMER
+
+    %% Comunicación con Motor Local
+    TIMER -->|HTTP POST /sign: Tensor 16x225| FASTAPI
+    FASTAPI --> MODEL
+    MODEL --> GATE
+    GATE -->|Glosas validadas| HUD
+    GATE -->|Frase final traducida| TTS
+    GATE -.->|Texto en español| CANVAS
+
+    %% Canal oyente: archivos de seña
+    subgraph NUBE ["Nube"]
+        SEM["Servidor semántico inverso<br>(POST /oyente)"]
+        POSE["Servidor de poses<br>(GET /tposes/{glosa}.pose)"]
+    end
+
+    MIC[/"Micrófono o chat"/]
+    MIC -->|POST /hearing| FASTAPI
+    FASTAPI -->|Oración en español| SEM
+    SEM -->|Glosas| FASTAPI
+    FASTAPI -->|Nombre de archivo| POSE
+    POSE -->|Archivo .pose o 404| FASTAPI
+    FASTAPI -->|Clip y subtítulo| CANVAS
+
+    %% Estilos
+    style CAM fill:#E2E8F0,stroke:#475569,stroke-width:1.5px;
+    style MAIN_WORLD fill:#EFF6FF,stroke:#2563EB,stroke-width:1.5px;
+    style EXT_WORLD fill:#F8FAFC,stroke:#64748B,stroke-width:1.5px;
+    style BG_OFFSCREEN fill:#FEF3C7,stroke:#D97706,stroke-width:1.5px;
+    style SANDBOX fill:#FEE2E2,stroke:#DC2626,stroke-width:1.5px;
+    style BACKEND_LOCAL fill:#ECFDF5,stroke:#059669,stroke-width:2px;
+    style NUBE fill:#F8F4FC,stroke:#8D74B0,stroke-width:1.5px;
+    style POSE fill:#FFF7ED,stroke:#C2410C,stroke-width:1.5px;
+    style MIC fill:#E2E8F0,stroke:#475569,stroke-width:1.5px;
