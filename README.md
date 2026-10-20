@@ -238,12 +238,10 @@ El API tiene que escuchar en loopback. Contrato y JSON:
 | GET | `/metrics` | Tiempos y conteos de la sesión |
 | GET | `/config` | Umbrales de captura |
 | GET | `/state` | Glosas pendientes y último texto |
-| GET | `/semantic/models` | Estado del traductor remoto |
 | POST | `/session` | Nueva sesión (`left_handed`) |
 | POST | `/sign` | Frames de una seña (solo sordo) |
 | POST | `/stt` | WAV del mic de Meet → español (oyente) |
 | POST | `/hearing` | Español → glosas + clip T-pose (oyente) |
-| POST | `/avatar` | Glosas → frames (oyente; `/hearing` ya lo trae) |
 | POST | `/activity` | Retrasa el cierre del enunciado |
 | POST | `/utterance/end` | Cerrar enunciado y traducir |
 | GET | `/mediapipe/{name}` | Sirve WASM locales a la extensión |

@@ -91,9 +91,6 @@ class LSASession:
                 self.semantic_ready = False
             print(f"[backend] LLM remota no disponible: {e}")
 
-    def switch_semantic_model(self, model_id: str) -> None:
-        return None
-
     def reset_session(self, left_handed: bool):
         with self.lock:
             self.left_handed = bool(left_handed)

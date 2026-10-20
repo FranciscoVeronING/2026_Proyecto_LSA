@@ -18,10 +18,6 @@ class HearingIn(BaseModel):
     final: bool = True
 
 
-class AvatarIn(BaseModel):
-    glosses: str = Field(default="", max_length=2000)
-
-
 class SttIn(BaseModel):
     wav_b64: str = ""
     lang: str = "es-ES"

@@ -99,27 +99,16 @@ function transcribeMeetAudio(wavB64) {
     });
 }
 
-function applyAvatarClip(clip, glosses) {
-  const play = (got) => {
-    if (!got || got.ok === false || !(got.frames && got.frames.length)) {
-      setHud({ debug: "Esqueleto en reposo: " + ((got && got.error) || "sin clips") });
-      return;
-    }
-    postToPage({ type: "LSA_AVATAR", clip: got });
-    const miss = (got.missing || []).filter(Boolean);
-    setHud({
-      debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
-    });
-  };
-  if (clip) {
-    play(clip);
+function applyAvatarClip(clip) {
+  if (!clip || clip.ok === false || !(clip.frames && clip.frames.length)) {
+    setHud({ debug: "Esqueleto en reposo: " + ((clip && clip.error) || "sin clips") });
     return;
   }
-  LsaApi.avatar(glosses)
-    .then(play)
-    .catch((err) => {
-      setHud({ debug: "Esqueleto: " + ((err && err.message) || "error") });
-    });
+  postToPage({ type: "LSA_AVATAR", clip });
+  const miss = (clip.missing || []).filter(Boolean);
+  setHud({
+    debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
+  });
 }
 
 /** Español (voz o chat) → POST /hearing → glosas quemadas en el video. */
@@ -149,7 +138,7 @@ function sendToOyente(spanish, source) {
         spanish: glosses,
         glosses,
       });
-      applyAvatarClip(s.avatar, glosses);
+      applyAvatarClip(s.avatar);
     })
     .catch((err) => {
       setHud({

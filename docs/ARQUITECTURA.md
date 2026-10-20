@@ -92,8 +92,7 @@ español
   → canvas 50/50, idle al terminar
 ```
 
-`POST /hearing` ya trae `avatar`. `POST /avatar` queda por si la extensión
-pide el clip aparte.
+`POST /hearing` trae `glosses` y `avatar`.
 
 Mute en Meet corta el tap de audio. Cámara apagada no alimenta el pipeline
 sordo. Detalle: [EXTENSION.md](EXTENSION.md). Stems y canvas:
@@ -132,10 +131,6 @@ vez). El `lang` se ignora: el modelo es español.
 ### `POST /hearing`
 
 `{ "spanish", "final" }` → snapshot con `glosses`, `caption` y `avatar`.
-
-### `POST /avatar`
-
-`{ "glosses" }` → el mismo JSON de frames que arma `avatar.remote.clip_for_glosses`.
 
 ### `GET /health`
 

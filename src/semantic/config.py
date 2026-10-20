@@ -4,13 +4,3 @@ CLOUD_SEMANTIC_URL = (
 )
 DEFAULT_MODEL_ID = "remote"
 SEMANTIC_TOKEN = ""
-
-
-def list_semantic_models() -> list[dict]:
-    return [
-        {
-            "id": DEFAULT_MODEL_ID,
-            "label": "Cloud Run",
-            "available": True,
-        }
-    ]

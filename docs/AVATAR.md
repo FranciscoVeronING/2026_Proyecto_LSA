@@ -94,10 +94,10 @@ Mic / chat
     → reproduce y vuelve a idle
 ```
 
-Solo con `_mode == hearing`. `POST /avatar` en sordo: 400.
+Solo con `_mode == hearing`. El clip viaja en `POST /hearing` (`avatar`).
 
-`HearingSession.ingest_speech` ya llama `clip_for_glosses`. `meet.js`
-`applyAvatarClip` usa ese JSON; si no vino, pide `/avatar`.
+`HearingSession.ingest_speech` llama `clip_for_glosses`. `meet.js`
+`applyAvatarClip` usa ese JSON.
 
 ---
 
@@ -168,7 +168,7 @@ hombros. Antebrazo casi horizontal, un poco abajo; la muñeca no se quiebra.
 | `src/avatar/names.py` | `tpose_stem`, `expand_spell` |
 | `src/avatar/remote.py` | GET, caché, `resolve_chain`, `clip_for_glosses` |
 | `src/backend/hearing_session.py` | Tras `/oyente`, pide el clip |
-| `src/backend/server.py` | `POST /hearing`, `POST /avatar` |
+| `src/backend/server.py` | `POST /hearing` (glosas + clip) |
 | `extraction/meet_sequence.py` | Paths → JSON de frames |
 | `extraction/render_pose_pair.py` | Compositor (también mp4 de laboratorio) |
 | `extension/content/skeleton.js` | Dibujo |

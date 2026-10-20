@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import AvatarIn, HearingIn, SessionIn, SignIn, SttIn
+from backend.http_schemas import HearingIn, SessionIn, SignIn, SttIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -109,17 +109,6 @@ def health():
     }
 
 
-@app.get("/semantic/models")
-def semantic_models():
-    from semantic.config import list_semantic_models
-
-    session = _session
-    active = ""
-    if session and _mode == "signer":
-        active = getattr(session, "_current_model_id", "") or ""
-    return {"models": list_semantic_models(), "active": active}
-
-
 @app.get("/config")
 def capture_config():
     return get_session().capture_config()
@@ -188,26 +177,6 @@ def hearing_speech(body: HearingIn):
     if ingest is None:
         raise HTTPException(status_code=400, detail="Esta sesión no acepta voz.")
     return ingest(body.spanish, final=body.final)
-
-
-@app.post("/avatar")
-def avatar_clip(body: AvatarIn):
-    """Glosas del oyente → frames del esqueleto remoto (T-pose en Cloud Run)."""
-    if _mode != "hearing":
-        raise HTTPException(status_code=400, detail="Solo en modo oyente.")
-    from avatar.remote import clip_for_glosses
-
-    try:
-        payload = clip_for_glosses(body.glosses)
-    except Exception as exc:
-        print(f"[backend] /avatar error: {exc}")
-        return {"ok": False, "error": str(exc), "frames": [], "missing": []}
-    n = len(payload.get("frames") or [])
-    if payload.get("ok"):
-        print(f"[backend] /avatar {n} frames played={payload.get('played')} missing={payload.get('missing')}")
-    else:
-        print(f"[backend] /avatar sin clip: {payload.get('error')}")
-    return payload
 
 
 @app.post("/activity")

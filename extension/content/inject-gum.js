@@ -691,22 +691,18 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Subtítulo abajo. En modo sordo se espeja para el CSS mirror del preview local.
-   * En modo oyente queda derecho: lo lee quien recibe el video.
+   * Subtítulo abajo, espejado (sordo y oyente).
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} w
    * @param {number} h
-   * @param {boolean} forReceiver
    */
-  function drawSubtitles(ctx, w, h, forReceiver) {
+  function drawSubtitles(ctx, w, h) {
     const text = caption.spanish;
     if (!text) return;
     const fontSize = Math.max(18, Math.round(h * 0.042));
     ctx.save();
-    if (!forReceiver) {
-      ctx.translate(w, 0);
-      ctx.scale(-1, 1);
-    }
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
     ctx.font = `700 ${fontSize}px "Segoe UI", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -834,12 +830,12 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           drawVideoFrame(ctx, video, canvas.width, canvas.height);
           if (enabled && showLandmarks) drawLandmarks(ctx, canvas.width, canvas.height);
         }
-        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height, hearingMode);
+        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
       } else {
         ctx.fillStyle = "#111";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         if (enabled && hearingMode && window.LsaAvatar) drawSkeletonPanel(ctx, canvas.width, canvas.height);
-        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height, hearingMode);
+        if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
       }
       if (hearingMode && previewTick++ % 8 === 0) {
         document.querySelectorAll("video").forEach((v) => {
