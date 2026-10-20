@@ -20,14 +20,7 @@ A esta brecha se añade la especificidad lingüística local: los modelos de vis
 \section{Alcance y limitaciones}
 El sistema desarrollado comprende un prototipo funcional de traducción bidireccional en tiempo pseudo-real concebido como una extensión para navegadores basados en la tecnología Chromium (como Google Chrome, Microsoft Edge, Brave, Opera o Vivaldi), articulada con un motor de ejecución en segundo plano denominado ILSA (\textit{Intérprete de LSA}). 
 
-Para abordar la interpretación de la LSA se introduce el concepto de \textbf{glosa}: representación escrita en letras mayúsculas asignada a una seña para identificarla y analizar su gramática sin constituir una traducción literal término a término. La arquitectura general y el flujo funcional de bloques del prototipo se esquematizan en la Figura~\ref{fig:diagrama-alto-nivel}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.90\textwidth]{integracion/Diagrama-alto-nivel.pdf}
-    \caption{Diagrama de bloques de alto nivel del sistema: partición de procesamiento entre el cliente local (captura, extracción de puntos clave, clasificación gestual y motor ILSA) y el servidor semántico remoto en la nube.}
-    \label{fig:diagrama-alto-nivel}
-\end{figure}
+Para abordar la interpretación de la LSA se introduce el concepto de \textbf{glosa}: representación escrita en letras mayúsculas asignada a una seña para identificarla y analizar su gramática sin constituir una traducción literal término a término.
 
 El sistema opera a través de dos canales comunicacionales integrados:
 \begin{itemize}

@@ -40,93 +40,61 @@ Los canales semántico directo (LSA $\rightarrow$ Español) e inverso (Español 
     \item \textbf{Familia SmolLM2 \parencite{allal2024smollm2}:} variante de instrucciones de 1,7B.
 \end{itemize}
 
-El entrenamiento puede recorrer la lista completa o limitarse a un subconjunto. El servicio en la nube no carga los cinco modelos. Cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. SmolLM2 y las variantes Qwen de 0,5B y 3B permanecen en la suite de entrenamiento y de exportación. No tienen un lugar reservado en el arranque. Otro archivo cuantizado en la carpeta del canal entra solo como candidato posterior.
+En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en el Capítulo~5. Aquí queda el ajuste.
+
+\subsection{Régimen común del ajuste}
+Los dos canales comparten el procedimiento. El corpus se parte en 85\,\% de entrenamiento y 15\,\% de evaluación, con semilla fija. Cada ejemplo es un diálogo de tres turnos: consigna, entrada del usuario y respuesta. La carga admite 2048 tokens y guarda los pesos en 4 bits solo en esta etapa.
+
+La adaptación es LoRA \parencite{hu2022lora}, con rango $r = 16$ y escala $\alpha = 32$, sobre las cuatro proyecciones de la atención y las tres de la red de avance. El modelo de 3B usa lotes de 2 y acumula el gradiente 8 pasos. El resto usa lotes de 4 y acumula 4 pasos. La tasa es $3 \times 10^{-4}$ para 3B y $5 \times 10^{-4}$ para los demás. El optimizador es Adam de 8 bits, con decaimiento $0{,}01$, diez pasos de calentamiento y planificador coseno. Usa precisión \textit{bfloat16}.
+
+La pérdida no mira todo el diálogo. Una máscara toma el inicio del turno de usuario y el inicio del turno de asistente. La consigna y la entrada quedan fuera del gradiente. El error cae solo sobre la respuesta.
+
+Para el entrenamiento, en los dos corpus, las letras sueltas y consecutivas del datatset se funden en un token con mayúscula inicial y los dígitos sueltos en un número. Tres letras iguales seguidas se reducen a dos. Una ráfaga sin separación, como \textit{Mar del Plata}, queda en un solo token.
 
 \subsection{\texorpdfstring{Canal directo (LSA $\rightarrow$ Español)}{Canal directo (LSA a Español)}}
-El canal directo recibe las glosas de un turno cerrado y devuelve una sola oración en español rioplatense. El procedimiento tiene cuatro tramos: preparación del par glosas--oración, ajuste de bajo rango, consigna de traducción y generación sobre el modelo cuantizado.
+El par de este canal es glosas hacia una oración en español rioplatense. El turno de usuario antepone «Glosas:» a la secuencia ya compacta. El turno de asistente es la oración. La máscara deja el error sobre esa oración.
 
-\paragraph{Preparación del corpus.}
-Cada ejemplo asocia una secuencia de glosas con una oración. Antes del ajuste, las letras sueltas y consecutivas se funden en un token con mayúscula inicial, y los dígitos sueltos y consecutivos se funden en un número. Tres o más letras iguales seguidas se reducen a dos. Una letra aislada X o Ñ permanece en mayúscula. Así, el modelo no aprende a pegar el deletreo: recibe el nombre o la cifra ya compactados. Una ráfaga de letras sin seña de separación, como el deletreo continuo de un topónimo de varias palabras, queda en un solo token.
-
-El conjunto se divide en un 85\,\% de entrenamiento y un 15\,\% de evaluación, con semilla fija. Cada ejemplo de entrenamiento forma un diálogo de tres turnos. El primero fija la consigna de sistema. El segundo, el del usuario, antepone la etiqueta «Glosas:» a la secuencia ya unida. El tercero, el del asistente, contiene la oración esperada. Cada familia conserva su propia plantilla de diálogo. La longitud máxima de cada ejemplo durante el ajuste es de 512 tokens y los ejemplos no se concatenan dentro de la misma secuencia. La carga del modelo admite un contexto de hasta 2048 tokens y, solo en esta etapa, guarda los pesos en 4 bits.
-
-\paragraph{Ajuste de bajo rango.}
-La adaptación usa LoRA \parencite{hu2022lora}, con rango $r = 16$ y factor de escala $\alpha = 32$. Las matrices cubren las cuatro proyecciones de la atención (consulta, clave, valor y salida) y las tres proyecciones de la red de avance (compuerta, expansión y contracción). La tabla de incrustaciones y la proyección final del vocabulario permanecen congeladas. No hay abandono de unidades ni sesgo adicional en los adaptadores. Para contener la memoria, el ajuste conserva solo algunos estados intermedios y recalcula el resto.
-
-El régimen por defecto recorre cinco épocas. El modelo de 3B usa lotes de 2 ejemplos y acumula el gradiente durante 8 pasos; los demás usan lotes de 4 y acumulan durante 4 pasos. La tasa de aprendizaje es $3 \times 10^{-4}$ para el modelo de 3B y $5 \times 10^{-4}$ para el resto. El optimizador es Adam de 8 bits, con decaimiento de pesos $0{,}01$, diez pasos de calentamiento y un planificador coseno. Si el equipo dispone de \textit{bfloat16}, el cálculo usa esa precisión; en caso contrario, usa \textit{float16}. Una corrida puede reemplazar las épocas por un tope de pasos.
-
-La pérdida no observa todo el diálogo. Una máscara reconoce, en la plantilla de cada familia, el inicio del turno de usuario y el inicio del turno de asistente. La consigna y las glosas quedan fuera del gradiente. El error se calcula solo sobre los tokens de la oración en español.
-\paragraph{Consigna de traducción.}
-La consigna obliga a una única oración, sin notas, comillas ni datos ajenos a la entrada. Las reglas que el ajuste debe fijar son las siguientes \parencite{massoneparte2}:
+La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la entrada \parencite{massoneparte2}:
 \begin{itemize}
     \item El español es rioplatense y usa voseo. La oración incorpora artículos, preposiciones y concordancia verbal. La traducción no es palabra por palabra.
     \item Los pronombres de entrada son \texttt{YO}, \texttt{VOS}, \texttt{EL}, \texttt{NOSOTROS} y \texttt{ELLOS}. Sin una marca de género al lado, el sujeto queda tácito.
     \item La letra \texttt{A} inmediata al sustantivo o al pronombre marca femenino, y la letra \texttt{O} marca masculino. Un parentesco sin esa letra se vierte en masculino.
     \item \texttt{MIO} y \texttt{TUYO} se vierten como posesivos del español.
-    \item \texttt{PASADO} o \texttt{AYER} exigen pretérito. \texttt{FUTURO} exige futuro o una perífrasis. \texttt{YA} o \texttt{TERMINAR} marcan una acción concluida. Sin marca temporal, el verbo queda en presente.
+    \item \texttt{PASADO} o \texttt{AYER} exigen pretérito. \texttt{FUTURO} exige futuro o una perífrasis. Sin marca temporal, el verbo queda en presente.
     \item \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} y \texttt{CUANTOS} producen una pregunta directa, con signos de apertura y de cierre.
     \item \texttt{NO} junto al concepto o al verbo produce una negación fluida.
     \item Un token en capitalización de nombre, o una cifra, se copia tal cual. La consigna prohíbe sustituirlo o alterarlo.
-    \item La entrada suele seguir el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
+    \item La entrada sigue el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
 \end{itemize}
-\paragraph{Generación.}
-ILSA junta las letras antes de llamar al modelo. Dos o más letras seguidas pasan a un nombre con mayúscula inicial, y dos o más dígitos seguidos pasan a un número. Una letra sola no se compacta, y esta unión no recorta las repeticiones de una misma letra. El modelo recibe esa cadena, con el nombre ya capitalizado, y no el deletreo letra por letra. Si el enunciado completo es solo letras o solo dígitos, ILSA arma el texto en el cliente y no llama al modelo. En los demás casos, el mensaje reúne la consigna de sistema, la ventana de turnos previos de ese cliente y el turno «Glosas:» con la secuencia ya unida. La generación admite hasta 64 tokens nuevos, con temperatura $0{,}1$ y penalización de repetición $1{,}0$. El canal intenta primero Qwen2.5 de 1,5B. Ante una respuesta vacía o un fallo, pasa a Llama 3.2 de 1B.
-La misma corrida de entrenamiento, ya con el adaptador fusionado y el binario cuantizado, evalúa el 15\,\% reservado. Esa evaluación usa temperatura $0$, un tope de 24 tokens nuevos y penalización de repetición $1{,}05$, y se detiene ante un salto de línea o la marca de fin de turno. Si varias oraciones del corpus comparten la misma secuencia de glosas, todas cuentan como referencia válida de esa entrada. La corrida registra el acierto exacto, el acierto tras normalizar puntuación y mayúsculas, y las métricas BLEU, ROUGE-L y METEOR, además de la latencia de cada generación.
+Al cierre de la corrida, el 15\,\% reservado se evalúa sobre el binario ya cuantizado. Esa evaluación usa temperatura $0$, tope de 24 tokens y penalización de repetición $1{,}05$, y se detiene ante un salto de línea o la marca de fin de turno. Si varias oraciones comparten las mismas glosas, todas cuentan como referencia. La corrida registra acierto exacto, acierto tras normalizar puntuación y mayúsculas, BLEU, ROUGE-L, METEOR y la latencia.
 
 \subsection{\texorpdfstring{Canal inverso (Español $\rightarrow$ LSA)}{Canal inverso (Español a LSA)}}
-El canal inverso recibe una oración en español rioplatense y devuelve una sola secuencia de glosas de la LSA. El par de entrenamiento invierte al del canal directo: la entrada es la oración y la respuesta esperada es la secuencia de glosas. El procedimiento recorre la preparación del corpus, el ajuste de bajo rango, la consigna de glosado y la generación sobre el modelo cuantizado.
+El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. El turno de usuario antepone «Español:». La máscara deja el error sobre las glosas.
 
-\paragraph{Preparación del corpus.}
-Cada ejemplo asocia una oración con su secuencia de glosas. Antes del ajuste, las letras sueltas y consecutivas de esa secuencia se funden en un token con mayúscula inicial, y los dígitos sueltos y consecutivos se funden en un número. Tres o más letras iguales seguidas se reducen a dos. Una letra aislada \texttt{X} o \texttt{Ñ} permanece en mayúscula. El modelo aprende así a emitir el nombre o la cifra ya compactados, y no una lista de caracteres.
-
-El conjunto se divide en un 85\,\% de entrenamiento y un 15\,\% de evaluación, con semilla fija. Si varias secuencias de glosas comparten la misma oración, todas cuentan como referencia válida de esa oración. Cada ejemplo de entrenamiento forma un diálogo de tres turnos. El primero fija la consigna de sistema. El segundo, el del usuario, antepone la etiqueta «Español:» a la oración. El tercero, el del asistente, contiene las glosas separadas por espacios. Cada familia conserva su plantilla de diálogo. La longitud máxima de cada ejemplo durante el ajuste es de 512 tokens y los ejemplos no se concatenan dentro de la misma secuencia. La carga del modelo admite un contexto de hasta 2048 tokens y, solo en esta etapa, guarda los pesos en 4 bits.
-
-La consigna de sistema incluye, en la corrida por defecto, ejemplos ya resueltos. Cada uno muestra una oración y la secuencia de glosas en la forma compacta. Una corrida puede omitir esos ejemplos.
-
-\paragraph{Ajuste de bajo rango.}
-El rango, el factor de escala y las capas coinciden con el canal directo: $r = 16$, $\alpha = 32$, las cuatro proyecciones de la atención y las tres de la red de avance. La tabla de incrustaciones y la proyección final del vocabulario permanecen congeladas. No hay abandono de unidades ni sesgo adicional. El ajuste conserva solo algunos estados intermedios y recalcula el resto. Si la familia no expone esas proyecciones con los nombres previstos, la adaptación cubre todas las proyecciones lineales del modelo.
-
-El régimen también coincide. Cinco épocas por defecto. El modelo de 3B usa lotes de 2 y acumula el gradiente durante 8 pasos; los demás usan lotes de 4 y acumulan durante 4 pasos. La tasa de aprendizaje es $3 \times 10^{-4}$ para el modelo de 3B y $5 \times 10^{-4}$ para el resto. El optimizador es Adam de 8 bits, con decaimiento de pesos $0{,}01$, diez pasos de calentamiento y un planificador coseno. Si el equipo dispone de \textit{bfloat16}, el cálculo usa esa precisión; en caso contrario, usa \textit{float16}. Una corrida puede reemplazar las épocas por un tope de pasos.
-
-La máscara de pérdida reconoce el inicio del turno de usuario y el inicio del turno de asistente. La consigna y la oración en español quedan fuera del gradiente. El error se calcula solo sobre los tokens de las glosas.
-
-\paragraph{Consigna de glosado.}
-La consigna exige una única secuencia, separada por espacios, sin notas, comillas ni el prefijo «Glosas:». La traducción no es palabra por palabra: no aparecen artículos, preposiciones ni signos del español. Las reglas que el ajuste debe fijar son las siguientes \parencite{massoneparte2}:
+Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español \parencite{massoneparte2}:
 \begin{itemize}
-    \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Maite} o \texttt{Moreno}, y nunca letra por letra. Una cifra, como un documento o una cantidad, va en un solo token numérico.
+    \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y nunca letra por letra. Una cifra, como un documento o una cantidad, va en un solo token numérico.
     \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación. Tres consignas de referencia son ``¿Dónde vas a vivir vos?'' $\rightarrow$ \texttt{FUTURO VOS VIVIR DONDE}, ``No voy a llevar el cuchillo.'' $\rightarrow$ \texttt{FUTURO YO CUCHILLO LLEVAR NO} y ``Vivo en la calle Moreno.'' $\rightarrow$ \texttt{CALLE Moreno YO VIVIR\_EN}.
-    \item Los pronombres se explicitan aunque el español los omita. ``Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL HOMBRE}, ella $\rightarrow$ \texttt{EL MUJER}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS MUJER}, ellos $\rightarrow$ \texttt{ELLOS HOMBRE} y ellas $\rightarrow$ \texttt{ELLOS MUJER}.
-    \item El género del parentesco usa el sustantivo en masculino más \texttt{HOMBRE} o \texttt{MUJER}: hermana $\rightarrow$ \texttt{HERMANO MUJER}, hija $\rightarrow$ \texttt{HIJO MUJER}, esposa $\rightarrow$ \texttt{ESPOSO MUJER}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{HOMBRE} si el español lo explicita.
+    \item Los pronombres se explicitan aunque el español los omita. ``Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}.
+    \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita.
     \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. ``Me llamo X'' o ``Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre.
-    \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis ``voy a'', coloca \texttt{FUTURO}. ``Ya'' coloca \texttt{YA}. El presente sin marca no agrega token temporal.
+    \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis ``voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega token temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
     \item ``Número de documento'' o ``DNI'' produce \texttt{DOCUMENTO NUMERO} más la cifra compacta. ``Apellido'' produce \texttt{APELLIDO} más el nombre. ``Calle'' produce \texttt{CALLE} más el nombre. Esos nombres y esas cifras se copian tal cual.
 \end{itemize}
 
-ILSA no recibe un deletreo. Recibe la secuencia de glosas, y un nombre o un número llega ahí como un solo token.
+El modelo aprende así a emitir el nombre o la cifra ya compactos, no una lista de letras.
 
-\paragraph{Generación.}
-El modelo recibe la oración en español. Un nombre propio ya figura en esa oración con mayúscula inicial. La respuesta es una secuencia de glosas. Si el enunciado trae un nombre o un número, el modelo los devuelve compactos: el nombre, en un token con mayúscula inicial, y el número, en un solo token. No los divide en letras. ILSA conserva esa secuencia tal como llega y no la parte en deletreo. Esta llamada no recibe los turnos previos. La generación admite hasta 64 tokens nuevos, con temperatura $0{,}1$ y penalización de repetición $1{,}0$. El canal intenta primero Qwen2.5 de 1,5B. Ante una respuesta vacía o un fallo, pasa a Llama 3.2 de 1B.
-
-La misma corrida de entrenamiento, ya con el adaptador fusionado y el binario cuantizado, evalúa el 15\,\% reservado. Esa evaluación usa temperatura $0$, un tope de 48 tokens nuevos y penalización de repetición $1{,}05$, y se detiene ante un salto de línea o la marca de fin de turno. Si la salida trae un bloque de razonamiento, ese bloque se descarta y solo queda la primera línea. Antes de puntuar, las letras y los dígitos sueltos de la predicción se compactan con las mismas reglas del corpus. La corrida registra el acierto exacto, el acierto tras pasar a minúsculas y quitar la puntuación, y las métricas BLEU, ROUGE-L y METEOR, además de la latencia de cada generación.
+La evaluación del 15\,\% usa temperatura $0$, tope de 48 tokens y penalización $1{,}05$. Se detiene ante un salto de línea o la marca de fin de turno. Si la salida trae un bloque de razonamiento, ese bloque se descarta y queda la primera línea. Si varias secuencias de glosas comparten la misma oración, todas cuentan como referencia. Las métricas son las mismas del canal directo.
 
 \subsection{Tratamiento de letras y dígitos sueltos}
 El léxico clasificado no cubre nombres ni cifras arbitrarias. La unión no queda a cargo de la red.
 
 En el canal directo, ILSA junta las letras antes de enviarlas al modelo. Dos o más letras seguidas forman un nombre con mayúscula inicial, y dos o más dígitos seguidos forman un número. El modelo recibe ese nombre ya capitalizado. Una letra sola no se compacta. Si el enunciado es solo un deletreo o solo dígitos, ILSA resuelve el texto en el cliente y la llamada al modelo no ocurre.
 
-En el canal inverso, el modelo recibe la oración, con el nombre ya capitalizado, y devuelve glosas. Un nombre o un número sale compacto y, en el caso del nombre, con mayúscula inicial. El modelo no lo divide en letras. ILSA recibe esas glosas y no un deletreo.
-
-En el corpus de entrenamiento la misma forma compacta es la que ve el modelo directo y la que debe emitir el modelo inverso. Tres o más letras iguales seguidas se reducen a dos, y una letra aislada X o Ñ permanece en mayúscula. Una ráfaga sin seña de separación, como el deletreo continuo de \textit{Mar del Plata}, queda en un solo token. No hay una regla posterior que parta ese token en las palabras del topónimo.
+En el canal inverso, el modelo recibe la oración, con el nombre ya capitalizado, y devuelve glosas. Un nombre o un número sale compacto y, en el caso del nombre, con mayúscula inicial.
 
 \subsection{Cuantización GGUF Q4\_K\_M y servicio de inferencia}
-Al terminar cada corrida, el adaptador se fusiona con los pesos base y el resultado se exporta al formato GGUF con cuantización Q4\_K\_M, por medio de \texttt{llama.cpp} \parencite{gerganov2023llamacpp}. La evaluación de esa corrida carga el binario cuantizado.
-
-El servicio usa la misma biblioteca de inferencia. Si el enlace desde Python no está disponible, el proceso usa el ejecutable nativo de \texttt{llama.cpp}. En ambos casos ninguna capa pasa a una placa de video y la inferencia queda en el procesador. El contexto por defecto es de 2048 tokens cuando el proceso publica un puerto de servicio, y de 4096 tokens en caso contrario. Una configuración explícita puede fijar otro tamaño. Cada canal tiene su propia carpeta. El arranque busca primero Qwen2.5 de 1,5B y después Llama 3.2 de 1B.
-
-Las rutas \texttt{/translate} y \texttt{/sordo} atienden el canal directo. El cuerpo trae una sola cadena, las glosas del turno, y no una lista. Las rutas \texttt{/hearing} y \texttt{/oyente} atienden el canal inverso. El cuerpo trae una sola cadena, la oración en español. Ninguna petición incluye el historial. La respuesta repite la cadena recibida, entrega la cadena producida, indica el modelo que respondió, el tiempo de generación, el tiempo de espera en cola, el cliente y la cantidad de turnos retenidos.
-
-Entre la consigna y las glosas actuales, el canal directo puede insertar hasta diez turnos previos del mismo cliente. Un turno del señante se guarda como sus glosas y la oración producida. Un turno del oyente se guarda como la oración oída y una nota fija de contexto, no como glosas. La traducción inversa no recibe esos turnos, aunque el turno oído sí entra en la ventana del canal directo. La petición de traducción no vacía esa ventana.
 
 \paragraph{Formulación analítica para la estimación de memoria RAM en tiempo de inferencia.}
 Esta estimación no forma parte del servicio. Acota la memoria del binario Q4\_K\_M en el procesador, con la ventana de 2048 tokens del entorno publicado:
