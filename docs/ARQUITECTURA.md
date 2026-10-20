@@ -16,7 +16,7 @@ Cómo se fabricaron los `.pose`: [DICCIONARIO.md](DICCIONARIO.md).
 | **Landmarks** | Coordenadas de pose (33 puntos) y manos (21 + 21). En el clasificador van normalizadas. |
 | **Frame de seña** | Un instante de landmarks, no un JPEG. |
 | **TinySkeleton** | Transformer chico: 16 frames × 225 números → una clase. |
-| **Traductor / semántico** | FastAPI en Cloud Run: `POST /sordo` y `POST /oyente`. |
+| **Traductor / semántico** | FastAPI en Cloud Run: `POST /sign` (glosas→español) y `POST /hearing` (español→glosas). |
 | **T-pose** | Clip `.pose` de una glosa en el servidor de movimiento. |
 | **Holistic** | MediaPipe: cuerpo + cara + manos. El clasificador usa pose y manos. |
 | **ILSA** | Ventana del motor local (`ILSA.exe` o `python run_backend.py`). |
@@ -58,7 +58,7 @@ cámara (Meet)
   → TinySkeleton CPU  →  glosa + confianza
   → UtteranceBuffer + repeat_policy
   → pausa ~4 s  o  POST /utterance/end
-  → POST Cloud Run /sordo  { glosses } → { spanish }
+  → POST Cloud Run /sign  { glosses } → { spanish }
   → HUD + LSA_CAPTION  (caduca 8 s)
 ```
 
@@ -84,7 +84,7 @@ chat de Meet (Enter / Enviar, si captura ≠ solo voz)
 
 español
   → POST /hearing
-  → POST Cloud Run /oyente  { spanish } → { glosses }
+  → POST Cloud Run /hearing  { spanish } → { glosses }
   → GET tpose-server /tposes/{STEM}.pose  (una por glosa / letra)
   → extraction/meet_sequence.py  (trim, park, EMA, puentes)
   → JSON de frames  (p, f, l, r)
@@ -188,8 +188,8 @@ ILSA no carga GGUF. `src/semantic/remote.py`:
 
 `https://ilsa-semantic-service-705664945052.us-central1.run.app`
 
-- Sordo: `POST /sordo` `{ "glosses": "..." }` → `{ "spanish": "..." }`.
-- Oyente: `POST /oyente` `{ "spanish": "..." }` → `{ "glosses": "..." }`.
+- Sordo: `POST /sign` `{ "glosses": "..." }` → `{ "spanish": "..." }`.
+- Oyente: `POST /hearing` `{ "spanish": "..." }` → `{ "glosses": "..." }`.
 
 Keepalive cada 4 min para no enfriar Cloud Run. `X-LSA-Client` es un UUID en
 `%LOCALAPPDATA%\ILSA\client_id.txt`. Token opcional: `LSA_SEMANTIC_TOKEN`.

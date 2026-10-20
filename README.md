@@ -49,7 +49,7 @@ están en el disco, **el código no las usa**.
 │  Oyente: Vosk (WAV → español) + compositor de .pose           │
 │  Ambos: clientes HTTP de Cloud Run                            │
 └──────┬────────────────────────────────────────────┬───────────┘
-       │ POST /sordo  POST /oyente                  │ GET /tposes/{GLOSA}.pose
+       │ POST /sign  POST /hearing                  │ GET /tposes/{GLOSA}.pose
        ▼                                            ▼
   ilsa-semantic-service                    tpose-server
   us-central1                              southamerica-east1
@@ -256,8 +256,10 @@ El API tiene que escuchar en loopback. Contrato y JSON:
 | Español ↔ glosas | `https://ilsa-semantic-service-705664945052.us-central1.run.app` | `semantic-cloud` |
 | Clips `.pose` | `https://tpose-server-705664945052.southamerica-east1.run.app` | `avatar-cloud` |
 
-Sordo: `POST /sordo` `{ "glosses" }` → `{ "spanish" }`.  
-Oyente: `POST /oyente` `{ "spanish" }` → `{ "glosses" }`.  
+Sordo: `POST /sign` `{ "glosses" }` → `{ "spanish" }`.  
+Oyente: `POST /hearing` `{ "spanish" }` → `{ "glosses" }`.  
+(Esos paths son del **Cloud Run**. En ILSA local, `POST /sign` son landmarks
+y `POST /hearing` es español → glosas + clip.)  
 T-pose: `GET /tposes/{STEM}.pose` (igualdad de nombre; ver
 [docs/AVATAR.md](docs/AVATAR.md)).
 

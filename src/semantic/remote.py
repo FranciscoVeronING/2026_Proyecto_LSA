@@ -135,12 +135,12 @@ def _ensure_keepalive() -> None:
 
 
 def translate_sordo(glosses: str) -> str:
-    data = _post("/sordo", {"glosses": glosses})
+    data = _post("/sign", {"glosses": glosses})
     return str(data.get("spanish") or "").strip()
 
 
 def translate_oyente(spanish: str) -> str:
-    data = _post("/oyente", {"spanish": spanish})
+    data = _post("/hearing", {"spanish": spanish})
     return str(
         data.get("glosses")
         or data.get("caption")

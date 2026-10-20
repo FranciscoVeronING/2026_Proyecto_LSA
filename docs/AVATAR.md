@@ -25,7 +25,7 @@ El idle no seña “por las dudas”.
 ### Ejemplo: “hola mamá”
 
 1. Mic de Meet → `POST /stt` → `hola mamá`. Si vino del chat, no hay STT.
-2. `POST /hearing` → Cloud Run `/oyente` → p. ej. `HOLA MAMÁ`.
+2. `POST /hearing` (ILSA) → Cloud Run `POST /hearing` → p. ej. `HOLA MAMÁ`.
 3. Esas glosas se pintan abajo del video (quien recibe las lee).
 4. Por cada glosa, `GET /tposes/{STEM}.pose` al servidor.
 5. El compositor local empalma clips. El canvas reproduce a la derecha y
@@ -87,7 +87,7 @@ Meet getUserMedia
 Mic / chat
     → POST /stt (si hay WAV)
     → POST /hearing
-         → Cloud Run /oyente
+         → Cloud Run POST /hearing
          → GET /tposes/{STEM}.pose
          → sequence_from_files
     → LSA_CAPTION + LSA_AVATAR
@@ -167,7 +167,7 @@ hombros. Antebrazo casi horizontal, un poco abajo; la muñeca no se quiebra.
 | `src/avatar/config.py` | URL y token |
 | `src/avatar/names.py` | `tpose_stem`, `expand_spell` |
 | `src/avatar/remote.py` | GET, caché, `resolve_chain`, `clip_for_glosses` |
-| `src/backend/hearing_session.py` | Tras `/oyente`, pide el clip |
+| `src/backend/hearing_session.py` | Tras Cloud Run `/hearing`, pide el clip |
 | `src/backend/server.py` | `POST /hearing` (glosas + clip) |
 | `extraction/meet_sequence.py` | Paths → JSON de frames |
 | `extraction/render_pose_pair.py` | Compositor (también mp4 de laboratorio) |
