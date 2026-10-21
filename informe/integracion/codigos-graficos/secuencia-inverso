@@ -1,0 +1,126 @@
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
+
+% Google Meet (Cajas superior e inferior)
+\draw (-1.125,16.75) rectangle (0.5,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,16.3125) {Google \\ Meet};
+\draw [short] (-0.375,15.875) -- (-0.375,2.625);
+
+\draw (-1.125,2.625) rectangle (0.5,1.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,2.1875) {Google \\ Meet};
+
+% Extensión (Cajas superior e inferior)
+\draw (1.75,16.75) rectangle (3.375,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,16.3125) {Extensión};
+\draw [short] (2.5,15.875) -- (2.5,2.625);
+
+\draw (1.75,2.625) rectangle (3.375,1.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,2.1875) {Extensión};
+
+% ILSA (Cajas superior e inferior)
+\draw (4.625,16.75) rectangle (6.25,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,16.3125) {ILSA};
+\draw [short] (5.375,15.875) -- (5.375,2.625);
+
+\draw (4.625,2.625) rectangle (6.25,1.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,2.1875) {ILSA};
+
+% Servidor semántico (Cajas superior e inferior)
+\draw (7.5,16.75) rectangle (9.125,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,16.3125) {Servidor \\ semántico};
+\draw [short] (8.25,15.875) -- (8.25,2.625);
+
+\draw (7.5,2.625) rectangle (9.125,1.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,2.1875) {Servidor \\ semántico};
+
+% Servidor de poses (Cajas superior e inferior)
+\draw (10.5,16.75) rectangle (12.125,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.3125,16.3125) {Servidor \\ de poses};
+\draw [short] (11.25,15.875) -- (11.25,2.625);
+
+\draw (10.5,2.625) rectangle (12.125,1.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.3125,2.1875) {Servidor \\ de poses};
+
+% Usuario oyente (Izquierda)
+\draw [short] (-3.25,15.875) -- (-3.25,3);
+\draw (-3.25,16.875) circle (0.125cm);
+\draw [short] (-3.25,16.75) -- (-3.25,16.5);
+\draw [short] (-3.25,16.5) -- (-3.375,16.375);
+\draw [short] (-3.25,16.5) -- (-3.125,16.375);
+\draw [short] (-3.375,16.625) -- (-3.125,16.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (-3.1875,16.0625) {Usuario oyente};
+
+\draw (-3.25,2.75) circle (0.125cm);
+\draw [short] (-3.25,2.625) -- (-3.25,2.375);
+\draw [short] (-3.25,2.375) -- (-3.375,2.25);
+\draw [short] (-3.25,2.375) -- (-3.125,2.25);
+\draw [short] (-3.375,2.5) -- (-3.125,2.5);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (-3.1875,1.9375) {Usuario oyente};
+
+% Usuario señante (Derecha)
+\draw [short] (14.25,15.875) -- (14.25,2.875);
+\draw (14.25,16.875) circle (0.125cm);
+\draw [short] (14.25,16.75) -- (14.25,16.5);
+\draw [short] (14.25,16.5) -- (14.125,16.375);
+\draw [short] (14.25,16.5) -- (14.375,16.375);
+\draw [short] (14.125,16.625) -- (14.375,16.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (14.3125,16.0625) {Usuario señante};
+
+\draw (14.25,2.625) circle (0.125cm);
+\draw [short] (14.25,2.5) -- (14.25,2.25);
+\draw [short] (14.25,2.25) -- (14.125,2.125);
+\draw [short] (14.25,2.25) -- (14.375,2.125);
+\draw [short] (14.125,2.375) -- (14.375,2.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (14.3125,1.8125) {Usuario señante};
+
+% Marcos de agrupación condicionales y de bucles
+\draw [dash pattern=on 6pt off 2pt] (2.125,12.125) rectangle (5.75,14.5);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.6,14.35) {[Si viene de micrófono]};
+
+\draw [dash pattern=on 6pt off 2pt] (4.875,4.375) rectangle (11.875,9.25);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.725,9.1) {[Por cada glosa]};
+
+\draw [dash pattern=on 6pt off 2pt] (5.125,5.625) rectangle (11.5,8);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.35,7.85) {[No existe archivo]};
+
+% Cuadro de proceso de interpretación
+\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (6.75,10.375) rectangle (9.5,10.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.125,10.625) {interpretación};
+
+% Flujos de mensajes (Flechas)
+\draw [-{Stealth[scale=1.5]}] (-3.25,14.875) -- (-0.375,14.875) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{habla o escribe};
+
+\draw [-{Stealth[scale=1.5]}] (-0.375,14.75) -- (2.5,14.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{audio/texto chat};
+
+\draw [-{Stealth[scale=1.5]}] (2.5,13.25) -- (5.375,13.25) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /stt};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,12.5) -- (2.5,12.5) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
+
+\draw [-{Stealth[scale=1.5]}] (2.5,11.375) -- (5.375,11.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+
+\draw [-{Stealth[scale=1.5]}] (5.375,11.125) -- (8.25,11.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (8.25,9.5) -- (5.375,9.5) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200 OK, glosas};
+
+\draw [-{Stealth[scale=1.5]}] (5.375,8.375) -- (11.25,8.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /tposes/\{archivo\}};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,6.75) -- (5.375,6.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{404 NOT FOUND};
+
+\draw [-{Stealth[scale=1.5]}] (5.375,6) -- (11.25,6) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /fingerspell?letters=...};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,4.75) -- (5.375,4.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200, archivo/s de seña/s};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,4) -- (2.5,4) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Glosas y animación};
+
+\draw [-{Stealth[scale=1.5]}] (2.5,3.75) -- (-0.375,3.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Subtítulo/esqueleto};
+
+\draw [-{Stealth[scale=1.5]}] (-0.375,3.375) -- (14.25,3.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Avatar señando / subtítulos};
+
+\end{circuitikz}%
+}
+\caption{Diagrama de secuencia del flujo de interpretación de voz/texto a señas para el usuario señante.}
+\label{fig:diagrama_secuencia_voz_señas}
+\end{figure}

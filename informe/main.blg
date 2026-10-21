@@ -1,24 +1,24 @@
-[0] Config.pm:328> INFO - This is Biber 2.21
-[0] Config.pm:331> INFO - Logfile is 'main.blg'
-[109] biber-MSWIN64:342> INFO - === 
-[150] Biber.pm:421> INFO - Reading 'main.bcf'
-[299] Biber.pm:1002> INFO - Found 39 citekeys in bib section 0
-[320] Biber.pm:4487> INFO - Processing section 0
-[331] Biber.pm:4678> INFO - Looking for bibtex file 'referencias.bib' for section 0
-[424] bibtex.pm:1713> INFO - LaTeX decoding ...
-[462] bibtex.pm:1519> INFO - Found BibTeX data source 'referencias.bib'
-[730] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[730] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
-[730] Biber.pm:4307> INFO - Sorting list 'apa/apasortcite//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
-[811] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[812] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
-[812] Biber.pm:4307> INFO - Sorting list 'apa/global//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
-[858] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[912] bbl.pm:779> INFO - Output to main.bbl
-[913] Biber.pm:132> WARN - Duplicate entry key: 'signall2026linkedin' in file 'referencias.bib', skipping ...
-[913] Biber.pm:132> WARN - Duplicate entry key: 'gerganov2023llamacpp' in file 'referencias.bib', skipping ...
-[913] Biber.pm:132> WARN - Duplicate entry key: 'frantar2022gptq' in file 'referencias.bib', skipping ...
-[913] Biber.pm:132> WARN - I didn't find a database entry for 'cabello2010threejs' (section 0)
-[913] Biber.pm:132> WARN - I didn't find a database entry for 'moryossef2021poseformat' (section 0)
-[913] Biber.pm:132> WARN - I didn't find a database entry for 'liddell1989phonological' (section 0)
-[913] Biber.pm:134> INFO - WARNINGS: 6
+[0] Config.pm:329> INFO - This is Biber 2.22
+[0] Config.pm:332> INFO - Logfile is 'main.blg'
+[107] biber-MSWIN64:342> INFO - === 
+[144] Biber.pm:421> INFO - Reading 'main.bcf'
+[254] Biber.pm:1002> INFO - Found 39 citekeys in bib section 0
+[270] Biber.pm:4487> INFO - Processing section 0
+[279] Biber.pm:4680> INFO - Looking for bibtex file 'referencias.bib' for section 0
+[338] bibtex.pm:1713> INFO - LaTeX decoding ...
+[369] bibtex.pm:1519> INFO - Found BibTeX data source 'referencias.bib'
+[583] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[583] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[583] Biber.pm:4307> INFO - Sorting list 'apa/apasortcite//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
+[657] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[657] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[657] Biber.pm:4307> INFO - Sorting list 'apa/global//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
+[697] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[742] bbl.pm:779> INFO - Output to main.bbl
+[743] Biber.pm:132> WARN - Duplicate entry key: 'signall2026linkedin' in file 'referencias.bib', skipping ...
+[743] Biber.pm:132> WARN - Duplicate entry key: 'gerganov2023llamacpp' in file 'referencias.bib', skipping ...
+[743] Biber.pm:132> WARN - Duplicate entry key: 'frantar2022gptq' in file 'referencias.bib', skipping ...
+[743] Biber.pm:132> WARN - I didn't find a database entry for 'cabello2010threejs' (section 0)
+[743] Biber.pm:132> WARN - I didn't find a database entry for 'moryossef2021poseformat' (section 0)
+[743] Biber.pm:132> WARN - I didn't find a database entry for 'liddell1989phonological' (section 0)
+[743] Biber.pm:134> INFO - WARNINGS: 6

@@ -1,0 +1,83 @@
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont] %todo che, leiste las cosas que escribi?=
+
+% Contenedor principal: ILSA (motor local)
+\draw [line width=0.6pt] (0.625,15) rectangle (12.625,4.875);
+\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (0.775,14.85) {ILSA (motor local)};
+
+% Caja Extension
+\draw (0.5,16.875) rectangle (12.625,16.125);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.5625,16.725) {Extension};
+
+% Subcaja Clasificador
+\draw [line width=0.7pt] (1,11) rectangle (4.625,5.25);
+\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (1.15,10.85) {clasificador};
+
+\draw (1.25,10) rectangle (4.375,8.75);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (2.8125,9.85) {extraccion de \\ puntos corporales};
+
+\draw (1.25,7.875) rectangle (4.375,7.125);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (2.8125,7.725) {clasificador};
+
+\draw (1.25,6.25) rectangle (4.375,5.5);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (2.8125,6.1) {filtros y buffer};
+
+% Cajas de síntesis y sesión
+\draw (9.875,11) rectangle (12.375,9.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (11.125,10.4375) {sintesis de \\ voz};
+
+\draw (5.125,11) rectangle (9.375,9.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (7.25,10.4375) {sesion oyente y avatar};
+
+% Conexiones internas
+\draw [-{Stealth[scale=1.5]}] (6,16.125) -- (6,11) node[pos=0.63, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+\draw [short] (6.5,11.875) -- (6.5,11.875);
+\draw [short] (4.25,12.25) -- (4.25,12.25);
+\draw [short] (3.5,11.75) -- (3.5,11.75);
+
+\draw [-{Stealth[scale=1.5]}] (2.75,8.75) -- (2.75,7.875) node[pos=0.41, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{puntos corporales};
+\draw [-{Stealth[scale=1.5]}] (2.75,7.125) -- (2.75,6.25) node[pos=0.38, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{glosa y confianza};
+
+% Contenedor Nube
+\draw (0.625,3.75) rectangle (11.5,3);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.0625,3.6) {Nube};
+
+% Flujos con la Nube y la Extensión
+\draw [-{Stealth[scale=1.5]}] (5.5,9.875) -- (5.5,3.75) node[pos=0.92, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /tposes/\{archivo\}};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (6.75,3.75) -- (6.75,9.875) node[pos=0.6, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{archivo pose};
+
+\draw [-{Stealth[scale=1.5]}] (5.125,16.125) -- (5.125,13.625) -- (3.25,13.625) -- (3.25,10);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.125,13.625) {POST /sign};
+
+\draw [-{Stealth[scale=1.5]}] (11,3.75) -- (11,9.875) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (6.75,11) -- (6.75,16.125) node[pos=0.61, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{animación};
+
+\draw [-{Stealth[scale=1.5]}] (1.5,5.5) -- (1.5,3.75) node[pos=0.64, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /sign};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (3.125,3.75) -- (3.125,5.5) node[pos=0.37, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
+
+\draw [dash pattern=on 6pt off 2pt, -{Stealth[scale=1.5]}] (1.25,5.75) -- (-1.375,5.75) -- (-1.375,16.5) -- (0.5,16.5);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-1.375,8.75) {oración};
+
+\draw [-{Stealth[scale=1.5]}] (8,9.875) -- (8,3.75) node[pos=0.59, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (9,3.75) -- (9,9.875) node[pos=0.53, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{glosas};
+
+\draw [dash pattern=on 6pt off 2pt, -{Stealth[scale=1.5]}] (11,11) -- (11,14.25) -- (11,16.125);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11,13.625) {audio};
+
+\draw [-{Stealth[scale=1.5]}] (0.375,16.25) -- (-0.125,16.25) -- (-0.125,6) -- (1.25,6);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.125,12.625) {POST /session \\ POST /activity \\POST /utterance/end \\GET /health \\GET /state};
+
+\draw [-{Stealth[scale=1.5]}] (8,16.125) -- (8,13.875) -- (8,12.375) -- (8,11);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8,12.375) {POST /stt};
+
+\draw [dash pattern=on 6pt off 2pt, -{Stealth[scale=1.5]}] (8.875,11) -- (8.875,14.5) -- (8.875,16.125);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.875,11.75) {oración};
+
+\end{circuitikz}%
+}
+\caption{Arquitectura detallada del motor local ILSA y su interacción con los servicios en la nube.}
+\label{fig:ilsa_local_arquitectura}
+\end{figure}

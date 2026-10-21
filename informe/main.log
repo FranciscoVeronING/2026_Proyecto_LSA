@@ -1,39 +1,39 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.19)  19 OCT 2026 15:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.4)  21 OCT 2026 00:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**c:/Users/franc/Documents/GitHub/2026_Proyecto_LSA-informe/informe/main.tex
-(c:/Users/franc/Documents/GitHub/2026_Proyecto_LSA-informe/informe/main.tex
-LaTeX2e <2025-11-01>
-L3 programming layer <2025-12-24>
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
+**"d:/Mis Archivos/Proyectos/2026_Proyecto_LSA_informe/informe/main.tex"
+(d:/Mis Archivos/Proyectos/2026_Proyecto_LSA_informe/informe/main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
 Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
 File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
-\c@part=\count275
-\c@chapter=\count276
-\c@section=\count277
-\c@subsection=\count278
-\c@subsubsection=\count279
-\c@paragraph=\count280
-\c@subparagraph=\count281
-\c@figure=\count282
-\c@table=\count283
+\c@part=\count276
+\c@chapter=\count277
+\c@section=\count278
+\c@subsection=\count279
+\c@subsubsection=\count280
+\c@paragraph=\count281
+\c@subparagraph=\count282
+\c@figure=\count283
+\c@table=\count284
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
-\bibindent=\dimen148
+\bibindent=\dimen150
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
 Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
@@ -68,30 +68,30 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
 Package: microtype 2026/03/01 v3.2d Micro-typographical refinements (RS)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
 \KV@toks@=\toks19
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count284
+\etb@tempcnta=\count285
 )
 \MT@toks=\toks20
 \MT@tempbox=\box53
-\MT@count=\count285
+\MT@count=\count286
 LaTeX Info: Redefining \noprotrusionifhmode on input line 1084.
 LaTeX Info: Redefining \leftprotrusion on input line 1085.
 \MT@prot@toks=\toks21
 LaTeX Info: Redefining \rightprotrusion on input line 1104.
 LaTeX Info: Redefining \textls on input line 1449.
-\MT@outer@kern=\dimen149
+\MT@outer@kern=\dimen151
 LaTeX Info: Redefining \microtypecontext on input line 2053.
 LaTeX Info: Redefining \textmicrotypecontext on input line 2070.
-\MT@listname@count=\count286
+\MT@listname@count=\count287
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
 tex.def
 File: microtype-pdftex.def 2026/03/01 v3.2d Definitions specific to pdftex (RS)
 
@@ -101,174 +101,179 @@ LaTeX Info: Redefining \lslig on input line 944.
 )
 Package microtype Info: Loading configuration file microtype.cfg.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
 File: microtype.cfg 2026/03/01 v3.2d microtype main configuration file (RS)
 )
 LaTeX Info: Redefining \microtypesetup on input line 3065.
-) (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
-Package: babel 2025/12/11 v25.17 The multilingual framework for LuaLaTeX, pdfLa
+) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2026/09/09 v26.12 The multilingual framework for LuaLaTeX, pdfLa
 TeX and XeLaTeX
-\babel@savecnt=\count287
+\babel@savecnt=\count288
 LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input li
-ne 2068.
+ne 2095.
 LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input li
-ne 2070.
+ne 2097.
 LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input lin
-e 2072.
+e 2099.
 LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input lin
-e 2073.
+e 2100.
 LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) 
-on input line 2074.
-LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) 
-on input line 2076.
-LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) 
 on input line 2101.
-\U@D=\dimen150
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) 
+on input line 2103.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) 
+on input line 2128.
+\U@D=\dimen152
 \l@unhyphenated=\language79
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
 \bbl@readstream=\read2
-\bbl@dirlevel=\count288
+\bbl@dirlevel=\count289
 Package babel Info: Configuration files are deprecated, as
 (babel)             they can break document portability.
-(babel)             Reported on input line 4196.
+(babel)             Reported on input line 4331.
 
 *************************************
 * Local config file bblopts.cfg used
 *
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
  babel
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/es\babel
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/es\babel
 -spanish.tex)
-Package babel Info: Importing font and identification data for spanish
-(babel)             from babel-es.ini. Reported on input line 4320.
+Package babel Info: Importing font and identification data for 'spanish'
+(babel)             from babel-es.ini. Reported on input line 4459.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/babel-spanish\spanish.l
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/babel-spanish\spanish.l
 df
 Language: spanish.ldf 2021/05/27 v5.0q Spanish support from the babel system
 \es@quottoks=\toks22
-\es@quotdepth=\count289
+\es@quotdepth=\count290
 ))
 LaTeX Encoding Info:    Redeclaring text command \guillemotleft (encoding OT1) 
 on input line 8.
 LaTeX Encoding Info:    Redeclaring text command \guillemotright (encoding OT1)
  on input line 8.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
-Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
-Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
 fg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen151
-\Gin@req@width=\dimen152
+\Gin@req@height=\dimen153
+\Gin@req@width=\dimen154
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/circuitikz\circuitikz.s
+ty
+Package: circuitikz 2026/09/12{} The CircuiTikz circuit drawing package version
+ 1.8.7
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
 sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
 y
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
 -common.tex
 \pgfutil@everybye=\toks23
-\pgfutil@tempdima=\dimen153
-\pgfutil@tempdimb=\dimen154
+\pgfutil@tempdima=\dimen155
+\pgfutil@tempdimb=\dimen156
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
 -latex.def
 \pgfutil@abb=\box54
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
 code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
-Package: pgfrcs 2025-08-29 v3.1.11a (3.1.11a)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+Package: pgfrcs 2026-08-01 v3.1.12 (3.1.12)
 ))
-Package: pgf 2025-08-29 v3.1.11a (3.1.11a)
+Package: pgf 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
 sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
 sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
 s.code.tex
-Package: pgfsys 2025-08-29 v3.1.11a (3.1.11a)
+Package: pgfsys 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
 .code.tex
 \pgfkeys@pathtoks=\toks24
 \pgfkeys@temptoks=\toks25
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
 libraryfiltered.code.tex
 \pgfkeys@tmptoks=\toks26
 ))
-\pgf@x=\dimen155
-\pgf@y=\dimen156
-\pgf@xa=\dimen157
-\pgf@ya=\dimen158
-\pgf@xb=\dimen159
-\pgf@yb=\dimen160
-\pgf@xc=\dimen161
-\pgf@yc=\dimen162
-\pgf@xd=\dimen163
-\pgf@yd=\dimen164
+\pgf@x=\dimen157
+\pgf@y=\dimen158
+\pgf@xa=\dimen159
+\pgf@ya=\dimen160
+\pgf@xb=\dimen161
+\pgf@yb=\dimen162
+\pgf@xc=\dimen163
+\pgf@yc=\dimen164
+\pgf@xd=\dimen165
+\pgf@yd=\dimen166
 \w@pgf@writea=\write3
 \r@pgf@reada=\read3
-\c@pgf@counta=\count290
-\c@pgf@countb=\count291
-\c@pgf@countc=\count292
-\c@pgf@countd=\count293
+\c@pgf@counta=\count291
+\c@pgf@countb=\count292
+\c@pgf@countc=\count293
+\c@pgf@countd=\count294
 \t@pgf@toka=\toks27
 \t@pgf@tokb=\toks28
 \t@pgf@tokc=\toks29
-\pgf@sys@id@count=\count294
+\pgf@sys@id@count=\count295
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
 fg
-File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
+File: pgf.cfg 2026-08-01 v3.1.12 (3.1.12)
 )
 Driver file for pgf: pgfsys-pdftex.def
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
 s-pdftex.def
-File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfsys-pdftex.def 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
 s-common-pdf.def
-File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfsys-common-pdf.def 2026-08-01 v3.1.12 (3.1.12)
 )))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
 ssoftpath.code.tex
-File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfsyssoftpath@smallbuffer@items=\count295
-\pgfsyssoftpath@bigbuffer@items=\count296
+File: pgfsyssoftpath.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgfsyssoftpath@smallbuffer@items=\count296
+\pgfsyssoftpath@bigbuffer@items=\count297
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
 sprotocol.code.tex
-File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfsysprotocol.code.tex 2026-08-01 v3.1.12 (3.1.12)
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
@@ -279,373 +284,464 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 e.code.tex
-Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
+Package: pgfcore 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
 .tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
 code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
 r.code.tex
-\pgfmath@dimen=\dimen165
-\pgfmath@count=\count297
+\pgfmath@dimen=\dimen167
+\pgfmath@count=\count298
 \pgfmath@box=\box55
 \pgfmath@toks=\toks30
 \pgfmath@stack@operand=\toks31
 \pgfmath@stack@operation=\toks32
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.basic.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.trigonometric.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.random.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.comparison.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.base.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.round.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.misc.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
 ions.integerarithmetics.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
 code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
 .code.tex
-\c@pgfmathroundto@lastzeros=\count298
+\c@pgfmathroundto@lastzeros=\count299
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
 tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 epoints.code.tex
-File: pgfcorepoints.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@picminx=\dimen166
-\pgf@picmaxx=\dimen167
-\pgf@picminy=\dimen168
-\pgf@picmaxy=\dimen169
-\pgf@pathminx=\dimen170
-\pgf@pathmaxx=\dimen171
-\pgf@pathminy=\dimen172
-\pgf@pathmaxy=\dimen173
-\pgf@xx=\dimen174
-\pgf@xy=\dimen175
-\pgf@yx=\dimen176
-\pgf@yy=\dimen177
-\pgf@zx=\dimen178
-\pgf@zy=\dimen179
+File: pgfcorepoints.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@picminx=\dimen168
+\pgf@picmaxx=\dimen169
+\pgf@picminy=\dimen170
+\pgf@picmaxy=\dimen171
+\pgf@pathminx=\dimen172
+\pgf@pathmaxx=\dimen173
+\pgf@pathminy=\dimen174
+\pgf@pathmaxy=\dimen175
+\pgf@xx=\dimen176
+\pgf@xy=\dimen177
+\pgf@yx=\dimen178
+\pgf@yy=\dimen179
+\pgf@zx=\dimen180
+\pgf@zy=\dimen181
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 epathconstruct.code.tex
-File: pgfcorepathconstruct.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@path@lastx=\dimen180
-\pgf@path@lasty=\dimen181
+File: pgfcorepathconstruct.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@path@lastx=\dimen182
+\pgf@path@lasty=\dimen183
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 epathusage.code.tex
-File: pgfcorepathusage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@shorten@end@additional=\dimen182
-\pgf@shorten@start@additional=\dimen183
+File: pgfcorepathusage.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@shorten@end@additional=\dimen184
+\pgf@shorten@start@additional=\dimen185
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 escopes.code.tex
-File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorescopes.code.tex 2026-08-01 v3.1.12 (3.1.12)
 \pgfpic=\box56
 \pgf@hbox=\box57
 \pgf@layerbox@main=\box58
-\pgf@picture@serial@count=\count299
+\pgf@picture@serial@count=\count300
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 egraphicstate.code.tex
-File: pgfcoregraphicstate.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgflinewidth=\dimen184
+File: pgfcoregraphicstate.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgflinewidth=\dimen186
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 etransformations.code.tex
-File: pgfcoretransformations.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@pt@x=\dimen185
-\pgf@pt@y=\dimen186
-\pgf@pt@temp=\dimen187
+File: pgfcoretransformations.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@pt@x=\dimen187
+\pgf@pt@y=\dimen188
+\pgf@pt@temp=\dimen189
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 equick.code.tex
-File: pgfcorequick.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorequick.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 eobjects.code.tex
-File: pgfcoreobjects.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcoreobjects.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 epathprocessing.code.tex
-File: pgfcorepathprocessing.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorepathprocessing.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 earrows.code.tex
-File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfarrowsep=\dimen188
+File: pgfcorearrows.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgfarrowsep=\dimen190
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 eshade.code.tex
-File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@max=\dimen189
-\pgf@sys@shading@range@num=\count300
-\pgf@shadingcount=\count301
+File: pgfcoreshade.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@max=\dimen191
+\pgf@sys@shading@range@num=\count301
+\pgf@shadingcount=\count302
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 eimage.code.tex
-File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcoreimage.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 eexternal.code.tex
-File: pgfcoreexternal.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcoreexternal.code.tex 2026-08-01 v3.1.12 (3.1.12)
 \pgfexternal@startupbox=\box59
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 elayers.code.tex
-File: pgfcorelayers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorelayers.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 etransparency.code.tex
-File: pgfcoretransparency.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcoretransparency.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 epatterns.code.tex
-File: pgfcorepatterns.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorepatterns.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
 erdf.code.tex
-File: pgfcorerdf.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfcorerdf.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
 shapes.code.tex
-File: pgfmoduleshapes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfmoduleshapes.code.tex 2026-08-01 v3.1.12 (3.1.12)
 \pgfnodeparttextbox=\box60
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
 plot.code.tex
-File: pgfmoduleplot.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgfmoduleplot.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
 mp-version-0-65.sty
-Package: pgfcomp-version-0-65 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@nodesepstart=\dimen190
-\pgf@nodesepend=\dimen191
+Package: pgfcomp-version-0-65 2026-08-01 v3.1.12 (3.1.12)
+\pgf@nodesepstart=\dimen192
+\pgf@nodesepend=\dimen193
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
 mp-version-1-18.sty
-Package: pgfcomp-version-1-18 2025-08-29 v3.1.11a (3.1.11a)
+Package: pgfcomp-version-1-18 2026-08-01 v3.1.12 (3.1.12)
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
 y
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
 ty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
 .code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
 .tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
 code.tex
-Package: pgffor 2025-08-29 v3.1.11a (3.1.11a)
-\pgffor@iter=\dimen192
-\pgffor@skip=\dimen193
+Package: pgffor 2026-08-01 v3.1.12 (3.1.12)
+\pgffor@iter=\dimen194
+\pgffor@skip=\dimen195
 \pgffor@stack=\toks33
 \pgffor@toks=\toks34
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z\tikz.code.tex
-Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
+Package: tikz 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
 aryplothandlers.code.tex
-File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@plot@mark@count=\count302
-\pgfplotmarksize=\dimen194
+File: pgflibraryplothandlers.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@plot@mark@count=\count303
+\pgfplotmarksize=\dimen196
 )
-\tikz@lastx=\dimen195
-\tikz@lasty=\dimen196
-\tikz@lastxsaved=\dimen197
-\tikz@lastysaved=\dimen198
-\tikz@lastmovetox=\dimen199
-\tikz@lastmovetoy=\dimen256
-\tikzleveldistance=\dimen257
-\tikzsiblingdistance=\dimen258
+\tikz@lastx=\dimen197
+\tikz@lasty=\dimen198
+\tikz@lastxsaved=\dimen199
+\tikz@lastysaved=\dimen256
+\tikz@lastmovetox=\dimen257
+\tikz@lastmovetoy=\dimen258
+\tikzleveldistance=\dimen259
+\tikzsiblingdistance=\dimen260
 \tikz@figbox=\box61
 \tikz@figbox@bg=\box62
 \tikz@tempbox=\box63
 \tikz@tempbox@bg=\box64
-\tikztreelevel=\count303
-\tikznumberofchildren=\count304
-\tikznumberofcurrentchild=\count305
-\tikz@fig@count=\count306
+\tikztreelevel=\count304
+\tikznumberofchildren=\count305
+\tikznumberofcurrentchild=\count306
+\tikz@fig@count=\count307
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
 matrix.code.tex
-File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfmatrixcurrentrow=\count307
-\pgfmatrixcurrentcolumn=\count308
-\pgf@matrix@numberofcolumns=\count309
+File: pgfmodulematrix.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgfmatrixcurrentrow=\count308
+\pgfmatrixcurrentcolumn=\count309
+\pgf@matrix@numberofcolumns=\count310
 )
-\tikz@expandcount=\count310
+\tikz@expandcount=\count311
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarytopaths.code.tex
-File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: tikzlibrarytopaths.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
-z/libraries\tikzlibrarypositioning.code.tex
-File: tikzlibrarypositioning.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
-aryarrows.meta.code.tex
-File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfarrowinset=\dimen259
-\pgfarrowlength=\dimen260
-\pgfarrowwidth=\dimen261
-\pgfarrowlinewidth=\dimen262
-)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
-z/libraries\tikzlibraryfit.code.tex
-File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarycalc.code.tex
-File: tikzlibrarycalc.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: tikzlibrarycalc.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
-Package: amsmath 2025/07/09 v2.17z AMS math features
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgfarrowinset=\dimen261
+\pgfarrowlength=\dimen262
+\pgfarrowwidth=\dimen263
+\pgfarrowlinewidth=\dimen264
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarybending.code.tex
+File: tikzlibrarybending.code.tex 2026-08-01 v3.1.12 (3.1.12)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+bending.code.tex
+File: pgfmodulebending.code.tex 2026-08-01 v3.1.12 (3.1.12)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+nonlineartransformations.code.tex
+File: pgfmodulenonlineartransformations.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgftransformnonlinearflatness=\dimen265
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+arycurvilinear.code.tex
+File: pgflibrarycurvilinear.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@curvilinear@time@a=\dimen266
+\pgf@curvilinear@length@a=\dimen267
+\pgf@curvilinear@length@b=\dimen268
+\pgf@curvilinear@length@c=\dimen269
+\pgf@curvilinear@length@d=\dimen270
+)
+\pgf@arrows@the@rigidity=\dimen271
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryfpu.code.tex
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryfpu.code.tex))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcirc.de
+fines.tex
+\pgf@circ@count@a=\count312
+\pgf@circ@count@b=\count313
+\pgf@circ@count@c=\count314
+\pgf@circ@res@up=\dimen272
+\pgf@circ@res@down=\dimen273
+\pgf@circ@res@zero=\dimen274
+\pgf@circ@res@left=\dimen275
+\pgf@circ@res@right=\dimen276
+\pgf@circ@res@other=\dimen277
+\pgf@circ@res@step=\dimen278
+\pgf@circ@res@temp=\dimen279
+\pgf@circ@Rlen=\dimen280
+\pgf@circ@scaled@Rlen=\dimen281
+\pgfstartlinewidth=\dimen282
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircuti
+ls.tex
+\ctikz@scratchbox=\box65
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircpat
+h.tex
+\ctikz@vif@count=\count315
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircsha
+pes.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircmon
+opoles.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircbip
+oles.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcirctri
+poles.tex
+\pgf@circ@res@count=\count316
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircqua
+dpoles.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircmul
+tipoles.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcirclab
+el.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircvol
+tage.tex
+\pgfcirc@labelshift=\dimen283
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcirccur
+rent.tex)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/circuitikz\pgfcircflo
+w.tex))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2026-08-01 v3.1.12 (3.1.12)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryfit.code.tex
+File: tikzlibraryfit.code.tex 2026-08-01 v3.1.12 (3.1.12)
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarybackgrounds.code.tex
+File: tikzlibrarybackgrounds.code.tex 2026-08-01 v3.1.12 (3.1.12)
+\pgf@layerbox@background=\box66
+\pgf@layerboxsaved@background=\box67
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2026-08-01 v3.1.12 (3.1.12)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2026-08-01 v3.1.12 (3.1.12)
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2026/05/19 v2.18d AMS math features
 \@mathmargin=\skip52
 
 For additional information on amsmath, use the `?' option.
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks35
-\ex@=\dimen263
+\ex@=\dimen284
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen264
+\pmbraise@=\dimen285
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count311
+\inf@bad=\count317
 LaTeX Info: Redefining \frac on input line 233.
-\uproot@=\count312
-\leftroot@=\count313
+\uproot@=\count318
+\leftroot@=\count319
 LaTeX Info: Redefining \overline on input line 398.
 LaTeX Info: Redefining \colon on input line 409.
-\classnum@=\count314
-\DOTSCASE@=\count315
+\classnum@=\count320
+\DOTSCASE@=\count321
 LaTeX Info: Redefining \ldots on input line 495.
 LaTeX Info: Redefining \dots on input line 498.
 LaTeX Info: Redefining \cdots on input line 619.
-\Mathstrutbox@=\box65
-\strutbox@=\box66
+\Mathstrutbox@=\box68
+\strutbox@=\box69
 LaTeX Info: Redefining \big on input line 721.
 LaTeX Info: Redefining \Big on input line 722.
 LaTeX Info: Redefining \bigg on input line 723.
 LaTeX Info: Redefining \Bigg on input line 724.
-\big@size=\dimen265
+\big@size=\dimen286
 LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
-\macc@depth=\count316
+\macc@depth=\count322
 LaTeX Info: Redefining \bmod on input line 904.
 LaTeX Info: Redefining \pmod on input line 909.
 LaTeX Info: Redefining \smash on input line 939.
 LaTeX Info: Redefining \relbar on input line 969.
 LaTeX Info: Redefining \Relbar on input line 970.
-\c@MaxMatrixCols=\count317
+\c@MaxMatrixCols=\count323
 \dotsspace@=\muskip17
-\c@parentequation=\count318
-\dspbrk@lvl=\count319
+\c@parentequation=\count324
+\dspbrk@lvl=\count325
 \tag@help=\toks36
-\row@=\count320
-\column@=\count321
-\maxfields@=\count322
+\row@=\count326
+\column@=\count327
+\maxfields@=\count328
 \andhelp@=\toks37
-\eqnshift@=\dimen266
-\alignsep@=\dimen267
-\tagshift@=\dimen268
-\tagwidth@=\dimen269
-\totwidth@=\dimen270
-\lineht@=\dimen271
+\eqnshift@=\dimen287
+\alignsep@=\dimen288
+\tagshift@=\dimen289
+\tagwidth@=\dimen290
+\totwidth@=\dimen291
+\lineht@=\dimen292
 \@envbody=\toks38
 \multlinegap=\skip53
 \multlinetaggap=\skip54
 \mathdisplay@stack=\toks39
-LaTeX Info: Redefining \[ on input line 2950.
-LaTeX Info: Redefining \] on input line 2951.
+LaTeX Info: Redefining \[ on input line 2965.
+LaTeX Info: Redefining \] on input line 2966.
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.st
+)) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.st
 y
 Package: geometry 2026/03/07 v6.0 Page Geometry
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
-\Gm@cnth=\count323
-\Gm@cntv=\count324
-\c@Gm@tempcnt=\count325
-\Gm@bindingoffset=\dimen272
-\Gm@wd@mp=\dimen273
-\Gm@odd@mp=\dimen274
-\Gm@even@mp=\dimen275
-\Gm@layoutwidth=\dimen276
-\Gm@layoutheight=\dimen277
-\Gm@layouthoffset=\dimen278
-\Gm@layoutvoffset=\dimen279
+\Gm@cnth=\count329
+\Gm@cntv=\count330
+\c@Gm@tempcnt=\count331
+\Gm@bindingoffset=\dimen293
+\Gm@wd@mp=\dimen294
+\Gm@odd@mp=\dimen295
+\Gm@even@mp=\dimen296
+\Gm@layoutwidth=\dimen297
+\Gm@layoutheight=\dimen298
+\Gm@layouthoffset=\dimen299
+\Gm@layoutvoffset=\dimen300
 \Gm@dimlist=\toks40
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2026-06-17 v7.01r Hypertext links for LaTeX
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
 keys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
 ty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
 .sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
 ty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
@@ -653,92 +749,92 @@ Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
-Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
 lestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count326
+\c@section@level=\count332
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
 ty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen280
-\Hy@linkcounter=\count327
-\Hy@pagecounter=\count328
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
-File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+\@linkdim=\dimen301
+\Hy@linkcounter=\count333
+\Hy@pagecounter=\count334
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2026-06-17 v7.01r Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-) (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count329
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
-File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+\Hy@SavedSpaceFactor=\count335
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2026-06-17 v7.01r Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Option `plainpages' set `false' on input line 4066.
-Package hyperref Info: Option `pdfpagelabels' set `true' on input line 4066.
-Package hyperref Info: Hyper figures OFF on input line 4195.
-Package hyperref Info: Link nesting OFF on input line 4200.
-Package hyperref Info: Hyper index ON on input line 4203.
-Package hyperref Info: Plain pages OFF on input line 4210.
-Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Option `plainpages' set `false' on input line 4070.
+Package hyperref Info: Option `pdfpagelabels' set `true' on input line 4070.
+Package hyperref Info: Hyper figures OFF on input line 4199.
+Package hyperref Info: Link nesting OFF on input line 4204.
+Package hyperref Info: Hyper index ON on input line 4207.
+Package hyperref Info: Plain pages OFF on input line 4214.
+Package hyperref Info: Backreferencing OFF on input line 4219.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count330
-LaTeX Info: Redefining \url on input line 4801.
-\XeTeXLinkMargin=\dimen281
+Package hyperref Info: Bookmarks ON on input line 4466.
+\c@Hy@tempcnt=\count336
+LaTeX Info: Redefining \url on input line 4805.
+\XeTeXLinkMargin=\dimen302
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
 .sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count331
-\Field@Width=\dimen282
-\Fld@charsize=\dimen283
-Package hyperref Info: Hyper figures OFF on input line 6078.
-Package hyperref Info: Link nesting OFF on input line 6083.
-Package hyperref Info: Hyper index ON on input line 6086.
-Package hyperref Info: backreferencing OFF on input line 6093.
-Package hyperref Info: Link coloring OFF on input line 6098.
-Package hyperref Info: Link coloring with OCG OFF on input line 6103.
-Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count332
-\c@Item=\count333
-\c@Hfootnote=\count334
+\Fld@menulength=\count337
+\Field@Width=\dimen303
+\Fld@charsize=\dimen304
+Package hyperref Info: Hyper figures OFF on input line 6091.
+Package hyperref Info: Link nesting OFF on input line 6096.
+Package hyperref Info: Hyper index ON on input line 6099.
+Package hyperref Info: backreferencing OFF on input line 6106.
+Package hyperref Info: Link coloring OFF on input line 6111.
+Package hyperref Info: Link coloring with OCG OFF on input line 6116.
+Package hyperref Info: PDF/A mode OFF on input line 6121.
+\Hy@abspage=\count338
+\c@Item=\count339
+\c@Hfootnote=\count340
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
-File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count335
-\c@bookmark@seq@number=\count336
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2026-06-17 v7.01r Hyperref driver for pdfTeX
+\Fld@listcount=\count341
+\c@bookmark@seq@number=\count342
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
 echeck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
 ounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
@@ -747,331 +843,337 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip55
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen284
-\lightrulewidth=\dimen285
-\cmidrulewidth=\dimen286
-\belowrulesep=\dimen287
-\belowbottomsep=\dimen288
-\aboverulesep=\dimen289
-\abovetopsep=\dimen290
-\cmidrulesep=\dimen291
-\cmidrulekern=\dimen292
-\defaultaddspace=\dimen293
-\@cmidla=\count337
-\@cmidlb=\count338
-\@aboverulesep=\dimen294
-\@belowrulesep=\dimen295
-\@thisruleclass=\count339
-\@lastruleclass=\count340
-\@thisrulewidth=\dimen296
+\heavyrulewidth=\dimen305
+\lightrulewidth=\dimen306
+\cmidrulewidth=\dimen307
+\belowrulesep=\dimen308
+\belowbottomsep=\dimen309
+\aboverulesep=\dimen310
+\abovetopsep=\dimen311
+\cmidrulesep=\dimen312
+\cmidrulekern=\dimen313
+\defaultaddspace=\dimen314
+\@cmidla=\count343
+\@cmidlb=\count344
+\@aboverulesep=\dimen315
+\@belowrulesep=\dimen316
+\@thisruleclass=\count345
+\@lastruleclass=\count346
+\@thisrulewidth=\dimen317
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count341
+\c@float@type=\count347
 \float@exts=\toks41
-\float@box=\box67
+\float@box=\box70
 \@float@everytoks=\toks42
-\@floatcapt=\box68
+\@floatcapt=\box71
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/fvextra\fvextra.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.sty
+Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-nom
+etadata.sty
+Package: pdflscape-nometadata 2022-10-28 v0.13 Display of landscape pages in PD
+F (HO)
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/fvextra\fvextra.sty
 Package: fvextra 2026/02/25 v1.14.0 fvextra - extensions and patches for fancyv
 rb
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/fancyvrb\fancyvrb.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/fancyvrb\fancyvrb.sty
 Package: fancyvrb 2026/08/13 4.7 verbatim text (tvz,hv)
-\FV@CodeLineNo=\count342
+\FV@CodeLineNo=\count348
 \FV@InFile=\read4
-\FV@TabBox=\box69
-\c@FancyVerbLine=\count343
-\FV@StepNumber=\count344
+\FV@TabBox=\box72
+\c@FancyVerbLine=\count349
+\FV@StepNumber=\count350
 \FV@OutFile=\write4
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty
 Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
 Package: lineno 2026/03/08 line numbers on paragraphs v5.9
-\linenopenalty=\count345
+\linenopenalty=\count351
 \output=\toks43
-\linenoprevgraf=\count346
-\linenumbersep=\dimen297
-\linenumberwidth=\dimen298
-\c@linenumber=\count347
-\c@pagewiselinenumber=\count348
-\c@LN@truepage=\count349
-\c@internallinenumber=\count350
-\c@internallinenumbers=\count351
-\quotelinenumbersep=\dimen299
-\bframerule=\dimen300
-\bframesep=\dimen301
-\bframebox=\box70
-\@LN@amsmath@ams@eqpen=\count352
+\linenoprevgraf=\count352
+\linenumbersep=\dimen318
+\linenumberwidth=\dimen319
+\c@linenumber=\count353
+\c@pagewiselinenumber=\count354
+\c@LN@truepage=\count355
+\c@internallinenumber=\count356
+\c@internallinenumbers=\count357
+\quotelinenumbersep=\dimen320
+\bframerule=\dimen321
+\bframesep=\dimen322
+\bframebox=\box73
+\@LN@amsmath@ams@eqpen=\count358
 )
-\c@FancyVerbWriteLine=\count353
-\c@FancyVerbBufferLine=\count354
-\c@FV@TrueTabGroupLevel=\count355
-\c@FV@TrueTabCounter=\count356
-\FV@TabBox@Group=\box71
-\FV@bgcolorstructbox=\box72
+\c@FancyVerbWriteLine=\count359
+\c@FancyVerbBufferLine=\count360
+\c@FV@TrueTabGroupLevel=\count361
+\c@FV@TrueTabCounter=\count362
+\FV@TabBox@Group=\box74
+\FV@bgcolorstructbox=\box75
 \FV@TmpLength=\skip56
-\c@FV@HighlightLinesStart=\count357
-\c@FV@HighlightLinesStop=\count358
-\FV@LoopCount=\count359
-\FV@NCharsBox=\box73
-\FV@BreakIndent=\dimen302
-\FV@BreakIndentNChars=\count360
-\FV@BreakSymbolSepLeft=\dimen303
-\FV@BreakSymbolSepLeftNChars=\count361
-\FV@BreakSymbolSepRight=\dimen304
-\FV@BreakSymbolSepRightNChars=\count362
-\FV@BreakSymbolIndentLeft=\dimen305
-\FV@BreakSymbolIndentLeftNChars=\count363
-\FV@BreakSymbolIndentRight=\dimen306
-\FV@BreakSymbolIndentRightNChars=\count364
-\c@FancyVerbLineBreakLast=\count365
-\FV@LineBox=\box74
-\FV@LineIndentBox=\box75
-\c@FV@BreakBufferDepth=\count366
-\FV@LineWidth=\dimen307
+\c@FV@HighlightLinesStart=\count363
+\c@FV@HighlightLinesStop=\count364
+\FV@LoopCount=\count365
+\FV@NCharsBox=\box76
+\FV@BreakIndent=\dimen323
+\FV@BreakIndentNChars=\count366
+\FV@BreakSymbolSepLeft=\dimen324
+\FV@BreakSymbolSepLeftNChars=\count367
+\FV@BreakSymbolSepRight=\dimen325
+\FV@BreakSymbolSepRightNChars=\count368
+\FV@BreakSymbolIndentLeft=\dimen326
+\FV@BreakSymbolIndentLeftNChars=\count369
+\FV@BreakSymbolIndentRight=\dimen327
+\FV@BreakSymbolIndentRightNChars=\count370
+\c@FancyVerbLineBreakLast=\count371
+\FV@LineBox=\box77
+\FV@LineIndentBox=\box78
+\c@FV@BreakBufferDepth=\count372
+\FV@LineWidth=\dimen328
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
 Package: csquotes 2026-05-19 v5.2p context-sensitive quotations (JAW)
-\csq@reset=\count367
-\csq@gtype=\count368
-\csq@glevel=\count369
-\csq@qlevel=\count370
-\csq@maxlvl=\count371
-\csq@tshold=\count372
+\csq@reset=\count373
+\csq@gtype=\count374
+\csq@glevel=\count375
+\csq@qlevel=\count376
+\csq@maxlvl=\count377
+\csq@tshold=\count378
 \csq@ltx@everypar=\toks44
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def
 File: csquotes.def 2026-05-19 v5.2p csquotes generic definitions (JAW)
 )
 Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
 Package csquotes Info: ... configuration file loaded successfully.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg
 File: csquotes.cfg 
-)) (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+)) (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
 Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
-Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
-\col@sep=\dimen308
-\ar@mcellbox=\box76
-\extrarowheight=\dimen309
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2026/02/24 v2.7b Tabular extension package (FMi)
+\col@sep=\dimen329
+\ar@mcellbox=\box79
+\extrarowheight=\dimen330
 \NC@list=\toks45
 \extratabsurround=\skip57
 \backup@length=\skip58
-\ar@cellbox=\box77
+\ar@cellbox=\box80
 )
-\TX@col@width=\dimen310
-\TX@old@table=\dimen311
-\TX@old@col=\dimen312
-\TX@target=\dimen313
-\TX@delta=\dimen314
-\TX@cols=\count373
+\TX@col@width=\dimen331
+\TX@old@table=\dimen332
+\TX@old@col=\dimen333
+\TX@target=\dimen334
+\TX@delta=\dimen335
+\TX@cols=\count379
 \TX@ftn=\toks46
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@colwidth=\skip59
-\multirow@cntb=\count374
+\multirow@cntb=\count380
 \multirow@dima=\skip60
-\bigstrutjot=\dimen315
+\bigstrutjot=\dimen336
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/pgfplots\pgfplots.sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.rev
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/pgfplots\pgfplots.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.rev
 ision.tex)
-Package: pgfplots 2021/05/15 v1.18.1 Data Visualization (1.18.1)
+Package: pgfplots 2026/08/26 v1.18.3 Data Visualization (1.18.3)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.cod
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.cod
 e.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotscore
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotscore
 .code.tex
 \t@pgfplots@toka=\toks47
 \t@pgfplots@tokb=\toks48
 \t@pgfplots@tokc=\toks49
-\pgfplots@tmpa=\dimen316
-\c@pgfplots@coordindex=\count375
-\c@pgfplots@scanlineindex=\count376
+\pgfplots@tmpa=\dimen337
+\c@pgfplots@coordindex=\count381
+\c@pgfplots@scanlineindex=\count382
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/sys\pgfplots
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/sys\pgfplots
 sysgeneric.code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\pgfplot
 slibrary.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/oldpgfcompat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/oldpgfcompat
 ib\pgfplotsoldpgfsupp_loader.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
-aryfpu.code.tex)
-Package pgfplots: loading complementary utilities for your pgf version...
-\t@pgf@toka=\toks50
-\t@pgf@tokb=\toks51
-\t@pgf@tokc=\toks52
-
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/oldpgfcompat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/oldpgfcompat
 ib\pgfplotsoldpgfsupp_pgfutil-common-lists.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 sutil.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
 e\pgfplotsliststructure.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
 e\pgfplotsliststructureext.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
 e\pgfplotsarray.code.tex
-\c@pgfplotsarray@tmp=\count377
+\c@pgfplotsarray@tmp=\count383
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
 e\pgfplotsmatrix.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/numtable\pgf
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/numtable\pgf
 plotstableshared.code.tex
-\c@pgfplotstable@counta=\count378
-\t@pgfplotstable@a=\toks53
+\c@pgfplotstable@counta=\count384
+\t@pgfplotstable@a=\toks50
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/liststructur
 e\pgfplotsdeque.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 sbinary.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 sbinary.data.code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 sutil.verb.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\pgflibr
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\pgflibr
 arypgfplots.surfshading.code.tex
-\c@pgfplotslibrarysurf@no=\count379
+\c@pgfplotslibrarysurf@no=\count385
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/sys\pgflibra
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/sys\pgflibra
 rypgfplots.surfshading.pgfsys-pdftex.def)))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 scolormap.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/util\pgfplot
 scolor.code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsstac
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsstac
 kedplots.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsplot
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsplot
 handlers.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsmesh
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsmesh
 plothandler.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsmesh
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotsmesh
 plotimage.code.tex)))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.sca
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.sca
 ling.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotscoor
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotscoor
 dprocessing.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.err
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.err
 orbars.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.mar
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.mar
 kers.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotstick
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplotstick
 s.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.pat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots\pgfplots.pat
 hs.code.tex)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarydecorations.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
 decorations.code.tex
-\pgfdecoratedcompleteddistance=\dimen317
-\pgfdecoratedremainingdistance=\dimen318
-\pgfdecoratedinputsegmentcompleteddistance=\dimen319
-\pgfdecoratedinputsegmentremainingdistance=\dimen320
-\pgf@decorate@distancetomove=\dimen321
-\pgf@decorate@repeatstate=\count380
-\pgfdecorationsegmentamplitude=\dimen322
-\pgfdecorationsegmentlength=\dimen323
+\pgfdecoratedcompleteddistance=\dimen338
+\pgfdecoratedremainingdistance=\dimen339
+\pgfdecoratedinputsegmentcompleteddistance=\dimen340
+\pgfdecoratedinputsegmentremainingdistance=\dimen341
+\pgf@decorate@distancetomove=\dimen342
+\pgf@decorate@repeatstate=\count386
+\pgfdecorationsegmentamplitude=\dimen343
+\pgfdecorationsegmentlength=\dimen344
 )
-\tikz@lib@dec@box=\box78
+\tikz@lib@dec@box=\box81
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarydecorations.pathmorphing.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decorat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decorat
 ions\pgflibrarydecorations.pathmorphing.code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarydecorations.pathreplacing.code.tex
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decorat
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decorat
 ions\pgflibrarydecorations.pathreplacing.code.tex))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\tikzlib
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgfplots/libs\tikzlib
 rarypgfplots.contourlua.code.tex)
-\pgfplots@numplots=\count381
-\pgfplots@xmin@reg=\dimen324
-\pgfplots@xmax@reg=\dimen325
-\pgfplots@ymin@reg=\dimen326
-\pgfplots@ymax@reg=\dimen327
-\pgfplots@zmin@reg=\dimen328
-\pgfplots@zmax@reg=\dimen329
+\pgfplots@numplots=\count387
+\pgfplots@xmin@reg=\dimen345
+\pgfplots@xmax@reg=\dimen346
+\pgfplots@ymin@reg=\dimen347
+\pgfplots@ymax@reg=\dimen348
+\pgfplots@zmin@reg=\dimen349
+\pgfplots@zmax@reg=\dimen350
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibraryplotmarks.code.tex
-File: tikzlibraryplotmarks.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: tikzlibraryplotmarks.code.tex 2026-08-01 v3.1.12 (3.1.12)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
 aryplotmarks.code.tex
-File: pgflibraryplotmarks.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+File: pgflibraryplotmarks.code.tex 2026-08-01 v3.1.12 (3.1.12)
 )))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.sty
-Package: biblatex 2025/07/10 v3.21 programmable bibliographies (PK/MW)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.sty
+Package: biblatex 2026/09/24 v3.22a programmable bibliographies (PK/MW)
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.sty
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count382
+\lrq@indent=\count388
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.def
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.def
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 ))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
 Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
-\c@tabx@nest=\count383
-\c@listtotal=\count384
-\c@listcount=\count385
-\c@liststart=\count386
-\c@liststop=\count387
-\c@citecount=\count388
-\c@citetotal=\count389
-\c@multicitecount=\count390
-\c@multicitetotal=\count391
-\c@instcount=\count392
-\c@maxnames=\count393
-\c@minnames=\count394
-\c@maxitems=\count395
-\c@minitems=\count396
-\c@citecounter=\count397
-\c@maxcitecounter=\count398
-\c@savedcitecounter=\count399
-\c@uniquelist=\count400
-\c@uniquename=\count401
-\c@refsection=\count402
-\c@refsegment=\count403
-\c@maxextratitle=\count404
-\c@maxextratitleyear=\count405
-\c@maxextraname=\count406
-\c@maxextradate=\count407
-\c@maxextraalpha=\count408
-\c@abbrvpenalty=\count409
-\c@highnamepenalty=\count410
-\c@lownamepenalty=\count411
-\c@maxparens=\count412
-\c@parenlevel=\count413
-\blx@tempcnta=\count414
-\blx@tempcntb=\count415
-\blx@tempcntc=\count416
-\c@blx@maxsection=\count417
-\blx@maxsegment@0=\count418
-\blx@notetype=\count419
-\blx@parenlevel@text=\count420
-\blx@parenlevel@foot=\count421
-\blx@sectionciteorder@0=\count422
-\blx@sectionciteorderinternal@0=\count423
-\blx@entrysetcounter=\count424
-\blx@biblioinstance=\count425
+\c@tabx@nest=\count389
+\c@listtotal=\count390
+\c@listcount=\count391
+\c@liststart=\count392
+\c@liststop=\count393
+\c@citecount=\count394
+\c@citetotal=\count395
+\c@multicitecount=\count396
+\c@multicitetotal=\count397
+\c@instcount=\count398
+\c@maxnames=\count399
+\c@minnames=\count400
+\c@maxitems=\count401
+\c@minitems=\count402
+\c@citecounter=\count403
+\c@maxcitecounter=\count404
+\c@savedcitecounter=\count405
+\c@uniquelist=\count406
+\c@uniquename=\count407
+\c@refsection=\count408
+\c@refsegment=\count409
+\c@maxextratitle=\count410
+\c@maxextratitleyear=\count411
+\c@maxextraname=\count412
+\c@maxextradate=\count413
+\c@maxextraalpha=\count414
+\c@abbrvpenalty=\count415
+\c@highnamepenalty=\count416
+\c@lownamepenalty=\count417
+\c@maxparens=\count418
+\c@parenlevel=\count419
+\blx@tempcnta=\count420
+\blx@tempcntb=\count421
+\blx@tempcntc=\count422
+\c@blx@maxsection=\count423
+\blx@maxsegment@0=\count424
+\blx@notetype=\count425
+\blx@parenlevel@text=\count426
+\blx@parenlevel@foot=\count427
+\blx@sectionciteorder@0=\count428
+\blx@sectionciteorderinternal@0=\count429
+\blx@entrysetcounter=\count430
+\blx@biblioinstance=\count431
 \labelnumberwidth=\skip61
 \labelalphawidth=\skip62
 \biblabelsep=\skip63
@@ -1083,101 +1185,101 @@ Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 \blx@bcfin=\read5
 \blx@bcfout=\write5
 \blx@langwohyphens=\language80
-\c@mincomprange=\count426
-\c@maxcomprange=\count427
-\c@mincompwidth=\count428
+\c@mincomprange=\count432
+\c@maxcomprange=\count433
+\c@mincompwidth=\count434
 Package biblatex Info: Trying to load biblatex default data model...
 Package biblatex Info: ... file 'blx-dm.def' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-dm.def
-File: blx-dm.def 2025/07/10 v3.21 biblatex datamodel (PK/MW)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-dm.def
+File: blx-dm.def 2026/09/24 v3.22a biblatex datamodel (PK/MW)
 )
 Package biblatex Info: Trying to load biblatex style data model...
 Package biblatex Info: ... file 'apa.dbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.dbx
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.dbx
 File: apa.dbx 2025/08/27 v9.20 APA biblatex style data model
 )
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
-\c@afterword=\count429
-\c@savedafterword=\count430
-\c@annotator=\count431
-\c@savedannotator=\count432
-\c@author=\count433
-\c@savedauthor=\count434
-\c@bookauthor=\count435
-\c@savedbookauthor=\count436
-\c@commentator=\count437
-\c@savedcommentator=\count438
-\c@editor=\count439
-\c@savededitor=\count440
-\c@editora=\count441
-\c@savededitora=\count442
-\c@editorb=\count443
-\c@savededitorb=\count444
-\c@editorc=\count445
-\c@savededitorc=\count446
-\c@foreword=\count447
-\c@savedforeword=\count448
-\c@holder=\count449
-\c@savedholder=\count450
-\c@introduction=\count451
-\c@savedintroduction=\count452
-\c@namea=\count453
-\c@savednamea=\count454
-\c@nameb=\count455
-\c@savednameb=\count456
-\c@namec=\count457
-\c@savednamec=\count458
-\c@translator=\count459
-\c@savedtranslator=\count460
-\c@shortauthor=\count461
-\c@savedshortauthor=\count462
-\c@shorteditor=\count463
-\c@savedshorteditor=\count464
-\c@narrator=\count465
-\c@savednarrator=\count466
-\c@execproducer=\count467
-\c@savedexecproducer=\count468
-\c@execdirector=\count469
-\c@savedexecdirector=\count470
-\c@with=\count471
-\c@savedwith=\count472
-\c@labelname=\count473
-\c@savedlabelname=\count474
-\c@institution=\count475
-\c@savedinstitution=\count476
-\c@lista=\count477
-\c@savedlista=\count478
-\c@listb=\count479
-\c@savedlistb=\count480
-\c@listc=\count481
-\c@savedlistc=\count482
-\c@listd=\count483
-\c@savedlistd=\count484
-\c@liste=\count485
-\c@savedliste=\count486
-\c@listf=\count487
-\c@savedlistf=\count488
-\c@location=\count489
-\c@savedlocation=\count490
-\c@organization=\count491
-\c@savedorganization=\count492
-\c@origlocation=\count493
-\c@savedoriglocation=\count494
-\c@origpublisher=\count495
-\c@savedorigpublisher=\count496
-\c@publisher=\count497
-\c@savedpublisher=\count498
-\c@language=\count499
-\c@savedlanguage=\count500
-\c@origlanguage=\count501
-\c@savedoriglanguage=\count502
-\c@citation=\count503
-\c@savedcitation=\count504
-\c@pageref=\count505
-\c@savedpageref=\count506
+\c@afterword=\count435
+\c@savedafterword=\count436
+\c@annotator=\count437
+\c@savedannotator=\count438
+\c@author=\count439
+\c@savedauthor=\count440
+\c@bookauthor=\count441
+\c@savedbookauthor=\count442
+\c@commentator=\count443
+\c@savedcommentator=\count444
+\c@editor=\count445
+\c@savededitor=\count446
+\c@editora=\count447
+\c@savededitora=\count448
+\c@editorb=\count449
+\c@savededitorb=\count450
+\c@editorc=\count451
+\c@savededitorc=\count452
+\c@foreword=\count453
+\c@savedforeword=\count454
+\c@holder=\count455
+\c@savedholder=\count456
+\c@introduction=\count457
+\c@savedintroduction=\count458
+\c@namea=\count459
+\c@savednamea=\count460
+\c@nameb=\count461
+\c@savednameb=\count462
+\c@namec=\count463
+\c@savednamec=\count464
+\c@translator=\count465
+\c@savedtranslator=\count466
+\c@shortauthor=\count467
+\c@savedshortauthor=\count468
+\c@shorteditor=\count469
+\c@savedshorteditor=\count470
+\c@narrator=\count471
+\c@savednarrator=\count472
+\c@execproducer=\count473
+\c@savedexecproducer=\count474
+\c@execdirector=\count475
+\c@savedexecdirector=\count476
+\c@with=\count477
+\c@savedwith=\count478
+\c@labelname=\count479
+\c@savedlabelname=\count480
+\c@institution=\count481
+\c@savedinstitution=\count482
+\c@lista=\count483
+\c@savedlista=\count484
+\c@listb=\count485
+\c@savedlistb=\count486
+\c@listc=\count487
+\c@savedlistc=\count488
+\c@listd=\count489
+\c@savedlistd=\count490
+\c@liste=\count491
+\c@savedliste=\count492
+\c@listf=\count493
+\c@savedlistf=\count494
+\c@location=\count495
+\c@savedlocation=\count496
+\c@organization=\count497
+\c@savedorganization=\count498
+\c@origlocation=\count499
+\c@savedoriglocation=\count500
+\c@origpublisher=\count501
+\c@savedorigpublisher=\count502
+\c@publisher=\count503
+\c@savedpublisher=\count504
+\c@language=\count505
+\c@savedlanguage=\count506
+\c@origlanguage=\count507
+\c@savedoriglanguage=\count508
+\c@citation=\count509
+\c@savedcitation=\count510
+\c@pageref=\count511
+\c@savedpageref=\count512
 \shorthandwidth=\skip69
 \shortjournalwidth=\skip70
 \shortserieswidth=\skip71
@@ -1195,39 +1297,39 @@ Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
 Package biblatex Info: Trying to load compatibility code...
 Package biblatex Info: ... file 'blx-compat.def' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-compat.def
-File: blx-compat.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-compat.def
+File: blx-compat.def 2026/09/24 v3.22a biblatex compatibility (PK/MW)
 )
 Package biblatex Info: Trying to load generic definitions...
 Package biblatex Info: ... file 'biblatex.def' found.
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.def
-File: biblatex.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
-\c@textcitecount=\count507
-\c@textcitetotal=\count508
-\c@textcitemaxnames=\count509
-\c@biburlbigbreakpenalty=\count510
-\c@biburlbreakpenalty=\count511
-\c@biburlnumpenalty=\count512
-\c@biburlucpenalty=\count513
-\c@biburllcpenalty=\count514
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.def
+File: biblatex.def 2026/09/24 v3.22a biblatex compatibility (PK/MW)
+\c@textcitecount=\count513
+\c@textcitetotal=\count514
+\c@textcitemaxnames=\count515
+\c@biburlbigbreakpenalty=\count516
+\c@biburlbreakpenalty=\count517
+\c@biburlnumpenalty=\count518
+\c@biburlucpenalty=\count519
+\c@biburllcpenalty=\count520
 \biburlbigskip=\muskip19
 \biburlnumskip=\muskip20
 \biburlucskip=\muskip21
 \biburllcskip=\muskip22
-\c@smartand=\count515
+\c@smartand=\count521
 )
 Package biblatex Info: Trying to load bibliography style 'apa'...
 Package biblatex Info: ... file 'apa.bbx' found.
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.bbx
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.bbx
 File: apa.bbx 2025/08/27 v9.20 APA biblatex references style
 Package biblatex Info: Trying to load bibliography style 'standard'...
 Package biblatex Info: ... file 'standard.bbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\standard.b
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\standard.b
 bx
-File: standard.bbx 2025/07/10 v3.21 biblatex bibliography style (PK/MW)
-\c@bbx:relatedcount=\count516
-\c@bbx:relatedtotal=\count517
+File: standard.bbx 2026/09/24 v3.22a biblatex bibliography style (PK/MW)
+\c@bbx:relatedcount=\count522
+\c@bbx:relatedtotal=\count523
 )
 Package biblatex Info: Delimiter 'nameyeardelim' in context 'bib' already defin
 ed, overwriting.
@@ -1241,7 +1343,7 @@ Package biblatex Info: Delimiter 'nonameyeardelim' in context 'biblist' already
 Package biblatex Info: Trying to load citation style 'apa'...
 Package biblatex Info: ... file 'apa.cbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.cbx
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\apa.cbx
 File: apa.cbx 2025/08/27 v9.20 APA biblatex citation style
 Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined,
  overwriting.
@@ -1266,74 +1368,69 @@ Package biblatex Info: Redefining '\textcites'.
 Package biblatex Info: Trying to load configuration file...
 Package biblatex Info: ... file 'biblatex.cfg' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.cfg
 File: biblatex.cfg 
 )
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Document encoding is UTF8 ....
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
-Package: expl3 2025-12-24 L3 programming layer (loader) 
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+Package: expl3 2026-09-09 L3 programming layer (loader) 
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
-tex.def
-File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count518
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\l3backend-pdft
+ex.def
+File: l3backend-pdftex.def 2026-09-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count524
 ))
 Package biblatex Info: ... and expl3
-(biblatex)             2025-12-24 L3 programming layer (loader) 
+(biblatex)             2026-09-09 L3 programming layer (loader) 
 (biblatex)             is new enough (at least 2020/04/06),
 (biblatex)             setting 'casechanger=expl3'.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-case-expl3
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-case-expl3
 .sty
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
 e.sty
 Package: xparse 2025-10-09 L3 Experimental document command parser
 )
-Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
-))
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count519
-\lst@gtempboxa=\box79
-\lst@token=\toks54
-\lst@length=\count520
-\lst@currlwidth=\dimen330
-\lst@column=\count521
-\lst@pos=\count522
-\lst@lostspace=\dimen331
-\lst@width=\dimen332
-\lst@newlines=\count523
-\lst@lineno=\count524
-\lst@maxwidth=\dimen333
+Package: blx-case-expl3 2026/09/24 v3.22a expl3 case changing code for biblatex
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+))
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count525
+\lst@gtempboxa=\box82
+\lst@token=\toks51
+\lst@length=\count526
+\lst@currlwidth=\dimen351
+\lst@column=\count527
+\lst@pos=\count528
+\lst@lostspace=\dimen352
+\lst@width=\dimen353
+\lst@newlines=\count529
+\lst@lineno=\count530
+\lst@maxwidth=\dimen354
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
 File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-\c@lstnumber=\count525
-\lst@skipnumbers=\count526
-\lst@framebox=\box80
+\c@lstnumber=\count531
+\lst@skipnumbers=\count532
+\lst@framebox=\box83
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
 File: listings.cfg 2025/11/14 1.11b listings configuration
 ))
 Package: listings 2025/11/14 1.11b (Carsten Heinz)
-==> First Aid for listings.sty no longer applied!
-    Expected:
-        2024/09/23 1.10c (Carsten Heinz)
-    but found:
-        2025/11/14 1.11b (Carsten Heinz)
-    so I'm assuming it got fixed.
-Package hyperref Info: Option `colorlinks' set `true' on input line 92.
+Package hyperref Info: Option `colorlinks' set `true' on input line 94.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'spanish'.
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 10
-5.
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+7.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (main.aux
 LaTeX Info: Redefining \. on input line 9.
@@ -1344,39 +1441,45 @@ Package babel Info: 'spanish' activates 'spanish' shorthands.
 (capitulos/cap00_resumen_palabras_clave.aux) (capitulos/cap01_introduccion.aux)
 (capitulos/cap02_objetivos.aux) (capitulos/cap03_marco_teorico.aux)
 (capitulos/cap04_requerimientos.aux) (capitulos/cap05_diseño.aux)
-(capitulos/cap06_implementacion.aux) (capitulos/cap06_experimentacion.aux)
-(capitulos/cap07_conclusiones.aux) (capitulos/apendice_a_vocabulario.aux)
-(capitulos/apendice_b_configuraciones.aux))
+(capitulos/cap06_implementacion.aux) (capitulos/cap07_experimentacion.aux)
+(capitulos/cap08_conclusiones.aux) (capitulos/apendice_a_vocabulario.aux)
+(capitulos/apendice_b_configuraciones.aux)
+(capitulos/apendice_c_arquitectura_nube.aux
+
+LaTeX Warning: Label `fig:arquitectura_servidor_escalabilidad' multiply defined
+.
+
+))
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 105.
-LaTeX Font Info:    ... okay on input line 105.
-LaTeX Info: Redefining \microtypecontext on input line 105.
-Package microtype Info: Applying patch `item' on input line 105.
-Package microtype Info: Applying patch `toc' on input line 105.
-Package microtype Info: Applying patch `eqnum' on input line 105.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 107.
+LaTeX Font Info:    ... okay on input line 107.
+LaTeX Info: Redefining \microtypecontext on input line 107.
+Package microtype Info: Applying patch `item' on input line 107.
+Package microtype Info: Applying patch `toc' on input line 107.
+Package microtype Info: Applying patch `eqnum' on input line 107.
 
 
-Package microtype Warning: Unable to apply patch `footnote' on input line 105.
+Package microtype Warning: Unable to apply patch `footnote' on input line 107.
 
-Package microtype Info: Applying patch `verbatim' on input line 105.
-LaTeX Info: Redefining \microtypesetup on input line 105.
+Package microtype Info: Applying patch `verbatim' on input line 107.
+LaTeX Info: Redefining \microtypesetup on input line 107.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -1387,35 +1490,35 @@ Package microtype Info: Patching command `\showhyphens'.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Info: Redefining \. on input line 105.
-LaTeX Info: Redefining \% on input line 105.
+LaTeX Info: Redefining \. on input line 107.
+LaTeX Info: Redefining \% on input line 107.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count527
-\scratchdimen=\dimen334
-\scratchbox=\box81
-\nofMPsegments=\count528
-\nofMParguments=\count529
-\everyMPshowfont=\toks55
-\MPscratchCnt=\count530
-\MPscratchDim=\dimen335
-\MPnumerator=\count531
-\makeMPintoPDFobject=\count532
-\everyMPtoPDFconversion=\toks56
+\scratchcounter=\count533
+\scratchdimen=\dimen355
+\scratchbox=\box84
+\nofMPsegments=\count534
+\nofMParguments=\count535
+\everyMPshowfont=\toks52
+\MPscratchCnt=\count536
+\MPscratchDim=\dimen356
+\MPnumerator=\count537
+\makeMPintoPDFobject=\count538
+\everyMPtoPDFconversion=\toks53
 )
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
@@ -1453,7 +1556,7 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 105.
+Package hyperref Info: Link coloring ON on input line 107.
 (main.out) (main.out)
 \@outlinefile=\write6
 \openout6 = `main.out'.
@@ -1465,22 +1568,22 @@ s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 Package biblatex Info: Trying to load language 'spanish' -> 'spanish-apa'...
 Package biblatex Info: ... file 'spanish-apa.lbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\spanish-ap
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex-apa\spanish-ap
 a.lbx
 File: spanish-apa.lbx 2025/08/27 v9.20 APA biblatex localisation
 Package biblatex Info: Trying to load language 'spanish'...
 Package biblatex Info: ... file 'spanish.lbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
 x
-File: spanish.lbx 2025/07/10 v3.21 biblatex localization (PK/MW)
+File: spanish.lbx 2026/09/24 v3.22a biblatex localization (PK/MW)
 )
 Package biblatex Info: Trying to load language 'spanish'...
 Package biblatex Info: ... file 'spanish.lbx' found.
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\spanish.lb
 x
-File: spanish.lbx 2025/07/10 v3.21 biblatex localization (PK/MW)
+File: spanish.lbx 2026/09/24 v3.22a biblatex localization (PK/MW)
 ))
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Automatic encoding selection.
@@ -1512,60 +1615,14 @@ Package biblatex Warning: The following entry could not be found
 (biblatex)                LaTeX afterwards.
 
 )
-Package biblatex Info: Reference section=0 on input line 105.
-Package biblatex Info: Reference segment=0 on input line 105.
-\c@lstlisting=\count533
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-08.
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
-File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-08.
+Package biblatex Info: Reference section=0 on input line 107.
+Package biblatex Info: Reference segment=0 on input line 107.
+\c@lstlisting=\count539
+Package babel Info: Main language set to 'spanish'.
+ [1
 
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
-File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-108.
-
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
-File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-108.
-
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
-File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 108.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 108.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 108.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 108
-.
-
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
-File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 108
-.
-
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-(C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
-File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-)
-[1
-
-{C:/Users/franc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/fran
-c/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
+{C:/Users/maite/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{D:/Users/mait
+e/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1574,22 +1631,61 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.I}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.114 \tableofcontents
+l.116 \tableofcontents
                        [1
 
 ] (main.toc
-LaTeX Info: Redefining \sptext on input line 1.
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
+.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
+.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <8> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <6> on input line 3.
- [2
+LaTeX Font Info:    Trying to load font information for U+msa on input line 3.
 
-] [3{C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 3.
+
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+(D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+[2
+
+] [3{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.
 enc}])
 \tf@toc=\write7
 \openout7 = `main.toc'.
@@ -1597,8 +1693,7 @@ enc}])
  [4]
 \openout2 = `capitulos/cap00_resumen_palabras_clave.aux'.
 
-
-(capitulos/cap00_resumen_palabras_clave.tex [5
+ (capitulos/cap00_resumen_palabras_clave.tex [5
 
 
 ]) [6
@@ -1615,40 +1710,26 @@ Cap\'{\i }tulo 1.
 
 
 ]
-<integracion/Diagrama-alto-nivel.pdf, id=578, 2902.845pt x 2388.04158pt>
-File: integracion/Diagrama-alto-nivel.pdf Graphic file (type pdf)
-<use integracion/Diagrama-alto-nivel.pdf>
-Package pdftex.def Info: integracion/Diagrama-alto-nivel.pdf  used on input lin
-e 27.
-(pdftex.def)             Requested size: 409.71692pt x 337.05643pt.
- [2]
 
-LaTeX Warning: Reference `anexo:vocabulario' on page 3 undefined on input line 
-39.
+LaTeX Warning: Reference `anexo:vocabulario' on page 2 undefined on input line 
+32.
 
-[3
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1.1}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.40 
-      <./integracion/Diagrama-alto-nivel.pdf>]) [4]
+[2]) [3]
 \openout2 = `capitulos/cap02_objetivos.aux'.
 
-
-(capitulos/cap02_objetivos.tex
+ (capitulos/cap02_objetivos.tex
 Cap\'{\i }tulo 2.
-[5
+[4
 
 
 
 
-]) [6]
+]) [5]
 \openout2 = `capitulos/cap03_marco_teorico.aux'.
 
  (capitulos/cap03_marco_teorico.tex
 Cap\'{\i }tulo 3.
-[7
+[6
 
 
 
@@ -1656,7 +1737,7 @@ Cap\'{\i }tulo 3.
 ]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
 2.
- (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
+ (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Package microtype Info: Loading generic protrusion settings for font family
@@ -1664,101 +1745,102 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-[8{C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
+[7{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10.95> on input line 64.
 
-[9
+[8
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.99 
-     {C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit
+     {D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit
 .enc}
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.99 
-     ] [10{C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-m
-athex.enc}] [11
+     ] [9{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ma
+thex.enc}] [10
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.2}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.177 \subsection
-                 {Modelos de lenguaje pequeños y adaptación LoRA}
+l.178 \subsection
+                 {Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.177 \subsection
-                 {Modelos de lenguaje pequeños y adaptación LoRA}
+l.178 \subsection
+                 {Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.3}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.177 \subsection
-                 {Modelos de lenguaje pequeños y adaptación LoRA}]
+l.178 \subsection
+                 {Modelos de lenguaje pequeños y adaptación \textit{LoRA}}]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 192.
- [12]
 
-LaTeX Warning: Citation 'cabello2010threejs' on page 13 undefined on input line
+[11]
+
+LaTeX Warning: Citation 'cabello2010threejs' on page 12 undefined on input line
  206.
 
 
-LaTeX Warning: Citation 'moryossef2021poseformat' on page 13 undefined on input
+LaTeX Warning: Citation 'moryossef2021poseformat' on page 12 undefined on input
  line 208.
 
 
-LaTeX Warning: Citation 'liddell1989phonological' on page 13 undefined on input
+LaTeX Warning: Citation 'liddell1989phonological' on page 12 undefined on input
  line 208.
 
-[13] [14
+[12] [13
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.4}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.248     \item \textbf
                        {Entorno de ejecución aislado (\textit{sandbox}):} M...
-] [15] [16]
+] [14] [15]
 
-LaTeX Warning: Citation 'moryossef2021poseformat' on page 17 undefined on input
+LaTeX Warning: Citation 'moryossef2021poseformat' on page 16 undefined on input
  line 289.
 
-) [17] [18
+) [16] [17
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.5}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.122 \include{capitulos/cap03_marco_teorico}
+l.124 \include{capitulos/cap03_marco_teorico}
                                              ]
 \openout2 = `capitulos/cap04_requerimientos.aux'.
 
 
 (capitulos/cap04_requerimientos.tex
 Cap\'{\i }tulo 4.
-[19
+[18
 
 
 
 
-] (C:\Users\franc\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+] (D:\Users\maite\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
 Underfull \hbox (badness 2671) in paragraph at lines 56--56
 []|\T1/lmr/m/n/10.95 (+20) Conexi�n por fi-bra �p-ti-ca ($\OMS/lmsy/m/n/10.95 ^
 ^U
  []
 
-[20] [21
+[19] [20
 pdfTeX warning (ext4): destination with the same identifier (name{table.4.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.72     \item \textbf
                       {CU-02 --- Configurar mano dominante:} El usuario señ...
-{C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+{D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -1776,67 +1858,52 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-) [22] [23] [24] [25] [26]
+) [21] [22] [23] [24] [25]
 \openout2 = `capitulos/cap05_diseño.aux'.
 
  (capitulos/cap05_diseño.tex
 Cap\'{\i }tulo 5.
-
-Overfull \hbox (4.89006pt too wide) in paragraph at lines 30--30
- \T1/lmtt/m/n/10 /tposes/{glosa}.pose 
- []
-
-[27
+[26
 
 
 
 
 ]
-<integracion/Diagrama-secuencia-senante.pdf, id=987, 2902.845pt x 1971.28462pt>
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 426.
 
-File: integracion/Diagrama-secuencia-senante.pdf Graphic file (type pdf)
-<use integracion/Diagrama-secuencia-senante.pdf>
-Package pdftex.def Info: integracion/Diagrama-secuencia-senante.pdf  used on in
-put line 52.
-(pdftex.def)             Requested size: 455.24411pt x 309.1254pt.
- [28
+Overfull \hbox (22.68639pt too wide) in paragraph at lines 426--466
+ [][] 
+ []
+
+[27
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.56 
-     ]
-<integracion/Diagrama-secuencia-oyente.pdf, id=997, 2902.845pt x 2114.86105pt>
-File: integracion/Diagrama-secuencia-oyente.pdf Graphic file (type pdf)
-<use integracion/Diagrama-secuencia-oyente.pdf>
-Package pdftex.def Info: integracion/Diagrama-secuencia-oyente.pdf  used on inp
-ut line 63.
-(pdftex.def)             Requested size: 455.24411pt x 331.64023pt.
- [29
+l.472 
+      ] [28
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.67 
-      <./integracion/Diagrama-secuencia-senante.pdf>] [30
+l.490  
+        "glosses": [],] [29
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.97 \subsection
-                {API local del motor ILSA}
+l.507  
+        "client": {}] [30
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.4}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.97 \subsection
-                {API local del motor ILSA} <./integracion/Diagrama-secuencia-oy
-ente.pdf>]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 112.
-
-Overfull \hbox (4.47275pt too wide) in paragraph at lines 112--122
- [][] 
+l.521  
+        "glosses": ["HOLA"]]
+Underfull \hbox (badness 5490) in paragraph at lines 547--548
+[]|\T1/lmr/m/n/12 (+20) Canal in-ver-so (es-pa-�ol $\OMS/lmsy/m/n/12 !$ \T1/lmr
+/m/n/12 (+20) LSA Topic-
  []
 
 [31
@@ -1844,47 +1911,54 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.5.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.129 
-      ] [32]
-Underfull \hbox (badness 5490) in paragraph at lines 210--211
-[]|\T1/lmr/m/n/12 (+20) Canal in-ver-so (es-pa-�ol $\OMS/lmsy/m/n/12 !$ \T1/lmr
-/m/n/12 (+20) LSA Topic-
- []
-
-[33
+l.568  
+        "spanish": "Mi apellido es Piñon.",] [32
 pdfTeX warning (ext4): destination with the same identifier (name{table.5.2}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.221 \begin{lstlisting}[language=json]
-                                       ] [34] [35
+l.606 
+      ]
+Underfull \hbox (badness 3965) in paragraph at lines 622--623
+[]|\T1/lmr/m/n/12 (+20) Solo le-tras del al-fa-be-to ma-nual, va-
+ []
+
+
+Underfull \hbox (badness 3503) in paragraph at lines 622--623
+\T1/lmr/m/n/12 (+20) rias en el pa-r�-me-tro \T1/lmtt/m/n/12 letters\T1/lmr/m/n
+/12 (+20) , se-pa-
+ []
+
+
+Underfull \hbox (badness 6808) in paragraph at lines 622--623
+\T1/lmr/m/n/12 (+20) ra-das por co-ma. Por ejem-plo, \T1/lmtt/m/n/12 GET
+ []
+
+[33
 pdfTeX warning (ext4): destination with the same identifier (name{table.5.3}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.308 
-      ] [36] [37] [38
+l.648 
+      ] [34] [35] [36] [37
 pdfTeX warning (ext4): destination with the same identifier (name{table.5.4}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.388 
-      ] [39] [40]
-<integracion/Diagrama-arquitectura-escalable.pdf, id=1360, 2902.845pt x 1549.70
-963pt>
-File: integracion/Diagrama-arquitectura-escalable.pdf Graphic file (type pdf)
-<use integracion/Diagrama-arquitectura-escalable.pdf>
-Package pdftex.def Info: integracion/Diagrama-arquitectura-escalable.pdf  used 
-on input line 438.
-(pdftex.def)             Requested size: 432.48051pt x 230.86209pt.
- [41
+l.755 
+      ] [38] [39] [40
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.5}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.447 \begin{itemize}
-                      <./integracion/Diagrama-arquitectura-escalable.pdf>]
-[42]) [43]
+l.909 
+      ] [41] [42
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1085 
+       ]) [43]
 \openout2 = `capitulos/cap06_implementacion.aux'.
 
  (capitulos/cap06_implementacion.tex
@@ -1894,36 +1968,43 @@ Cap\'{\i }tulo 6.
 
 
 
-] [45] [46] [47] [48] [49]
-Overfull \hbox (33.26395pt too wide) in paragraph at lines 176--177
+]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <14.4> on input line 54.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 54.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 54.
+ [45] [46]
+Overfull \hbox (33.26395pt too wide) in paragraph at lines 136--137
  [][] 
  []
 
-[50
-pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.184 
-      ]
-Overfull \hbox (3.25053pt too wide) in paragraph at lines 185--186
+[47]
+Overfull \hbox (3.25053pt too wide) in paragraph at lines 145--146
 \T1/lmr/m/n/12 (-20) en-torno ais-la-do (\T1/lmr/m/it/12 (-20) sand-box\T1/lmr/
 m/n/12 (-20) ) con po-l�-ti-cas de se-gu-ri-dad re-la-ja-das (\T1/lmtt/m/n/12 C
 ontent-Security-Policy\T1/lmr/m/n/12 (-20) ),
  []
 
-[51] [52] [53
+[48
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.154 
+      ] [49] [50
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.259 
-      ] [54]) [55]
-\openout2 = `capitulos/cap06_experimentacion.aux'.
+l.211 
+      ] [51]) [52]
+\openout2 = `capitulos/cap07_experimentacion.aux'.
 
- (capitulos/cap06_experimentacion.tex
+ (capitulos/cap07_experimentacion.tex
 Cap\'{\i }tulo 7.
-[56
+[53
 
 
 
@@ -1933,7 +2014,7 @@ Overfull \hbox (5.65149pt too wide) in paragraph at lines 42--55
  [][] 
  []
 
-[57
+[54
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -1944,19 +2025,19 @@ Overfull \hbox (16.17593pt too wide) in paragraph at lines 70--79
  [][] 
  []
 
-<clasificador/curva_16_frames.png, id=1659, 722.7pt x 433.62pt>
+<clasificador/curva_16_frames.png, id=1185, 722.7pt x 433.62pt>
 File: clasificador/curva_16_frames.png Graphic file (type png)
 <use clasificador/curva_16_frames.png>
 Package pdftex.def Info: clasificador/curva_16_frames.png  used on input line 8
 3.
 (pdftex.def)             Requested size: 373.3035pt x 223.98175pt.
-<clasificador/curva_32_frames_b.png, id=1661, 722.7pt x 433.62pt>
+<clasificador/curva_32_frames_b.png, id=1187, 722.7pt x 433.62pt>
 File: clasificador/curva_32_frames_b.png Graphic file (type png)
 <use clasificador/curva_32_frames_b.png>
 Package pdftex.def Info: clasificador/curva_32_frames_b.png  used on input line
  90.
 (pdftex.def)             Requested size: 373.3035pt x 223.98175pt.
-[58
+[55
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.2}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -1968,32 +2049,32 @@ has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.94 
-      <./clasificador/curva_16_frames.png>] [59
+      <./clasificador/curva_16_frames.png>] [56
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.106 
-       <./clasificador/curva_32_frames_b.png>] [60] [61
+       <./clasificador/curva_32_frames_b.png>] [57] [58
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.3}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
 l.156 
       ]
-<clasificador/curva_tinyskeleton_final.png, id=1696, 722.7pt x 433.62pt>
+<clasificador/curva_tinyskeleton_final.png, id=1221, 722.7pt x 433.62pt>
 File: clasificador/curva_tinyskeleton_final.png Graphic file (type png)
 <use clasificador/curva_tinyskeleton_final.png>
 Package pdftex.def Info: clasificador/curva_tinyskeleton_final.png  used on inp
 ut line 159.
 (pdftex.def)             Requested size: 373.3035pt x 223.98175pt.
-<clasificador/matriz_confusion_final.png, id=1697, 1084.05pt x 867.24pt>
+<clasificador/matriz_confusion_final.png, id=1222, 1084.05pt x 867.24pt>
 File: clasificador/matriz_confusion_final.png Graphic file (type png)
 <use clasificador/matriz_confusion_final.png>
 Package pdftex.def Info: clasificador/matriz_confusion_final.png  used on input
  line 166.
 (pdftex.def)             Requested size: 455.24411pt x 364.19862pt.
- [62
+ [59
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -2005,92 +2086,119 @@ Overfull \hbox (14.53848pt too wide) in paragraph at lines 176--176
 s Qwen2.5,
  []
 
-) [63
+) [60
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7.4}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.126 \include{capitulos/cap06_experimentacion}
+l.128 \include{capitulos/cap07_experimentacion}
                                                 <./clasificador/matriz_confusio
-n_final.png>] [64]
-\openout2 = `capitulos/cap07_conclusiones.aux'.
+n_final.png>] [61]
+\openout2 = `capitulos/cap08_conclusiones.aux'.
 
- (capitulos/cap07_conclusiones.tex
+ (capitulos/cap08_conclusiones.tex
 Cap\'{\i }tulo 8.
-) [65
+) [62
 
 
 
 
-] [66
+] [63
 
 
 
-] [67]
+] [64]
 \openout2 = `capitulos/apendice_a_vocabulario.aux'.
 
  (capitulos/apendice_a_vocabulario.tex)
 \openout2 = `capitulos/apendice_b_configuraciones.aux'.
 
 
-(capitulos/apendice_b_configuraciones.tex) (main.aux
-LaTeX Info: Redefining \sptext on input line 9.
+(capitulos/apendice_b_configuraciones.tex)
+\openout2 = `capitulos/apendice_c_arquitectura_nube.aux'.
+
+
+(capitulos/apendice_c_arquitectura_nube.tex
+Ap\'{e}ndice A.
+
+LaTeX Warning: Reference `sec:arq_escalable' on page 65 undefined on input line
+ 4.
+
+[65
+
+
+
+
+
+
+
+
+] [66
+
+]) (main.aux
 LaTeX Info: Redefining \. on input line 9.
 LaTeX Info: Redefining \% on input line 9.
-
-(capitulos/cap00_resumen_palabras_clave.aux) (capitulos/cap01_introduccion.aux)
-(capitulos/cap02_objetivos.aux) (capitulos/cap03_marco_teorico.aux)
-(capitulos/cap04_requerimientos.aux) (capitulos/cap05_diseño.aux)
-(capitulos/cap06_implementacion.aux) (capitulos/cap06_experimentacion.aux)
-(capitulos/cap07_conclusiones.aux) (capitulos/apendice_a_vocabulario.aux)
-(capitulos/apendice_b_configuraciones.aux))
+ (capitulos/cap00_resumen_palabras_clave.aux)
+(capitulos/cap01_introduccion.aux) (capitulos/cap02_objetivos.aux)
+(capitulos/cap03_marco_teorico.aux) (capitulos/cap04_requerimientos.aux)
+(capitulos/cap05_diseño.aux) (capitulos/cap06_implementacion.aux)
+(capitulos/cap07_experimentacion.aux) (capitulos/cap08_conclusiones.aux)
+(capitulos/apendice_a_vocabulario.aux)
+(capitulos/apendice_b_configuraciones.aux)
+(capitulos/apendice_c_arquitectura_nube.aux))
  ***********
-LaTeX2e <2025-11-01>
-L3 programming layer <2025-12-24>
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-09-09>
  ***********
 
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: EA57086BD054E0824CFC02DBB0A1E0EF;29262.
+(rerunfilecheck)             Checksum: 2D06A9D2B66EA113E841DDD54368011F;30363.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 48736 strings out of 467870
- 1076395 string characters out of 5418354
- 2241512 words of memory out of 5000000
- 76033 multiletter control sequences out of 15000+600000
- 779478 words of font info for 333 fonts, out of 8000000 for 9000
+ 67969 strings out of 467392
+ 1659781 string characters out of 5405639
+ 3087240 words of memory out of 5000000
+ 95654 multiletter control sequences out of 15000+600000
+ 793737 words of font info for 340 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,12n,104p,1509b,2803s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pf
-b><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pf
-b><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.p
-fb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.
-pfb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.
-pfb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.
-pfb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.
-pfb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.p
-fb><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pf
-b><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb
-><C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><
-C:/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:
-/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:
-/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:
-/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:
-/Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/
-Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/
-Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/
-Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/
-Users/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt8.pfb><C:/U
-sers/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/ms
-bm10.pfb>
-Output written on main.pdf (74 pages, 2766459 bytes).
+ 107i,11n,118p,1435b,2803s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb
+><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbxi10.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.p
+fb><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pf
+b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb
+><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb>
+<D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><D
+:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr7.pfb><D:/
+Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><D:/Us
+ers/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><D:/Us
+ers/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><D:/Us
+ers/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri8.pfb><D:/Use
+rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><D:/Use
+rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><D:/User
+s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><D:/User
+s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><D:/User
+s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><D:/User
+s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt8.pfb><D:/Users
+/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10
+.pfb>
+Output written on main.pdf (73 pages, 1141119 bytes).
 PDF statistics:
- 1916 PDF objects out of 2073 (max. 8388607)
- 377 named destinations out of 1000 (max. 500000)
- 83317 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 1464 PDF objects out of 1728 (max. 8388607)
+ 371 named destinations out of 1000 (max. 500000)
+ 91553 words of extra memory for PDF output out of 106986 (max. 10000000)
 

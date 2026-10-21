@@ -1,0 +1,48 @@
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
+
+% Caja Cliente
+\draw (1.125,14.25) rectangle (5.375,7.25);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{11.9pt}{15.5pt}\selectfont] at (3.25,14.1) {Cliente};
+
+\draw (1.875,13.25) rectangle (4.375,12.5);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (3.125,13.1) {Google Meet};
+
+\draw (1.875,11.375) rectangle (4.375,10.625);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (3.125,11.225) {Extension};
+
+\draw (1.75,8.875) rectangle (4.5,7.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (3.125,8.3125) {Motor ILSA. \\ Clasificador};
+
+% Flechas Cliente
+\draw [-{Stealth[scale=1.5]}] (3.25,12.5) -- (3.25,11.375) node[pos=0.45, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{fotogramas};
+
+\draw [-{Stealth[scale=1.5]}] (2.375,10.625) -- (2.375,8.875) node[pos=0.5, align=center, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{frames \\ coordenadas \\ audio};
+
+\draw [-{Stealth[scale=1.5]}] (3.75,8.875) -- (3.75,10.625) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{subtitulos};
+
+% Caja Nube
+\draw (7.875,11.5) rectangle (11.5,7.25);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (9.6875,11.35) {Nube};
+
+\draw (8.375,10.5) rectangle (11,9.25);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (9.6875,10.35) {Servicio \\ semantico};
+
+\draw (8.375,8.875) rectangle (11,7.625);
+\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (9.6875,8.725) {Servicio de \\ poses};
+
+% Flechas Cliente <-> Nube
+\draw [-{Stealth[scale=1.5]}] (4.5,8.25) -- (8.375,8.25) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{nombre de glosa};
+
+\draw [-{Stealth[scale=1.5]}] (8.375,7.875) -- (4.5,7.875) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{archivo pose};
+
+\draw [{Stealth[scale=1.5]}-{Stealth[scale=1.5]}] (4.5,8.625) -- (8.375,9.875) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{glosas / oración};
+
+\end{circuitikz}%
+}
+\caption{Diagrama de la arquitectura del sistema}
+\label{fig:diagrama_arquitectura}
+\end{figure}

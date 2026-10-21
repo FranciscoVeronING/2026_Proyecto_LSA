@@ -6,8 +6,9 @@
 \usepackage{microtype}
 \usepackage[spanish, es-noshorthands]{babel}
 \usepackage{graphicx}
+\usepackage{circuitikz}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, fit, calc}
+\usetikzlibrary{positioning, arrows.meta, fit, calc, backgrounds, shapes.geometric}
 \usepackage{amsmath, amssymb}
 \usepackage{geometry}
 \geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
@@ -15,6 +16,7 @@
 \usepackage[plainpages=false,pdfpagelabels]{hyperref}
 \usepackage{booktabs}
 \usepackage{float}
+\usepackage{pdflscape}
 \usepackage{fvextra}
 \usepackage{setspace}
 \usepackage{csquotes}
@@ -123,8 +125,8 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 \include{capitulos/cap04_requerimientos}
 \include{capitulos/cap05_diseño}
 \include{capitulos/cap06_implementacion}
-\include{capitulos/cap06_experimentacion}
-\include{capitulos/cap07_conclusiones}
+\include{capitulos/cap07_experimentacion}
+\include{capitulos/cap08_conclusiones}
 
 % --- Bibliografía ---
 \printbibliography
@@ -133,6 +135,7 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 \appendix
 \include{capitulos/apendice_a_vocabulario}
 \include{capitulos/apendice_b_configuraciones}
+\include{capitulos/apendice_c_arquitectura_nube}
 
 
 \end{document}

@@ -40,59 +40,51 @@ Los canales semántico directo (LSA $\rightarrow$ Español) e inverso (Español 
     \item \textbf{Familia SmolLM2 \parencite{allal2024smollm2}:} variante de instrucciones de 1,7B.
 \end{itemize}
 
-En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en el Capítulo~5. Aquí queda el ajuste.
+En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en el Capítulo~5.
 
-\subsection{Régimen común del ajuste}
-Los dos canales comparten el procedimiento. El corpus se parte en 85\,\% de entrenamiento y 15\,\% de evaluación, con semilla fija. Cada ejemplo es un diálogo de tres turnos: consigna, entrada del usuario y respuesta. La carga admite 2048 tokens y guarda los pesos en 4 bits solo en esta etapa.
+\subsection{Régimen común del entrenamiento}
+Los dos canales comparten el procedimiento. El corpus se parte en 85\,\% de entrenamiento y 15\,\% de evaluación, con semilla fija. Cada ejemplo es un diálogo de tres partes: \textit{prompt}, entrada del usuario y respuesta. La carga admite 2048 tokens y guarda los pesos en 4 bits solo en esta etapa.
 
 La adaptación es LoRA \parencite{hu2022lora}, con rango $r = 16$ y escala $\alpha = 32$, sobre las cuatro proyecciones de la atención y las tres de la red de avance. El modelo de 3B usa lotes de 2 y acumula el gradiente 8 pasos. El resto usa lotes de 4 y acumula 4 pasos. La tasa es $3 \times 10^{-4}$ para 3B y $5 \times 10^{-4}$ para los demás. El optimizador es Adam de 8 bits, con decaimiento $0{,}01$, diez pasos de calentamiento y planificador coseno. Usa precisión \textit{bfloat16}.
 
-La pérdida no mira todo el diálogo. Una máscara toma el inicio del turno de usuario y el inicio del turno de asistente. La consigna y la entrada quedan fuera del gradiente. El error cae solo sobre la respuesta.
+La pérdida no mira todo el diálogo. Una máscara toma la salida del modelo y la respuesta esperada. El \textit{prompt} y la entrada quedan fuera del gradiente. El error cae solo sobre la respuesta.
 
-Para el entrenamiento, en los dos corpus, las letras sueltas y consecutivas del datatset se funden en un token con mayúscula inicial y los dígitos sueltos en un número. Tres letras iguales seguidas se reducen a dos. Una ráfaga sin separación, como \textit{Mar del Plata}, queda en un solo token.
+Para el entrenamiento, en los dos corpus, las letras sueltas y consecutivas del datatset se funden en un token con mayúscula inicial y los dígitos sueltos en un número. Tres letras iguales seguidas se reducen a dos. Una ráfaga sin separación, como \textit{Mar del Plata}, queda en un solo token \textit{Mardelplata}.
 
 \subsection{\texorpdfstring{Canal directo (LSA $\rightarrow$ Español)}{Canal directo (LSA a Español)}}
-El par de este canal es glosas hacia una oración en español rioplatense. El turno de usuario antepone «Glosas:» a la secuencia ya compacta. El turno de asistente es la oración. La máscara deja el error sobre esa oración.
+El par de este canal es glosas hacia una oración en español rioplatense. La entrada del usuario antepone «Glosas:» a la secuencia ya compacta. La respuesta es la oración esperada. La máscara deja el error sobre esa oración.
 
 La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la entrada \parencite{massoneparte2}:
 \begin{itemize}
     \item El español es rioplatense y usa voseo. La oración incorpora artículos, preposiciones y concordancia verbal. La traducción no es palabra por palabra.
     \item Los pronombres de entrada son \texttt{YO}, \texttt{VOS}, \texttt{EL}, \texttt{NOSOTROS} y \texttt{ELLOS}. Sin una marca de género al lado, el sujeto queda tácito.
-    \item La letra \texttt{A} inmediata al sustantivo o al pronombre marca femenino, y la letra \texttt{O} marca masculino. Un parentesco sin esa letra se vierte en masculino.
-    \item \texttt{MIO} y \texttt{TUYO} se vierten como posesivos del español.
-    \item \texttt{PASADO} o \texttt{AYER} exigen pretérito. \texttt{FUTURO} exige futuro o una perífrasis. Sin marca temporal, el verbo queda en presente.
+    \item La letra \texttt{A} inmediata al sustantivo o al pronombre marca femenino, y la letra \texttt{O} marca masculino. Un parentesco sin esa letra se considera masculino.
+    \item \texttt{MIO} y \texttt{TUYO} expresan posesivos del español.
+    \item \texttt{PASADO} o \texttt{AYER} exigen pretérito. \texttt{FUTURO} exige tiempo futuro. Sin marca temporal, el verbo queda en presente.
     \item \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} y \texttt{CUANTOS} producen una pregunta directa, con signos de apertura y de cierre.
-    \item \texttt{NO} junto al concepto o al verbo produce una negación fluida.
+    \item \texttt{NO} junto al concepto o al verbo produce una negación.
     \item Un token en capitalización de nombre, o una cifra, se copia tal cual. La consigna prohíbe sustituirlo o alterarlo.
     \item La entrada sigue el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
 \end{itemize}
 Al cierre de la corrida, el 15\,\% reservado se evalúa sobre el binario ya cuantizado. Esa evaluación usa temperatura $0$, tope de 24 tokens y penalización de repetición $1{,}05$, y se detiene ante un salto de línea o la marca de fin de turno. Si varias oraciones comparten las mismas glosas, todas cuentan como referencia. La corrida registra acierto exacto, acierto tras normalizar puntuación y mayúsculas, BLEU, ROUGE-L, METEOR y la latencia.
 
 \subsection{\texorpdfstring{Canal inverso (Español $\rightarrow$ LSA)}{Canal inverso (Español a LSA)}}
-El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. El turno de usuario antepone «Español:». La máscara deja el error sobre las glosas.
+El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas.
 
 Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español \parencite{massoneparte2}:
 \begin{itemize}
     \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y nunca letra por letra. Una cifra, como un documento o una cantidad, va en un solo token numérico.
-    \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación. Tres consignas de referencia son ``¿Dónde vas a vivir vos?'' $\rightarrow$ \texttt{FUTURO VOS VIVIR DONDE}, ``No voy a llevar el cuchillo.'' $\rightarrow$ \texttt{FUTURO YO CUCHILLO LLEVAR NO} y ``Vivo en la calle Moreno.'' $\rightarrow$ \texttt{CALLE Moreno YO VIVIR\_EN}.
+    \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación.
     \item Los pronombres se explicitan aunque el español los omita. ``Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}.
     \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita.
     \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. ``Me llamo X'' o ``Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre.
     \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis ``voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega token temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
-    \item ``Número de documento'' o ``DNI'' produce \texttt{DOCUMENTO NUMERO} más la cifra compacta. ``Apellido'' produce \texttt{APELLIDO} más el nombre. ``Calle'' produce \texttt{CALLE} más el nombre. Esos nombres y esas cifras se copian tal cual.
 \end{itemize}
 
 El modelo aprende así a emitir el nombre o la cifra ya compactos, no una lista de letras.
 
 La evaluación del 15\,\% usa temperatura $0$, tope de 48 tokens y penalización $1{,}05$. Se detiene ante un salto de línea o la marca de fin de turno. Si la salida trae un bloque de razonamiento, ese bloque se descarta y queda la primera línea. Si varias secuencias de glosas comparten la misma oración, todas cuentan como referencia. Las métricas son las mismas del canal directo.
-
-\subsection{Tratamiento de letras y dígitos sueltos}
-El léxico clasificado no cubre nombres ni cifras arbitrarias. La unión no queda a cargo de la red.
-
-En el canal directo, ILSA junta las letras antes de enviarlas al modelo. Dos o más letras seguidas forman un nombre con mayúscula inicial, y dos o más dígitos seguidos forman un número. El modelo recibe ese nombre ya capitalizado. Una letra sola no se compacta. Si el enunciado es solo un deletreo o solo dígitos, ILSA resuelve el texto en el cliente y la llamada al modelo no ocurre.
-
-En el canal inverso, el modelo recibe la oración, con el nombre ya capitalizado, y devuelve glosas. Un nombre o un número sale compacto y, en el caso del nombre, con mayúscula inicial.
 
 \subsection{Cuantización GGUF Q4\_K\_M y servicio de inferencia}
 
@@ -167,7 +159,7 @@ La secuencia de eventos que rige la ejecución integrada del canal directo compr
     \item \textbf{Clasificación temporal continua en el motor local (ILSA):} La extensión serializa la secuencia de 16 fotogramas ($16 \times 225$) y la transmite mediante una petición HTTP POST al endpoint \texttt{/sign} del servidor local FastAPI \parencite{tiangolo2018fastapi}.
     \item \textbf{Inferencia local y filtrado heurístico (\texttt{RepeatGate}):} El clasificador \textit{TinySkeletonClassifier} genera la predicción. La compuerta de validación evalúa la glosa según su categoría léxica (admitiendo repeticiones en dígitos, un máximo de dos en letras y descartando repeticiones inmediatas en vocabulario general) y actualiza el búfer acumulador \parencite{gamma1994design}.
     \item \textbf{Temporización y cierre de enunciado:} Al transcurrir un intervalo continuo de 4 segundos sin actividad gestual, el acumulador declara el cierre del enunciado y dispara la solicitud de traducción.
-    \item \textbf{Invocación al servicio semántico:} El motor local transmite la lista de glosas mediante una petición HTTP POST al endpoint \texttt{/translate} del servidor remoto en la nube \parencite{tiangolo2018fastapi}.
+    \item \textbf{Invocación al servicio semántico:} El motor local transmite la lista de glosas mediante \texttt{POST /sordo} al servidor remoto. \texttt{POST /translate} acepta el mismo cuerpo \parencite{tiangolo2018fastapi}.
     \item \textbf{Emisión concurrente de resultados:} La oración traducida en español se retorna a la extensión para dibujarse como subtítulo sobre el lienzo virtual de Google Meet \parencite{w3c2024mediacapture} y, en simultáneo, se envía al hilo secundario de síntesis de voz (\texttt{pyttsx3}) para su emisión audible hacia el oyente \parencite{pressman2014software}.
 \end{enumerate}
 
@@ -225,7 +217,7 @@ El diccionario de \texttt{.pose} evita ese paso: dibuja los puntos medidos y no 
 
 ILSA, en modo oyente, no lee un diccionario de poses del disco de la videollamada. Después de obtener las glosas del canal inverso, normaliza cada nombre y pide \texttt{GET /tposes/\{glosa\}.pose}. \texttt{GET /health} solo indica que el proceso está arriba. Un 200 del archivo trae el binario. Un 404 indica que esa glosa no tiene clip.
 
-En el motor local, \texttt{POST /hearing} hace las dos consultas: primero la oración hacia el canal inverso y después los archivos. La respuesta trae la oración, las glosas y el clip. \texttt{POST /avatar} recibe una cadena de glosas y repite solo la descarga. En modo señante las dos rutas responden 400. La dirección del servicio se reemplaza por configuración, sin recompilar el motor. Los archivos ya bajados quedan en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red.
+En el motor local, \texttt{POST /hearing} hace las dos consultas: primero la oración hacia el canal inverso y después los archivos. La respuesta trae la oración, las glosas y el clip. En modo señante esa ruta responde 400. La dirección del servicio se reemplaza por configuración, sin recompilar el motor. Los archivos ya bajados quedan en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red.
 
 Si el nombre de una glosa no tiene archivo, ILSA no inventa el movimiento. Pide las letras de esa glosa al mismo servicio, cada una como un archivo. Si el servicio no responde, las glosas siguen disponibles como texto y el clip queda vacío. El tope de la cadena es 24 archivos.
 
