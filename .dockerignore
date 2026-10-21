@@ -3,10 +3,7 @@ venv/
 __pycache__/
 **/__pycache__/
 .git/
-downloads/
 *.pyc
 .pytest_cache/
 dist/
 build/
-extension/
-dataset/

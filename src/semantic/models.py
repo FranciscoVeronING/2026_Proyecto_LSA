@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 from semantic.config import (
     BACKUP_GGUF,
@@ -55,9 +54,3 @@ def describe_slot(folder: Path) -> dict:
         "backup": BACKUP_GGUF,
         "backup_present": backup.is_file(),
     }
-
-
-def model_used_name(path: Optional[str]) -> str:
-    if not path:
-        return ""
-    return Path(path).name

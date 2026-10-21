@@ -1,4 +1,4 @@
-"""FastAPI del traductor (sordo y oyente)."""
+"""FastAPI del traductor: POST /sign y POST /hearing."""
 
 from __future__ import annotations
 
@@ -10,9 +10,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import time
 
-from semantic.config import BACKUP_GGUF, PRIMARY_GGUF, SEMANTIC_TOKEN
+from semantic.config import (
+    BACKUP_GGUF,
+    OYENTE_GGUF_DIR,
+    PRIMARY_GGUF,
+    SEMANTIC_TOKEN,
+    SORDO_GGUF_DIR,
+)
 from semantic.models import describe_slot
-from semantic.config import OYENTE_GGUF_DIR, SORDO_GGUF_DIR
 from semantic.translator import (
     infer_slot,
     load_model_and_tokenizer,
@@ -115,31 +120,13 @@ def _oyente_impl(body: OyenteIn, authorization, x_lsa_token):
     }
 
 
-@app.post("/sordo")
-def sordo(
+@app.post("/sign")
+def sign(
     body: SordoIn,
     authorization: Optional[str] = Header(None),
     x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
 ):
     return _sordo_impl(body, authorization, x_lsa_token)
-
-
-@app.post("/translate")
-def translate(
-    body: SordoIn,
-    authorization: Optional[str] = Header(None),
-    x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-):
-    return _sordo_impl(body, authorization, x_lsa_token)
-
-
-@app.post("/oyente")
-def oyente(
-    body: OyenteIn,
-    authorization: Optional[str] = Header(None),
-    x_lsa_token: Optional[str] = Header(None, alias="X-LSA-Token"),
-):
-    return _oyente_impl(body, authorization, x_lsa_token)
 
 
 @app.post("/hearing")
@@ -159,4 +146,4 @@ def warmup() -> None:
     print(f"[semantic-http] oyente RAM: {paths.get('oyente')}", flush=True)
     if not paths.get("sordo"):
         raise RuntimeError("[semantic-http] Warmup incompleto: sin GGUF en RAM")
-    print("[semantic-http] Listo /sordo /translate /oyente /hearing", flush=True)
+    print("[semantic-http] Listo /sign /hearing", flush=True)

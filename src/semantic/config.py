@@ -10,9 +10,6 @@ OYENTE_GGUF_DIR = MODELS_DIR / "oyente"
 PRIMARY_GGUF = "qwen2.5-1.5b.gguf"
 BACKUP_GGUF = "llama-3.2-1b.gguf"
 
-SYSTEM_PROMPT_PATH = str(_SEMANTIC_DIR / "prompts" / "sys_prompt.txt")
-SYSTEM_PROMPT_OYENTE_PATH = str(_SEMANTIC_DIR / "prompts" / "sys_prompt_oyente.txt")
-
 SEMANTIC_TOKEN = (os.getenv("LSA_SEMANTIC_TOKEN") or "").strip()
 
 # En Cloud Run (PORT) un n_ctx 4096 × 4 motores OOM/cuelga el mmap.

@@ -12,8 +12,8 @@ Inferencia **sin memoria de conversación**: cada request es system prompt + enu
 
 | Canal | Dirección | Quién llama | Entrada | Salida |
 | --- | --- | --- | --- | --- |
-| Directo (sordo) | Glosas LSA → español | `POST /sordo` o `/translate` | Cadena de glosas | Oración en español rioplatense |
-| Inverso (oyente) | Español → glosas LSA | `POST /oyente` o `/hearing` | Oración en español | Cadena de glosas (Topic-Comment) |
+| Directo (sordo) | Glosas LSA → español | `POST /sign` | Cadena de glosas | Oración en español rioplatense |
+| Inverso (oyente) | Español → glosas LSA | `POST /hearing` | Oración en español | Cadena de glosas (Topic-Comment) |
 | Salud | ¿SLM en RAM? | `GET /health` | — | `ready`, rutas en disco vs en RAM |
 
 Dos canales **independientes**: cada uno tiene su carpeta, su GGUF principal, su GGUF de backup y su `sys_prompt.txt`. No se reutiliza el motor ni el prompt entre sordo y oyente.
@@ -25,7 +25,7 @@ Dos canales **independientes**: cada uno tiene su carpeta, su GGUF principal, su
 ```
 ILSA (PC)
   │  1) GET /health  hasta HTTP 200 y ready=true
-  │  2) POST /translate  o  POST /hearing
+  │  2) POST /sign  o  POST /hearing
   ▼
 Cloud Run  (ilsa-semantic-service, us-central1)
   FastAPI + Uvicorn
@@ -65,7 +65,7 @@ Nombres fijos (no se buscan otros orígenes):
 | Sordo | `src/semantic/models/sordo/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
 | Oyente | `src/semantic/models/oyente/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
 
-En cada carpeta hace falta también `sys_prompt.txt` (el del entrenamiento de ese canal). Si falta, hay fallback en `src/semantic/prompts/sys_prompt.txt` y `sys_prompt_oyente.txt`.
+En cada carpeta hace falta también `sys_prompt.txt` (el del entrenamiento de ese canal).
 
 Orden de carga por canal: Qwen → Llama → cualquier otro `*.gguf` del folder. En RAM entra **solo el primero que inicializa** (principal). El backup queda en disco y se carga si el principal falla en una inferencia.
 
@@ -76,7 +76,7 @@ Chat:
 - nombre con `qwen` → plantilla ChatML, stops `<|im_end|>`, etc.
 - el resto (Llama) → plantilla Llama 3, stops `<|eot_id|>`, etc.
 
-En Windows, si `llama-cpp-python` no carga, hay fallback a `llama-server.exe` (`native_llama.py`). En Cloud Run se usa llama-cpp-python CPU.
+La inferencia usa `llama-cpp-python` en CPU (`n_gpu_layers=0`).
 
 ### Canal sordo: juntado de deletreo
 
@@ -126,7 +126,7 @@ Listo para ILSA **solo** con HTTP 200 y `"ready": true`. `primary_present` solo 
 
 Durante el cold start el puerto aún no existe: el GET falla o queda colgado. Reintentar.
 
-### `POST /sordo` y `POST /translate` (canal directo)
+### `POST /sign` (canal directo)
 
 Request:
 
@@ -156,7 +156,7 @@ Respuesta 200:
 | `ms` | Tiempo de inferencia en este request |
 | `queued_ms` | Espera por el lock si había otra inferencia |
 
-### `POST /oyente` y `POST /hearing` (canal inverso)
+### `POST /hearing` (canal inverso)
 
 Request:
 
@@ -204,7 +204,7 @@ Respuesta 200:
 Al cargar, se **ancla** el system prompt en el KV (`sys_n` tokens). Cada request rebobina a ese prefijo y solo evalúa glosas/oración nuevas. En logs:
 
 ```
-[semantic] /sordo con qwen2.5-1.5b.gguf para 'HOLA' prompt_tokens=… sys=… eval=…
+[semantic] /sign con qwen2.5-1.5b.gguf para 'HOLA' prompt_tokens=… sys=… eval=…
 ```
 
 `eval` chico = atajo del sys. Si aparece `Prefijo sys no coincide`, se reevalúa el prompt entero (latencia alta, típico ~8 s en CPU 1.5B).
@@ -237,8 +237,8 @@ Colocar los cuatro GGUF (o al menos el principal de cada canal) y los `sys_promp
 
 ```bash
 curl -s http://127.0.0.1:8787/health
-curl -s -X POST http://127.0.0.1:8787/translate -H "Content-Type: application/json" -d "{\"glosses\":\"HOLA\"}"
-curl -s -X POST http://127.0.0.1:8787/hearing  -H "Content-Type: application/json" -d "{\"spanish\":\"Hola\"}"
+curl -s -X POST http://127.0.0.1:8787/sign -H "Content-Type: application/json" -d "{\"glosses\":\"HOLA\"}"
+curl -s -X POST http://127.0.0.1:8787/hearing -H "Content-Type: application/json" -d "{\"spanish\":\"Hola\"}"
 ```
 
 ---
@@ -282,8 +282,8 @@ URL típica:
 
 1. Poll `GET /health` hasta `ready === true` (errores de red, 502/504 y timeout = seguir en carga). Timeout de cliente largo (p. ej. 180–300 s) o reintentos cortos.
 2. No prender el clasificador local antes.
-3. Canal sordo: `POST /translate` o `/sordo` con `{ "glosses": "..." }`; leer `spanish`.
-4. Canal oyente: `POST /hearing` o `/oyente` con `{ "spanish": "..." }`; leer `glosses`.
+3. Canal sordo: `POST /sign` con `{ "glosses": "..." }`; leer `spanish`.
+4. Canal oyente: `POST /hearing` con `{ "spanish": "..." }`; leer `glosses`.
 5. Ping opcional a `/health` **solo mientras la sesión está abierta** para no soltar del todo la CPU; al cerrar ILSA, cortar pings (scale to zero).
 
 ---
@@ -301,8 +301,6 @@ src/semantic/
   config.py                nombres, n_ctx, sampling
   models.py                candidatos GGUF
   literals.py              deletreo/dígitos (solo sordo)
-  native_llama.py          fallback Windows llama-server.exe
-  prompts/                 sys_prompt fallback
   models/sordo/            GGUF + sys_prompt.txt
   models/oyente/           GGUF + sys_prompt.txt
 ```

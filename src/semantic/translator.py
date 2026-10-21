@@ -58,8 +58,6 @@ from semantic.config import (
     PRIMARY_GGUF,
     REPETITION_PENALTY,
     SORDO_GGUF_DIR,
-    SYSTEM_PROMPT_OYENTE_PATH,
-    SYSTEM_PROMPT_PATH,
     TEMPERATURE,
 )
 from semantic.literals import collapse_literal_runs
@@ -70,7 +68,6 @@ SYSTEM_PROMPT_OYENTE = ""
 _LOADED = False
 _LOADING = False
 _LOAD_ERROR: Optional[str] = None
-_NATIVE_PORT = 18790
 _LOAD_LOCK = threading.Lock()
 
 _CHATML_STOP = ["<|im_end|>", "<|endoftext|>", "<|im_start|>"]
@@ -130,10 +127,6 @@ def infer_slot() -> Iterator[float]:
         INFER_LOCK.release()
 
 
-def get_active_model_id() -> Optional[str]:
-    return _SORDO.used_name() or None
-
-
 def loaded_paths() -> dict[str, Optional[str]]:
     return {
         "sordo": _SORDO.path_str(),
@@ -154,19 +147,12 @@ def _read_prompt_file(path: Path) -> Optional[str]:
     return text or None
 
 
-def _load_role_prompt(folder: Path, fallback: str, default: str) -> str:
-    names = ("sys_prompt.txt", "system_prompt.txt")
-    candidates = [folder / n for n in names]
-    candidates.append(Path(fallback))
-    seen = set()
-    for path in candidates:
-        key = str(path.resolve()) if path.exists() else str(path)
-        if key in seen:
-            continue
-        seen.add(key)
+def _load_role_prompt(folder: Path, default: str) -> str:
+    for name in ("sys_prompt.txt", "system_prompt.txt"):
+        path = folder / name
         text = _read_prompt_file(path)
         if text:
-            print(f"[semantic] Prompt: {path}")
+            print(f"[semantic] Prompt: {path}", flush=True)
             return text
     return default
 
@@ -174,7 +160,6 @@ def _load_role_prompt(folder: Path, fallback: str, default: str) -> str:
 def load_prompt() -> str:
     return _load_role_prompt(
         SORDO_GGUF_DIR,
-        SYSTEM_PROMPT_PATH,
         "Sos un traductor estricto de Lengua de Señas Argentina (LSA) a español rioplatense natural.",
     )
 
@@ -182,53 +167,37 @@ def load_prompt() -> str:
 def load_prompt_oyente() -> str:
     return _load_role_prompt(
         OYENTE_GGUF_DIR,
-        SYSTEM_PROMPT_OYENTE_PATH,
         "Traducí español a glosas LSA en mayúsculas, separadas por espacios. Solo la línea de glosas.",
     )
 
 
 def _make_engine(model_path: str, n_threads: int):
-    global _NATIVE_PORT
+    from llama_cpp import Llama
+
+    print(
+        f"[semantic] Llama() mmap {model_path} n_ctx={N_CTX} threads={n_threads}…",
+        flush=True,
+    )
+    t0 = time.perf_counter()
+    kwargs = dict(
+        model_path=model_path,
+        n_gpu_layers=0,
+        n_ctx=int(N_CTX),
+        n_batch=512,
+        n_threads=n_threads,
+        n_threads_batch=n_threads,
+        verbose=False,
+        use_mmap=True,
+    )
     try:
-        from llama_cpp import Llama
-
-        print(
-            f"[semantic] Llama() mmap {model_path} n_ctx={N_CTX} threads={n_threads}…",
-            flush=True,
-        )
-        t0 = time.perf_counter()
-        kwargs = dict(
-            model_path=model_path,
-            n_gpu_layers=0,
-            n_ctx=int(N_CTX),
-            n_batch=512,
-            n_threads=n_threads,
-            n_threads_batch=n_threads,
-            verbose=False,
-            use_mmap=True,
-        )
-        try:
-            engine = Llama(**kwargs, use_mlock=True)
-        except (TypeError, RuntimeError, OSError):
-            engine = Llama(**kwargs)
-        print(
-            f"[semantic] Llama() listo en {time.perf_counter() - t0:.1f}s",
-            flush=True,
-        )
-        return engine
-    except (ImportError, OSError, RuntimeError) as exc:
-        print(f"[semantic] llama-cpp-python no carga ({exc}). Uso llama-server.exe.")
-        from semantic.native_llama import LlamaServerEngine
-
-        port = _NATIVE_PORT
-        _NATIVE_PORT += 1
-        return LlamaServerEngine(
-            model_path=model_path,
-            n_ctx=int(N_CTX),
-            n_gpu_layers=0,
-            n_threads=n_threads,
-            port=port,
-        )
+        engine = Llama(**kwargs, use_mlock=True)
+    except (TypeError, RuntimeError, OSError):
+        engine = Llama(**kwargs)
+    print(
+        f"[semantic] Llama() listo en {time.perf_counter() - t0:.1f}s",
+        flush=True,
+    )
+    return engine
 
 
 def _to_chatml(messages: list[dict]) -> str:
@@ -434,7 +403,7 @@ def translate_glosses(glosses_input: str) -> tuple[str, str]:
         {"role": "user", "content": f"Glosas: {raw}"},
     ]
 
-    return _complete_channel(_SORDO, messages, raw, "sordo")
+    return _complete_channel(_SORDO, messages, raw, "sign")
 
 
 def translate_spanish_to_glosses(spanish_input: str) -> tuple[str, str]:
@@ -446,7 +415,7 @@ def translate_spanish_to_glosses(spanish_input: str) -> tuple[str, str]:
         {"role": "system", "content": SYSTEM_PROMPT_OYENTE},
         {"role": "user", "content": f"Español: {raw}"},
     ]
-    return _complete_channel(_OYENTE, messages, raw, "oyente")
+    return _complete_channel(_OYENTE, messages, raw, "hearing")
 
 
 def _complete_channel(
@@ -510,10 +479,10 @@ def _complete_channel(
             print(f"[semantic] Fallo {label} {item.path.name}: {exc}", flush=True)
             if item.path.name.lower() == PRIMARY_GGUF:
                 print(f"[semantic] Conmutando {label} a {BACKUP_GGUF}", flush=True)
-                paths = sordo_candidates() if label == "sordo" else oyente_candidates()
+                paths = sordo_candidates() if label == "sign" else oyente_candidates()
                 n_threads = max(1, os.cpu_count() or 2)
                 have = {e.path.resolve() for e in channel.engines}
-                system = SYSTEM_PROMPT if label == "sordo" else SYSTEM_PROMPT_OYENTE
+                system = SYSTEM_PROMPT if label == "sign" else SYSTEM_PROMPT_OYENTE
                 for path in paths:
                     if path.resolve() in have:
                         continue
@@ -527,7 +496,6 @@ def _complete_channel(
 
 
 __all__ = [
-    "get_active_model_id",
     "infer_slot",
     "loaded_paths",
     "load_status",
