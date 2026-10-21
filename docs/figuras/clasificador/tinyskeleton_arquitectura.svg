@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 980" width="1680" height="980" role="img" aria-labelledby="title desc">
+  <title id="title">TinySkeleton — Conv1D y Transformer</title>
+  <desc id="desc">Diagrama de TinySkeletonClassifier: secuencia de 16 por 225, dos Conv1D, codificación posicional, Transformer de 2 capas con 4 cabezas, attention pooling y capa lineal a 100 señas.</desc>
+  <defs>
+    <linearGradient id="teal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1A9A90"/>
+      <stop offset="1" stop-color="#0E6E68"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7EDCEA"/>
+      <stop offset="1" stop-color="#3CB4C6"/>
+    </linearGradient>
+    <linearGradient id="slate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9AADB8"/>
+      <stop offset="1" stop-color="#6D828E"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6C453"/>
+      <stop offset="1" stop-color="#E39B12"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1C2B33" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 Z" fill="#8AA0AA"/>
+    </marker>
+  </defs>
+
+  <rect width="1680" height="980" fill="#FBFBFA"/>
+
+  <text x="64" y="62" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="34" font-weight="650">TinySkeleton</text>
+  <text x="64" y="96" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="16">Conv1D + Transformer encoder · clasificación de señas LSA · 16 frames · 100 clases</text>
+
+  <!-- connectors -->
+  <g fill="none" stroke="#B7C6CE" stroke-width="1.6" stroke-dasharray="3 5" marker-end="url(#arrow)">
+    <path d="M268 390 H318"/>
+    <path d="M548 390 H598"/>
+    <path d="M778 390 H828"/>
+    <path d="M1108 390 H1158"/>
+    <path d="M1368 390 H1418"/>
+  </g>
+
+  <!-- INPUT -->
+  <g filter="url(#soft)">
+    <rect x="78" y="300" width="150" height="150" rx="18" fill="url(#teal)"/>
+    <rect x="112" y="334" width="82" height="82" rx="10" fill="#E7F7F5"/>
+    <rect x="136" y="358" width="34" height="34" rx="6" fill="#7EDCEA"/>
+  </g>
+  <g fill="#0E6E68">
+    <rect x="78" y="468" width="150" height="6" rx="3" opacity="0.9"/>
+    <rect x="96" y="480" width="114" height="5" rx="2.5" opacity="0.55"/>
+    <rect x="114" y="491" width="78" height="4" rx="2" opacity="0.35"/>
+  </g>
+  <text x="153" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Entrada</text>
+  <text x="153" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">16 × 225</text>
+  <text x="153" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">pose + dos manos</text>
+
+  <!-- CONV -->
+  <g filter="url(#soft)">
+    <rect x="352" y="286" width="132" height="168" rx="16" fill="#D7F3F7"/>
+    <rect x="372" y="274" width="132" height="168" rx="16" fill="#B7E8F0"/>
+    <rect x="392" y="262" width="132" height="168" rx="16" fill="url(#cyan)"/>
+    <rect x="418" y="318" width="80" height="56" rx="8" fill="#F4FCFE" opacity="0.85"/>
+    <rect x="444" y="334" width="28" height="24" rx="4" fill="#E39B12" opacity="0.9"/>
+  </g>
+  <text x="458" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Conv1D × 2</text>
+  <text x="458" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">kernel 3 · 225 &#8594; 128</text>
+  <text x="458" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">BatchNorm · ReLU · dropout 0.2</text>
+
+  <!-- POSITIONAL -->
+  <g filter="url(#soft)">
+    <rect x="618" y="292" width="140" height="168" rx="18" fill="#FFFFFF" stroke="#D5E2E8" stroke-width="1.5"/>
+    <path d="M640 392 C 656 340, 672 340, 688 392 S 720 444, 736 392" fill="none" stroke="#0E6E68" stroke-width="3" stroke-linecap="round"/>
+    <g fill="#3CB4C6">
+      <circle cx="640" cy="392" r="5"/>
+      <circle cx="664" cy="348" r="5"/>
+      <circle cx="688" cy="392" r="5"/>
+      <circle cx="712" cy="436" r="5"/>
+      <circle cx="736" cy="392" r="5"/>
+    </g>
+  </g>
+  <text x="688" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Posición</text>
+  <text x="688" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">seno / coseno</text>
+  <text x="688" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">se suma a cada frame</text>
+
+  <!-- TRANSFORMER -->
+  <g filter="url(#soft)">
+    <rect x="858" y="268" width="210" height="176" rx="18" fill="#E4ECEF"/>
+    <rect x="878" y="248" width="210" height="176" rx="18" fill="url(#slate)"/>
+    <g fill="#F7FBFC">
+      <circle cx="928" cy="318" r="11"/>
+      <circle cx="968" cy="318" r="11"/>
+      <circle cx="1008" cy="318" r="11"/>
+      <circle cx="1048" cy="318" r="11"/>
+      <circle cx="948" cy="378" r="11"/>
+      <circle cx="988" cy="378" r="11"/>
+      <circle cx="1028" cy="378" r="11"/>
+    </g>
+    <g stroke="#F7FBFC" stroke-width="1.2" opacity="0.85">
+      <path d="M928 329 L948 367"/>
+      <path d="M968 329 L948 367"/>
+      <path d="M968 329 L988 367"/>
+      <path d="M1008 329 L988 367"/>
+      <path d="M1008 329 L1028 367"/>
+      <path d="M1048 329 L1028 367"/>
+    </g>
+  </g>
+  <text x="983" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Transformer × 2</text>
+  <text x="983" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">4 cabezas · d = 128</text>
+  <text x="983" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">FFN 256 · dropout 0.4</text>
+
+  <!-- ATTENTION POOL -->
+  <g filter="url(#soft)">
+    <rect x="1178" y="292" width="170" height="168" rx="18" fill="#FFFFFF" stroke="#D5E2E8" stroke-width="1.5"/>
+    <g fill="#3CB4C6">
+      <rect x="1204" y="390" width="10" height="28" rx="3"/>
+      <rect x="1220" y="372" width="10" height="46" rx="3"/>
+      <rect x="1236" y="340" width="10" height="78" rx="3" fill="#0E6E68"/>
+      <rect x="1252" y="360" width="10" height="58" rx="3"/>
+      <rect x="1268" y="384" width="10" height="34" rx="3"/>
+      <rect x="1284" y="396" width="10" height="22" rx="3" opacity="0.7"/>
+    </g>
+    <circle cx="1322" cy="368" r="16" fill="url(#teal)"/>
+    <path d="M1241 340 C 1270 330, 1296 348, 1308 360" fill="none" stroke="#0E6E68" stroke-width="1.4"/>
+  </g>
+  <text x="1263" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Attention pooling</text>
+  <text x="1263" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">softmax sobre 16 frames</text>
+  <text x="1263" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">vector de 128</text>
+
+  <!-- OUTPUT -->
+  <g font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="650" fill="#3D2A08">
+    <rect x="1438" y="268" width="168" height="42" rx="12" fill="url(#amber)" filter="url(#soft)"/>
+    <text x="1522" y="295" text-anchor="middle">hola</text>
+    <rect x="1438" y="322" width="168" height="42" rx="12" fill="url(#amber)" filter="url(#soft)"/>
+    <text x="1522" y="349" text-anchor="middle">gracias</text>
+    <rect x="1438" y="376" width="168" height="42" rx="12" fill="url(#amber)" filter="url(#soft)"/>
+    <text x="1522" y="403" text-anchor="middle">A</text>
+    <rect x="1438" y="430" width="168" height="42" rx="12" fill="#F3E2B8"/>
+    <text x="1522" y="457" text-anchor="middle" fill="#7A5A16">100 señas</text>
+  </g>
+  <text x="1522" y="548" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="650">Salida</text>
+  <text x="1522" y="572" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="14">dropout 0.4</text>
+  <text x="1522" y="592" text-anchor="middle" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">capa lineal 128 &#8594; 100</text>
+
+  <!-- brackets -->
+  <path d="M330 660 H586" fill="none" stroke="#163038" stroke-width="1.4"/>
+  <path d="M330 660 v10 M586 660 v10" stroke="#163038" stroke-width="1.4"/>
+  <text x="458" y="692" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="650">Rasgos locales en el tiempo</text>
+
+  <path d="M618 660 H1108" fill="none" stroke="#163038" stroke-width="1.4"/>
+  <path d="M618 660 v10 M1108 660 v10" stroke="#163038" stroke-width="1.4"/>
+  <text x="863" y="692" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="650">Contexto de la secuencia</text>
+
+  <path d="M1178 660 H1606" fill="none" stroke="#163038" stroke-width="1.4"/>
+  <path d="M1178 660 v10 M1606 660 v10" stroke="#163038" stroke-width="1.4"/>
+  <text x="1392" y="692" text-anchor="middle" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="650">Clasificación</text>
+
+  <!-- tensor strip -->
+  <rect x="64" y="740" width="1552" height="168" rx="18" fill="#FFFFFF" stroke="#E4ECEF"/>
+  <text x="92" y="778" fill="#163038" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="650">Forma del tensor, sin el batch</text>
+  <g font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#163038">
+    <rect x="92" y="804" width="210" height="64" rx="12" fill="#E7F7F5"/>
+    <text x="197" y="832" text-anchor="middle" font-weight="650">16 × 225</text>
+    <text x="197" y="852" text-anchor="middle" fill="#5E7380" font-size="13">landmarks</text>
+
+    <text x="322" y="842" fill="#8AA0AA" font-size="20">&#8594;</text>
+
+    <rect x="348" y="804" width="250" height="64" rx="12" fill="#E5F7FA"/>
+    <text x="473" y="832" text-anchor="middle" font-weight="650">16 × 128</text>
+    <text x="473" y="852" text-anchor="middle" fill="#5E7380" font-size="13">después de Conv1D</text>
+
+    <text x="618" y="842" fill="#8AA0AA" font-size="20">&#8594;</text>
+
+    <rect x="644" y="804" width="300" height="64" rx="12" fill="#EEF3F5"/>
+    <text x="794" y="832" text-anchor="middle" font-weight="650">16 × 128</text>
+    <text x="794" y="852" text-anchor="middle" fill="#5E7380" font-size="13">posición + Transformer</text>
+
+    <text x="964" y="842" fill="#8AA0AA" font-size="20">&#8594;</text>
+
+    <rect x="990" y="804" width="210" height="64" rx="12" fill="#E7F7F5"/>
+    <text x="1095" y="832" text-anchor="middle" font-weight="650">128</text>
+    <text x="1095" y="852" text-anchor="middle" fill="#5E7380" font-size="13">pooling</text>
+
+    <text x="1220" y="842" fill="#8AA0AA" font-size="20">&#8594;</text>
+
+    <rect x="1246" y="804" width="210" height="64" rx="12" fill="#FBF3DE"/>
+    <text x="1351" y="832" text-anchor="middle" font-weight="650">100</text>
+    <text x="1351" y="852" text-anchor="middle" fill="#5E7380" font-size="13">logits de seña</text>
+  </g>
+  <text x="1488" y="842" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">El pooling pesa</text>
+  <text x="1488" y="860" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">los frames, no</text>
+  <text x="1488" y="878" fill="#5E7380" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13">los promedia.</text>
+</svg>

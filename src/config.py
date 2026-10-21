@@ -4,7 +4,7 @@ _SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATASET_VIDEOS_DIR = os.path.join(_SRC_DIR, "..", "dataset")
 DATASET_NPY_DIR = os.path.join(_SRC_DIR, "..", "dataset_landmarks_16frames")
-MODEL_SAVE_DIR = os.path.join(_SRC_DIR, "model_new_2026_10_15")
+MODEL_SAVE_DIR = os.path.join(_SRC_DIR, "model_new_2026_10_20")
 MODEL_CHECKPOINT = "tinyskeleton_best.pth"
 
 # Misma build que la extensión (Holistic JS/WASM). No usar mediapipe de Python.
@@ -13,7 +13,7 @@ MEDIAPIPE_WEB_VERSION = "0.5.1675471629"
 MEDIAPIPE_WEB_ID = f"{MEDIAPIPE_WEB_PACKAGE}@{MEDIAPIPE_WEB_VERSION}"
 
 NUM_CLASSES = 100
-SAMPLES_PER_CLASS = 60
+SAMPLES_PER_CLASS = 100
 
 # Preprocess, train e inferencia usan el mismo T.
 MAX_FRAMES = 16
@@ -218,6 +218,6 @@ CAPTURE_MODE = "auto"
 # Las dinámicas (lunes, años, donde, viernes) no van en esta lista.
 STATIC_SIGN_CLASSES = [
     "0", "1", "2", "3", "4", "5", "6", "8",
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M",
-    "N", "ñ", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "A", "B", "C", "D", "E", "F", "G", "I", "K", "L", "M",
+    "N", "ñ", "O", "P", "Q", "S", "T", "U", "V", "W", "X", "Y",
 ]
