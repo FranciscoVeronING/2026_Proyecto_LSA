@@ -9,10 +9,10 @@ DEFAULT_LOG_DIR = SCRIPT_DIR / "logs"
 DEFAULT_DATASET = SCRIPT_DIR / "dataset_glosas.json"
 DEFAULT_TRIAL_DATASET = SCRIPT_DIR / "dataset_trial.json"
 DEFAULT_PROMPT_FILE = SCRIPT_DIR / "prompts" / "sys_prompt.txt"
-DEFAULT_FEW_SHOT_FILE = SCRIPT_DIR / "prompts" / "few_shot_examples.json"
 
 MAX_SEQ_LENGTH = 2048
-TRAIN_SEQ_LENGTH = 512
+# El system prompt ocupa ~1600 tokens. 512 recorta la glosa y no entrena la respuesta.
+TRAIN_SEQ_LENGTH = 2048
 SPLIT_SEED = 3407
 TEST_SIZE = 0.15
 MAX_NEW_TOKENS = 48

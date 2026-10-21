@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from config import DEFAULT_DATASET, SPLIT_SEED, TEST_SIZE
-from gloss_format import formato_canonico
+from gloss_format import join_glosas
 
 
 def load_json(path: Path) -> Any:
@@ -15,14 +15,14 @@ def load_json(path: Path) -> Any:
 
 
 def load_parallel_pairs(dataset_path: Path | None = None) -> list[dict[str, str]]:
-    """Pares de entrenamiento. Compacta deletreo y DNI."""
+    """Pares de entrenamiento conservando los tokens del dataset."""
     dataset_path = dataset_path or DEFAULT_DATASET
     raw = load_json(dataset_path)
     rows = raw.get("dataset", raw.get("examples", []))
     return [
         {
             "spanish": str(item["spanish"]).strip(),
-            "glosses": formato_canonico(item["glosses"]),
+            "glosses": join_glosas(item["glosses"]),
         }
         for item in rows
     ]
@@ -60,7 +60,7 @@ def load_trial_groups(path: Path) -> list[dict[str, Any]]:
             {
                 "category": item.get("category", ""),
                 "spanish": [str(s).strip() for s in spanish_list],
-                "glosses": formato_canonico(item["glosses"]),
+                "glosses": join_glosas(item["glosses"]),
             }
         )
     return groups

@@ -34,11 +34,6 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="IDs a entrenar (ej: qwen2.5-0.5b llama-3.2-1b). Default: todos.",
     )
-    parser.add_argument(
-        "--no-few-shots",
-        action="store_true",
-        help="No concatenar prompts/few_shot_examples.json al system prompt.",
-    )
     return parser.parse_args()
 
 
@@ -56,10 +51,7 @@ def main() -> int:
         print(f"Error: no está el dataset en {dataset_path}", file=sys.stderr)
         return 1
 
-    system_prompt = load_system_prompt(
-        prompt_path=prompt_path,
-        include_few_shots=not args.no_few_shots,
-    )
+    system_prompt = load_system_prompt(prompt_path=prompt_path)
 
     selected = MODELS
     if args.models:

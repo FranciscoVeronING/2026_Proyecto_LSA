@@ -34,6 +34,11 @@ IDs: `qwen2.5-0.5b`, `qwen2.5-1.5b`, `qwen2.5-3b`, `llama-3.2-1b`, `smollm2-1.7b
 
 Salida en `outputs/` (adaptador + carpeta `*_gguf`) y log en `logs/`. Split 85/15, seed 3407.
 
+Los nombres propios están guardados como palabras completas y los números de varios dígitos
+como un único token en el dataset. El cargador conserva esos tokens sin compactar deletreos
+ni números. Los modelos ya entrenados no cambian; hay que volver a entrenar para aplicar los
+cambios del dataset.
+
 ```powershell
 python eval_compare_models.py
 ```
@@ -43,6 +48,7 @@ python eval_compare_models.py
 | LoRA r / alpha | 16 / 32 |
 | Épocas | 5 |
 | LR | 5e-4 (3e-4 en 3B) |
+| Batch | 1 x acumulación 16 si la GPU tiene 16 GB o menos |
 | Loss | solo la respuesta |
 
 Si Unsloth no ve GPU, torch quedó en CPU: reinstalar `torch+cu126` y `unsloth --no-deps`.

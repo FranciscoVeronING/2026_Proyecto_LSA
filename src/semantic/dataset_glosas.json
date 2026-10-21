@@ -42,7 +42,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Nosotros llamamos."
@@ -50,7 +50,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Nosotras llamamos."
@@ -104,7 +104,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven acá."
@@ -112,7 +112,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven acá."
@@ -158,14 +158,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "8",
-        "9",
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "38901234"
       ],
       "spanish": "Mi número de documento es 38901234."
     },
@@ -174,14 +167,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "8",
-        "9",
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "38901234"
       ],
       "spanish": "Mi documento es 38901234."
     },
@@ -190,14 +176,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "8",
-        "9",
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "38901234"
       ],
       "spanish": "El número de mi documento es 38901234."
     },
@@ -206,14 +185,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "8",
-        "9",
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "38901234"
       ],
       "spanish": "Mi número de DNI es 38901234."
     },
@@ -222,14 +194,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "8",
-        "9",
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "38901234"
       ],
       "spanish": "Mi DNI es 38901234."
     },
@@ -250,7 +215,7 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "TENER"
       ],
       "spanish": "Tengo papá."
@@ -258,14 +223,14 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "TENER"
       ],
       "spanish": "Yo tengo papá."
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "MIO"
       ],
       "spanish": "Mi papá."
@@ -281,10 +246,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "I",
-        "S"
+        "Luis"
       ],
       "spanish": "Me llamo Luis."
     },
@@ -292,10 +254,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "I",
-        "S"
+        "Luis"
       ],
       "spanish": "Yo me llamo Luis."
     },
@@ -303,10 +262,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "I",
-        "S"
+        "Luis"
       ],
       "spanish": "Mi nombre es Luis."
     },
@@ -314,10 +270,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "I",
-        "S"
+        "Luis"
       ],
       "spanish": "Soy Luis."
     },
@@ -325,10 +278,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "I",
-        "S"
+        "Luis"
       ],
       "spanish": "Yo soy Luis."
     },
@@ -377,7 +327,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Ellos ven."
@@ -385,7 +335,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ellas ven."
@@ -428,7 +378,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -438,7 +388,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -454,7 +404,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi hija."
@@ -469,7 +419,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi hermana."
@@ -484,7 +434,7 @@
     {
       "glosses": [
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO"
       ],
       "spanish": "Mi esposa."
@@ -502,7 +452,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "ROBAR"
       ],
@@ -512,7 +462,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "YO",
         "ROBAR"
       ],
@@ -523,14 +473,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "0",
-        "1",
-        "1",
-        "1",
-        "2",
-        "2",
-        "2"
+        "30111222"
       ],
       "spanish": "Mi número de documento es 30111222."
     },
@@ -539,14 +482,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "0",
-        "1",
-        "1",
-        "1",
-        "2",
-        "2",
-        "2"
+        "30111222"
       ],
       "spanish": "Mi documento es 30111222."
     },
@@ -555,14 +491,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "0",
-        "1",
-        "1",
-        "1",
-        "2",
-        "2",
-        "2"
+        "30111222"
       ],
       "spanish": "Mi número de DNI es 30111222."
     },
@@ -571,14 +500,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "0",
-        "1",
-        "1",
-        "1",
-        "2",
-        "2",
-        "2"
+        "30111222"
       ],
       "spanish": "Mi DNI es 30111222."
     },
@@ -587,14 +509,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "3",
-        "0",
-        "1",
-        "1",
-        "1",
-        "2",
-        "2",
-        "2"
+        "30111222"
       ],
       "spanish": "El número de mi documento es 30111222."
     },
@@ -602,11 +517,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "I",
-        "A"
+        "Maria"
       ],
       "spanish": "Me llamo María."
     },
@@ -614,11 +525,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "I",
-        "A"
+        "Maria"
       ],
       "spanish": "Mi nombre es María."
     },
@@ -626,11 +533,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "I",
-        "A"
+        "Maria"
       ],
       "spanish": "Soy María."
     },
@@ -638,11 +541,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "I",
-        "A"
+        "Maria"
       ],
       "spanish": "Yo soy María."
     },
@@ -650,11 +549,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "I",
-        "A"
+        "Maria"
       ],
       "spanish": "Yo me llamo María."
     },
@@ -696,7 +591,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Él ve."
@@ -704,7 +599,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ella ve."
@@ -721,7 +616,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "CUCHILLO",
         "ROBAR"
@@ -731,7 +626,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "YO",
         "CUCHILLO",
         "ROBAR"
@@ -811,7 +706,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Nosotros podemos."
@@ -819,7 +714,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Nosotros somos capaces."
@@ -827,7 +722,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Nosotras podemos."
@@ -835,7 +730,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Nosotras somos capaces."
@@ -873,7 +768,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "FAMILIA",
         "VIVIR"
       ],
@@ -882,7 +777,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "FAMILIA",
         "VIVIR"
       ],
@@ -891,7 +786,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "FAMILIA",
         "VIVIR"
       ],
@@ -900,7 +795,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "FAMILIA",
         "VIVIR"
       ],
@@ -951,7 +846,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Ellos pueden."
@@ -959,7 +854,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Ellos son capaces."
@@ -967,7 +862,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ellas pueden."
@@ -975,7 +870,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ellas son capaces."
@@ -1004,7 +899,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Ellos llaman."
@@ -1012,7 +907,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ellas llaman."
@@ -1021,8 +916,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "2",
-        "5"
+        "25"
       ],
       "spanish": "Tengo veinticinco años."
     },
@@ -1030,8 +924,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "2",
-        "5"
+        "25"
       ],
       "spanish": "Yo tengo veinticinco años."
     },
@@ -1039,8 +932,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "2",
-        "5"
+        "25"
       ],
       "spanish": "Mi edad es veinticinco años."
     },
@@ -1094,7 +986,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Él vive acá."
@@ -1102,7 +994,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ella vive acá."
@@ -1158,7 +1050,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -1167,7 +1059,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -1183,7 +1075,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Nosotros repetimos."
@@ -1191,7 +1083,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Nosotras repetimos."
@@ -1285,9 +1177,9 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "EL",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos le robaron a él."
@@ -1295,9 +1187,9 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "EL",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellos le robaron a ella."
@@ -1305,9 +1197,9 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "EL",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellas le robaron a él."
@@ -1315,9 +1207,9 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "EL",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas le robaron a ella."
@@ -1339,7 +1231,7 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "MIO",
         "VER"
       ],
@@ -1348,7 +1240,7 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "MIO",
         "VER"
       ],
@@ -1357,7 +1249,7 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "VER"
       ],
       "spanish": "Veo a papá."
@@ -1365,7 +1257,7 @@
     {
       "glosses": [
         "YO",
-        "PAPA",
+        "PAPÁ",
         "VER"
       ],
       "spanish": "Yo veo a papá."
@@ -1380,7 +1272,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llama."
@@ -1388,7 +1280,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llama."
@@ -1436,7 +1328,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1445,7 +1337,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1494,7 +1386,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1503,7 +1395,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1529,7 +1421,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo esposa."
@@ -1538,7 +1430,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo esposa."
@@ -1613,7 +1505,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Él lleva."
@@ -1621,7 +1513,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Ella lleva."
@@ -1636,7 +1528,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Él tiene."
@@ -1644,7 +1536,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Ella tiene."
@@ -1705,7 +1597,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -1715,7 +1607,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "MIO",
         "VER"
       ],
@@ -1725,8 +1617,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "3",
-        "0"
+        "30"
       ],
       "spanish": "Tengo treinta años."
     },
@@ -1734,8 +1625,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "3",
-        "0"
+        "30"
       ],
       "spanish": "Yo tengo treinta años."
     },
@@ -1743,8 +1633,7 @@
       "glosses": [
         "YO",
         "ANOS",
-        "3",
-        "0"
+        "30"
       ],
       "spanish": "Mi edad es treinta años."
     },
@@ -1759,7 +1648,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1768,7 +1657,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "BRAZO",
         "LASTIMAR"
       ],
@@ -1810,7 +1699,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo hermana."
@@ -1819,7 +1708,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo una hermana."
@@ -1828,7 +1717,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo hermana."
@@ -1837,7 +1726,7 @@
       "glosses": [
         "YO",
         "HERMANO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo una hermana."
@@ -1868,7 +1757,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Él repite."
@@ -1876,7 +1765,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Ella repite."
@@ -1884,14 +1773,7 @@
     {
       "glosses": [
         "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
+        "Belgrano",
         "YO",
         "VIVIR_EN"
       ],
@@ -1900,14 +1782,7 @@
     {
       "glosses": [
         "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
+        "Belgrano",
         "YO",
         "VIVIR_EN"
       ],
@@ -1957,7 +1832,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Nosotros llevamos."
@@ -1965,7 +1840,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Nosotras llevamos."
@@ -1974,14 +1849,7 @@
       "glosses": [
         "CASA",
         "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
+        "Belgrano",
         "YO",
         "VIVIR_EN"
       ],
@@ -1991,14 +1859,7 @@
       "glosses": [
         "CASA",
         "CALLE",
-        "B",
-        "E",
-        "L",
-        "G",
-        "R",
-        "A",
-        "N",
-        "O",
+        "Belgrano",
         "YO",
         "VIVIR_EN"
       ],
@@ -2030,7 +1891,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "REPETIR"
       ],
       "spanish": "Ellos repiten."
@@ -2038,7 +1899,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "REPETIR"
       ],
       "spanish": "Ellas repiten."
@@ -2053,7 +1914,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Ellos tienen."
@@ -2061,7 +1922,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Ellas tienen."
@@ -2069,11 +1930,7 @@
     {
       "glosses": [
         "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
+        "Mitre",
         "YO",
         "VIVIR_EN"
       ],
@@ -2082,11 +1939,7 @@
     {
       "glosses": [
         "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
+        "Mitre",
         "YO",
         "VIVIR_EN"
       ],
@@ -2175,7 +2028,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Él puede."
@@ -2183,7 +2036,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "PODER"
       ],
       "spanish": "Él es capaz."
@@ -2191,7 +2044,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ella puede."
@@ -2199,7 +2052,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "PODER"
       ],
       "spanish": "Ella es capaz."
@@ -2224,7 +2077,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven en la casa."
@@ -2233,7 +2086,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR"
       ],
       "spanish": "Ellos viven en una casa."
@@ -2242,7 +2095,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven en la casa."
@@ -2251,7 +2104,7 @@
       "glosses": [
         "CASA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR"
       ],
       "spanish": "Ellas viven en una casa."
@@ -2260,11 +2113,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "P",
-        "E",
-        "R",
-        "E",
-        "Z"
+        "Perez"
       ],
       "spanish": "Mi apellido es Pérez."
     },
@@ -2272,11 +2121,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "P",
-        "E",
-        "R",
-        "E",
-        "Z"
+        "Perez"
       ],
       "spanish": "Me apellido Pérez."
     },
@@ -2284,11 +2129,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "P",
-        "E",
-        "R",
-        "E",
-        "Z"
+        "Perez"
       ],
       "spanish": "Yo me apellido Pérez."
     },
@@ -2296,10 +2137,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "D",
-        "I",
-        "A",
-        "Z"
+        "Diaz"
       ],
       "spanish": "Mi apellido es Díaz."
     },
@@ -2307,10 +2145,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "D",
-        "I",
-        "A",
-        "Z"
+        "Diaz"
       ],
       "spanish": "Me apellido Díaz."
     },
@@ -2318,10 +2153,7 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "D",
-        "I",
-        "A",
-        "Z"
+        "Diaz"
       ],
       "spanish": "Yo me apellido Díaz."
     },
@@ -2381,7 +2213,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "TENER"
       ],
       "spanish": "Nosotros tenemos."
@@ -2389,7 +2221,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Nosotras tenemos."
@@ -2430,7 +2262,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo una hija."
@@ -2439,7 +2271,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Tengo hija."
@@ -2448,7 +2280,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo una hija."
@@ -2457,7 +2289,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "TENER"
       ],
       "spanish": "Yo tengo hija."
@@ -2486,7 +2318,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Nosotros vemos."
@@ -2494,7 +2326,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Nosotras vemos."
@@ -2509,7 +2341,7 @@
     {
       "glosses": [
         "ELLOS",
-        "HOMBRE",
+        "O",
         "LLEVAR"
       ],
       "spanish": "Ellos llevan."
@@ -2517,7 +2349,7 @@
     {
       "glosses": [
         "ELLOS",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Ellas llevan."
@@ -2532,7 +2364,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Nosotros robamos."
@@ -2540,7 +2372,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Nosotras robamos."
@@ -2724,14 +2556,14 @@
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "DONDE"
       ],
       "spanish": "¿Dónde está papá?"
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "MIO",
         "DONDE"
       ],
@@ -2739,7 +2571,7 @@
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "TUYO",
         "DONDE"
       ],
@@ -2897,7 +2729,7 @@
     {
       "glosses": [
         "EL",
-        "HOMBRE",
+        "O",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tiene él?"
@@ -2905,7 +2737,7 @@
     {
       "glosses": [
         "EL",
-        "MUJER",
+        "A",
         "CUANTOS"
       ],
       "spanish": "¿Cuántos años tiene ella?"
@@ -2935,7 +2767,7 @@
     {
       "glosses": [
         "ESPOSO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -2996,7 +2828,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3005,7 +2837,7 @@
     {
       "glosses": [
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3066,7 +2898,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3075,7 +2907,7 @@
     {
       "glosses": [
         "HIJO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -3191,11 +3023,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "D",
-        "I",
-        "E",
-        "G",
-        "O"
+        "Diego"
       ],
       "spanish": "Hola, me llamo Diego."
     },
@@ -3204,11 +3032,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "D",
-        "I",
-        "E",
-        "G",
-        "O"
+        "Diego"
       ],
       "spanish": "Hola, mi nombre es Diego."
     },
@@ -3217,11 +3041,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "D",
-        "I",
-        "E",
-        "G",
-        "O"
+        "Diego"
       ],
       "spanish": "Hola, yo me llamo Diego."
     },
@@ -3230,11 +3050,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "D",
-        "I",
-        "E",
-        "G",
-        "O"
+        "Diego"
       ],
       "spanish": "Hola, soy Diego."
     },
@@ -3257,10 +3073,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "R",
-        "O",
-        "S",
-        "A"
+        "Rosa"
       ],
       "spanish": "Hola, soy Rosa."
     },
@@ -3269,10 +3082,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "R",
-        "O",
-        "S",
-        "A"
+        "Rosa"
       ],
       "spanish": "Hola, me llamo Rosa."
     },
@@ -3281,10 +3091,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "R",
-        "O",
-        "S",
-        "A"
+        "Rosa"
       ],
       "spanish": "Hola, mi nombre es Rosa."
     },
@@ -3293,10 +3100,7 @@
         "HOLA",
         "NOMBRE",
         "MIO",
-        "R",
-        "O",
-        "S",
-        "A"
+        "Rosa"
       ],
       "spanish": "Hola, yo me llamo Rosa."
     },
@@ -3456,7 +3260,7 @@
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "MIO",
         "BIEN"
       ],
@@ -3464,7 +3268,7 @@
     },
     {
       "glosses": [
-        "PAPA",
+        "PAPÁ",
         "BIEN"
       ],
       "spanish": "Papá está bien."
@@ -3530,9 +3334,7 @@
       "glosses": [
         "LUNES",
         "YO",
-        "A",
-        "N",
-        "A",
+        "Ana",
         "LLAMAR"
       ],
       "spanish": "El lunes llamé a Ana."
@@ -3541,9 +3343,7 @@
       "glosses": [
         "LUNES",
         "YO",
-        "A",
-        "N",
-        "A",
+        "Ana",
         "LLAMAR"
       ],
       "spanish": "El lunes yo llamé a Ana."
@@ -3552,10 +3352,7 @@
       "glosses": [
         "MARTES",
         "YO",
-        "L",
-        "U",
-        "I",
-        "S",
+        "Luis",
         "LLAMAR"
       ],
       "spanish": "El martes llamé a Luis."
@@ -3564,10 +3361,7 @@
       "glosses": [
         "MARTES",
         "YO",
-        "L",
-        "U",
-        "I",
-        "S",
+        "Luis",
         "LLAMAR"
       ],
       "spanish": "El martes yo llamé a Luis."
@@ -3594,7 +3388,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -3604,7 +3398,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR"
       ],
@@ -3614,7 +3408,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -3624,7 +3418,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR"
       ],
@@ -3653,7 +3447,7 @@
         "HOY_AHORA",
         "PLAZA",
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Ahora nosotros nos vemos en la plaza."
@@ -3663,7 +3457,7 @@
         "HOY_AHORA",
         "PLAZA",
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Ahora nosotras nos vemos en la plaza."
@@ -3690,7 +3484,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "LLAMAR"
       ],
@@ -3700,7 +3494,7 @@
       "glosses": [
         "VOS",
         "HERMANO",
-        "MUJER",
+        "A",
         "TUYO",
         "LLAMAR"
       ],
@@ -3718,7 +3512,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "ROSTRO",
         "LASTIMAR",
         "NO"
@@ -3728,7 +3522,7 @@
     {
       "glosses": [
         "NOSOTROS",
-        "MUJER",
+        "A",
         "ROSTRO",
         "LASTIMAR",
         "NO"
@@ -3748,7 +3542,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR_EN",
         "NO"
       ],
@@ -3758,7 +3552,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR_EN",
         "NO"
       ],
@@ -3788,7 +3582,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO",
         "LLAMAR",
         "NO"
@@ -3799,7 +3593,7 @@
       "glosses": [
         "YO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "MIO",
         "LLAMAR",
         "NO"
@@ -3809,11 +3603,7 @@
     {
       "glosses": [
         "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
+        "Mitre",
         "VOS",
         "VIVIR_EN",
         "DONDE"
@@ -3823,11 +3613,7 @@
     {
       "glosses": [
         "CALLE",
-        "M",
-        "I",
-        "T",
-        "R",
-        "E",
+        "Mitre",
         "VOS",
         "VIVIR_EN",
         "DONDE"
@@ -3848,7 +3634,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VOS",
         "ROBAR",
         "DONDE"
@@ -3859,7 +3645,7 @@
       "glosses": [
         "AYER",
         "ELLOS",
-        "MUJER",
+        "A",
         "VOS",
         "ROBAR",
         "DONDE"
@@ -3962,7 +3748,7 @@
       "glosses": [
         "PASADO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llamó."
@@ -3971,7 +3757,7 @@
       "glosses": [
         "PASADO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llamó."
@@ -3988,7 +3774,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos robaron."
@@ -3997,7 +3783,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas robaron."
@@ -4113,7 +3899,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él va a llamar."
@@ -4122,7 +3908,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "HOMBRE",
+        "O",
         "LLAMAR"
       ],
       "spanish": "Él llamará."
@@ -4131,7 +3917,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella va a llamar."
@@ -4140,7 +3926,7 @@
       "glosses": [
         "FUTURO",
         "EL",
-        "MUJER",
+        "A",
         "LLAMAR"
       ],
       "spanish": "Ella llamará."
@@ -4165,7 +3951,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos van a robar."
@@ -4174,7 +3960,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR"
       ],
       "spanish": "Ellos robarán."
@@ -4183,7 +3969,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas van a robar."
@@ -4192,7 +3978,7 @@
       "glosses": [
         "FUTURO",
         "ELLOS",
-        "MUJER",
+        "A",
         "ROBAR"
       ],
       "spanish": "Ellas robarán."
@@ -4225,7 +4011,7 @@
       "glosses": [
         "FUTURO",
         "NOSOTROS",
-        "HOMBRE",
+        "O",
         "VER"
       ],
       "spanish": "Nosotros nos vamos a ver."
@@ -4234,7 +4020,7 @@
       "glosses": [
         "FUTURO",
         "NOSOTROS",
-        "MUJER",
+        "A",
         "VER"
       ],
       "spanish": "Nosotras nos vamos a ver."
@@ -4384,7 +4170,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "ROBAR",
         "QUE"
       ],
@@ -4403,7 +4189,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "LLEVAR"
       ],
@@ -4413,7 +4199,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "MIO",
         "LLEVAR"
       ],
@@ -4423,7 +4209,7 @@
       "glosses": [
         "YO",
         "HIJO",
-        "MUJER",
+        "A",
         "LLEVAR"
       ],
       "spanish": "Llevo a la hija."
@@ -4482,14 +4268,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "1"
+        "45678901"
       ],
       "spanish": "Mi número de documento era 45678901."
     },
@@ -4499,14 +4278,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "1"
+        "45678901"
       ],
       "spanish": "Mi documento era 45678901."
     },
@@ -4516,14 +4288,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "1"
+        "45678901"
       ],
       "spanish": "Mi DNI era 45678901."
     },
@@ -4533,14 +4298,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "1"
+        "45678901"
       ],
       "spanish": "Mi número de DNI era 45678901."
     },
@@ -4550,14 +4308,7 @@
         "DOCUMENTO",
         "MIO",
         "NUMERO",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "1"
+        "45678901"
       ],
       "spanish": "El número de mi documento era 45678901."
     },
@@ -4671,11 +4422,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "I",
-        "T",
-        "E"
+        "Maite"
       ],
       "spanish": "Me llamo Maite."
     },
@@ -4683,11 +4430,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "I",
-        "T",
-        "E"
+        "Maite"
       ],
       "spanish": "Yo me llamo Maite."
     },
@@ -4695,11 +4438,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "I",
-        "T",
-        "E"
+        "Maite"
       ],
       "spanish": "Mi nombre es Maite."
     },
@@ -4707,11 +4446,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "I",
-        "T",
-        "E"
+        "Maite"
       ],
       "spanish": "Soy Maite."
     },
@@ -4719,11 +4454,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "I",
-        "T",
-        "E"
+        "Maite"
       ],
       "spanish": "Yo soy Maite."
     },
@@ -4731,10 +4462,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "U",
-        "A",
-        "N"
+        "Juan"
       ],
       "spanish": "Me llamo Juan."
     },
@@ -4742,10 +4470,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "U",
-        "A",
-        "N"
+        "Juan"
       ],
       "spanish": "Yo me llamo Juan."
     },
@@ -4753,10 +4478,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "U",
-        "A",
-        "N"
+        "Juan"
       ],
       "spanish": "Mi nombre es Juan."
     },
@@ -4764,10 +4486,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "U",
-        "A",
-        "N"
+        "Juan"
       ],
       "spanish": "Soy Juan."
     },
@@ -4775,10 +4494,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "U",
-        "A",
-        "N"
+        "Juan"
       ],
       "spanish": "Yo soy Juan."
     },
@@ -4786,12 +4502,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "C",
-        "A",
-        "M",
-        "I",
-        "L",
-        "A"
+        "Camila"
       ],
       "spanish": "Me llamo Camila."
     },
@@ -4799,12 +4510,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "C",
-        "A",
-        "M",
-        "I",
-        "L",
-        "A"
+        "Camila"
       ],
       "spanish": "Yo me llamo Camila."
     },
@@ -4812,12 +4518,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "C",
-        "A",
-        "M",
-        "I",
-        "L",
-        "A"
+        "Camila"
       ],
       "spanish": "Mi nombre es Camila."
     },
@@ -4825,12 +4526,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "C",
-        "A",
-        "M",
-        "I",
-        "L",
-        "A"
+        "Camila"
       ],
       "spanish": "Soy Camila."
     },
@@ -4838,12 +4534,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "C",
-        "A",
-        "M",
-        "I",
-        "L",
-        "A"
+        "Camila"
       ],
       "spanish": "Yo soy Camila."
     },
@@ -4851,11 +4542,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "T",
-        "E",
-        "O"
+        "Mateo"
       ],
       "spanish": "Me llamo Mateo."
     },
@@ -4863,11 +4550,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "T",
-        "E",
-        "O"
+        "Mateo"
       ],
       "spanish": "Yo me llamo Mateo."
     },
@@ -4875,11 +4558,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "T",
-        "E",
-        "O"
+        "Mateo"
       ],
       "spanish": "Mi nombre es Mateo."
     },
@@ -4887,11 +4566,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "T",
-        "E",
-        "O"
+        "Mateo"
       ],
       "spanish": "Soy Mateo."
     },
@@ -4899,11 +4574,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "T",
-        "E",
-        "O"
+        "Mateo"
       ],
       "spanish": "Yo soy Mateo."
     },
@@ -4911,11 +4582,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "C",
-        "I",
-        "A"
+        "Lucia"
       ],
       "spanish": "Me llamo Lucía."
     },
@@ -4923,11 +4590,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "C",
-        "I",
-        "A"
+        "Lucia"
       ],
       "spanish": "Yo me llamo Lucía."
     },
@@ -4935,11 +4598,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "C",
-        "I",
-        "A"
+        "Lucia"
       ],
       "spanish": "Mi nombre es Lucía."
     },
@@ -4947,11 +4606,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "C",
-        "I",
-        "A"
+        "Lucia"
       ],
       "spanish": "Soy Lucía."
     },
@@ -4959,11 +4614,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "L",
-        "U",
-        "C",
-        "I",
-        "A"
+        "Lucia"
       ],
       "spanish": "Yo soy Lucía."
     },
@@ -4971,11 +4622,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "T",
-        "O",
-        "M",
-        "A",
-        "S"
+        "Tomas"
       ],
       "spanish": "Me llamo Tomás."
     },
@@ -4983,11 +4630,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "T",
-        "O",
-        "M",
-        "A",
-        "S"
+        "Tomas"
       ],
       "spanish": "Yo me llamo Tomás."
     },
@@ -4995,11 +4638,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "T",
-        "O",
-        "M",
-        "A",
-        "S"
+        "Tomas"
       ],
       "spanish": "Mi nombre es Tomás."
     },
@@ -5007,11 +4646,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "T",
-        "O",
-        "M",
-        "A",
-        "S"
+        "Tomas"
       ],
       "spanish": "Soy Tomás."
     },
@@ -5019,11 +4654,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "T",
-        "O",
-        "M",
-        "A",
-        "S"
+        "Tomas"
       ],
       "spanish": "Yo soy Tomás."
     },
@@ -5031,11 +4662,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "S",
-        "O",
-        "F",
-        "I",
-        "A"
+        "Sofia"
       ],
       "spanish": "Me llamo Sofía."
     },
@@ -5043,11 +4670,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "S",
-        "O",
-        "F",
-        "I",
-        "A"
+        "Sofia"
       ],
       "spanish": "Yo me llamo Sofía."
     },
@@ -5055,11 +4678,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "S",
-        "O",
-        "F",
-        "I",
-        "A"
+        "Sofia"
       ],
       "spanish": "Mi nombre es Sofía."
     },
@@ -5067,11 +4686,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "S",
-        "O",
-        "F",
-        "I",
-        "A"
+        "Sofia"
       ],
       "spanish": "Soy Sofía."
     },
@@ -5079,11 +4694,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "S",
-        "O",
-        "F",
-        "I",
-        "A"
+        "Sofia"
       ],
       "spanish": "Yo soy Sofía."
     },
@@ -5091,13 +4702,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "O",
-        "A",
-        "Q",
-        "U",
-        "I",
-        "N"
+        "Joaquin"
       ],
       "spanish": "Me llamo Joaquín."
     },
@@ -5105,13 +4710,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "O",
-        "A",
-        "Q",
-        "U",
-        "I",
-        "N"
+        "Joaquin"
       ],
       "spanish": "Yo me llamo Joaquín."
     },
@@ -5119,13 +4718,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "O",
-        "A",
-        "Q",
-        "U",
-        "I",
-        "N"
+        "Joaquin"
       ],
       "spanish": "Mi nombre es Joaquín."
     },
@@ -5133,13 +4726,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "O",
-        "A",
-        "Q",
-        "U",
-        "I",
-        "N"
+        "Joaquin"
       ],
       "spanish": "Soy Joaquín."
     },
@@ -5147,13 +4734,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "J",
-        "O",
-        "A",
-        "Q",
-        "U",
-        "I",
-        "N"
+        "Joaquin"
       ],
       "spanish": "Yo soy Joaquín."
     },
@@ -5161,15 +4742,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "V",
-        "A",
-        "L",
-        "E",
-        "N",
-        "T",
-        "I",
-        "N",
-        "A"
+        "Valentina"
       ],
       "spanish": "Me llamo Valentina."
     },
@@ -5177,15 +4750,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "V",
-        "A",
-        "L",
-        "E",
-        "N",
-        "T",
-        "I",
-        "N",
-        "A"
+        "Valentina"
       ],
       "spanish": "Yo me llamo Valentina."
     },
@@ -5193,15 +4758,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "V",
-        "A",
-        "L",
-        "E",
-        "N",
-        "T",
-        "I",
-        "N",
-        "A"
+        "Valentina"
       ],
       "spanish": "Mi nombre es Valentina."
     },
@@ -5209,15 +4766,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "V",
-        "A",
-        "L",
-        "E",
-        "N",
-        "T",
-        "I",
-        "N",
-        "A"
+        "Valentina"
       ],
       "spanish": "Soy Valentina."
     },
@@ -5225,15 +4774,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "V",
-        "A",
-        "L",
-        "E",
-        "N",
-        "T",
-        "I",
-        "N",
-        "A"
+        "Valentina"
       ],
       "spanish": "Yo soy Valentina."
     },
@@ -5241,12 +4782,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "T",
-        "I",
-        "N"
+        "Martin"
       ],
       "spanish": "Me llamo Martín."
     },
@@ -5254,12 +4790,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "T",
-        "I",
-        "N"
+        "Martin"
       ],
       "spanish": "Yo me llamo Martín."
     },
@@ -5267,12 +4798,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "T",
-        "I",
-        "N"
+        "Martin"
       ],
       "spanish": "Mi nombre es Martín."
     },
@@ -5280,12 +4806,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "T",
-        "I",
-        "N"
+        "Martin"
       ],
       "spanish": "Soy Martín."
     },
@@ -5293,12 +4814,7 @@
       "glosses": [
         "NOMBRE",
         "MIO",
-        "M",
-        "A",
-        "R",
-        "T",
-        "I",
-        "N"
+        "Martin"
       ],
       "spanish": "Yo soy Martín."
     },
@@ -5315,7 +4831,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "YO",
         "TENER"
       ],
@@ -5334,7 +4850,7 @@
       "glosses": [
         "PASADO",
         "ESPOSO",
-        "MUJER",
+        "A",
         "TUYO",
         "QUIEN"
       ],
@@ -5382,29 +4898,14 @@
       "glosses": [
         "APELLIDO",
         "MIO",
-        "L",
-        "L",
-        "I",
-        "N",
-        "A",
-        "R",
-        "E",
-        "S"
+        "Llinares"
       ],
       "spanish": "Mi apellido es Llinares."
     },
     {
       "glosses": [
         "CALLE",
-        "S",
-        "A",
-        "R",
-        "M",
-        "I",
-        "E",
-        "N",
-        "T",
-        "O",
+        "Sarmiento",
         "YO",
         "VIVIR_EN"
       ],
@@ -5413,15 +4914,7 @@
     {
       "glosses": [
         "CALLE",
-        "S",
-        "A",
-        "R",
-        "M",
-        "I",
-        "E",
-        "N",
-        "T",
-        "O",
+        "Sarmiento",
         "YO",
         "VIVIR_EN"
       ],
@@ -5668,7 +5161,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5679,7 +5172,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5690,7 +5183,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5701,7 +5194,7 @@
         "PASADO",
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5760,7 +5253,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "VIVIR",
         "DONDE"
       ],
@@ -5770,7 +5263,7 @@
       "glosses": [
         "PLAZA",
         "ELLOS",
-        "MUJER",
+        "A",
         "VIVIR",
         "DONDE"
       ],
@@ -5890,7 +5383,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER",
         "QUE"
       ],
@@ -5900,7 +5393,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER",
         "QUE"
       ],
@@ -5919,7 +5412,7 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "HOMBRE",
+        "O",
         "TENER",
         "QUE"
       ],
@@ -5929,11 +5422,205 @@
       "glosses": [
         "PASADO",
         "ELLOS",
-        "MUJER",
+        "A",
         "TENER",
         "QUE"
       ],
       "spanish": "¿Qué tenían ellas?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "IR",
+        "DONDE"
+      ],
+      "spanish": "¿A dónde fuiste ayer?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "VOS",
+        "IR",
+        "DONDE"
+      ],
+      "spanish": "¿A dónde fuiste?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "PLAZA",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la plaza ayer?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la plaza?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "CASA",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a casa ayer?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CASA",
+        "FAMILIA",
+        "TUYO",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la casa de tu familia?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CALLE",
+        "Mitre",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la calle Mitre?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "CALLE",
+        "Moreno",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la calle Moreno ayer?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "FAMILIA",
+        "TUYO",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste con tu familia?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "IR",
+        "QUIEN"
+      ],
+      "spanish": "¿Con quién fuiste a la plaza?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "VOS",
+        "IR",
+        "QUIEN"
+      ],
+      "spanish": "¿Con quién fuiste ayer?"
+    },
+    {
+      "glosses": [
+        "PLAZA",
+        "VOS",
+        "IR",
+        "CUANDO"
+      ],
+      "spanish": "¿Cuándo fuiste a la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "CASA",
+        "VOS",
+        "IR",
+        "POR_QUE"
+      ],
+      "spanish": "¿Por qué fuiste a la casa?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "SOLO",
+        "IR"
+      ],
+      "spanish": "¿Fuiste solo a la plaza?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "MAMA",
+        "TUYO",
+        "VOS",
+        "VER",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a ver a tu mamá?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "PAPÁ",
+        "TUYO",
+        "VOS",
+        "VER",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a ver a tu papá ayer?"
+    },
+    {
+      "glosses": [
+        "AYER",
+        "HOSPITAL",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "Fuiste al hospital ayer."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "REUNION",
+        "VOS",
+        "IR"
+      ],
+      "spanish": "Fuiste a la reunión."
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "PLAZA",
+        "VOS",
+        "ELLOS",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a la plaza con ellos?"
+    },
+    {
+      "glosses": [
+        "PASADO",
+        "DOCUMENTO",
+        "VOS",
+        "BUSCAR",
+        "IR"
+      ],
+      "spanish": "¿Fuiste a buscar el documento?"
     }
   ]
 }

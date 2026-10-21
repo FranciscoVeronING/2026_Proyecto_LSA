@@ -1,6 +1,11 @@
 """Entrenamiento LoRA, export GGUF y evaluación de un modelo."""
 from __future__ import annotations
 
+import os
+
+# Antes de que Unsloth inicialice CUDA. Reduce los OOM por fragmentación.
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 # unsloth antes que trl/transformers/peft
 from unsloth import FastLanguageModel
 from unsloth.chat_templates import get_chat_template, train_on_responses_only
@@ -35,14 +40,30 @@ def _release_cuda(*objects: Any) -> None:
         pass
 
 
-def build_lora_model(model: Any) -> Any:
+def fit_budget(model_name: str) -> tuple[int, int, str | bool]:
+    """Batch, acumulación y checkpointing según la VRAM.
+
+    El system prompt deja cada ejemplo en ~1600 tokens. En 12 GB, batch 4
+    de ese largo se queda sin memoria a mitad del entrenamiento.
+    """
+    total_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+    large = is_large_model(model_name)
+    if total_gb <= 16:
+        checkpointing: str | bool = "unsloth" if large else True
+        return 1, 16, checkpointing
+    if large:
+        return 2, 8, True
+    return 4, 4, True
+
+
+def build_lora_model(model: Any, checkpointing: str | bool = "unsloth") -> Any:
     """LoRA r=16. Si fallan los nombres de capa, usa all-linear."""
     common = {
         "r": 16,
         "lora_alpha": 32,
         "lora_dropout": 0,
         "bias": "none",
-        "use_gradient_checkpointing": "unsloth",
+        "use_gradient_checkpointing": checkpointing,
     }
     try:
         return FastLanguageModel.get_peft_model(model, target_modules=TARGET_MODULES, **common)
@@ -73,7 +94,12 @@ def train_and_eval_single_model(
     tokenizer = get_chat_template(tokenizer, chat_template=model_cfg.get("chat_template", "chatml"))
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    model = build_lora_model(model)
+    batch_size, grad_accum, checkpointing = fit_budget(model_name)
+    model = build_lora_model(model, checkpointing)
+    log_line(
+        log_fp,
+        f"Batch {batch_size} x acumulación {grad_accum} | checkpointing={checkpointing}",
+    )
 
     pairs = load_parallel_pairs(dataset_path)
     train_raw, test_raw = split_pairs(pairs)
@@ -90,8 +116,8 @@ def train_and_eval_single_model(
     large = is_large_model(model_name)
     sft_kwargs: dict[str, Any] = {
         "output_dir": str(output_dir),
-        "per_device_train_batch_size": 2 if large else 4,
-        "gradient_accumulation_steps": 8 if large else 4,
+        "per_device_train_batch_size": batch_size,
+        "gradient_accumulation_steps": grad_accum,
         "warmup_steps": 10,
         "learning_rate": 3e-4 if large else 5e-4,
         "fp16": not torch.cuda.is_bf16_supported(),

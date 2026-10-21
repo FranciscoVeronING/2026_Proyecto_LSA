@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from config import GGUF_STOP, MAX_NEW_TOKENS, MAX_SEQ_LENGTH
-from gloss_format import formato_canonico, limpiar_salida_modelo, normalizar_para_metricas
+from gloss_format import limpiar_salida_modelo, normalizar_para_metricas
 from prompts import build_messages
 
 
@@ -33,7 +33,7 @@ def predecir_glosas(llm: Any, system_prompt: str, spanish: str) -> tuple[str, fl
     )
     latency_ms = (time.time() - started) * 1000
     raw = response["choices"][0]["message"]["content"].strip()
-    predicho = formato_canonico(limpiar_salida_modelo(raw))
+    predicho = limpiar_salida_modelo(raw)
     return predicho, latency_ms
 
 
