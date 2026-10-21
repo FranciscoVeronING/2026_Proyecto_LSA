@@ -8,7 +8,7 @@ Los archivos viven en `poses/`. El nombre de cada archivo, sin la extensión, es
 
 El proceso escucha en `0.0.0.0` y toma el puerto de la variable de entorno `PORT`. Si esa variable no existe, usa el puerto `8080`. Cloud Run inyecta `PORT` al arrancar el contenedor.
 
-Hay dos rutas.
+Hay tres rutas.
 
 ### `GET /health`
 
@@ -31,7 +31,29 @@ Ejemplos:
 - `GET /tposes/ENIE.pose`
 - `GET /tposes/PADRE.pose`
 
-Si el archivo existe, la respuesta es `200` y el cuerpo es el binario `.pose`, con `Content-Type: application/octet-stream`. Si no existe, la respuesta es `404`.
+Si el archivo existe, la respuesta es `200` y el cuerpo es el binario `.pose`, con `Content-Type: application/octet-stream`. Si no existe, la respuesta es `404`. El servidor no deletrea esa palabra: un nombre ausente sigue siendo un 404.
+
+### `GET /fingerspell`
+
+Pide varias letras en una sola solicitud. Sirve solo para deletreo, no para glosas de palabras. Las letras van separadas por comas, o repetidas en el parámetro `letters`. El orden de la respuesta es el orden del pedido.
+
+```text
+GET /fingerspell?letters=H,O,L,A
+GET /fingerspell?letters=CH,I,L,E
+GET /fingerspell?letters=N&letters=ENIE
+```
+
+Cada letra es un archivo de una sola letra: `A` a `Z`, `CH` o `ENIE`. `Ñ` se acepta y se resuelve como `ENIE`. Una palabra completa, un número u otra glosa responde `400`.
+
+El máximo es 20 letras por solicitud. El abecedario tiene 27 letras más `CH`, así que una sola llamada no puede llevarse todas. Si el pedido supera 20, la respuesta es `400` e indica el límite.
+
+Si todas existen, la respuesta es `200` con `Content-Type: multipart/mixed`. Cada parte es el `.pose` de esa letra, en orden, con estos encabezados:
+
+- `Content-Disposition` trae el nombre del archivo, por ejemplo `H.pose`.
+- `X-Indice` es la posición, empezando en 0.
+- `X-Letra` es la letra canónica: `H`, `CH` o `ENIE`.
+
+El encabezado `X-Cantidad` de la respuesta dice cuántas letras volvieron. Si falta el archivo de alguna letra pedida, la respuesta es `404` y no se devuelve un deletreo a medias.
 
 La misma carpeta también puede servir `.json`, `.gltf`, `.bin` y `.fbx` si más adelante se agregan ahí. Esos formatos salen con su tipo de contenido correspondiente: JSON, `model/gltf+json` para `.gltf`, y binario para `.bin` y `.fbx`.
 
