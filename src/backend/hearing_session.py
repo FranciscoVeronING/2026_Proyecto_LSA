@@ -60,20 +60,27 @@ class HearingSession:
         glosses = ""
         remote_ms = 0.0
         timing = {}
-        try:
-            from semantic.remote import last_timing, ping, translate_oyente
-            import time
+        tokens = text.split()
+        # Una sola palabra: va al T-pose como glosa. Una oración tiene que pasar por Cloud Run.
+        if len(tokens) <= 1:
+            glosses = tokens[0].strip().upper() if tokens else ""
+            print(f"[backend] /hearing palabra suelta (sin semántico): {text!r} → {glosses!r}")
+        else:
+            try:
+                from semantic.remote import last_timing, ping, translate_oyente
+                import time
 
-            if not self.semantic_ready:
-                self.semantic_ready = ping()
-            t0 = time.perf_counter()
-            glosses = translate_oyente(text)
-            remote_ms = (time.perf_counter() - t0) * 1000
-            timing = last_timing()
-            print(f"[backend] /hearing español={text!r} glosas={glosses!r} {remote_ms:.0f}ms")
-        except Exception as exc:
-            print(f"[backend] Oyente remoto falló: {exc}")
-            self.semantic_error = str(exc)
+                if not self.semantic_ready:
+                    self.semantic_ready = ping()
+                print(f"[backend] /hearing → Cloud Run POST /hearing: {text!r}")
+                t0 = time.perf_counter()
+                glosses = translate_oyente(text)
+                remote_ms = (time.perf_counter() - t0) * 1000
+                timing = last_timing()
+                print(f"[backend] Cloud Run /hearing → glosas={glosses!r} {remote_ms:.0f}ms")
+            except Exception as exc:
+                print(f"[backend] Oyente remoto falló: {exc}")
+                self.semantic_error = str(exc)
         self.gloss_text = glosses
         clip = None
         if glosses:

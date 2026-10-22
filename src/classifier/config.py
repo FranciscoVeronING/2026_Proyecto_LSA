@@ -89,12 +89,10 @@ UTTERANCE_PAUSE_SEC = 4.0
 # Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
 LETTER_MAX_CONSECUTIVE = 2
 
-# Alias clasificador → token que ve la LLM. **No** es el vocabulario completo
-# (eso es ``SIGN_CLASSES`` + mayúsculas). **No** unificar a masculino:
-# en LSA hermano/hermana es un signo; ``HERMANO/A`` deja el género a la LLM.
+# Alias clasificador → token que ve la LLM.
 GLOSS_NORMALIZER = {
     "el_ella": "EL",
-    "esposo a": "ESPOSO",
+    "esposo_a": "ESPOSO",
     "ahora_hoy": "HOY",
     "vivir_en": "VIVIR_EN",
     "hermano_a": "HERMANO",

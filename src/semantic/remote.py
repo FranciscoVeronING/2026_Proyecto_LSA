@@ -134,17 +134,21 @@ def _ensure_keepalive() -> None:
     threading.Thread(target=_loop, name="semantic-keepalive", daemon=True).start()
 
 
+def _first_str(data: dict, *keys: str) -> str:
+    for key in keys:
+        val = data.get(key)
+        if isinstance(val, str) and val.strip():
+            return val.strip()
+    return ""
+
+
 def translate_sordo(glosses: str) -> str:
+    """Cloud Run `POST /sign`: glosas → oración."""
     data = _post("/sign", {"glosses": glosses})
-    return str(data.get("spanish") or "").strip()
+    return _first_str(data, "spanish", "text", "output")
 
 
 def translate_oyente(spanish: str) -> str:
+    """Cloud Run `POST /hearing`: oración → glosas."""
     data = _post("/hearing", {"spanish": spanish})
-    return str(
-        data.get("glosses")
-        or data.get("caption")
-        or data.get("text")
-        or data.get("output")
-        or ""
-    ).strip()
+    return _first_str(data, "glosses", "caption", "text", "output")

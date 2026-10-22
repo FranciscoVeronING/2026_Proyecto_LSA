@@ -72,24 +72,41 @@ class LSASession:
 
     def _bootstrap_llm(self):
         try:
-            from semantic.remote import configured, ping, translate_sordo
-
-            if not configured():
-                raise RuntimeError("Falta la URL del traductor semántico")
-            if not ping():
-                raise RuntimeError("El traductor Cloud Run no responde")
-            with self._llm_gate:
-                with self.lock:
-                    self._translate_glosses = translate_sordo
-                    self._current_model_id = "remote"
-                    self.semantic_ready = True
-                    self.semantic_error = ""
+            self._ensure_remote()
+            if not self.semantic_ready:
+                raise RuntimeError(self.semantic_error or "El traductor Cloud Run no responde")
             print("[backend] Traductor remoto listo.")
         except Exception as e:
             with self.lock:
                 self.semantic_error = str(e)
                 self.semantic_ready = False
             print(f"[backend] LLM remota no disponible: {e}")
+
+    def _ensure_remote(self) -> None:
+        """Vuelve a pinguear Cloud Run si el hilo de arranque todavía no dejó el cliente."""
+        from semantic.remote import configured, ping, translate_sordo
+
+        with self.lock:
+            if self._translate_glosses is not None:
+                return
+        if not self.enable_llm:
+            return
+        if not configured():
+            with self.lock:
+                self.semantic_error = "Falta la URL del traductor semántico"
+                self.semantic_ready = False
+            return
+        if not ping():
+            with self.lock:
+                self.semantic_error = "El traductor Cloud Run no responde"
+                self.semantic_ready = False
+            return
+        with self._llm_gate:
+            with self.lock:
+                self._translate_glosses = translate_sordo
+                self._current_model_id = "remote"
+                self.semantic_ready = True
+                self.semantic_error = ""
 
     def reset_session(self, left_handed: bool):
         with self.lock:
@@ -301,7 +318,7 @@ class LSASession:
         return snap
 
     def _translate(self, glosses: list[str]) -> tuple[str, str, float, float | None]:
-        # Letras/dígitos van literales. Sin traductor remoto, devolvemos las glosas.
+        # Una glosa suelta o un deletreo/dígitos no van a Cloud Run. Una oración sí.
         fixed = resolve_letter_lookalikes(glosses)
         if fixed != list(glosses):
             print(f"[backend] Lookalikes letra: {glosses!r} => {fixed!r}")
@@ -309,31 +326,34 @@ class LSASession:
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
-            print(f"[backend] Enunciado → literal: {joined} => {literal}")
+            print(f"[backend] Enunciado → literal (sin semántico): {joined} => {literal}")
             return literal, "literal", 0.0, None
         simple = simple_lexical_spanish(glosses)
         if simple is not None:
-            print(f"[backend] Enunciado → glosa directa: {joined} => {simple}")
+            print(f"[backend] Enunciado → glosa suelta (sin semántico): {joined} => {simple}")
             return simple, "lexical", 0.0, None
         collapsed = " ".join(collapse_literal_runs(glosses))
-        if collapsed != joined:
-            print(f"[backend] Enunciado → LLM: {joined} => {collapsed}")
-        else:
-            print(f"[backend] Enunciado → LLM: {joined}")
-        with self.lock:
-            fn = self._translate_glosses
+        print(f"[backend] Enunciado → Cloud Run POST /sign: {collapsed}")
+        self._ensure_remote()
+        with self._llm_gate:
+            with self.lock:
+                fn = self._translate_glosses
         if fn is None:
+            print("[backend] Semántico no listo; no hay oración.")
             return collapsed, "fallback", 0.0, None
         try:
             from semantic.remote import last_timing
 
             t0 = time.perf_counter()
-            text = fn(collapsed) or collapsed
+            text = fn(collapsed)
             remote_ms = (time.perf_counter() - t0) * 1000
             timing = last_timing()
+            if not text:
+                print("[backend] Cloud Run /sign devolvió vacío")
+                return collapsed, "fallback", remote_ms, timing.get("server_ms")
             return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:
-            print(f"[backend] Error LLM: {e}")
+            print(f"[backend] Error Cloud Run /sign: {e}")
             return collapsed, "fallback", 0.0, None
 
     def capture_config(self) -> dict[str, Any]:
