@@ -13,6 +13,10 @@ datas = [
     (str(src / "classifier" / "weights"), "classifier/weights"),
     (str(repo / "assets" / "ilsa-logo.png"), "assets"),
     (str(repo / "packaging" / "ilsa.ico"), "."),
+    (str(repo / "extraction" / "__init__.py"), "extraction"),
+    (str(repo / "extraction" / "meet_sequence.py"), "extraction"),
+    (str(repo / "extraction" / "render_pose_pair.py"), "extraction"),
+    (str(repo / "extraction" / "sign_names.py"), "extraction"),
 ]
 try:
     _vosk_d, _vosk_b, _vosk_h = collect_all("vosk")
@@ -35,6 +39,7 @@ hidden = (
         "avatar.remote",
         "avatar.config",
         "avatar.names",
+        "extraction.meet_sequence",
         "pose_format",
         "vosk",
         "cffi",

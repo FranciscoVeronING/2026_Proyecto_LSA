@@ -10,12 +10,26 @@ Los `.pose` los baja `avatar.remote` del servidor de T-pose.
 from __future__ import annotations
 
 import importlib.util
+import sys
 import threading
 from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent
+
+def _extraction_dir() -> Path:
+    here = Path(__file__).resolve().parent
+    if (here / "render_pose_pair.py").is_file():
+        return here
+    if getattr(sys, "frozen", False):
+        meipass = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent / "_internal"))
+        bundled = meipass / "extraction"
+        if (bundled / "render_pose_pair.py").is_file():
+            return bundled
+    return here
+
+
+ROOT = _extraction_dir()
 _MAX_FRAMES = 1200
 
 # Contornos de FaceMesh (sin iris: Holistic tiene 468 puntos, el iris empieza en 468).
@@ -73,7 +87,12 @@ def _load_rp():
     global _RP
     if _RP is not None:
         return _RP
-    path = ROOT / "render_pose_pair.py"
+    path = _extraction_dir() / "render_pose_pair.py"
+    if not path.is_file():
+        raise ImportError(
+            f"No está el compositor ({path}). En el exe hay que reconstruir ILSA "
+            "con packaging\\build_exe.bat."
+        )
     spec = importlib.util.spec_from_file_location("render_pose_pair", path)
     if spec is None or spec.loader is None:
         raise ImportError(f"No se pudo cargar {path}")

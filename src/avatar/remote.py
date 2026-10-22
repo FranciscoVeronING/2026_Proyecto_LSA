@@ -170,7 +170,10 @@ def clip_for_glosses(glosses: str) -> dict:
             "frames": [],
             "missing": missing,
         }
-    root = Path(__file__).resolve().parents[2]
+    if getattr(sys, "frozen", False):
+        root = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent / "_internal"))
+    else:
+        root = Path(__file__).resolve().parents[2]
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
     from backend.ensure_pkg import ensure_module
