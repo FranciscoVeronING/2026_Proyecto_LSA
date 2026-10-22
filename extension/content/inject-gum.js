@@ -7,6 +7,10 @@
 (function () {
   if (window.__lsaGumHooked) return;
   window.__lsaGumHooked = true;
+  try {
+    const leftover = document.getElementById("lsa-oyente-subs");
+    if (leftover) leftover.remove();
+  } catch (_) {}
 
   const origGetUserMedia = MediaDevices.prototype.getUserMedia;
   const OrigPC = window.RTCPeerConnection;
@@ -84,12 +88,10 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           });
         }
         syncCanvasToMeet();
-        syncOyenteLocalSubs();
       } else if (!want && enabled) {
         enabled = false;
         document.querySelectorAll("video").forEach((v) => clearPreviewFix(v));
         restoreNativeCamera();
-        syncOyenteLocalSubs();
       } else {
         enabled = want;
         if (enabled) {
@@ -97,7 +99,6 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           if (hearingMode) syncHearingCapture();
           syncCanvasToMeet();
         }
-        syncOyenteLocalSubs();
       }
     }
     if (data.type === "LSA_PREFS") {
@@ -121,7 +122,6 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
       window.__lsaCaptionTimer = setTimeout(() => {
         caption.spanish = "";
-        syncOyenteLocalSubs();
       }, ms);
     }
     if (data.type === "LSA_CAPTION") {
@@ -130,11 +130,9 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       const line = typeof data.line === "string" ? data.line.trim() : "";
       if (line) {
         caption.spanish = line;
-        syncOyenteLocalSubs();
         if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
         window.__lsaCaptionTimer = setTimeout(() => {
           caption.spanish = "";
-          syncOyenteLocalSubs();
         }, SUBTITLE_HOLD_MS);
       }
     }
@@ -714,55 +712,8 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Glosas del oyente en su pantalla (no van a la llamada). Cubre la franja
-   * de subtítulos del preview, fondo opaco, texto derecho.
-   */
-  function syncOyenteLocalSubs() {
-    let el = document.getElementById("lsa-oyente-subs");
-    const show = enabled && hearingMode && caption.spanish;
-    if (!show) {
-      if (el) el.remove();
-      return;
-    }
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "lsa-oyente-subs";
-      el.setAttribute("aria-live", "polite");
-      el.style.cssText =
-        "position:fixed;z-index:2147483647;margin:0;box-sizing:border-box;" +
-        "display:flex;align-items:center;justify-content:center;" +
-        "background:#000;color:#fff;text-align:center;pointer-events:none;" +
-        "font-family:'Segoe UI',system-ui,sans-serif;font-weight:700;line-height:1.25;" +
-        "letter-spacing:0.02em;overflow:hidden;border:0;border-radius:0;";
-      (document.body || document.documentElement).appendChild(el);
-    }
-    el.textContent = caption.spanish;
-    let tile = null;
-    let area = 0;
-    document.querySelectorAll("video").forEach((v) => {
-      if (!isOurPreviewVideo(v)) return;
-      const r = v.getBoundingClientRect();
-      const a = r.width * r.height;
-      if (r.width < 40 || r.height < 40) return;
-      if (a > area) {
-        area = a;
-        tile = r;
-      }
-    });
-    if (!tile) return;
-    const band = Math.max(64, Math.round(tile.height * 0.28));
-    const fontPx = Math.max(16, Math.min(36, Math.round(tile.height * 0.055)));
-    el.style.left = Math.round(tile.left) + "px";
-    el.style.width = Math.round(tile.width) + "px";
-    el.style.top = Math.round(tile.bottom - band) + "px";
-    el.style.height = band + "px";
-    el.style.bottom = "auto";
-    el.style.padding = "8px 16px";
-    el.style.fontSize = fontPx + "px";
-  }
-
-  /**
-   * Subtítulo abajo, derecho en el canvas (quien recibe).
+   * Subtítulo abajo, derecho en el canvas. Meet puede espejar la miniatura
+   * del oyente; quien recibe ve este dibujo sin ese CSS.
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} w
    * @param {number} h
@@ -945,7 +896,6 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         document.querySelectorAll("video").forEach((v) => {
           if (isOurPreviewVideo(v)) straightenPreview(v);
         });
-        if (hearingMode) syncOyenteLocalSubs();
       }
       if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
       requestAnimationFrame(draw);
