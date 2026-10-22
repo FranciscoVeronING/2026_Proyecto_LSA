@@ -615,9 +615,7 @@ class IlsaWindow:
                     self._sync_actions()
             except Exception:
                 if self.backend.running:
-                    self.status_var.set("Arrancando…")
                     self._set_dot(WARN)
-                    self._sync_actions(busy=True)
         else:
             cur = self.status_var.get()
             if cur.startswith("En marcha") or cur == "Arrancando…":

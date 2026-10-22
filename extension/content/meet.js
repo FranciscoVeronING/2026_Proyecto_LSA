@@ -8,6 +8,8 @@ const SUBTITLE_HOLD_MS = 8000;
 let running = false;
 let extDead = false;
 let meetMode = "signer";
+let lastHealthOkAt = 0;
+const ILSA_DOWN_MS = 8000;
 let framesSeen = 0;
 let pending = false;
 let rafId = 0;
@@ -552,13 +554,16 @@ async function tickLocal() {
   } catch (_) {
     h = null;
   }
-  if (!h || !h.ok) {
-    if (running) stopBridge();
-    else setHud({ debug: "Encendé ILSA para traducir", capturing: false });
+  if (h && h.ok) {
+    lastHealthOkAt = Date.now();
+    startBridge(h.mode === "hearing" ? "hearing" : "signer");
     return;
   }
-  const mode = h.mode === "hearing" ? "hearing" : "signer";
-  startBridge(mode);
+  if (running && lastHealthOkAt && Date.now() - lastHealthOkAt >= ILSA_DOWN_MS) {
+    stopBridge();
+    return;
+  }
+  if (!running) setHud({ debug: "Encendé ILSA para traducir", capturing: false });
 }
 
 requestMeetSync();
@@ -569,9 +574,8 @@ if (!globalThis.__lsaMeetInterval) {
       onExtDead();
       return;
     }
-    requestMeetSync();
     tickLocal();
-  }, 1500);
+  }, 2000);
 }
 
 if (!globalThis.__lsaHudWatch) {

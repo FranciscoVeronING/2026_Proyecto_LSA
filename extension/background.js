@@ -16,6 +16,11 @@ let meetTabId = null;
 let meetModeOn = null;
 let offscreenPort = null;
 const offscreenAcks = new Map();
+let lastHealthOkAt = 0;
+let pingInFlight = null;
+let syncLock = false;
+const ILSA_DOWN_MS = 8000;
+const API_BASE = "http://127.0.0.1:8765";
 
 /**
  * @returns {Promise<boolean>} true si ya hay un documento offscreen de esta extensión.
@@ -96,6 +101,13 @@ chrome.runtime.onStartup.addListener(() => {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || !msg.type) return;
+
+  if (msg.type === "lsa-api") {
+    proxyIlsaApi(msg)
+      .then((data) => sendResponse({ ok: true, data }))
+      .catch((err) => sendResponse({ ok: false, error: (err && err.message) || String(err) }));
+    return true;
+  }
 
   if (msg.type === "lsa-meet-sync") {
     const tabId = (sender.tab && sender.tab.id) || msg.tabId;
@@ -184,14 +196,12 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 if (chrome.webNavigation && chrome.webNavigation.onCompleted) {
-  const onMeetNav = (details) => {
+  chrome.webNavigation.onCompleted.addListener((details) => {
     if (details.frameId !== 0) return;
     const url = details.url || "";
     if (!url.startsWith("https://meet.google.com/")) return;
     syncMeetTab(details.tabId).catch(() => {});
-  };
-  chrome.webNavigation.onCompleted.addListener(onMeetNav);
-  chrome.webNavigation.onHistoryStateUpdated.addListener(onMeetNav);
+  });
 }
 
 chrome.tabs.onActivated.addListener((info) => {
@@ -202,20 +212,62 @@ chrome.tabs.onActivated.addListener((info) => {
   }).catch(() => {});
 });
 
+function parseApiBody(text) {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { detail: text };
+  }
+}
+
+/**
+ * Fetch a ILSA desde el SW (origen de la extensión). Meet no puede ir a loopback.
+ * @param {{path?: string, method?: string, body?: string|null}} msg
+ */
+async function proxyIlsaApi(msg) {
+  const path = String((msg && msg.path) || "");
+  if (!path.startsWith("/")) throw new Error("Pedido inválido.");
+  const method = String((msg && msg.method) || "GET").toUpperCase();
+  const opts = { method, signal: AbortSignal.timeout(method === "GET" ? 4000 : 25000) };
+  if (msg && msg.body) {
+    opts.headers = { "Content-Type": "application/json" };
+    opts.body = typeof msg.body === "string" ? msg.body : JSON.stringify(msg.body);
+  }
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, opts);
+  } catch (_) {
+    throw new Error("ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
+  }
+  const data = parseApiBody(await res.text());
+  if (!res.ok) {
+    const detail = data && (data.detail || data.message);
+    throw new Error(typeof detail === "string" ? detail : res.statusText);
+  }
+  return data;
+}
+
 /**
  * @returns {Promise<{ok: boolean, mode?: string}|null>}
  */
 async function pingHealth() {
-  const urls = ["http://127.0.0.1:8765/health", "http://localhost:8765/health"];
-  for (const url of urls) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) continue;
-      const h = await res.json();
-      if (h && h.ok) return h;
-    } catch (_) {}
-  }
-  return null;
+  if (pingInFlight) return pingInFlight;
+  pingInFlight = (async () => {
+    const urls = [`${API_BASE}/health`, "http://localhost:8765/health"];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(2500) });
+        if (!res.ok) continue;
+        const h = await res.json();
+        if (h && h.ok) return h;
+      } catch (_) {}
+    }
+    return null;
+  })().finally(() => {
+    pingInFlight = null;
+  });
+  return pingInFlight;
 }
 
 /**
@@ -223,39 +275,42 @@ async function pingHealth() {
  * @param {number} tabId
  */
 async function syncMeetTab(tabId) {
-  let tab;
+  if (syncLock) return;
+  syncLock = true;
   try {
-    tab = await chrome.tabs.get(tabId);
-  } catch {
-    if (tabId === meetTabId) await stopMeet();
-    return;
-  }
-  const url = tab.url || tab.pendingUrl || "";
-  if (!url.startsWith("https://meet.google.com/")) {
-    if (tabId === meetTabId) await stopMeet();
-    return;
-  }
-  const h = await pingHealth();
-  if (!h) {
-    if (meetTabId) {
-      try {
-        if (offscreenPort) offscreenPort.postMessage({ type: "lsa-meet-stop" });
-      } catch (_) {}
-      meetTabId = null;
-      meetModeOn = null;
+    let tab;
+    try {
+      tab = await chrome.tabs.get(tabId);
+    } catch {
+      if (tabId === meetTabId) await stopMeet();
+      return;
     }
-    return;
-  }
-  const mode = h.mode === "hearing" ? "hearing" : "signer";
-  if (meetTabId === tabId && meetModeOn === mode) return;
-  try {
-    await startMeet(tabId, false);
-  } catch (err) {
-    const message = (err && err.message) || String(err);
-    chrome.tabs
-      .sendMessage(tabId, { type: "lsa-meet-content-error", error: message })
-      .catch(() => {});
-    throw err;
+    const url = tab.url || tab.pendingUrl || "";
+    if (!url.startsWith("https://meet.google.com/")) {
+      if (tabId === meetTabId) await stopMeet();
+      return;
+    }
+    const h = await pingHealth();
+    const now = Date.now();
+    if (!h) {
+      if (meetTabId && lastHealthOkAt && now - lastHealthOkAt >= ILSA_DOWN_MS) {
+        await stopMeet();
+      }
+      return;
+    }
+    lastHealthOkAt = now;
+    const mode = h.mode === "hearing" ? "hearing" : "signer";
+    if (meetTabId === tabId && meetModeOn === mode) return;
+    try {
+      await startMeet(tabId, false);
+    } catch (err) {
+      const message = (err && err.message) || String(err);
+      chrome.tabs
+        .sendMessage(tabId, { type: "lsa-meet-content-error", error: message })
+        .catch(() => {});
+    }
+  } finally {
+    syncLock = false;
   }
 }
 

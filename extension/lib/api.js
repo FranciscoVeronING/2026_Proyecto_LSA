@@ -1,38 +1,69 @@
 /**
  * Cliente del motor en 127.0.0.1:8765.
- * `sign` manda puntos 3D, no video — Holistic corre en sandbox.js.
+ * Desde Meet (content script) Chrome trata el fetch como red local y lo
+ * bloquea; ahí se pide al service worker. Popup/offscreen hablan directo.
  */
 
-/** Origen fijado en el manifest (host_permissions). */
 const API_BASE = "http://127.0.0.1:8765";
 
-async function api(path, options = {}) {
+function fromMeetTab() {
+  try {
+    return location.protocol === "https:" && location.hostname === "meet.google.com";
+  } catch (_) {
+    return false;
+  }
+}
+
+function parseBody(text) {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { detail: text };
+  }
+}
+
+function errorMessage(data, statusText) {
+  const msg = (data && (data.detail || data.message)) || statusText;
+  return typeof msg === "string" ? msg : JSON.stringify(msg);
+}
+
+async function apiViaWorker(path, options = {}) {
+  const method = (options.method || "GET").toUpperCase();
+  const reply = await chrome.runtime.sendMessage({
+    type: "lsa-api",
+    path,
+    method,
+    body: options.body || null,
+  });
+  if (!reply || !reply.ok) {
+    throw new Error((reply && reply.error) || "ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
+  }
+  return reply.data;
+}
+
+async function apiDirect(path, options = {}) {
+  const method = (options.method || "GET").toUpperCase();
+  const headers = { ...(options.headers || {}) };
+  if (options.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
   let res;
   try {
     res = await fetch(`${API_BASE}${path}`, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
+      method,
+      headers,
     });
-  } catch (err) {
-    throw new Error(
-      "Failed to fetch: ILSA no responde en 127.0.0.1:8765. Encendé el motor."
-    );
+  } catch (_) {
+    throw new Error("Failed to fetch: ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
   }
-  const text = await res.text();
-  let data = null;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = { detail: text };
-  }
-  if (!res.ok) {
-    const msg = (data && (data.detail || data.message)) || res.statusText;
-    throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
-  }
+  const data = parseBody(await res.text());
+  if (!res.ok) throw new Error(errorMessage(data, res.statusText));
   return data;
+}
+
+async function api(path, options = {}) {
+  if (fromMeetTab()) return apiViaWorker(path, options);
+  return apiDirect(path, options);
 }
 
 const LsaApi = {

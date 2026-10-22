@@ -63,25 +63,38 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     const data = event.data;
     if (!data || data.source !== "lsa-ext") return;
     if (data.type === "LSA_SET_ENABLED") {
-      enabled = Boolean(data.enabled);
-      hearingMode = Boolean(data.enabled && data.hearing);
+      const want = Boolean(data.enabled);
+      hearingMode = Boolean(want && data.hearing);
       if (!hearingMode) {
         stopHearingTap();
         avatarClip = null;
       }
-      if (hearingMode) {
+      if (want && !enabled) {
+        enabled = true;
         wrapExistingMeetCamera();
-        syncHearingCapture();
-        [300, 1000, 2500].forEach((ms) => {
-          setTimeout(() => {
-            if (hearingMode) {
-              wrapExistingMeetCamera();
-              syncHearingCapture();
-            }
-          }, ms);
-        });
+        if (hearingMode) {
+          syncHearingCapture();
+          [300, 1000, 2500].forEach((ms) => {
+            setTimeout(() => {
+              if (enabled && hearingMode) {
+                wrapExistingMeetCamera();
+                syncHearingCapture();
+              }
+            }, ms);
+          });
+        }
+        syncCanvasToMeet();
+      } else if (!want && enabled) {
+        enabled = false;
+        restoreNativeCamera();
+      } else {
+        enabled = want;
+        if (enabled) {
+          wrapExistingMeetCamera();
+          if (hearingMode) syncHearingCapture();
+          syncCanvasToMeet();
+        }
       }
-      syncCanvasToMeet();
     }
     if (data.type === "LSA_PREFS") {
       if (typeof data.showSubtitles === "boolean") showSubtitles = data.showSubtitles;
@@ -736,14 +749,16 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
    */
   function stopPipeline(releaseCamera) {
     if (!pipeline) return;
-    pipeline.stopped = true;
-    pipeline.running = false;
+    const current = pipeline;
+    current.stopped = true;
+    current.running = false;
+    pipeline = null;
     try {
-      pipeline.out.getTracks().forEach((t) => t.stop());
+      if (current.out) current.out.getTracks().forEach((t) => t.stop());
     } catch (_) {}
     if (releaseCamera) {
       try {
-        pipeline.real.getTracks().forEach((t) => t.stop());
+        current.real.getTracks().forEach((t) => t.stop());
       } catch (_) {}
     }
     try {
@@ -753,9 +768,31 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         el.remove();
       }
     } catch (_) {}
-    pipeline = null;
     landmarks = null;
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: false }, "*");
+  }
+
+  /** Meet vuelve a ver el stream nativo; no paramos esos tracks. */
+  function restoreNativeCamera() {
+    if (!pipeline) return;
+    const real = pipeline.real;
+    const realTrack = real && real.getVideoTracks().find((t) => t.readyState === "live");
+    document.querySelectorAll("video").forEach((v) => {
+      if (v.id === "lsa-real-cam") return;
+      if (v.srcObject === pipeline.out && real) v.srcObject = real;
+    });
+    if (realTrack) {
+      peerConnections.forEach((pc) => {
+        try {
+          pc.getSenders().forEach((sender) => {
+            if (sender.track && sender.track.kind === "video" && sender.track !== realTrack) {
+              sender.replaceTrack(realTrack).catch(() => {});
+            }
+          });
+        } catch (_) {}
+      });
+    }
+    stopPipeline(false);
   }
   /**
    * Crea video oculto `#lsa-real-cam` + canvas que Meet ve como “cámara”.
@@ -766,6 +803,11 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
    * @param {MediaStream} realStream Resultado nativo de `getUserMedia`.
    */
   function createPipeline(realStream) {
+    if (pipeline && pipeline.real === realStream && pipeline.alive()) {
+      const live = existingStream();
+      if (live) return pipeline;
+    }
+    if (pipeline) stopPipeline(pipeline.real !== realStream);
     const track = realStream.getVideoTracks()[0];
     const settings = (track && track.getSettings && track.getSettings()) || {};
     const video = document.createElement("video");
@@ -804,7 +846,13 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
 
     const out = canvas.captureStream(24);
     const capTrack = out.getVideoTracks()[0];
-    if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
+    if (capTrack) {
+      if (capTrack.requestFrame) capTrack.requestFrame();
+      capTrack.addEventListener("ended", () => {
+        if (handle.stopped || pipeline !== handle) return;
+        stopPipeline(true);
+      });
+    }
     let previewTick = 0;
 
     const draw = () => {
@@ -885,9 +933,17 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   function wrapExistingMeetCamera() {
+    if (!enabled) return;
     if (pipeline && pipeline.alive()) {
       syncCanvasToMeet();
       return;
+    }
+    if (pipeline && pipeline.real && pipeline.real.getVideoTracks().some((t) => t.readyState === "live")) {
+      try {
+        pipeline = createPipeline(pipeline.real);
+        syncCanvasToMeet();
+        return;
+      } catch (_) {}
     }
     const videos = document.querySelectorAll("video");
     for (let i = 0; i < videos.length; i++) {
@@ -909,10 +965,22 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
    * Reusa el canvas. Nunca devolvemos DroidCam cruda: ahí no hay subtítulos.
    */
   function existingStream() {
-    if (!pipeline || pipeline.stopped || !pipeline.alive()) return null;
+    if (!enabled || !pipeline || pipeline.stopped || !pipeline.alive()) return null;
     const canvasTrack = pipeline.out && pipeline.out.getVideoTracks()[0];
     if (canvasTrack && canvasTrack.readyState === "live") return pipeline.out;
     return null;
+  }
+
+  function reuseHeldCamera() {
+    if (!enabled || !pipeline || !pipeline.real) return null;
+    const live = pipeline.real.getVideoTracks().some((t) => t.readyState === "live");
+    if (!live) return null;
+    try {
+      pipeline = createPipeline(pipeline.real);
+      return pipeline.out;
+    } catch (_) {
+      return null;
+    }
   }
 
   MediaDevices.prototype.getUserMedia = function (constraints) {
@@ -923,7 +991,10 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         return stream;
       });
     }
-    const reuse = existingStream();
+    if (!enabled) {
+      return origGetUserMedia.call(this, constraints);
+    }
+    const reuse = existingStream() || reuseHeldCamera();
     if (reuse) return Promise.resolve(reuse);
     return origGetUserMedia.call(this, constraints).then((real) => {
       try {
