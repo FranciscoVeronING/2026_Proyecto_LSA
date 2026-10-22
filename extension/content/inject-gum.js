@@ -84,9 +84,12 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           });
         }
         syncCanvasToMeet();
+        syncOyenteLocalSubs();
       } else if (!want && enabled) {
         enabled = false;
+        document.querySelectorAll("video").forEach((v) => clearPreviewFix(v));
         restoreNativeCamera();
+        syncOyenteLocalSubs();
       } else {
         enabled = want;
         if (enabled) {
@@ -94,6 +97,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           if (hearingMode) syncHearingCapture();
           syncCanvasToMeet();
         }
+        syncOyenteLocalSubs();
       }
     }
     if (data.type === "LSA_PREFS") {
@@ -117,6 +121,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
       window.__lsaCaptionTimer = setTimeout(() => {
         caption.spanish = "";
+        syncOyenteLocalSubs();
       }, ms);
     }
     if (data.type === "LSA_CAPTION") {
@@ -125,9 +130,11 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       const line = typeof data.line === "string" ? data.line.trim() : "";
       if (line) {
         caption.spanish = line;
+        syncOyenteLocalSubs();
         if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
         window.__lsaCaptionTimer = setTimeout(() => {
           caption.spanish = "";
+          syncOyenteLocalSubs();
         }, SUBTITLE_HOLD_MS);
       }
     }
@@ -589,11 +596,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     const panelW = w - half;
     const view = window.LsaAvatar.sample(avatarClip, performance.now());
     if (view && view.done) avatarClip = null;
-    ctx.save();
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
-    window.LsaAvatar.draw(ctx, view, 0, 0, panelW, h);
-    ctx.restore();
+    window.LsaAvatar.draw(ctx, view, half, 0, panelW, h);
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.fillRect(half, 0, 1, h);
   }
@@ -625,29 +628,36 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     if (!video || video.id === "lsa-real-cam" || !pipeline || !pipeline.out) return false;
     const src = video.srcObject;
     if (!src || !src.getVideoTracks) return false;
+    if (src === pipeline.out || src === pipeline.real) return true;
     const ours = new Set(pipeline.out.getVideoTracks().map((t) => t.id));
+    if (pipeline.real) pipeline.real.getVideoTracks().forEach((t) => ours.add(t.id));
     return src.getVideoTracks().some((t) => ours.has(t.id));
   }
 
-  /**
-   * Meet espeja solo tu miniatura. El canvas: cámara y subtítulo derechos;
-   * esqueleto ya espejado al dibujar. Este contrarresto es CSS del video local;
-   * quien recibe no lo ve. Meet suele clonar el MediaStream: se matchea por
-   * id de track, no por identidad de `srcObject`.
-   */
-  function straightenPreview(video) {
+  function clearPreviewFix(video) {
     if (!video) return;
     const mine = video.dataset.lsaFix || "";
     if (mine === "scale") video.style.removeProperty("scale");
     if (mine === "transform") video.style.removeProperty("transform");
+    if (mine) video.dataset.lsaFix = "";
+  }
+
+  /**
+   * Meet espeja la miniatura local. El canvas (la llamada) va derecho.
+   * Un scaleX extra en ESE video cancela el selfie; quien recibe no lo ve.
+   */
+  function straightenPreview(video) {
+    if (!video) return;
+    clearPreviewFix(video);
     let flips = flipCount(video);
-    for (let el = video.parentElement; el && el !== document.documentElement; el = el.parentElement) {
+    let el = video.parentElement;
+    const seen = new Set();
+    while (el && el !== document.documentElement && !seen.has(el)) {
+      seen.add(el);
       flips += flipCount(el);
+      el = el.parentElement || (el.getRootNode && el.getRootNode().host) || null;
     }
-    if (flips % 2 === 0) {
-      video.dataset.lsaFix = "";
-      return;
-    }
+    if (flips % 2 === 0) return;
     const scaleNow = (getComputedStyle(video).scale || "none").trim();
     const scaleFlipped = scaleNow !== "none" && parseFloat(scaleNow.split(/\s+/)[0]) < 0;
     if (scaleFlipped) {
@@ -704,7 +714,55 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Subtítulo abajo, espejado (sordo y oyente).
+   * Glosas del oyente en su pantalla (no van a la llamada). Cubre la franja
+   * de subtítulos del preview, fondo opaco, texto derecho.
+   */
+  function syncOyenteLocalSubs() {
+    let el = document.getElementById("lsa-oyente-subs");
+    const show = enabled && hearingMode && caption.spanish;
+    if (!show) {
+      if (el) el.remove();
+      return;
+    }
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "lsa-oyente-subs";
+      el.setAttribute("aria-live", "polite");
+      el.style.cssText =
+        "position:fixed;z-index:2147483647;margin:0;box-sizing:border-box;" +
+        "display:flex;align-items:center;justify-content:center;" +
+        "background:#000;color:#fff;text-align:center;pointer-events:none;" +
+        "font-family:'Segoe UI',system-ui,sans-serif;font-weight:700;line-height:1.25;" +
+        "letter-spacing:0.02em;overflow:hidden;border:0;border-radius:0;";
+      (document.body || document.documentElement).appendChild(el);
+    }
+    el.textContent = caption.spanish;
+    let tile = null;
+    let area = 0;
+    document.querySelectorAll("video").forEach((v) => {
+      if (!isOurPreviewVideo(v)) return;
+      const r = v.getBoundingClientRect();
+      const a = r.width * r.height;
+      if (r.width < 40 || r.height < 40) return;
+      if (a > area) {
+        area = a;
+        tile = r;
+      }
+    });
+    if (!tile) return;
+    const band = Math.max(64, Math.round(tile.height * 0.28));
+    const fontPx = Math.max(16, Math.min(36, Math.round(tile.height * 0.055)));
+    el.style.left = Math.round(tile.left) + "px";
+    el.style.width = Math.round(tile.width) + "px";
+    el.style.top = Math.round(tile.bottom - band) + "px";
+    el.style.height = band + "px";
+    el.style.bottom = "auto";
+    el.style.padding = "8px 16px";
+    el.style.fontSize = fontPx + "px";
+  }
+
+  /**
+   * Subtítulo abajo, derecho en el canvas (quien recibe).
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} w
    * @param {number} h
@@ -714,8 +772,6 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     if (!text) return;
     const fontSize = Math.max(18, Math.round(h * 0.042));
     ctx.save();
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
     ctx.font = `700 ${fontSize}px "Segoe UI", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -885,10 +941,11 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         if (enabled && hearingMode && window.LsaAvatar) drawSkeletonPanel(ctx, canvas.width, canvas.height);
         if (enabled && showSubtitles) drawSubtitles(ctx, canvas.width, canvas.height);
       }
-      if (hearingMode && previewTick++ % 8 === 0) {
+      if (enabled && previewTick++ % 2 === 0) {
         document.querySelectorAll("video").forEach((v) => {
           if (isOurPreviewVideo(v)) straightenPreview(v);
         });
+        if (hearingMode) syncOyenteLocalSubs();
       }
       if (capTrack && capTrack.requestFrame) capTrack.requestFrame();
       requestAnimationFrame(draw);

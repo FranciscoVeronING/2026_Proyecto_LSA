@@ -77,12 +77,15 @@ const LsaPrefs = {
    * @returns {Promise<{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }>}
    */
   get() {
-    const store = lsaStorageLocal();
-    if (!store) return Promise.resolve({ ...LSA_PREFS_DEFAULTS });
-    return store
-      .get(LSA_PREFS_KEY)
-      .then((data) => normalizeLsaPrefs((data && data[LSA_PREFS_KEY]) || LSA_PREFS_DEFAULTS))
-      .catch(() => ({ ...LSA_PREFS_DEFAULTS }));
+    try {
+      const store = lsaStorageLocal();
+      if (!store) return Promise.resolve({ ...LSA_PREFS_DEFAULTS });
+      return Promise.resolve(store.get(LSA_PREFS_KEY))
+        .then((data) => normalizeLsaPrefs((data && data[LSA_PREFS_KEY]) || LSA_PREFS_DEFAULTS))
+        .catch(() => ({ ...LSA_PREFS_DEFAULTS }));
+    } catch (_) {
+      return Promise.resolve({ ...LSA_PREFS_DEFAULTS });
+    }
   },
 
   /**
@@ -90,12 +93,18 @@ const LsaPrefs = {
    * @returns {Promise<{ showLandmarks: boolean, outputMode: string, utterancePauseSec: number }>}
    */
   set(partial) {
-    const store = lsaStorageLocal();
-    return LsaPrefs.get().then((cur) => {
-      const next = normalizeLsaPrefs({ ...cur, ...partial });
-      if (!store) return next;
-      return store.set({ [LSA_PREFS_KEY]: next }).then(() => next);
-    });
+    try {
+      const store = lsaStorageLocal();
+      return LsaPrefs.get().then((cur) => {
+        const next = normalizeLsaPrefs({ ...cur, ...partial });
+        if (!store) return next;
+        return Promise.resolve(store.set({ [LSA_PREFS_KEY]: next }))
+          .then(() => next)
+          .catch(() => next);
+      });
+    } catch (_) {
+      return Promise.resolve(normalizeLsaPrefs({ ...LSA_PREFS_DEFAULTS, ...partial }));
+    }
   },
 
   /**

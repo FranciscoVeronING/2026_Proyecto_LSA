@@ -362,7 +362,9 @@ function bindHudDrag(root) {
     drag = null;
     card.classList.remove("lsa-dragging");
     const rect = root.getBoundingClientRect();
-    LsaPrefs.set({ hudLeft: Math.round(rect.left), hudTop: Math.round(rect.top) });
+    if (extAlive()) {
+      LsaPrefs.set({ hudLeft: Math.round(rect.left), hudTop: Math.round(rect.top) }).catch(() => {});
+    }
   };
   card.addEventListener("pointerup", end);
   card.addEventListener("pointercancel", end);

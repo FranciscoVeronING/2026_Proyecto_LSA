@@ -53,16 +53,16 @@ async function downloadIlsa() {
   btnExe.disabled = true;
   exeHint.textContent = "Preparando descarga…";
   try {
-    if (await resourceExists(RELEASE_ZIP)) {
-      saveAs(RELEASE_ZIP, "ILSA.zip");
-      exeHint.textContent =
-        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta. La primera vez baja el traductor sola.";
-      return;
-    }
     if (await resourceExists(PACKAGED_ZIP)) {
       saveAs(PACKAGED_ZIP, "ILSA.zip");
       exeHint.textContent =
         "Listo. Descomprimí ILSA.zip, abrí ILSA.exe y dejá esa ventana abierta.";
+      return;
+    }
+    if (await resourceExists(RELEASE_ZIP)) {
+      saveAs(RELEASE_ZIP, "ILSA.zip");
+      exeHint.textContent =
+        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta.";
       return;
     }
     exeHint.textContent =

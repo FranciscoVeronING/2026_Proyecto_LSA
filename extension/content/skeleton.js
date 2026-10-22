@@ -1,6 +1,6 @@
 /**
  * Esqueleto de PoseVisualizer en el canvas de Meet (mundo MAIN).
- * Cada dedo tiene su color. `inject-gum.js` espeja el panel al dibujar.
+ * Cada dedo tiene su color. El panel se dibuja derecho (quien recibe).
  */
 (function () {
   if (window.LsaAvatar) return;

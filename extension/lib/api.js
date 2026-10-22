@@ -6,9 +6,9 @@
 
 const API_BASE = "http://127.0.0.1:8765";
 
-function fromMeetTab() {
+function isExtensionPage() {
   try {
-    return location.protocol === "https:" && location.hostname === "meet.google.com";
+    return location.protocol === "chrome-extension:";
   } catch (_) {
     return false;
   }
@@ -62,8 +62,8 @@ async function apiDirect(path, options = {}) {
 }
 
 async function api(path, options = {}) {
-  if (fromMeetTab()) return apiViaWorker(path, options);
-  return apiDirect(path, options);
+  if (isExtensionPage()) return apiDirect(path, options);
+  return apiViaWorker(path, options);
 }
 
 const LsaApi = {
