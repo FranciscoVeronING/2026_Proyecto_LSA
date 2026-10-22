@@ -13,13 +13,11 @@ La articulación de la LSA se sostiene sobre la interacción simultánea de dos 
 \end{itemize}
  
 \subsection{Estructura lingüística de la LSA y traducción \textit{Topic-Comment}}
-La LSA es una lengua independiente del español oral, dotada de su propia gramática, léxico y reglas sintácticas \parencite{massoneparte2}. Para abordar informáticamente su traducción, es necesario introducir el concepto de \textbf{glosa}: representación escrita en letras mayúsculas que se le asigna a una seña para poder identificarla, transcribirla y analizar su gramática en un formato de texto, sin que esto constituya una traducción literal al español \parencite{massone1993lengua}.
-
 A nivel morfosintáctico, la LSA presenta diferencias sustanciales con el español rioplatense:
 \begin{itemize}
     \item \textbf{Estructura oracional:} Mientras que el español sigue preferentemente un orden Sujeto-Verbo-Objeto (SVO), la LSA organiza sus proposiciones bajo el principio de \textit{Topic-Comment} \parencite{massoneparte2}.
     \item \textbf{Ausencia de elementos funcionales:} La LSA carece de artículos determinados e indeterminados («el», «la», «un»), preposiciones gramaticales abstractas («de», «a», «con») y verbos copulativos («ser» o «estar») \parencite{massoneparte1, massoneparte2}.
-    \item \textbf{Marcadores de cierre:} Las partículas interrogativas (\texttt{QUÉ}, \texttt{DÓNDE}, \texttt{CUÁNDO}) y los operadores de negación (\texttt{NO}) se posponen obligatoriamente al final de la cláusula oracional.
+    \item \textbf{Marcadores de cierre:} Las partículas interrogativas (\texttt{QUÉ}, \texttt{DÓNDE}, \texttt{CUÁNDO}) y los operadores de negación (\texttt{NO}) se posponen obligatoriamente al final de la oración.
 \end{itemize}
 
 Bajo el esquema de \textit{Topic-Comment}, el enunciado sitúa en primer lugar el marco temporal y espacial de referencia (el tópico o contexto), seguido por el sujeto, el objeto y finalmente la acción o estado junto con sus modificadores (el comentario):
@@ -32,13 +30,16 @@ Bajo el esquema de \textit{Topic-Comment}, el enunciado sitúa en primer lugar e
 \label{eq:topic_comment_structure}
 \end{equation}
 
-Debido a estas diferencias morfosintácticas, la equivalencia entre ambas lenguas no admite un mapeo léxico directo o traducción término a término. Resulta imprescindible incorporar una etapa intermedia de interpretación semántica mediante modelos de lenguaje que traduzca tanto la secuencia de glosas discontinuas provenientes del clasificador a oraciones fluidas en español, como el texto en español a glosas formalmente ordenadas antes de su animación visual.
+El prompt del canal inverso fija un orden más detallado que esa fórmula: tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la pregunta o la negación. En un parentesco, la glosa puede ir seguida de la letra O o de la letra A para marcar el género.
 
-\paragraph{Delimitación del prototipo y alcance de captura}
-A pesar de la relevancia lingüística de la gesticulación facial en la LSA, en este trabajo se optó por capturar únicamente los datos de las manos y el esqueleto superior. Se descartó el uso de la malla facial para reducir el consumo de procesamiento en el equipo del usuario y evitar sobrecargar la CPU durante una videollamada.
+Debido a estas diferencias morfosintácticas, la equivalencia entre ambas lenguas no admite un mapeo léxico directo o traducción término a término.
 
-Esta decisión responde a que las señas seleccionadas para el vocabulario del prototipo son independientes de los gesticulaciones faciales. Aunque algunas señas comparten configuraciones similares entre sí y dependen del contexto para su correcta interpretación, la combinación de pose y manos resulta plenamente suficiente para clasificar el léxico definido sin comprometer la fluidez ni la tasa de fotogramas del sistema.
 
+\subsection{Tiempo real estricto y tiempo pesudo-real}
+
+El concepto de \textbf{tiempo pseudo-real} designa a aquellos sistemas de procesamiento interactivo donde la respuesta computacional no ocurre de forma estrictamente instantánea ni en el orden de los microsegundos, pero cuyos retardos temporales permanecen dentro de un umbral operativo tolerable para la interacción humana. A diferencia de los sistemas de tiempo real estricto, el tiempo pseudo-real admite una latencia acotada resultante de la segmentación temporal por pausas de inactividad, el empaquetado de datos y el tiempo de inferencia de los modelos semánticos en la nube, pero permite sostener la fluidez del diálogo bilingüe en la videollamada.
+
+% TODO: Todo esto iria aca? lo que explica medipipe si, pero lo que justifica porq mediapipe y no frames no se
 \subsection{Visión computacional y reconocimiento basado en esqueletos}
 
 El reconocimiento de señas sobre video crudo opera, en cada fotograma, sobre millones de valores de color. Un cuadro de $1920 \times 1080$ en RGB contiene
@@ -46,7 +47,7 @@ El reconocimiento de señas sobre video crudo opera, en cada fotograma, sobre mi
 1920 \times 1080 \times 3 = 6\,220\,800
 \label{eq:escalares_rgb}
 \end{equation}
-escalares. Esa representación es sensible a la iluminación, al fondo y a la vestimenta, y su costo impide una inferencia sostenida en la CPU de una computadora que, al mismo tiempo, mantiene una videollamada. El prototipo no clasifica píxeles, clasifica un esqueleto: un conjunto reducido de coordenadas articulares llamadas \textit{landmarks}.
+escalares. Esa representación es sensible a la iluminación, al fondo y a la vestimenta. El reconocimiento basado en esqueletos clasifica un conjunto reducido de coordenadas articulares, llamadas \textit{landmarks}.
 
 El estimador es MediaPipe Holistic, un marco de código abierto para cadenas de percepción en el dispositivo \parencite{lugaresi2019mediapipe,google2020mediapipe}. La solución utilizada, no es un único detector. Es un encadenado de modelos ya entrenados, que corre en el cliente y no transmite la imagen. El primer modelo, BlazePose, localiza a la persona y estima 33 puntos de \textit{pose} \parencite{bazarevsky2020blazepose}. Esos puntos cubren un rostro grueso (nariz, ojos, orejas y comisuras), el torso, los brazos y las piernas. A partir de las muñecas de ese \textit{pose}, el pipeline recorta una región para cada mano. El modelo de manos  (\textit{hand}) estima entonces 21 puntos tridimensionales por mano: la muñeca y cuatro articulaciones por dedo \parencite{zhang2020mediapipehands}. En los fotogramas siguientes, la pose previa define la región de búsqueda, y el detector de cuerpo completo no se repite en todos los cuadros. La Figura~\ref{fig:pipeline_holistic} resume ese recorrido.
 
@@ -67,11 +68,14 @@ El estimador es MediaPipe Holistic, un marco de código abierto para cadenas de 
         \draw[arr] (roi) -- (hands);
         \draw[arr] (hands) -- (vec);
     \end{tikzpicture}
-    \caption{Cadena de MediaPipe Holistic retenida en el prototipo. Face Mesh no forma parte del vector de clasificación.}
+    \caption{Cadena de MediaPipe Holistic. El vector reúne la pose y las dos manos.}
     \label{fig:pipeline_holistic}
 \end{figure}
 
-Cada punto aporta una terna $(x, y, z)$. Las componentes $x$ e $y$ se expresan como fracción del ancho y del alto de la imagen, en el intervalo $[0, 1]$. La componente $z$ es una profundidad relativa, en una escala comparable a la de $x$, y no una distancia en metros hasta la cámara. Con la pose y ambas manos, el descriptor instantáneo queda en
+Cada punto aporta una terna $(x, y, z)$. En la salida de MediaPipe, las componentes $x$ e $y$ son una fracción del ancho y del alto de la imagen, en el intervalo $[0, 1]$. La componente $z$ es una profundidad relativa, en una escala comparable a la de $x$, y no una distancia en metros hasta la cámara.
+
+% TODO: De aca para abajo lo sacaria, junto con el prier parrafo de esta subseccion. Me parece algo que no deberia estar en marco teorico. No se donde, entiendo que en experimentacion(? porq en implementacion estamos poniendo solo lo que quedo asi que lo que probamos iria en experimentacion?
+
 \begin{equation}
 (33 + 21 + 21) \times 3 = 225.
 \label{eq:vector_225}
@@ -94,8 +98,11 @@ La Tabla~\ref{tab:representaciones_fotograma} contrasta esta cifra con el fotogr
     \end{tabular}
 \end{table}
 
-El paso de $6\,220\,800$ escalares a 225 reduce la entrada en cuatro órdenes de magnitud. Una segmentación píxel a píxel debe reaprender la seña ante cada fondo y cada prenda. El esqueleto entrega a la red la geometría del gesto. El color de la ropa, el tono de la piel y el fondo dejan de ser variables de entrada, y la inferencia queda dentro del presupuesto de una CPU local en tiempo pseudo-real.
-El modelo completo de malla facial (\textit{Face Mesh}) se excluyó del vector de entrada por razones dimensionales y metodológicas. Por un lado, estimar sus 468 puntos tridimensionales añadiría $1\,404$ coordenadas adicionales ($468 \times 3$), un volumen desproporcionado que, frente a un corpus de 100 clips por clase, favorecería que el clasificador memorice la fisonomía del señante antes que la configuración cinemática de la seña. Por otro lado, aunque en la LSA las expresiones de la boca, cejas y movimientos de cabeza delimitan modalidades oracionales (interrogación, negación o matices gramaticales), incorporar tales rasgos obligaría a filmar variantes expresivas para cada una de las 100 señas lo que sobrecargaria la captura sin aportar a la discriminación del léxico base. En su lugar, el sistema conserva únicamente los puntos faciales provistos nativamente por BlazePose. Si bien estos puntos no reemplazan a \textit{Face Mesh} ni son tratados como rasgos gramaticales por la red, resultan fundamentales para aportar una referencia espacial relativa entre la cara y las manos lo que permite discriminar señas que comparten la misma configuración manual pero difieren en su punto de articulación facial \parencite{massoneparte2}.
+El paso de $6\,220\,800$ escalares a 225 reduce la entrada en cuatro órdenes de magnitud. Una segmentación píxel a píxel debe reaprender la seña ante cada fondo y cada prenda. El esqueleto entrega a la red la geometría del gesto. El color de la ropa, el tono de la piel y el fondo dejan de ser variables de entrada. La fila de la malla facial en la Tabla~\ref{tab:representaciones_fotograma} muestra el costo de sumar los 468 puntos del rostro denso: 1\,404 coordenadas más. El alcance de este prototipo deja esa malla fuera, según la Sección~\ref{sec:limites_operativos}.
+
+En su lugar, el sistema conserva únicamente los puntos faciales provistos nativamente por BlazePose. Si bien estos puntos no reemplazan a \textit{Face Mesh} ni son tratados como rasgos gramaticales por la red, resultan fundamentales para aportar una referencia espacial relativa entre la cara y las manos lo que permite discriminar señas que comparten la misma configuración manual pero difieren en su punto de articulación facial \parencite{massoneparte2}.
+
+% TODO: Esto habria que explicarlo aca?, no habria que explicar cualq cosa muy por arriba un transformer porq nuestra red parte de eso?? y esto explicarlo en... diseño o implementacion? osea lo dividiria en lo que quedo: implementacion y lo de LSTM a experimentacion?
 
 \subsection{Arquitectura neuronal temporal: TinySkeletonClassifier}
 
@@ -126,7 +133,7 @@ Por eso el modelo retenido es un transformador pequeño, llamado \textit{TinySke
         \midrule
         Longitud de la secuencia & Cientos o miles de elementos & 16 fotogramas \\
         Parámetros & $10^{7}$--$10^{8}$ & $\sim 4{,}1 \times 10^{5}$ \\
-        Dato de entrenamiento & Corpus masivo & $\sim 60$ clips por clase \\
+        Dato de entrenamiento & Corpus masivo & 100 clips por clase \\
         Ejecución prevista & GPU o servidor & CPU del cliente \\
         \bottomrule
     \end{tabular}
@@ -176,7 +183,7 @@ El cierre no es un promedio uniforme de los 16 estados. Una capa lineal produce 
 
 
 \subsection{Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
-Para la traducción semántica bidireccional se emplean SLM de las familias Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3}. Estos modelos se adaptan mediante la técnica Adaptación de Bajo Rango (\textit{LoRA}) \parencite{hu2022lora} , que congela los pesos base del modelo e inserta matrices de descomposición de bajo rango en las proyecciones de atención y en las capas de entrada y salida (\texttt{embed\_tokens} y \texttt{lm\_head}) \parencite{hu2022lora, huggingface2024transformers}. A su vez, permite ajustar los modelos sin incurrir en el elevado costo computacional de un reentrenamiento completo (\textit{full fine-tuning}).
+Para la traducción semántica bidireccional se emplean modelos de lenguajes pequeños (SLM). Estos modelos se adaptan mediante la técnica Adaptación de Bajo Rango (\textit{LoRA}) \parencite{hu2022lora} , que congela los pesos base del modelo e inserta matrices de bajo rango en siete proyecciones: las cuatro de la atención (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj}) y las tres de la red de avance (\texttt{gate\_proj}, \texttt{up\_proj}, \texttt{down\_proj}). A su vez, permite ajustar los modelos sin incurrir en el elevado costo computacional de un reentrenamiento completo (\textit{full fine-tuning}).
 
 \textit{LoRA} funciona de la siguiente manera: matemáticamente, la matriz de pesos preentrenados $\mathbf{W}_0 \in \mathbb{R}^{d \times k}$ se mantiene congelada durante todo el proceso, mientras que las actualizaciones de aprendizaje se desacoplan en dos matrices entrenables de menor rango $\mathbf{B} \in \mathbb{R}^{d \times r}$ y $\mathbf{A} \in \mathbb{R}^{r \times k}$ (donde el rango $r \ll \min(d, k)$). De este modo, los pesos resultantes se calculan mediante la combinación lineal:
 
@@ -187,78 +194,161 @@ Para la traducción semántica bidireccional se emplean SLM de las familias Qwen
 
 donde $\alpha$ es un factor constante de escala que pondera el impacto relativo de las matrices adaptadoras respecto al conocimiento base del modelo. Desde una perspectiva de arquitectura, esta descomposición reduce en más de un 99\,\% la cantidad de parámetros optimizables: en lugar de actualizar matrices densas de millones de valores, el modelo retiene su conocimiento preentrenado e instruye únicamente las matrices delgadas $\mathbf{A}$ y $\mathbf{B}$ \parencite{hu2022lora}.
 
-Además de inyectar adaptadores en las capas de atención convencionales (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj}), la arquitectura del traductor incorporó de forma deliberada adaptadores \textit{LoRA} sobre las capas límite de entrada y salida:
-\begin{itemize}
-    \item \textbf{\texttt{embed\_tokens}:} Adapta la proyección inicial para transformar la secuencia de 100 glosas en mayúsculas en representaciones vectoriales densas que capturan la sintaxis propia de la LSA \parencite{hu2022lora}.
-    \item \textbf{\texttt{lm\_head}:} Ajusta la capa lineal de desproyección final, lo que permite a la red asignar probabilidades precisas sobre los artículos, preposiciones y flexiones verbales requeridas en español rioplatense \parencite{hu2022lora}. % TODO: Flexiones??
-\end{itemize}
-% TOO: Dagregar un cuadrito o diagrama como la ves? 
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
+
+% Títulos superiores de los métodos
+\node [font=\fontsize{9.1pt}{11.8pt}\selectfont, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (7.75,15.625) {\textbf{AJUSTE FINO TRADICIONAL}};
+\node [font=\fontsize{9.1pt}{11.8pt}\selectfont, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (16.75,15.625) {\textbf{AJUSTE LoRA}};
+
+% -----------------------------------------------------------------
+% GRÁFICO IZQUIERDO: Ajuste Fino Tradicional
+% -----------------------------------------------------------------
+
+% Salida
+\draw (5.875,15) rectangle (9.25,14.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (7.5625,14.6875) {$W \cdot x + \Delta W \cdot x$ (salida)};
+
+% Bloques de multiplicaciones intermedias
+\draw (3.875,13.5) rectangle (6.75,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.3125,13.1875) {$(d \times d)\hspace{0.210cm} W \cdot x$};
+
+\draw (8.25,13.5) rectangle (11.125,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (9.6875,13.1875) {$(d \times d)\hspace{0.210cm} \Delta W \cdot x$};
+
+% Matriz W (Congelada)
+\draw (4.375,12.125) -- (3.625,10.375) -- (6.625,10.375) -- (6,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.125,11.25) {$W$\\Pesos\\preentrenados\\(congelados)};
+
+% Matriz ΔW (Entrenable de dimensión completa)
+\draw (9,12.125) -- (8.25,10.375) -- (11.25,10.375) -- (10.625,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (9.75,11.25) {$\Delta W$\\Pesos actualizados\\(entrenables)};
+
+% Entrada x
+\draw (6.25,9) rectangle (9.125,8.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (7.6875,8.6875) {$x$ (entrada)};
+
+% Flechas de flujo (Izquierda)
+\draw [-{Stealth[scale=1.5]}] (7.625,9) -- (7.625,9.75) -- (4.875,9.75) -- (4.875,10.375);
+\draw [-{Stealth[scale=1.5]}] (7.625,9) -- (7.625,9.75) -- (9.75,9.75) -- (9.75,10.375);
+\draw [-{Stealth[scale=1.5]}] (5.125,12.125) -- (5.125,12.875);
+\draw [-{Stealth[scale=1.5]}] (9.75,12.125) -- (9.75,12.875);
+\draw [-{Stealth[scale=1.5]}] (5.125,13.5) -- (5.125,14) -- (7.5,14) -- (7.5,14.375);
+\draw [-{Stealth[scale=1.5]}] (9.75,13.5) -- (9.75,14) -- (7.5,14) -- (7.5,14.375);
+
+% Línea divisoria central
+\draw [short] (12,16) -- (12,8.25);
+
+% -----------------------------------------------------------------
+% GRÁFICO DERECHO: Ajuste LoRA (Low-Rank Adaptation)
+% -----------------------------------------------------------------
+
+% Salida
+\draw (15.125,15) rectangle (18.375,14.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.75,14.6875) {$W \cdot x + BA \cdot x$ (salida)};
+
+% Bloques de multiplicaciones intermedias
+\draw (13,13.5) rectangle (15.875,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.4375,13.1875) {$(d \times d)\hspace{0.210cm} W \cdot x$};
+
+\draw (17.375,13.5) rectangle (20.25,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.8125,13.1875) {$(d \times d)\hspace{0.210cm} \Delta W \cdot x$};
+
+% Matriz W (Congelada)
+\draw (13.5,12.125) -- (12.75,10.375) -- (15.75,10.375) -- (15.125,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.25,11.25) {$W$\\Pesos\\preentrenados\\(congelados)};
+
+% Descomposición de bajo rango: Matrices B y A
+\draw (17.625,12) -- (20.125,12) -- (19.625,11.375) -- (18.125,11.375) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.875,11.75) {$B\hspace{0.210cm}(r \times d)$};
+
+\draw [dash pattern=on 6pt off 2pt] (17.5,12.125) rectangle (20.25,10.375);
+
+\draw (18.125,11.125) -- (19.625,11.125) -- (20.125,10.5) -- (17.625,10.5) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.875,10.875) {$A\hspace{0.210cm}(d \times r)$};
+
+% Entrada x
+\draw (15.375,9) rectangle (18.25,8.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.8125,8.6875) {$x$ (entrada)};
+
+% Flechas de flujo (Derecha)
+\draw [-{Stealth[scale=1.5]}] (16.75,9) -- (16.75,9.75) -- (14,9.75) -- (14,10.375);
+\draw [-{Stealth[scale=1.5]}] (16.75,9) -- (16.75,9.75) -- (18.875,9.75) -- (18.875,10.375);
+\draw [-{Stealth[scale=1.5]}] (14.25,12.125) -- (14.25,12.875);
+\draw [-{Stealth[scale=1.5]}] (18.875,12.125) -- (18.875,12.875);
+\draw [-{Stealth[scale=1.5]}] (14.375,13.5) -- (14.375,14) -- (16.75,14) -- (16.75,14.375);
+\draw [-{Stealth[scale=1.5]}] (19,13.5) -- (19,14) -- (16.75,14) -- (16.75,14.375);
+
+\end{circuitikz}%
+}
+\caption{Comparación de arquitecturas: en el ajuste fino tradicional los pesos preentrenados $W$ permanecen congelados y se actualiza de forma directa la matriz $\Delta W$ de dimensión $d \times d$. En el ajuste LoRA, la actualización de pesos $\Delta W$ se descompone en dos matrices entrenables de bajo rango $A$ ($d \times r$) y $B$ ($r \times d$), con $r \ll d$.}
+\label{fig:comparacion_finetuning_lora}
+\end{figure}
+
 \paragraph{Mecánica de cuantización Q4\_K\_M}
-A partir del binario consolidado en precisión de 16 bits, se aplica el algoritmo de cuantización por bloques \texttt{Q4\_K\_M} provisto por \texttt{llama.cpp} \parencite{gerganov2023llamacpp, frantar2022gptq}. A diferencia de los métodos uniformes tradicionales donde todos los parámetros se reducen a la misma precisión, la estrategia de k-cuants (\textit{k-quants}) adopta un esquema heterogéneo basado en la sensibilidad de cada estructura neuronal:
-\begin{itemize}
-    \item \textbf{Tensores de auto-atención y activación (\texttt{q\_proj}, \texttt{v\_proj}, \texttt{gate\_proj}):} Se comprimen a una representación de 4 bits por parámetro, organizados en super-bloques que almacenan escalas y mínimos locales, lo que permite reconstruir la distribución de pesos con mínima pérdida de dispersión.
-    \item \textbf{Capas críticas de alimentación hacia adelante y normalización:} Se retienen en una precisión mixta de 6 bits (\textit{medium variant}) para proteger las capas más propensas a generar desviaciones sintácticas o degradación en métricas de generación.
-\end{itemize}
+Después del ajuste, los adaptadores se fusionan con los pesos base. Ese resultado sigue en 16 bits, esto es, dos bytes por parámetro. El archivo que corre en el servidor, y el que entra en la evaluación, es otro. \texttt{llama.cpp} lo convierte al formato GGUF con el preset \texttt{Q4\_K\_M} \parencite{gerganov2023llamacpp}.
 
-\subsection{Animación y representación visual mediante Avatar}
-El canal inverso exige, para cada glosa, una forma visual que conserve la configuración de la mano, el punto de articulación y la trayectoria. En la síntesis de lenguas de señas conviven tres familias de representación.
+Un parámetro de 16 bits pasa a un entero de 4 bits, un número entre 0 y 15. Para volver de ese entero al peso hace falta el rango del grupo donde estaba. El conversor parte cada tensor en superbloques de 256 pesos y, dentro de cada superbloque, en bloques más cortos. Cada bloque guarda sus enteros junto con dos auxiliares: una escala $s$ y un mínimo $m$. La reconstrucción de un peso es
+\begin{equation}
+\hat{w} = m + s\, q,
+\label{eq:reconstruccion_q4k}
+\end{equation}
+donde $q$ es el entero de 4 bits de ese peso. Cada bloque trae su propia escala. El escalón de una zona de pesos grandes queda independiente del escalón de una zona de pesos chicos. Las escalas y los mínimos suman unos bits. En la tabla de \texttt{llama.cpp}, este preset promedia cerca de 5 bits por parámetro, frente a los 16 del archivo fusionado. Esa reducción deja al traductor en CPU.
 
-La primera es el avatar paramétrico. El personaje posee una malla, un esqueleto de huesos de longitud fija y, en el rostro, \textit{blendshapes}: pesos que mezclan expresiones sobre la misma geometría. La animación interpola rotaciones de esos huesos o esos pesos. Conducir el muñeco desde una persona filmada exige un \textit{retarget}, esto es, el paso de posiciones de \textit{landmarks} a rotaciones de otro cuerpo \parencite{cabello2010threejs}. MediaPipe Holistic entrega coordenadas en el plano de la imagen y una profundidad de la mano relativa a la muñeca, en una escala distinta de una distancia en metros. El esqueleto del avatar exige rotaciones sobre sus propias longitudes. Si esas longitudes se respetan, las yemas quedan fuera de los puntos medidos. Si una cinemática inversa alarga el miembro hasta el punto, la mano pierde su configuración. En el alfabeto manual esa diferencia cambia la letra. Los estimadores pensados para avatares de cámara, como Kalidokit, resumen cada dedo en un único ángulo de rizo y confunden configuraciones próximas. Los personajes tridimensionales de Hand Talk y de HETAH pertenecen a esta familia \parencite{handtalk2025,hetah2024avatar}.
-% TODO: que opinas, deberia explicar kalidokit?
-La segunda familia reproduce un diccionario medido. Cada glosa corresponde a un clip de \textit{landmarks} estimado sobre un video de referencia, archivado por ejemplo en formato \texttt{.pose} \parencite{moryossef2021poseformat}. El enunciado es la concatenación de esos clips: el sistema vuelve a dibujar una seña ya registrada. El Señario de la CAS y aplicaciones de consulta como LSApp operan sobre esta lógica léxica. La fonología de las lenguas de señas separa el núcleo significativo de la preparación y de la retracción \parencite{liddell1989phonological}. Entre el final de un clip y el inicio del siguiente, una interpolación breve de los puntos cubre el salto visual. Ese puente es un recurso gráfico. La coarticulación pertenece a la lengua: el final de una seña anticipa la siguiente, y un puente cartesiano deja ese fenómeno fuera de su alcance.
+La M del nombre marca una mezcla. La mayor parte de los tensores queda en 4 bits, bajo el tipo \texttt{Q4\_K}. El preset reserva 6 bits, tipo \texttt{Q6\_K}, para dos tensores que inciden fuerte en la palabra siguiente: la proyección de valores de la atención, \texttt{v\_proj}, y la proyección de bajada de la red de avance, \texttt{down\_proj}. Las normalizaciones, un vector corto por capa, permanecen en 32 bits. El resto del modelo acepta el escalón de 4 bits.
 
-La tercera familia genera el movimiento a partir del texto, sin un clip léxico, mediante un cuerpo paramétrico o un modelo de difusión. La seña resulta entonces una muestra del modelo.
+\subsection{Representación visual por diccionario de poses}
+En el canal inverso, el oyente produce una oración en español y el señante tiene que ver la seña. Cada glosa de esa oración necesita una forma visual que conserve tres datos de la lengua: la configuración de la mano, el lugar del cuerpo donde se articula y el recorrido que hace. Este trabajo toma ese movimiento de un diccionario medido. Una persona seña cada glosa frente a la cámara, una sola vez, y ese video queda como referencia. Del video sale un clip, que es la serie de posiciones del cuerpo a lo largo de la seña. El enunciado que ve el señante es la sucesión de esos clips: el sistema vuelve a dibujar una seña que ya fue registrada.
 
-La Tabla~\ref{tab:familias_avatar} contrapone las dos familias cuya fuente es un video ya señado. Un término ausente del léxico, como un nombre propio o un tecnicismo, se resuelve en las lenguas de señas por deletreo manual: la palabra se articula letra por letra con el alfabeto dactilológico. El deletreo es productivo; el diccionario, cerrado. La representación adoptada en este trabajo, y el controlador que la ejecuta, se describen en la Sección~\ref{sec:repr_inversa}.
+\paragraph{Qué guarda un archivo \texttt{.pose}}
+El clip se guarda en un archivo binario de extensión \texttt{.pose} \parencite{moryossef2021poseformat}. Esa extensión, y la manera en que los números se ordenan adentro, salen de \textit{pose-format}, una biblioteca de Python para archivar poses de lenguas de señas. MediaPipe Holistic solo cumple el rol de mirar el video y marcar los puntos (estimar). \textit{pose-format} recibe esos puntos, fotograma por fotograma, y los guarda en un \texttt{.pose}.
+Al abrir el archivo, \textit{pose-format} lo interpreta y devuelve una estructura de dos partes:
 
-\begin{table}[H]
-    \centering
-    \small
-    \caption{Familias de representación visual de una glosa.}
-    \label{tab:familias_avatar}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}
-                                 >{\raggedright\arraybackslash}X
-                                 >{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Criterio} & \textbf{Avatar paramétrico} & \textbf{Diccionario de poses} \\
-        \midrule
-        Unidad de animación & Rotación de hueso o peso de \textit{blendshape}. & Trayectoria de \textit{landmarks}. \\
-        \addlinespace[2pt]
-        Cuerpo & Esqueleto de longitudes fijas. & Proporciones de la persona filmada. \\
-        \addlinespace[2pt]
-        Glosa fuera del léxico & Animación nueva o \textit{retarget}. & Deletreo sobre clips del alfabeto. \\
-        \addlinespace[2pt]
-        Límite propio & La configuración manual puede quedar fuera del esqueleto. & Un punto perdido arrastra la interpolación. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+La primera parte es la cabecera. Figuran la cantidad de fotogramas por segundo del video de origen, y el ancho y el alto de esa imagen. Esos datos dicen a qué cuadro pertenecen las coordenadas. Sin el tamaño de la imagen, un número de posición carece de referencia.
 
-\subsection{Arquitectura híbrida de partición Cliente-Nube}
-El concepto de \textbf{tiempo pseudo-real} designa a aquellos sistemas de procesamiento interactivo donde la respuesta computacional no ocurre de forma estrictamente instantánea ni en el orden de los microsegundos, pero cuyos retardos temporales permanecen dentro de un umbral operativo tolerable para la interacción humana. A diferencia de los sistemas de tiempo real estricto (\textit{hard real-time}), el tiempo pseudo-real admite una latencia acotada resultante de la segmentación temporal por pausas de inactividad, el empaquetado de datos y el tiempo de inferencia de los modelos semánticos en la nube, pero permite sostener la fluidez del diálogo bilingüe en la videollamada.
+La segunda parte es el cuerpo del archivo: un arreglo con un renglón por fotograma. Cada renglón agrupa los puntos en componentes de nombre fijo. Un componente es un grupo con una función estable. En este diccionario los componentes son el cuerpo, la cara, la mano izquierda y la mano derecha. Dentro del componente, cada punto trae su posición y una confianza. La confianza es un número entre 0 y 1; si el valor es cercano a 1, indica que el estimador vio ese punto con seguridad. Un valor cercano a 0 indica que casi no lo vio.
+
+La lectura del \texttt{.pose} mira el archivo y se detiene ahí. Interpreta la cabecera, recupera la lista de componentes y entrega el arreglo de fotogramas. A partir de ese arreglo el clip se recorre de a un fotograma, se recorta en el tiempo o se une con el clip de otra glosa.
+
+\paragraph{De dónde salen las coordenadas.}
+El arreglo se completa una sola vez, antes de la videollamada. El video de la glosa pasa por MediaPipe Holistic, el estimador de la sección anterior. Holistic observa cada fotograma y escribe los puntos de la pose, los de la cara y los 21 puntos de cada mano. El resultado de esa pasada queda guardado en el \texttt{.pose}. Durante la llamada el sistema lee el archivo.
+Las coordenadas $x$ e $y$ quedan en píxeles de la imagen filmada. El píxel es la unidad de esa imagen: $x$ cuenta la distancia desde el borde izquierdo, e $y$ la distancia desde el borde superior. El archivo conserva así el tamaño y las proporciones de la persona que se filmó. La componente $z$ se lee de otra manera. En la mano, Holistic la mide desde la muñeca, y el número que entrega es pequeño frente al desplazamiento de la mano sobre el plano de la imagen. Esa $z$ le sirve al estimador para ordenar las articulaciones de la mano entre sí. No dice cuántos metros separan la mano de la cámara. La reproducción dibuja, entonces, cada punto en el lugar que ocupa en la imagen.
+El archivo que sale de Holistic conserva la toma completa. En un video de diccionario la persona levanta la mano, realiza el gesto y después vuelve a una postura quieta. La fonología de las lenguas de señas pone nombre a esos tres tramos \parencite{liddell1989phonological}. La preparación es el levantamiento hasta llegar a la seña. El núcleo es el tramo del medio: ahí la forma de la mano, el lugar y el movimiento distinguen esa seña de las demás. La retracción es el regreso a la quietud. El \texttt{.pose} guarda los tres tramos. El inicio y el fin del núcleo se anotan en un índice aparte, con un tiempo de entrada y un tiempo de salida. La reproducción consulta ese índice y el archivo permanece entero. Un cambio del tramo visible se resuelve al corregir el índice, y el video no vuelve a estimarse. Qué puntos del arreglo se dibujan, y cuáles quedan apagados, se fija en la Sección~\ref{sec:repr_inversa}.
+
+\paragraph{Cómo se arma el enunciado.}
+Una glosa sola se muestra como su núcleo. Una oración se muestra como varios núcleos, uno detrás de otro, en el orden de las glosas. Entre el último fotograma de un núcleo y el primero del siguiente, las manos suelen quedar lejos del lugar donde la seña siguiente las necesita. Para tapar ese corte se inserta un puente: una serie breve de fotogramas nuevos, ausentes de los dos archivos. Cada punto se traslada, en el plano de la imagen, desde donde quedó hasta donde tiene que estar.
+El puente pertenece al dibujo. En la lengua hay otro fenómeno, la coarticulación: el final de una seña ya anticipa la configuración de la siguiente, y el señante modifica el gesto por ese anticipo. El puente toma dos poses ya recortadas y cubre el espacio que hay entre ellas.
+El diccionario es cerrado. Tiene una entrada por cada seña filmada y carece de un procedimiento para crear una seña que nadie registró. Cuando la oración trae un nombre propio o un tecnicismo sin clip, entra el deletreo manual, que es el recurso de la propia lengua de señas para una palabra fuera del léxico. La palabra se muestra letra por letra, y cada letra es un clip del alfabeto dactilológico. Con ese alfabeto, chico y fijo, se cubren palabras que el diccionario no contiene: por eso el deletreo se llama productivo. La preparación de cada clip antes de unirlo con el siguiente, el dibujo sobre la llamada y la elección del fotograma que corresponde a cada instante se describen en la Sección~\ref{sec:repr_inversa}.
+
 
 \subsection{Captura de medios en la Web y aislamiento en extensiones (Manifest V3)}
 La transmisión y el procesamiento de video en tiempo pseudo-real dentro del navegador web se fundamentan en las especificaciones del estándar W3C Media Capture \parencite{w3c2024mediacapture}. La interfaz nativa \texttt{navigator.mediaDevices.getUserMedia()} permite solicitar al sistema operativo el acceso al flujo de la cámara física. No obstante, los motores de los navegadores modernos gestionan el hardware de captura bajo un esquema de acceso exclusivo: cuando una aplicación web (como la plataforma Google Meet) toma el control del dispositivo de video, el hardware queda bloqueado y no admite el consumo concurrente por parte de otros procesos sin generar conflictos de permisos o interrupciones en la transmisión.
 
-Para resolver esta restricción sin alterar el flujo nativo de la videoconferencia, el estándar W3C define el método \texttt{canvas.captureStream()}, el cual permite sintetizar un objeto \texttt{MediaStream} dinámico a partir del renderizado fotograma a fotograma sobre un lienzo virtual (\texttt{<canvas>}). Este flujo sintético sustituye de manera transparente la entrada de cámara nativa y permite la inyección de subtítulos y el procesamiento cinemático en paralelo.
+Para resolver esta restricción sin alterar el flujo nativo de la videoconferencia, el estándar W3C define el método \texttt{canvas.captureStream()} en la especificación \textit{Media Capture from DOM Elements} \parencite{w3c2023mediacapturefromelement}. Este método permite sintetizar un objeto \texttt{MediaStream} dinámico a partir del renderizado fotograma a fotograma sobre un lienzo virtual (\texttt{<canvas>}). Este flujo sintético sustituye de manera transparente la entrada de cámara nativa y permite la inyección de subtítulos y el procesamiento cinemático en paralelo.
 
-Por otro lado, la arquitectura de extensiones en navegadores Chromium bajo la especificación Manifest V3 \parencite{chrome2024manifestv3} impone restricciones de seguridad estrictas mediante su Política de Seguridad de Contenido, las cuales prohíben la ejecución de código dinámico y restringen el acceso al DOM en scripts de fondo (\textit{service workers}). Para ejecutar modelos de visión computacional basados en WebAssembly e hilos auxiliares (\textit{workers}) sin congelar la pestaña principal de la videollamada, la plataforma requiere un esquema de desacoplamiento en dos entornos aislados:
-% TODO: agregar cuadro/diagrama aca?
+Por otro lado, la arquitectura de extensiones en navegadores Chromium bajo la especificación Manifest V3 \parencite{chrome2024manifestv3} impone restricciones de seguridad estrictas mediante su Política de Seguridad de Contenido (CSP). Dichas normas prohíben la ejecución de código dinámico y restringen el acceso al DOM en scripts de fondo (\textit{service workers}). Para ejecutar modelos de visión computacional sin congelar la pestaña principal de la videollamada ni bloquear el hilo de renderizado, la plataforma requiere un esquema de desacoplamiento en dos entornos aislados:
+
 \begin{itemize}
-    \item \textbf{Documento en segundo plano (\textit{offscreen}):} Entorno sin interfaz gráfica habilitado por la API \texttt{chrome.offscreen} para gestionar la recepción de fotogramas comprimidos y coordinar la mensajería asíncrona entre la página y el backend.
-    \item \textbf{Entorno de ejecución aislado (\textit{sandbox}):} Marco con restricciones de red pero con permisos para instanciar entornos de ejecución de WebAssembly y ejecutar hilos paralelos de inferencia en segundo plano.
+    \item \textbf{Documento en segundo plano (\textit{offscreen}):} Entorno sin interfaz gráfica habilitado por la API \texttt{chrome.offscreen} \parencite{chrome2024offscreen}. Este documento proporciona un contexto con DOM completo para coordinar la recepción de fotogramas, gestionar la mensajería asíncrona y operar lienzos desacoplados del hilo de la interfaz de usuario.
+    \item \textbf{Entorno de ejecución aislado (\textit{sandbox}):} Página restringida habilitada por el manifiesto \parencite{chrome2024sandbox} con acceso nulo a la red y al DOM. Su Política de Seguridad de Contenido flexible otorga permisos para el inicio de hilos auxiliares (\textit{Web Workers}) dedicados exclusivamente al cómputo de la inferencia.
+
+    \item \textbf{Canal de comunicación e intercambiabilidad:} La transferencia de fotogramas entre el contexto de la página web, el documento \textit{offscreen} y el marco \textit{sandbox} utiliza la API de paso de mensajes del navegador (\texttt{chrome.runtime.sendMessage}) e interfaces de baja latencia como \texttt{OffscreenCanvas} y \texttt{MessageChannel}. Este canal evita el copiado masivo de memoria mediante la transferencia directa de buffers (\textit{ArrayBuffers} transferibles), lo cual preserva la tasa de cuadros por segundo (\textit{FPS}) del flujo de video.
 \end{itemize}
 
 \section{Estado del arte}
 
 \subsection{Desarrollos en Argentina y la región}
-En el ámbito nacional, las iniciativas tecnológicas orientadas a la comunidad sorda han estado enfocadas principalmente en la enseñanza y la consulta de vocabulario. El Diccionario de Señas del INJU opera como un índice léxico en línea sin capacidades de reconocimiento dinámico \parencite{inju2024diccionario}. La Confederación Argentina de Sordos (CAS) promueve herramientas pedagógicas bilingües de carácter estático \parencite{cas2024senario}. En cuanto a la animación digital, la aplicación móvil LSApp \parencite{lsapp2018} introdujo un personaje tridimensional capaz de reproducir entradas del diccionario y deletreo manual, por lo que funciona como material de consulta unilateral sin integración a videoconferencias.
+En el ámbito nacional, las iniciativas tecnológicas orientadas a la comunidad sorda han estado enfocadas principalmente en la enseñanza y la consulta de vocabulario. El Diccionario de Señas del INJU opera como un índice léxico en línea sin capacidades de reconocimiento dinámico \parencite{inju2024diccionario}. La Confederación Argentina de Sordos (CAS) promueve herramientas pedagógicas bilingües de carácter estático \parencite{cas2024senario}. En cuanto a la animación digital, la aplicación móvil LSApp \parencite{lsapp2018} introdujo un personaje tridimensional capaz de reproducir entradas del diccionario y deletreo manual, por lo que funciona como material de consulta unilateral.
 
-En el plano asistencial comercial, la plataforma Blessit \parencite{blessit2024interpretes} y servicios públicos como la Línea 144 \parencite{argentina2024linea144} ofrecen tele-interpretación mediante videollamada con operadores humanos. Aunque efectivos, estos esquemas están supeditados a la disponibilidad de personal, generan demoras de conexión y comprometen la intimidad de los interlocutores en intercambios de índole privada. 
+En el plano asistencial comercial, la plataforma Blessit \parencite{blessit2024interpretes} y servicios públicos como la Línea 144 \parencite{argentina2024linea144} ofrecen tele-interpretación mediante videollamada con operadores humanos. Aunque efectivos, estos esquemas están ligados a la disponibilidad de personal, generan demoras de conexión y comprometen la intimidad de los interlocutores en intercambios de índole privada. 
 
-Académicamente, el corpus LSA64 \parencite{ronchetti2016lsa64} constituye el principal antecedente en reconocimiento automático local; no obstante, su captura controlada mediante guantes de colores restringe su aplicación directa sobre cámaras web comerciales sin aditamentos físicos, limitación observada en desarrollos posteriores con redes recurrentes \parencite{mindlin2021reconocimiento}.
+Académicamente, el corpus LSA64 \parencite{ronchetti2016lsa64} constituye el principal antecedente en reconocimiento automático local; no obstante, su captura controlada mediante guantes de colores restringe su aplicación directa sobre cámaras web comerciales, limitación observada en desarrollos posteriores con redes recurrentes \parencite{mindlin2021reconocimiento}.
 
 \subsection{Sistemas internacionales de reconocimiento y síntesis}
-A nivel internacional, el referente en reconocimiento unidireccional es SignAll Technologies \parencite{signall2026linkedin}, enfocado en la traducción de ASL hacia inglés escrito mediante visión computacional y modelos lingüísticos. Sin embargo, su enfoque prioriza que el oyente comprenda a la persona sorda y omite la devolución gestual accesible. Por su parte, corpus a gran escala como WLASL \parencite{li2020wlasl} han impulsado el reconocimiento léxico en video de ASL, aunque sin foco en la traducción oracional bidireccional ni en la LSA.
+A nivel internacional, el referente en reconocimiento unidireccional es SignAll Technologies \parencite{signall2026linkedin}, enfocado en la traducción de ASL hacia inglés escrito mediante visión computacional y modelos lingüísticos. Sin embargo, su enfoque prioriza que el oyente comprenda a la persona sorda y omite la devolución gestual accesible. Por su parte, corpus a gran escala como WLASL \parencite{li2020wlasl} han impulsado el reconocimiento léxico en video de ASL, aunque sin foco en la traducción a oraciones ni en la LSA.
 En la dirección inversa (texto a señas), la empresa Hand Talk \parencite{handtalk2025} lidera la región con avatares 3D (Hugo y Maya) que traducen texto escrito a Libras y ASL. De igual forma, el avatar Iris/Juan desarrollado por la fundación HETAH \parencite{hetah2024avatar} en Colombia realiza síntesis gestual a partir de oraciones en español. No obstante, ninguna de estas plataformas comerciales unifica reconocimiento continuo de LSA, traducción semántica contextual y síntesis gestual interactiva dentro del flujo nativo de una videollamada bajo un esquema híbrido y escalable.
 
 \section{Metodología de desarrollo}
@@ -267,9 +357,9 @@ El proyecto se rigió bajo un modelo de ciclo de vida iterativo e incremental \p
     \item \textbf{Curación de datos y formalización léxica:} delimitación de 100 señas de LSA junto a Miriam Rolls; diseño del set de grabación; captura de clips en video 1080p (16:9); y generación del dataset de coordenadas vectoriales normalizadas.
     \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} experimentación de arquitecturas temporales (pruebas desde 8 a 32 frames); optimización de hiperparámetros mediante marcos automatizados \parencite{akiba2019optuna}; desarrollo de instrumentación de diagnóstico de confusiones mediante análisis AUC de Mann-Whitney.
     \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} ingeniería de prompts; fine-tuning con LoRA sobre modelos Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3} (traducción directa e inversa \textit{Topic-Comment} \parencite{massoneparte2}); cuantización a binarios GGUF \parencite{gerganov2023llamacpp}; evaluación de fidelidad sintáctica (BLEU, ROUGE-L, METEOR); diseño conceptual de la arquitectura elástica en la nube; y prueba del servicio semántico con Cloud Run.
-    \item \textbf{Integración y renderizado gestual:} acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados \parencite{gamma1994design}; comunicación con el servidor semántico desacoplado; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{w3c2024mediacapture, chrome2024manifestv3}.
+    \item \textbf{Integración y renderizado gestual:} acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados; comunicación con el servidor semántico desacoplado; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{chrome2024manifestv3}.
     \item \textbf{Avatar e integración visual inversa:} desarrollo del controlador del avatar para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico ante términos ausentes en el léxico; integracion en la extension.
-    \item \textbf{Fase de pruebas y evaluación de campo:} pruebas integrales de latencia, usabilidad y robustez frente a escenarios reales de videoconferencia.
+    \item \textbf{Fase de pruebas:} medición de latencia y de robustez del prototipo en videollamada. Esta fase no incluye una evaluación formal de usabilidad con usuarios finales.
 \end{enumerate}
 
 \subsection{Declaración sobre el uso de herramientas de inteligencia artificial}
@@ -283,15 +373,15 @@ Durante las fases de diseño, implementación y redacción se utilizaron exclusi
 \paragraph{Alcance y propósito de su utilización}
 La intervención de dichas herramientas se limitó a:
 \begin{itemize}
-    \item \textbf{Aprendizaje guiado y asimilación conceptual:} Utilización de Gemini como interlocutor de estudio y consulta técnica para comprender en profundidad conceptos que excedían la currícula tradicional de grado, tales como las complejidades de la cuantización GGUF Q4\_K\_M con \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, los fundamentos de adaptación de bajo rango (LoRA) en capas densas de modelos autorregresivos \parencite{hu2022lora}, y los esquemas de comunicación asíncrona entre contextos aislados (\textit{offscreen} y \textit{sandbox}) exigidos por Chrome Manifest V3 \parencite{chrome2024manifestv3}.
-    \item \textbf{Asistencia en el desarrollo de software:} Sugerencias de refactorización de código, resolución de incompatibilidades de sintaxis en el entorno Chrome Extensions Manifest V3 (aislamiento de páginas \textit{offscreen} y \textit{sandbox}) \parencite{chrome2024manifestv3} y resolución de dependencias concurrentes en Python.
-    \item \textbf{Consultas sobre APIs y formatos:} Apoyo en la parametrización de llamadas a MediaPipe Holistic \parencite{google2020mediapipe} y en la sintaxis de cuantización a formato GGUF mediante herramientas de línea de comandos \parencite{gerganov2023llamacpp}.
+    \item \textbf{Aprendizaje guiado y asimilación conceptual:} Utilización de Gemini como interlocutor de estudio y consulta técnica para comprender en profundidad conceptos que excedían la currícula tradicional de grado, tales como las complejidades de la cuantización GGUF Q4\_K\_M con \texttt{llama.cpp}, los fundamentos de LoRA, y los esquemas de comunicación asíncrona entre contextos aislados (\textit{offscreen} y \textit{sandbox}) exigidos por Chrome Manifest V3.
+    \item \textbf{Asistencia en el desarrollo de software:} Sugerencias de refactorización de código, resolución de incompatibilidades de sintaxis en el entorno Chrome Extensions Manifest V3 y resolución de dependencias concurrentes en Python.
+    \item \textbf{Consultas sobre APIs y formatos:} Apoyo en la parametrización de llamadas a MediaPipe Holistic y en la sintaxis de cuantización a formato GGUF mediante herramientas de línea de comandos.
     \item \textbf{Avatar:} Consulta sobre la diferencia entre un esqueleto medido y el \textit{retarget} hacia huesos VRM, el archivo \texttt{.pose} \parencite{moryossef2021poseformat} y el empalme de clips.
     \item \textbf{Edición y formato del documento:} Corrección resolución de errores en la redacción del informe.
 \end{itemize}
 
 \paragraph{Límites y responsabilidad de autoría.}
-Se deja constancia de que ninguna de las herramientas generativas reemplazó la labor intelectual, analítica ni experimental de los autores. La concepción de la arquitectura híbrida, la recolección y curación del corpus de video de 100 señas validado por Miriam Rolls, el diseño e iteración de las redes neuronales (TinySkeletonClassifier), la ingeniería de prompts y fine-tuning de los modelos de lenguaje, el diagnóstico de captura y el análisis de resultados fueron ejecutados y validados íntegramente por los estudiantes. Los autores asumen la total responsabilidad técnica y académica por el contenido del presente informe y del código fuente asociado.
+Se deja constancia de que ninguna de las herramientas generativas reemplazó la labor intelectual, analítica ni experimental de los autores. La concepción de la arquitectura híbrida, la recolección y curación del corpus de video de 100 señas validado por Miriam Rolls, el diseño e iteración de las redes neuronales, la ingeniería de prompts y fine-tuning de los modelos de lenguaje, el diagnóstico de captura y el análisis de resultados fueron ejecutados y validados por los estudiantes. Los autores asumen la total responsabilidad técnica y académica por el contenido del presente informe y del código fuente asociado.
 
 \section{Herramientas y tecnologías empleadas}
 
@@ -309,21 +399,25 @@ Se deja constancia de que ninguna de las herramientas generativas reemplazó la 
 \midrule
 Entorno y Lenguajes & Python 3.11, JavaScript & Lógica de backend, motor local, servidor semántico y extensión web. \\
 \addlinespace[3pt]
-Visión Computacional & MediaPipe Holistic \parencite{google2020mediapipe}, OpenCV & Extracción de coordenadas articulares corporales y manipulación de video. \\
+Visión Computacional & MediaPipe Holistic, OpenCV & Extracción de coordenadas articulares corporales y manipulación de video. \\
 \addlinespace[3pt]
-Aprendizaje Profundo & PyTorch 2.6 & Inferencia local del clasificador gestual \mbox{TinySkeletonClassifier}. \\
+Aprendizaje Profundo & PyTorch 2.6 & Inferencia local del clasificador gestual. \\
 \addlinespace[3pt]
-Modelos de Lenguaje & Transformers \parencite{huggingface2024transformers}, PEFT, Unsloth & Fine-tuning eficiente con adaptadores LoRA \parencite{hu2022lora} para traducción directa e inversa. \\
+Modelos de Lenguaje & Transformers, PEFT, Unsloth & Fine-tuning eficiente con adaptadores LoRA para traducción directa e inversa. \\
 \addlinespace[3pt]
-Inferencia de Lenguaje & \texttt{llama.cpp} \parencite{gerganov2023llamacpp}, GGUF & Servidor de inferencia semántica optimizado en CPU/GPU remota. \\
+Inferencia de Lenguaje & \texttt{llama.cpp}, GGUF & Inferencia del traductor en CPU. \\
 \addlinespace[3pt]
-Comunicación y Backend & FastAPI \parencite{tiangolo2018fastapi}, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
+Comunicación y Backend & FastAPI, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
 \addlinespace[3pt]
-Servicio en la nube & Google Cloud Run & Instancia única del servicio semántico usada en las pruebas. El clúster elástico de producción no forma parte de esa instancia. \\
+Servicio en la nube & Google Cloud Run & Instancia del servicio semántico usada en las pruebas. El clúster elástico de producción no forma parte de esa instancia. \\
 \addlinespace[3pt]
-Integración Web & Chrome Extensions (MV3) \parencite{chrome2024manifestv3} & Intercepción de media mediante Canvas \texttt{captureStream()} en Google Meet \parencite{w3c2024mediacapture}. \\
+Integración Web & Chrome Extensions (MV3) & Intercepción de media mediante Canvas \texttt{captureStream()} en Google Meet. \\
 \addlinespace[3pt]
-Síntesis de Salida & pyttsx3, Avatar & Emisión de voz local hacia el oyente y animación visual gestual hacia el señante. \\
+Transcripción & Vosk & Pasa la voz del oyente a texto en la misma computadora. El audio no sale de ese equipo. \\
+\addlinespace[3pt]
+Síntesis de Salida & Síntesis del navegador y avatar & Lee la oración en la computadora de quien seña y dibuja el esqueleto de cada glosa para el señante. \\
+\addlinespace[3pt]
+Avatar & PoseFormat & Conversión de landmarks a .pose. \\
 \bottomrule
 \end{tabularx}
 \end{table}

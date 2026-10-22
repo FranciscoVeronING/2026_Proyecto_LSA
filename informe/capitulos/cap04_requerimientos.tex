@@ -4,29 +4,29 @@
 
 \section{Requerimientos funcionales}
 \begin{itemize}
-    \item \textbf{RF-01 --- Captura y extracción local de landmarks:} Capturar el flujo de video del usuario señante en el cliente y extraer las coordenadas articulares tridimensionales normalizadas de torso y manos en tiempo real mediante visión computacional \parencite{google2020mediapipe}.
+    \item \textbf{RF-01 --- Captura y extracción local de landmarks:} Capturar el video del usuario señante en el cliente y extraer los 33 puntos de pose y los 21 de cada mano, en tres coordenadas. Cada punto resta el centro de los hombros y queda dividido por la distancia entre hombros.
     \item \textbf{RF-02 --- Clasificación gestual temporal local:} Clasificar localmente secuencias fijas de coordenadas en una de las 100 clases de LSA soportadas y utilizar  arquitecturas de aprendizaje profundo para reportar la glosa asignada y su confianza.
-    \item \textbf{RF-03 --- Traducción semántica directa remota (LSA $\rightarrow$ Español):} Transmitir las glosas detectadas hacia el servicio semántico en la nube y recibir una oración gramaticalmente correcta en español rioplatense generada por un modelo de lenguaje adaptado
-    \item \textbf{RF-04 --- Emisión hacia el oyente:} Presentar la traducción en texto superpuesto en pantalla y/o sintetizarla como audio oral para el interlocutor oyente de forma concurrente.
+    \item \textbf{RF-03 --- Traducción semántica directa remota (LSA $\rightarrow$ Español):} Enviar a la nube el texto de glosas de un enunciado y recibir una oración en español rioplatense. Una glosa léxica sola, un deletreo de letras o una seguidilla de dígitos se resuelven en ILSA y no salen a la nube.
+    \item \textbf{RF-04 --- Emisión hacia el oyente:} Mostrar la traducción como subtítulo dentro del video, leerla en voz alta en la misma computadora, o hacer ambas cosas. El audio no reemplaza la pista de la llamada.
     \item \textbf{RF-05 --- Captura del turno del interlocutor oyente:} Capturar la voz o texto del oyente en la videollamada durante su turno de intervención con el fin de ser procesada para su uso en el canal de retorno bidireccional.
     \item \textbf{RF-06 --- Traducción semántica inversa remota (Español $\rightarrow$ LSA):} Transmitir el texto en español emitido por el oyente hacia el servicio semántico en la nube y obtener una secuencia ordenada de glosas bajo la estructura gramatical \textit{Topic-Comment} canónica de la LSA.
-    \item \textbf{RF-07 --- Representación visual mediante Avatar LSA:} Recibir las glosas generadas por el canal inverso y renderizar localmente en pantalla la animación de la seña correspondiente, y ejecutar deletreo manual dactilológico para términos fuera del léxico.
+    \item \textbf{RF-07 --- Representación visual mediante un avatar:} Recibir las glosas generadas por el canal inverso y renderizar localmente en pantalla la animación de la seña correspondiente, y ejecutar deletreo manual dactilológico para términos fuera del léxico.
     \item \textbf{RF-08 --- Integración con Google Meet:} Inyectar el video procesado y los canales de comunicación dentro de la pestaña de videollamada.
 \end{itemize}
 
 \section{Requerimientos no funcionales}
 \begin{itemize}
-    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La delimitación de cierre de enunciado debe operar tras un umbral de 4 segundos sin actividad gestual. La inferencia semántica remota y retorno al cliente no debe superar los 1{,}5 segundos bajo conexiones de banda ancha estándar, apoyándose en la optimización de pesos cuantizados.
+    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La pausa que cierra el enunciado vale 4 segundos por defecto. La inferencia semántica remota y retorno al cliente no debe superar los 2 segundos bajo conexiones de banda ancha estándar.
     \item \textbf{RNF-02 --- Privacidad de imagen y video:} Ningún flujo de video crudo o imagen de la cámara web debe ser transmitido hacia servidores externos o servicios en la nube; el intercambio de red con el backend se restringe exclusivamente a cargas textuales livianas (glosas o texto transcripto).
-    \item \textbf{RNF-03 --- Robustez en reconocimiento en vivo:} El clasificador gestual local debe mantener un rendimiento superior al 75\,\%  en condiciones de iluminación doméstica estándar.
-    \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad del servicio semántico:} La arquitectura del backend semántico debe estar concebida para operar de forma desacoplada y elástica, lo que permita su despliegue en infraestructuras con auto-escalado horizontal a través de interfaces REST tipadas.
+    \item \textbf{RNF-03 --- Robustez en reconocimiento en vivo:} El clasificador debe superar el 75\,\% de acierto en luz doméstica. Ese valor es una meta de reconocimiento. No es el umbral de confianza: ILSA descarta la glosa cuando la confianza queda bajo 0,75.
+    \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad de los servicios en la nube:} La arquitectura del backend semántico y del servidor de archivos .pose deben estar concebidas para operar de forma desacoplada y elástica, lo que permita sus despliegues en infraestructuras con auto-escalado horizontal a través de interfaces REST tipadas.
     \item \textbf{RNF-05 --- Usabilidad y no invasividad:} La interfaz sobre la videollamada debe ofrecer indicadores visuales de estado que no ocluyan la visibilidad del interlocutor para mitigar la brecha comunicacional receptiva y expresiva.
 \end{itemize}
 
 \section{Restricciones}
 \begin{itemize}
     \item \textbf{RC-01 --- Alcance léxico:} El vocabulario reconocido por el clasificador está acotado a 100 señas validadas por profesionales de LSA, enmarcadas en las pautas pedagógicas y lingüísticas vigentes.
-    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Las pruebas no despliegan la arquitectura elástica del servicio semántico. La validación usa Cloud Run, de Google Cloud.
+    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Las pruebas no despliegan la arquitectura elástica del servicio semántico o del servicio de archivos .pose. La validación usa Cloud Run, de Google Cloud.
     \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y la extension estan diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes.
     \item \textbf{RC-04 --- Dependencia de visión:} El clasificador depende del correcto funcionamiento de MediaPipe Holistic para la extraccion de landmarks.
     \item \textbf{RC-05 --- Recursos del cliente objetivo:} El componente local del prototipo debe ser capaz de operar en laptops estándar (procesadores de 4 núcleos y 8 GB de memoria RAM, sin placa gráfica dedicada).
@@ -34,6 +34,8 @@
 
 \subsection{Especificación del entorno de ejecución cliente}
 A fin de asegurar la accesibilidad y democratización del sistema, se definió un hardware objetivo representativo del equipamiento informático estándar presente en ámbitos educativos y laborales:
+
+% HECHO CON GEMINI, mas que abierto a modificaciones
 
 \begin{table}[H]
 \centering
@@ -57,20 +59,15 @@ A fin de asegurar la accesibilidad y democratización del sistema, se definió u
 \end{table}
 
 \paragraph{Criterio técnico de selección del procesador base}
-La especificación de la CPU base no fue adoptada de manera arbitraria, sino deducida a partir de la descomposición de hilos requerida en ejecución simultánea:
-\begin{enumerate}
-    \item \textbf{Carga WebRTC en navegador:} Google Meet demanda aproximadamente entre $1$ y $1{,}5$ núcleos para la decodificación y codificación de video en tiempo real.
-    \item \textbf{Extracción (MediaPipe Holistic):} La ejecución sobre WebAssembly en el contexto aislado del navegador insume la capacidad de $1$ núcleo dedicado para mantener una cadencia de $24$ a $30$ FPS.
-    \item \textbf{Inferencia gestual e interprocesos (Motor ILSA):} El servidor local FastAPI y el modelo neuronal en CPU (\textit{TinySkeletonClassifier}) requieren disponibilidad de cómputo vectorial (instrucciones AVX2/FMA) para garantizar latencias de clasificación inferiores a los $2$\,ms sin contienda de recursos.
-\end{enumerate}
+La CPU base debe sostener tres cargas a la vez: la videollamada en el navegador, la extracción de puntos en WebAssembly y la clasificación de ILSA en CPU. Por eso el mínimo queda en cuatro núcleos, con instrucciones AVX2 para el modelo. Este informe no asigna una cantidad de núcleos a cada carga ni fija un tiempo de clasificación en milisegundos.
 
 \section{Casos de uso}
 
 \subsection{Casos de uso esenciales en formato breve}
 \begin{itemize}
-    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara web durante la videollamada; el sistema captura y clasifica localmente las señas, solicita la traducción remota y proyecta el mensaje como texto o voz para el oyente.
-    \item \textbf{CU-02 --- Configurar mano dominante:} El usuario señante selecciona si su mano hábil es la derecha o la izquierda.
-    \item \textbf{CU-03 --- Configurar canal de salida:} El usuario señante selecciona si prefiere que la interpretación sea en formato de subtítulos, voz sintetizada en off o ambas alternativas simultáneamente.
+    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Según el enunciado, arma el texto en ILSA o consulta el servicio semántico. La salida es subtítulo en el video, audio en esa computadora, o ambas.
+    \item \textbf{CU-02 --- Mano hábil:} El motor sabe espejar el vector si la persona es zurda. En la videollamada la sesión arranca con mano derecha y la extensión no ofrece el cambio. La herramienta de cámara del entrenamiento sí muestra los controles de diestro y de zurdo.
+    \item \textbf{CU-03 --- Configurar canal de salida:} En el panel de la extensión, el usuario señante elige la salida en Meet: Subtítulo, Audio o Ambos.
     \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla o escribe durante la llamada; el sistema solicita la estructuración remota en glosas LSA y el avatar reproduce localmente las señas o las deletrea visualmente.
 \end{itemize}
 
@@ -83,13 +80,13 @@ La especificación de la CPU base no fue adoptada de manera arbitraria, sino ded
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario no señante es capaz de leer/escuchar lo que el usuario señante le dice} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video, o la voz suena en la computadora de quien seña, según la salida elegida.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
  & \textbf{1} & Realiza las señas correspondientes a lo que quiere comunicar & \\ \cline{2-4} 
  & \textbf{2} & & El Sistema procesa la seña, extrae los landmarks, clasifica la seña y la carga en un buffer temporal. \\ \hline
- & \textbf{3} & Si necesita realiar otra seña, vuelve al paso 1. Sino espera 4 segundos. &  \\ \hline
- & \textbf{4} & & El Sistema envia el buffer temporal al módulo semántico, que se encarga de interpretar y mostrar por pantalla el resultado \\ \hline
+ & \textbf{3} & Si necesita otra seña, vuelve al paso 1. Si no, espera la pausa elegida: 2, 3 o 4 segundos. El valor inicial es 4. &  \\ \hline
+ & \textbf{4} & & Si el enunciado es una glosa léxica sola, un deletreo o dígitos, ILSA arma el texto en el equipo. En los demás casos envía las glosas al servicio semántico. Muestra el resultado como subtítulo, como audio local, o con ambas salidas. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 \end{tabularx}
@@ -100,15 +97,15 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \renewcommand{\arraystretch}{1.6}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Configurar mano dominante}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Mano hábil}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
-Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Queda configurada la mano hábil para el módulo clasificador} \\ \hline
+Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El motor local está en marcha. En Meet no hace falta elegir la mano: la sesión arranca diestra.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{En la herramienta de cámara, el vector queda espejado si la persona elige zurdo. En Meet el vector queda diestro.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
- & \textbf{1} & & Muestra dos botones, "Seleccionar mano habil:" "izquierda" o "derecha"\\ \cline{2-4} 
- & \textbf{2} & Hace click en el botón correspondiente & \\ \cline{2-4} 
- & \textbf{3} &  & Configura que la extracción y tratamiento de landmarks sea con ese tipo de mano habil\\ \hline
+ & \textbf{1} & En la herramienta de cámara del entrenamiento, elige diestro o zurdo. & \\ \cline{2-4} 
+ & \textbf{2} & & Si la elección es zurdo, espeja el eje horizontal y cruza las dos manos. El modelo se entrenó con mano derecha. \\ \cline{2-4} 
+ & \textbf{3} & En la extensión de Meet no aparece este control. & La sesión de la llamada usa mano derecha. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 \end{tabularx}
@@ -122,13 +119,13 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida del oyente}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Queda configurada la salida del módulo semantico} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida de la interpretación en Meet queda en subtítulo, audio local o ambas.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
- & \textbf{1} & Hace click en el botón "configuración de interpretación" & \\ \cline{2-4}
- & \textbf{2} & & Muestra 3 opciones, "Texto" "Voz en off" o "Ambas"\\ \cline{2-4} 
- & \textbf{3} & Hace click en la opción de preferencia & \\ \cline{2-4} 
- & \textbf{4} &  & Configura la salida con la preferencia del usuario\\ \hline
+ & \textbf{1} & Abre el panel de la extensión. & \\ \cline{2-4}
+ & \textbf{2} & & Muestra tres opciones bajo «Salida en Meet»: Subtítulo, Audio y Ambos. \\ \cline{2-4} 
+ & \textbf{3} & Elige una opción. & \\ \cline{2-4} 
+ & \textbf{4} &  & Aplica esa salida. El audio suena en la misma computadora y no entra en la pista de la llamada. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 \end{tabularx}
@@ -141,14 +138,14 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \hline
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-04: Traducir español a LSA mediante Avatar (Modo Oyente)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario no señante} \\ \hline
-Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada. Se debe haber realizado una interpretación} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada y la extensión está en modo oyente.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El video de la llamada muestra el esqueleto de las glosas, o el deletreo si falta un archivo.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
- & \textbf{1} & Habla o ingresa un mensaje de texto al chat & \\ \cline{2-4}
- & \textbf{2} & & Captura el flujo de audio y lo transcribe a texto en español\\  \cline{2-4} 
- & \textbf{3} & & Procesa el mensaje con el módulo semántico y obtiene una secuencia de glosas\\  \cline{2-4} 
- & \textbf{4} & & Renderiza la animación de las glosas sobre la cámara del usuario \\ \hline
+ & & \textbf{Usuario oyente} & \textbf{Sistema} \\ \cline{2-4} 
+ & \textbf{1} & Habla, o escribe en el chat. & \\ \cline{2-4}
+ & \textbf{2} & & Si la entrada es voz, la transcribe en la misma computadora. Si es chat, toma ese texto. \\  \cline{2-4} 
+ & \textbf{3} & & Envía la oración al servicio semántico y recibe las glosas. \\  \cline{2-4} 
+ & \textbf{4} & & Dibuja el clip de cada glosa sobre la cámara. Si una glosa no tiene archivo, dibuja sus letras una por una. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
 \end{tabularx}

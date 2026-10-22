@@ -795,12 +795,12 @@ La extensión une la videollamada con el motor local. El requerimiento RF-08 pid
 \node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-2.975,14.725) {Google Meet};
 
 % HUD
-\draw (2.3,7.875) rectangle (5.05,7.25);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (3.675,7.5625) {indicador};
+\draw (2.625,7.875) rectangle (4.75,7.25);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (3.6875,7.5625) {HUD};
 
 % Offscreen
 \draw [line width=0.7pt] (2.5,14.75) rectangle (7,10.625);
-\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.85,14.6) {coordinación};
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.85,14.6) {offscreen};
 
 % ILSA (motor local)
 \draw (-3.25,4.75) rectangle (9.125,4);
@@ -811,10 +811,10 @@ La extensión une la videollamada con el motor local. El requerimiento RF-08 pid
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,11.8125) {video oculto \\ (flujo real)};
 
 \draw (-2.875,14) rectangle (0.125,12.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,13.4375) {toma de la\\ cámara};
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,13.4375) {inject-gum.js \\ (toma la camara)};
 
 \draw (-2.875,10.25) rectangle (0.625,9.125);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.125,9.6875) {lienzo \\ (imagen y subtítulo)};
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.125,9.6875) {canvas virtual \\ (imagen y subtítulo)};
 
 \draw (-2.875,8.5) rectangle (0.125,7.375);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,7.9375) {Google Meet \\ (videollamada)};
@@ -832,7 +832,7 @@ La extensión une la videollamada con el motor local. El requerimiento RF-08 pid
 
 % Sandbox
 \draw [line width=0.7pt] (4.25,10.25) rectangle (8.75,8.375);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (4.4,10.1) {visión};
+\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (4.4,10.1) {sandbox};
 
 \draw (4.5,9.5) rectangle (8.5,8.625);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.5,9.0625) {extracción de puntos};
@@ -840,14 +840,14 @@ La extensión une la videollamada con el motor local. El requerimiento RF-08 pid
 % Conexiones y flechas
 \draw [-{Stealth[scale=1.5]}] (0,16) -- (0,14);
 \draw [-{Stealth[scale=1.5]}] (-1.25,12.875) -- (-1.25,12.375);
-\draw [-{Stealth[scale=1.5]}] (-1.375,11.25) -- (-1.375,10.25) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{cuadro a cuadro};
+\draw [-{Stealth[scale=1.5]}] (-1.375,11.25) -- (-1.375,10.25) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{frame x frame};
 \draw [-{Stealth[scale=1.5]}] (-1.375,9.125) -- (-1.375,8.5);
 
 \draw [-{Stealth[scale=1.5]}] (0.125,11.875) -- (1.625,11.875) -- (1.625,13.5) -- (2.75,13.5);
 \node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (1.625,12.5) {JPEG};
 
 \draw [-{Stealth[scale=1.5]}] (6.75,13.875) -- (8.25,13.875) -- (8.25,9.5);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.25,12.5) {fotograma};
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.25,12.5) {frame};
 
 \draw [dash pattern=on 6pt off 2pt, -{Stealth[scale=1.5]}] (7.625,9.5) -- (7.625,13.25) -- (6.75,13.25);
 \node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (7.625,11.875) {puntos};
@@ -878,7 +878,7 @@ La extensión une la videollamada con el motor local. El requerimiento RF-08 pid
 
 \end{circuitikz}%
 }
-\caption{Arquitectura de la extensión de videollamada. El motor local queda como un solo componente.}
+\caption{Diagrama de arquitectura del flujo de video, procesamiento offscreen e integración con el motor ILSA.}
 \label{fig:arquitectura_video_ilsa}
 \end{figure}
 
@@ -933,140 +933,11 @@ El diseño separa las responsabilidades del cliente local, de la extensión y de
 \end{itemize}
 
 \section{Diseño conceptual de la arquitectura escalable de producción en la nube}
+\label{sec:arq_escalable}
 
-Las pruebas de este trabajo usan una instancia de Cloud Run por servicio. Esta sección no describe esa instancia. Describe la proyección para varias videollamadas a la vez, en coincidencia con la restricción RC-02. 
+Las pruebas de este trabajo usan una instancia de Cloud Run por servicio. Esta sección no describe esa instancia. Describe la proyección para varias videollamadas a la vez, en coincidencia con la restricción RC-02.
 
-\begin{figure}[!ht]
-\centering
-\resizebox{1\textwidth}{!}{%
-\begin{circuitikz}
-\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
-
-% Clientes concurrentes
-\draw [line width=0.7pt] (3.125,12.875) rectangle (5.25,9.625);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.1875,12.725) {Clientes \\ concurrentes};
-
-\draw (3.375,11.875) rectangle (5,11.375);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.1875,11.625) {Cliente A};
-
-\draw (3.375,11.125) rectangle (5,10.625);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.1875,10.875) {Cliente A};
-
-\draw (3.375,10.375) rectangle (5,9.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.1875,10.125) {Cliente A};
-
-% Ingreso
-\draw [line width=0.7pt] (6.5,11.875) rectangle (13.125,10.125);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (6.65,11.725) {Ingreso};
-
-\draw (6.875,11.125) rectangle (9.625,10.625);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.25,10.875) {DNS / CDN / WAF};
-
-\draw (10.25,11.625) rectangle (12.75,10.375);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.5,11) {\textit{Aplication load} \\ \textit{balancer / Ingress} \\ \textit{controller}};
-
-% Servicio semántico
-\draw [line width=0.7pt] (14,15.375) rectangle (23.875,11.5);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.15,15.225) {Servicio semántico (sin estado, cómputo)};
-
-\draw (14.875,14.75) rectangle (17.375,11.75);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (15.025,14.6) {Réplicas idénticas};
-
-\draw (15.25,14) rectangle (16.875,13.5);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.0625,13.75) {Réplica 1};
-
-\draw (15.25,13.25) rectangle (16.875,12.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.0625,13) {Réplica 2};
-
-\draw (15.25,12.5) rectangle (16.875,12);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.0625,12.25) {Réplica N};
-
-\draw (21.125,15) rectangle (23.375,13.625);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (22.25,14.85) {Escalador \\ horizontal (cola \\ y latencia)};
-
-\draw (21.125,13.125) rectangle (23.25,11.75);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (22.1875,12.975) {Modelos en \\ volumen (solo \\ lectura)};
-
-% Servicio de poses
-\draw [line width=0.7pt] (14,10.125) rectangle (23.875,6.25);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.15,9.975) {Servicio de poses (sin estado, I/O)};
-
-\draw (14.75,9.5) rectangle (17.25,6.5);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.9,9.35) {Réplicas idénticas};
-
-\draw (15.125,8.75) rectangle (16.75,8.25);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (15.9375,8.5) {Réplica 1};
-
-\draw (15.125,8) rectangle (16.75,7.5);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (15.9375,7.75) {Réplica 2};
-
-\draw (15.125,7.25) rectangle (16.75,6.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (15.9375,7) {Réplica N};
-
-\draw (20.75,9.75) rectangle (23.375,8.375);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (22.0625,9.6) {Escalador \\ horizontal (QPS y \\ ancho de banda)};
-
-\draw (21.125,7.875) rectangle (23.25,6.5);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (22.1875,7.725) {Carpeta de \\ poses (solo \\ lectura)};
-
-% Observabilidad
-\draw [line width=0.7pt] (25,11.625) rectangle (27.625,10.125);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (26.3125,11.475) {Observabilidad};
-
-\draw (25.5,11) rectangle (27.125,10.5);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (26.3125,10.75) {Métricas};
-
-% Notas informativas
-\draw [draw opacity=0, fill={rgb,255:red,231; green,231; blue,231}, fill opacity=1] (10.25,12.125) rectangle (12.75,13.125);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.5,12.975) {POST /sign \\ POST /hearing};
-
-\draw [draw opacity=0, fill={rgb,255:red,231; green,231; blue,231}, fill opacity=1] (9.25,8.25) rectangle (13.125,9.25);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.1875,9.1) {GET /tsposes/\{archivo\} \\ GET /fingerspell?letters=...};
-
-\draw [draw opacity=0, fill={rgb,255:red,231; green,231; blue,231}, fill opacity=1] (18.125,11.625) rectangle (20.75,13.375);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (19.4375,13.225) {Montaje \\ compartido, el peso \\ vive en RAM de \\ cada réplica};
-
-\draw [draw opacity=0, fill={rgb,255:red,231; green,231; blue,231}, fill opacity=1] (17.875,6.5) rectangle (20.5,7.5);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (19.1875,7.35) {Misma carpeta en \\ cada réplica};
-
-% Conexiones y flechas
-\draw [-{Stealth[scale=1.5]}] (5,10.875) -- (6.875,10.875) node[pos=0.33, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{HTTPS};
-
-\draw [-{Stealth[scale=1.5]}] (5,11.625) -- (6.125,11.625) -- (6.125,11.125) -- (6.875,11.125);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.625,11.625) {HTTPS};
-
-\draw [-{Stealth[scale=1.5]}] (5,10.125) -- (6.125,10.125) -- (6.125,10.625) -- (6.875,10.625);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.75,10.125) {HTTPS};
-
-\draw [-{Stealth[scale=1.5]}] (9.625,10.875) -- (10.25,10.875);
-
-\draw [-{Stealth[scale=1.5]}] (11.625,11.625) -- (11.625,12.25) -- (15.25,12.25);
-\draw [-{Stealth[scale=1.5]}] (11.625,11.625) -- (11.625,13) -- (15.25,13);
-\draw [-{Stealth[scale=1.5]}] (11.625,11.625) -- (11.625,13.625) -- (15.25,13.625);
-
-\draw [-{Stealth[scale=1.5]}] (11.625,10.375) -- (11.625,8.625) -- (15.125,8.625);
-\draw [-{Stealth[scale=1.5]}] (11.625,10.375) -- (11.625,7.875) -- (15.125,7.875);
-\draw [-{Stealth[scale=1.5]}] (11.625,10.375) -- (11.625,7) -- (15.125,7);
-
-\draw [-{Stealth[scale=1.5]}] (20.75,8.625) -- (17.25,8.625) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{suma o baja réplicas};
-\draw [-{Stealth[scale=1.5]}] (21.125,7) -- (17.25,7);
-\draw [-{Stealth[scale=1.5]}] (21.125,12.375) -- (17.375,12.375);
-\draw [-{Stealth[scale=1.5]}] (21.125,14.25) -- (17.375,14.25) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{suma o baja réplicas};
-
-\draw [-{Stealth[scale=1.5]}] (17.25,9.125) -- (18.75,9.125) -- (18.75,10.625) -- (25.5,10.625);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (22.125,10.625) {latencia, ocupación, CPU};
-
-\draw [-{Stealth[scale=1.5]}] (16.875,11.75) -- (16.875,11) -- (25.5,11);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.625,11) {lecturas, errores, bytes};
-
-\draw [-{Stealth[scale=1.5]}] (26.375,11.625) -- (26.375,14.25) -- (23.375,14.25);
-\draw [-{Stealth[scale=1.5]}] (26.375,10.125) -- (26.375,9.125) -- (23.375,9.125);
-
-\end{circuitikz}%
-}
-\caption{Diagrama de la arquitectura del servidor, balanceo de carga y escalabilidad de servicios sin estado.}
-\label{fig:arquitectura_servidor_escalabilidad}
-\end{figure}
+El diagrama, en hoja horizontal, está en el Apéndice~\ref{ap:nube} (Figura~\ref{fig:arquitectura_servidor_escalabilidad}).
 
 La proyección tiene dos servicios detrás de un mismo ingreso. El traductor genera texto. El servicio de archivos entrega un clip de seña. No comparten réplica ni cola.
 

@@ -1,0 +1,93 @@
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
+
+% Títulos superiores de los métodos
+\node [font=\fontsize{9.1pt}{11.8pt}\selectfont, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (7.75,15.625) {\textbf{AJUSTE FINO TRADICIONAL}};
+\node [font=\fontsize{9.1pt}{11.8pt}\selectfont, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (16.75,15.625) {\textbf{AJUSTE LoRA}};
+
+% -----------------------------------------------------------------
+% GRÁFICO IZQUIERDO: Ajuste Fino Tradicional
+% -----------------------------------------------------------------
+
+% Salida
+\draw (5.875,15) rectangle (9.25,14.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (7.5625,14.6875) {$W \cdot x + \Delta W \cdot x$ (salida)};
+
+% Bloques de multiplicaciones intermedias
+\draw (3.875,13.5) rectangle (6.75,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.3125,13.1875) {$(d \times d)\hspace{0.210cm} W \cdot x$};
+
+\draw (8.25,13.5) rectangle (11.125,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (9.6875,13.1875) {$(d \times d)\hspace{0.210cm} \Delta W \cdot x$};
+
+% Matriz W (Congelada)
+\draw (4.375,12.125) -- (3.625,10.375) -- (6.625,10.375) -- (6,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.125,11.25) {$W$\\Pesos\\preentrenados\\(congelados)};
+
+% Matriz ΔW (Entrenable de dimensión completa)
+\draw (9,12.125) -- (8.25,10.375) -- (11.25,10.375) -- (10.625,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (9.75,11.25) {$\Delta W$\\Pesos actualizados\\(entrenables)};
+
+% Entrada x
+\draw (6.25,9) rectangle (9.125,8.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (7.6875,8.6875) {$x$ (entrada)};
+
+% Flechas de flujo (Izquierda)
+\draw [-{Stealth[scale=1.5]}] (7.625,9) -- (7.625,9.75) -- (4.875,9.75) -- (4.875,10.375);
+\draw [-{Stealth[scale=1.5]}] (7.625,9) -- (7.625,9.75) -- (9.75,9.75) -- (9.75,10.375);
+\draw [-{Stealth[scale=1.5]}] (5.125,12.125) -- (5.125,12.875);
+\draw [-{Stealth[scale=1.5]}] (9.75,12.125) -- (9.75,12.875);
+\draw [-{Stealth[scale=1.5]}] (5.125,13.5) -- (5.125,14) -- (7.5,14) -- (7.5,14.375);
+\draw [-{Stealth[scale=1.5]}] (9.75,13.5) -- (9.75,14) -- (7.5,14) -- (7.5,14.375);
+
+% Línea divisoria central
+\draw [short] (12,16) -- (12,8.25);
+
+% -----------------------------------------------------------------
+% GRÁFICO DERECHO: Ajuste LoRA (Low-Rank Adaptation)
+% -----------------------------------------------------------------
+
+% Salida
+\draw (15.125,15) rectangle (18.375,14.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.75,14.6875) {$W \cdot x + BA \cdot x$ (salida)};
+
+% Bloques de multiplicaciones intermedias
+\draw (13,13.5) rectangle (15.875,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.4375,13.1875) {$(d \times d)\hspace{0.210cm} W \cdot x$};
+
+\draw (17.375,13.5) rectangle (20.25,12.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.8125,13.1875) {$(d \times d)\hspace{0.210cm} \Delta W \cdot x$};
+
+% Matriz W (Congelada)
+\draw (13.5,12.125) -- (12.75,10.375) -- (15.75,10.375) -- (15.125,12.125) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (14.25,11.25) {$W$\\Pesos\\preentrenados\\(congelados)};
+
+% Descomposición de bajo rango: Matrices B y A
+\draw (17.625,12) -- (20.125,12) -- (19.625,11.375) -- (18.125,11.375) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.875,11.75) {$B\hspace{0.210cm}(r \times d)$};
+
+\draw [dash pattern=on 6pt off 2pt] (17.5,12.125) rectangle (20.25,10.375);
+
+\draw (18.125,11.125) -- (19.625,11.125) -- (20.125,10.5) -- (17.625,10.5) -- cycle;
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (18.875,10.875) {$A\hspace{0.210cm}(d \times r)$};
+
+% Entrada x
+\draw (15.375,9) rectangle (18.25,8.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (16.8125,8.6875) {$x$ (entrada)};
+
+% Flechas de flujo (Derecha)
+\draw [-{Stealth[scale=1.5]}] (16.75,9) -- (16.75,9.75) -- (14,9.75) -- (14,10.375);
+\draw [-{Stealth[scale=1.5]}] (16.75,9) -- (16.75,9.75) -- (18.875,9.75) -- (18.875,10.375);
+\draw [-{Stealth[scale=1.5]}] (14.25,12.125) -- (14.25,12.875);
+\draw [-{Stealth[scale=1.5]}] (18.875,12.125) -- (18.875,12.875);
+\draw [-{Stealth[scale=1.5]}] (14.375,13.5) -- (14.375,14) -- (16.75,14) -- (16.75,14.375);
+\draw [-{Stealth[scale=1.5]}] (19,13.5) -- (19,14) -- (16.75,14) -- (16.75,14.375);
+
+\end{circuitikz}%
+}
+\caption{Comparación de arquitecturas: en el ajuste fino tradicional (izquierda) los pesos preentrenados $W$ permanecen congelados y se actualiza de forma directa la matriz $\Delta W$ de dimensión $d \times d$. En el ajuste LoRA (derecha), la actualización de pesos $\Delta W$ se descompone en dos matrices entrenables de bajo rango $A$ ($d \times r$) y $B$ ($r \times d$), con $r \ll d$.}
+\label{fig:comparacion_finetuning_lora}
+\end{figure}
