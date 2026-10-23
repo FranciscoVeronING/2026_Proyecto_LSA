@@ -346,52 +346,6 @@
       \field{title}{The {Llama 3} Herd of Models}
       \field{year}{2024}
     \endentry
-    \entry{frantar2022gptq}{article}{}{}
-      \name{author}{4}{}{%
-        {{un=0,uniquepart=base,hash=ddda2fa01f869e2cbd2dcffd43c994fb}{%
-           family={Frantar},
-           familyi={F\bibinitperiod},
-           given={Elias},
-           giveni={E\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=b75b3eec8eb6e5e8eb2b20a256848acb}{%
-           family={Ashkboos},
-           familyi={A\bibinitperiod},
-           given={Saleh},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=a03a613d2570c7db5f2e4b779e7a90a5}{%
-           family={Torfi},
-           familyi={T\bibinitperiod},
-           given={Ammar},
-           giveni={A\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=f03360e92167899bed76b84077d1b13f}{%
-           family={Alistarh},
-           familyi={A\bibinitperiod},
-           given={Dan},
-           giveni={D\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{eb9bf8088cf89c0278dfb9f1afa6e2f5}
-      \strng{fullhash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{fullhashraw}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{bibnamehash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authorbibnamehash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authornamehash}{eb9bf8088cf89c0278dfb9f1afa6e2f5}
-      \strng{authorfullhash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authorfullhashraw}{b8a63791f614f03e1ce803939c8929eb}
-      \field{sortinit}{F}
-      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2210.17323}
-      \field{title}{{GPTQ}: Accurate Post-Training Quantization for Generative Pre-trained Transformers}
-      \field{year}{2022}
-    \endentry
     \entry{gamma1994design}{book}{}{}
       \name{author}{4}{}{%
         {{un=0,uniquepart=base,hash=abd927bf30d6566be0ac66a66e893fdd}{%
@@ -643,31 +597,6 @@
       \field{title}{{LoRA}: Low-Rank Adaptation of Large Language Models}
       \field{year}{2022}
     \endentry
-    \entry{huggingface2024transformers}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=e0b6bb846c6a3e0649ce0e3cd9355df3}{%
-           family={{Hugging Face}},
-           familyi={H\bibinitperiod}}}%
-      }
-      \strng{namehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{fullhash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{fullhashraw}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{bibnamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorbibnamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authornamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorfullhash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorfullhashraw}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \field{sortinit}{H}
-      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://huggingface.co/docs/transformers}}
-      \field{title}{Transformers: State-of-the-Art Machine Learning for {PyTorch}, TensorFlow, and {JAX}}
-      \field{year}{2024}
-    \endentry
     \entry{inju2024diccionario}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=316ae78f7a9a303f26aa7045713b1f11}{%
@@ -918,46 +847,6 @@
       \field{year}{1993}
       \field{pages}{73\bibrangedash 99}
       \range{pages}{27}
-    \endentry
-    \entry{massone1993lengua}{book}{}{}
-      \name{author}{2}{}{%
-        {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
-           family={Massone},
-           familyi={M\bibinitperiod},
-           given={María\bibnamedelima Ignacia},
-           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=02e0ad8d6e86851af3642b3d90179714}{%
-           family={Machado},
-           familyi={M\bibinitperiod},
-           given={Emilia\bibnamedelima Margarita},
-           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod},
-           givenun=0}}%
-      }
-      \list{location}{1}{%
-        {Buenos Aires, Argentina}%
-      }
-      \list{publisher}{1}{%
-        {Edicial}%
-      }
-      \strng{namehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{fullhash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{fullhashraw}{2a4a383b3fd800438b8c303905be8490}
-      \strng{bibnamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorbibnamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authornamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorfullhash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorfullhashraw}{2a4a383b3fd800438b8c303905be8490}
-      \field{sortinit}{M}
-      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{isbn}{950-506-213-3}
-      \field{title}{Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe}
-      \field{year}{1993}
     \endentry
     \entry{massoneparte2}{book}{}{}
       \name{author}{2}{}{%
@@ -1418,90 +1307,6 @@
       \field{howpublished}{\url{https://www.w3.org/TR/mediacapture-fromelement/}}
       \field{title}{Media Capture from {DOM} Elements: \texttt{HTMLMediaElement.captureStream()}}
       \field{year}{2024}
-    \endentry
-    \entry{wu2020lite}{article}{}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{10}{}{%
-        {{un=0,uniquepart=base,hash=22fd84b8276575e01ba678bb2095dc23}{%
-           family={Wu},
-           familyi={W\bibinitperiod},
-           given={Ying},
-           giveni={Y\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=bf777009716d4138e952aeb64410f6a1}{%
-           family={Lu},
-           familyi={L\bibinitperiod},
-           given={Shuang},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=1,uniquepart=given,hash=fdbb2099b5ec4dc238af542b6115bcbe}{%
-           family={Gan},
-           familyi={G\bibinitperiod},
-           given={Zhiqiang},
-           giveni={Z\bibinitperiod},
-           givenun=1}}%
-        {{un=1,uniquepart=given,hash=97044e575d3c0a3dd2551779810add07}{%
-           family={Gan},
-           familyi={G\bibinitperiod},
-           given={Chuang},
-           giveni={C\bibinitperiod},
-           givenun=1}}%
-        {{un=0,uniquepart=base,hash=aaa9955fb9037812408de19d3a92bfe9}{%
-           family={Shen},
-           familyi={S\bibinitperiod},
-           given={Yu},
-           giveni={Y\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=71ea9461b9f1a974127ea82ba97ee6f3}{%
-           family={Chen},
-           familyi={C\bibinitperiod},
-           given={Yen-Chun},
-           giveni={Y\bibinithyphendelim C\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=1ea9ac415f6ae530be9011182ce38988}{%
-           family={Smith},
-           familyi={S\bibinitperiod},
-           given={Lawrence},
-           giveni={L\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=432c6f3debb86a88d1cda44a134731b1}{%
-           family={Ren},
-           familyi={R\bibinitperiod},
-           given={Shanghang},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=ce681750caa3045d8bb30c05a70f10d7}{%
-           family={Carin},
-           familyi={C\bibinitperiod},
-           given={Lawrence},
-           giveni={L\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=a2d92e419c3b04b620f2b0302581e68c}{%
-           family={He},
-           familyi={H\bibinitperiod},
-           given={Xiaodong},
-           giveni={X\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{626d28be86a459b8197a085a23e900e9}
-      \strng{fullhash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{fullhashraw}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{bibnamehash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authorbibnamehash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authornamehash}{626d28be86a459b8197a085a23e900e9}
-      \strng{authorfullhash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authorfullhashraw}{293c678652fac3b6bc8eec2289c8802f}
-      \field{sortinit}{W}
-      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2004.11886}
-      \field{title}{Lite Transformer with Long-Short Range Attention}
-      \field{year}{2020}
     \endentry
     \entry{zhang2020mediapipehands}{misc}{}{}
       \name{author}{7}{}{%
@@ -1900,52 +1705,6 @@
       \field{title}{The {Llama 3} Herd of Models}
       \field{year}{2024}
     \endentry
-    \entry{frantar2022gptq}{article}{}{}
-      \name{author}{4}{}{%
-        {{un=0,uniquepart=base,hash=ddda2fa01f869e2cbd2dcffd43c994fb}{%
-           family={Frantar},
-           familyi={F\bibinitperiod},
-           given={Elias},
-           giveni={E\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=b75b3eec8eb6e5e8eb2b20a256848acb}{%
-           family={Ashkboos},
-           familyi={A\bibinitperiod},
-           given={Saleh},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=a03a613d2570c7db5f2e4b779e7a90a5}{%
-           family={Torfi},
-           familyi={T\bibinitperiod},
-           given={Ammar},
-           giveni={A\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=f03360e92167899bed76b84077d1b13f}{%
-           family={Alistarh},
-           familyi={A\bibinitperiod},
-           given={Dan},
-           giveni={D\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{eb9bf8088cf89c0278dfb9f1afa6e2f5}
-      \strng{fullhash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{fullhashraw}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{bibnamehash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authorbibnamehash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authornamehash}{eb9bf8088cf89c0278dfb9f1afa6e2f5}
-      \strng{authorfullhash}{b8a63791f614f03e1ce803939c8929eb}
-      \strng{authorfullhashraw}{b8a63791f614f03e1ce803939c8929eb}
-      \field{sortinit}{F}
-      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2210.17323}
-      \field{title}{{GPTQ}: Accurate Post-Training Quantization for Generative Pre-trained Transformers}
-      \field{year}{2022}
-    \endentry
     \entry{gamma1994design}{book}{}{}
       \name{author}{4}{}{%
         {{un=0,uniquepart=base,hash=abd927bf30d6566be0ac66a66e893fdd}{%
@@ -2197,31 +1956,6 @@
       \field{title}{{LoRA}: Low-Rank Adaptation of Large Language Models}
       \field{year}{2022}
     \endentry
-    \entry{huggingface2024transformers}{misc}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=e0b6bb846c6a3e0649ce0e3cd9355df3}{%
-           family={{Hugging Face}},
-           familyi={H\bibinitperiod}}}%
-      }
-      \strng{namehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{fullhash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{fullhashraw}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{bibnamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorbibnamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authornamehash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorfullhash}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \strng{authorfullhashraw}{e0b6bb846c6a3e0649ce0e3cd9355df3}
-      \field{sortinit}{H}
-      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://huggingface.co/docs/transformers}}
-      \field{title}{Transformers: State-of-the-Art Machine Learning for {PyTorch}, TensorFlow, and {JAX}}
-      \field{year}{2024}
-    \endentry
     \entry{inju2024diccionario}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=316ae78f7a9a303f26aa7045713b1f11}{%
@@ -2472,46 +2206,6 @@
       \field{year}{1993}
       \field{pages}{73\bibrangedash 99}
       \range{pages}{27}
-    \endentry
-    \entry{massone1993lengua}{book}{}{}
-      \name{author}{2}{}{%
-        {{un=0,uniquepart=base,hash=2a38b5daff09cba218d6b6be3383d8a1}{%
-           family={Massone},
-           familyi={M\bibinitperiod},
-           given={María\bibnamedelima Ignacia},
-           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=02e0ad8d6e86851af3642b3d90179714}{%
-           family={Machado},
-           familyi={M\bibinitperiod},
-           given={Emilia\bibnamedelima Margarita},
-           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod},
-           givenun=0}}%
-      }
-      \list{location}{1}{%
-        {Buenos Aires, Argentina}%
-      }
-      \list{publisher}{1}{%
-        {Edicial}%
-      }
-      \strng{namehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{fullhash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{fullhashraw}{2a4a383b3fd800438b8c303905be8490}
-      \strng{bibnamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorbibnamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authornamehash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorfullhash}{2a4a383b3fd800438b8c303905be8490}
-      \strng{authorfullhashraw}{2a4a383b3fd800438b8c303905be8490}
-      \field{sortinit}{M}
-      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{isbn}{950-506-213-3}
-      \field{title}{Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe}
-      \field{year}{1993}
     \endentry
     \entry{massoneparte2}{book}{}{}
       \name{author}{2}{}{%
@@ -2973,90 +2667,6 @@
       \field{title}{Media Capture from {DOM} Elements: \texttt{HTMLMediaElement.captureStream()}}
       \field{year}{2024}
     \endentry
-    \entry{wu2020lite}{article}{}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{10}{}{%
-        {{un=0,uniquepart=base,hash=22fd84b8276575e01ba678bb2095dc23}{%
-           family={Wu},
-           familyi={W\bibinitperiod},
-           given={Ying},
-           giveni={Y\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=bf777009716d4138e952aeb64410f6a1}{%
-           family={Lu},
-           familyi={L\bibinitperiod},
-           given={Shuang},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=1,uniquepart=given,hash=fdbb2099b5ec4dc238af542b6115bcbe}{%
-           family={Gan},
-           familyi={G\bibinitperiod},
-           given={Zhiqiang},
-           giveni={Z\bibinitperiod},
-           givenun=1}}%
-        {{un=1,uniquepart=given,hash=97044e575d3c0a3dd2551779810add07}{%
-           family={Gan},
-           familyi={G\bibinitperiod},
-           given={Chuang},
-           giveni={C\bibinitperiod},
-           givenun=1}}%
-        {{un=0,uniquepart=base,hash=aaa9955fb9037812408de19d3a92bfe9}{%
-           family={Shen},
-           familyi={S\bibinitperiod},
-           given={Yu},
-           giveni={Y\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=71ea9461b9f1a974127ea82ba97ee6f3}{%
-           family={Chen},
-           familyi={C\bibinitperiod},
-           given={Yen-Chun},
-           giveni={Y\bibinithyphendelim C\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=1ea9ac415f6ae530be9011182ce38988}{%
-           family={Smith},
-           familyi={S\bibinitperiod},
-           given={Lawrence},
-           giveni={L\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=432c6f3debb86a88d1cda44a134731b1}{%
-           family={Ren},
-           familyi={R\bibinitperiod},
-           given={Shanghang},
-           giveni={S\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=ce681750caa3045d8bb30c05a70f10d7}{%
-           family={Carin},
-           familyi={C\bibinitperiod},
-           given={Lawrence},
-           giveni={L\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=a2d92e419c3b04b620f2b0302581e68c}{%
-           family={He},
-           familyi={H\bibinitperiod},
-           given={Xiaodong},
-           giveni={X\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{626d28be86a459b8197a085a23e900e9}
-      \strng{fullhash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{fullhashraw}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{bibnamehash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authorbibnamehash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authornamehash}{626d28be86a459b8197a085a23e900e9}
-      \strng{authorfullhash}{293c678652fac3b6bc8eec2289c8802f}
-      \strng{authorfullhashraw}{293c678652fac3b6bc8eec2289c8802f}
-      \field{sortinit}{W}
-      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2004.11886}
-      \field{title}{Lite Transformer with Long-Short Range Attention}
-      \field{year}{2020}
-    \endentry
     \entry{zhang2020mediapipehands}{misc}{}{}
       \name{author}{7}{}{%
         {{un=1,uniquepart=given,hash=ae021641a8f85fd2607152ab99ed115b}{%
@@ -3126,9 +2736,11 @@
       \endverb
     \endentry
   \enddatalist
-  \missing{cabello2010threejs}
+  \missing{chrome2024offscreen}
+  \missing{chrome2024sandbox}
   \missing{liddell1989phonological}
   \missing{moryossef2021poseformat}
+  \missing{w3c2023mediacapturefromelement}
 \endrefsection
 \endinput
 
