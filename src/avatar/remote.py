@@ -68,6 +68,23 @@ def _headers() -> dict[str, str]:
     return headers
 
 
+def ping(timeout: float = 20.0) -> bool:
+    """GET `/health` del servidor de T-pose."""
+    base = avatar_url()
+    if not base:
+        print("[avatar] ping: no hay URL")
+        return False
+    req = urllib.request.Request(f"{base}/health", headers=_headers(), method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            ok = 200 <= resp.status < 300
+            print(f"[avatar] ping {base}/health → HTTP {resp.status}")
+            return ok
+    except Exception as exc:
+        print(f"[avatar] ping {base}/health: {exc}")
+        return False
+
+
 def fetch_tpose(stem: str) -> Path | None:
     """GET `/tposes/{stem}.pose`. 404 → None. Cacha el archivo en disco."""
     key = (stem or "").strip()

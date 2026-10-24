@@ -128,9 +128,15 @@ function applyState(s) {
   const payload = {
     status: s.semantic_busy ? "traduciendo" : lastSpanish ? "listo" : "escuchando",
     glosses: s.pending_text || "",
+    pendingText: s.pending_text || "",
     lastGloss,
     top3: s.top3 || [],
   };
+  if (typeof s.added === "boolean") {
+    payload.glossAdded = s.added;
+    payload.glossReject = s.reject_reason || "";
+    payload.glossConfidence = typeof s.confidence === "number" ? s.confidence : null;
+  }
   if (s.closed && s.spanish) payload.spanish = s.spanish;
   emit(payload);
 }

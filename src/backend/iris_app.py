@@ -34,7 +34,7 @@ from semantic.config import DEFAULT_MODEL_ID
 REPO_URL = "https://github.com/FranciscoVeronING/2026_Proyecto_LSA"
 AUTHORS = "Maite Nigro · Francisco Veron"
 WIN_W = 420
-WIN_H = 560
+WIN_H = 620
 SENARIO_1_URL = (
     "https://cas.org.ar/senario-de-terminos-y-expresiones-en-lengua-de-senas-argentina/"
 )
@@ -63,6 +63,9 @@ class IlsaWindow:
         self.log_text: tk.Text | None = None
         self._boot_q: queue.Queue = queue.Queue()
         self._ready = False
+        self._pad = None
+        self._after_cloud: str | None = None
+        self._booting = False
         self._icon_images: list[tk.PhotoImage] = []
 
         self.root = tk.Tk()
@@ -109,8 +112,7 @@ class IlsaWindow:
         )
         self._tick_spin()
         self.root.after(200, self._drain_logs)
-        self.root.after(80, self._start_bootstrap)
-        self.root.after(120, self._poll_boot)
+        self.root.after(80, self._cloud_check)
 
     def _logo_png(self) -> Path | None:
         root = _app_root()
@@ -155,7 +157,14 @@ class IlsaWindow:
                 pass
 
     def _tick_spin(self) -> None:
-        if self._ready or self._splash is None:
+        if self._splash is None:
+            return
+        try:
+            if not self._splash.winfo_ismapped():
+                self._spin_job = None
+                return
+        except tk.TclError:
+            self._spin_job = None
             return
         try:
             if not self._spin_canvas.winfo_exists():
@@ -186,24 +195,58 @@ class IlsaWindow:
                 pass
             self._spin_job = None
 
+    def _cloud_check(self, after: str | None = None) -> None:
+        if after is not None:
+            self._after_cloud = after
+        self._show_splash()
+        self._start_bootstrap()
+
+    def _splash_visible(self) -> bool:
+        if self._splash is None:
+            return False
+        try:
+            return bool(self._splash.winfo_ismapped())
+        except tk.TclError:
+            return False
+
+    def _show_splash(self, msg: str = "Comprobando servidores…") -> None:
+        self._splash_status.set(msg)
+        try:
+            self._retry_btn.pack_forget()
+        except tk.TclError:
+            pass
+        if self._pad is not None:
+            self._pad.pack_forget()
+        if self._splash is not None and not self._splash.winfo_ismapped():
+            self._splash.pack(fill="both", expand=True)
+        self._stop_spin()
+        self._tick_spin()
+
     def _start_bootstrap(self) -> None:
+        if self._booting:
+            return
+        self._booting = True
         self._retry_btn.pack_forget()
-        self._splash_status.set("Conectando con el servidor…")
+        self._splash_status.set("Comprobando traductor (puede tardar unos minutos)…")
         if self._spin_job is None:
             self._tick_spin()
         threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-semantic").start()
+        self.root.after(150, self._poll_boot)
 
     def _bootstrap_worker(self) -> None:
         try:
-            from semantic.remote import configured, ping
+            from avatar.remote import ping as ping_avatar
+            from semantic.remote import configured, ping as ping_semantic
 
-            if self.args.no_llm:
-                self._boot_q.put(("ok",))
-                return
-            if not configured():
-                self._boot_q.put(("ok",))
-                return
-            ping()
+            if not self.args.no_llm:
+                if not configured():
+                    raise RuntimeError("Falta la URL del traductor semántico")
+                self._boot_q.put(("status", "Comprobando traductor (puede tardar unos minutos)…"))
+                if not ping_semantic():
+                    raise RuntimeError("El traductor semántico no responde")
+            self._boot_q.put(("status", "Comprobando avatar…"))
+            if not ping_avatar(timeout=20.0):
+                raise RuntimeError("El servidor de T-pose no responde")
             self._boot_q.put(("ok",))
         except Exception as exc:
             self._boot_q.put(("err", str(exc)))
@@ -213,27 +256,43 @@ class IlsaWindow:
             while True:
                 item = self._boot_q.get_nowait()
                 kind = item[0]
-                if kind == "ok":
-                    self._show_main()
+                if kind == "status":
+                    self._splash_status.set(item[1])
+                elif kind == "ok":
+                    self._booting = False
+                    self._finish_cloud_ok()
                     return
                 elif kind == "err":
-                    self._splash_status.set("No se pudo conectar")
+                    self._booting = False
+                    self._stop_spin()
+                    self._splash_status.set(item[1] if len(item) > 1 else "No se pudo conectar")
                     self._retry_btn.pack(pady=(16, 0))
+                    return
         except queue.Empty:
             pass
-        if not self._ready:
+        if self._booting:
             self.root.after(150, self._poll_boot)
 
+    def _finish_cloud_ok(self) -> None:
+        self._show_main()
+        after = self._after_cloud
+        self._after_cloud = None
+        if after == "start":
+            self._start_on_main()
+        elif after == "restart":
+            self._restart_on_main()
+
     def _show_main(self) -> None:
-        if self._ready:
-            return
-        self._ready = True
         self._stop_spin()
-        self._splash.destroy()
-        self._splash = None
-        self._build()
-        self.root.geometry(f"{WIN_W}x{WIN_H}")
-        self.root.after(800, self._poll_health)
+        if self._splash is not None:
+            self._splash.pack_forget()
+        if self._pad is None:
+            self._build()
+            self.root.geometry(f"{WIN_W}x{WIN_H}")
+            self.root.after(800, self._poll_health)
+        else:
+            self._pad.pack(fill="both", expand=True)
+        self._ready = True
 
     def _hook_logs(self) -> None:
         writer = QueueWriter(self.log_q)
@@ -246,6 +305,7 @@ class IlsaWindow:
 
     def _build(self) -> None:
         pad = tk.Frame(self.root, bg=BG, padx=28, pady=22)
+        self._pad = pad
         pad.pack(fill="both", expand=True)
 
         title_f = tkfont.Font(family="Segoe UI", size=22, weight="bold")
@@ -327,6 +387,30 @@ class IlsaWindow:
             height=3,
             anchor="nw",
         ).pack(anchor="w", pady=(8, 0))
+
+        self.handed_var = tk.StringVar(value="right")
+        self.handed_frame = tk.Frame(modes, bg=BG)
+        tk.Label(self.handed_frame, text="Mano", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
+        row_hand = tk.Frame(self.handed_frame, bg=BG)
+        row_hand.pack(fill="x", pady=(6, 0))
+        self.zurdo_btn = tk.Button(
+            row_hand,
+            text="Zurdo",
+            font=body_f,
+            padx=16,
+            pady=10,
+            command=lambda: self._pick_handed("left"),
+        )
+        self.zurdo_btn.pack(side="left", fill="x", expand=True)
+        self.diestro_btn = tk.Button(
+            row_hand,
+            text="Diestro",
+            font=body_f,
+            padx=16,
+            pady=10,
+            command=lambda: self._pick_handed("right"),
+        )
+        self.diestro_btn.pack(side="left", fill="x", expand=True, padx=(8, 0))
 
         card = tk.Frame(pad, bg=BG2, highlightbackground=LINE, highlightthickness=1, padx=16, pady=14)
         card.pack(fill="x", pady=(18, 12))
@@ -465,11 +549,33 @@ class IlsaWindow:
     def _mode_pending(self) -> bool:
         live = self.backend.mode
         chosen = self.mode_var.get()
-        return bool(
+        mode_changed = bool(
             self.backend.running
             and chosen in ("signer", "hearing")
             and chosen != live
         )
+        handed_changed = bool(
+            self.backend.running
+            and chosen == "signer"
+            and live == "signer"
+            and self._want_left_handed() != bool(self.backend.left_handed)
+        )
+        return mode_changed or handed_changed
+
+    def _want_left_handed(self) -> bool:
+        return self.handed_var.get() == "left"
+
+    def _paint_handed_control(self) -> None:
+        if self.mode_var.get() != "signer":
+            self.handed_frame.pack_forget()
+            return
+        if not self.handed_frame.winfo_ismapped():
+            self.handed_frame.pack(fill="x", pady=(10, 0))
+        if self.handed_var.get() not in ("left", "right"):
+            self.handed_var.set("right")
+        handed = self.handed_var.get()
+        self._paint_btn(self.zurdo_btn, live=True, role="start" if handed == "left" else "secondary")
+        self._paint_btn(self.diestro_btn, live=True, role="start" if handed == "right" else "secondary")
 
     def _paint_mode_control(self) -> None:
         mode = self.mode_var.get()
@@ -479,9 +585,18 @@ class IlsaWindow:
         self.mode_hint_var.set(hint)
         self._paint_btn(self.signer_btn, live=True, role="start" if mode == "signer" else "secondary")
         self._paint_btn(self.hearing_btn, live=True, role="start" if mode == "hearing" else "secondary")
+        self._paint_handed_control()
+
+    def _pick_handed(self, handed: str) -> None:
+        if handed not in ("left", "right"):
+            handed = "right"
+        self.handed_var.set(handed)
+        self._on_mode_change()
 
     def _pick_mode(self, mode: str) -> None:
         self.mode_var.set(mode)
+        if mode == "signer" and self.handed_var.get() not in ("left", "right"):
+            self.handed_var.set("right")
         self._on_mode_change()
 
     def _on_mode_change(self) -> None:
@@ -525,6 +640,7 @@ class IlsaWindow:
             return None
         self.backend.mode = mode
         self.backend.semantic_model_id = DEFAULT_MODEL_ID
+        self.backend.left_handed = mode == "signer" and self._want_left_handed()
         return mode
 
     def _start_on_main(self) -> None:
@@ -548,13 +664,12 @@ class IlsaWindow:
                 pass
             self._idle("Apagado")
             self._on_mode_change()
+            self._cloud_check()
             return
-        self._busy("Encendiendo motor…")
-        self.root.update_idletasks()
-        self._start_on_main()
+        self._cloud_check("start")
 
-    def _on_reset(self) -> None:
-        if not self._reset_armed or not self._bind_opts():
+    def _restart_on_main(self) -> None:
+        if not self._bind_opts():
             return
         self._busy("Reiniciando…")
         self.root.update_idletasks()
@@ -563,6 +678,11 @@ class IlsaWindow:
             self._idle("Cargando modelos…")
         except Exception as exc:
             self._idle(f"No reinició: {exc}", error=True)
+
+    def _on_reset(self) -> None:
+        if not self._reset_armed or not self._bind_opts():
+            return
+        self._cloud_check("restart")
 
     def _busy(self, label: str) -> None:
         self.status_var.set(label)
@@ -576,6 +696,9 @@ class IlsaWindow:
         self._sync_actions()
 
     def _poll_health(self) -> None:
+        if self._splash_visible():
+            self.root.after(1000, self._poll_health)
+            return
         if self.backend.running:
             try:
                 import urllib.request
@@ -588,31 +711,33 @@ class IlsaWindow:
                     data = json.loads(resp.read().decode("utf-8"))
                 if data.get("ok"):
                     mode = data.get("mode") or self.backend.mode
-                    if mode == "hearing":
-                        bits = ["En marcha", "oyente", "voz → subtítulos"]
-                        self._set_dot(OK)
+                    semantic_ok = bool(data.get("semantic_ready")) or self.args.no_llm
+                    if not semantic_ok:
+                        self.status_var.set("Traductor caído · Reiniciá ILSA")
+                        self._set_dot(BAD)
+                        self.detail_var.set(data.get("semantic_error") or "El semántico no responde")
+                        self._sync_actions()
                     else:
-                        bits = ["En marcha", "sordo"]
-                        if data.get("classifier_ready"):
-                            bits.append("clasificador")
-                        if data.get("semantic_ready"):
-                            bits.append("traductor")
-                        elif self.args.no_llm:
-                            bits.append("sin traductor")
+                        if mode == "hearing":
+                            bits = ["En marcha", "oyente", "voz → subtítulos"]
+                            self._set_dot(OK)
                         else:
-                            bits.append("traductor cargando")
-                        self._set_dot(OK if data.get("semantic_ready") or self.args.no_llm else WARN)
-                    if self._mode_pending():
-                        bits.append("Reiniciá el modo")
-                    elif mode == "signer" and data.get("semantic_busy"):
-                        bits.append("traduciendo…")
-                    self.status_var.set(" · ".join(bits))
-                    extra = f"{self.args.host}:{self.args.port}  ·  CPU"
-                    line = data.get("metrics") or ""
-                    if line:
-                        extra = f"{extra}  ·  {line}"
-                    self.detail_var.set(extra)
-                    self._sync_actions()
+                            bits = ["En marcha", "sordo"]
+                            if data.get("classifier_ready"):
+                                bits.append("clasificador")
+                            bits.append("traductor")
+                            self._set_dot(OK)
+                        if self._mode_pending():
+                            bits.append("Reiniciá el modo")
+                        elif mode == "signer" and data.get("semantic_busy"):
+                            bits.append("traduciendo…")
+                        self.status_var.set(" · ".join(bits))
+                        extra = f"{self.args.host}:{self.args.port}  ·  CPU"
+                        line = data.get("metrics") or ""
+                        if line:
+                            extra = f"{extra}  ·  {line}"
+                        self.detail_var.set(extra)
+                        self._sync_actions()
             except Exception:
                 if self.backend.running:
                     self._set_dot(WARN)

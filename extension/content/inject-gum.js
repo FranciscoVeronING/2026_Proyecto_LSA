@@ -59,6 +59,9 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   let landmarks = null;
   let caption = { spanish: "", glosses: "" };
   let avatarClip = null;
+  const avatarQueue = [];
+  const AVATAR_QUEUE_MAX = 20;
+  let lastCaptionLine = "";
   let pipeline = null;
   let extraAudio = null;
 
@@ -72,6 +75,8 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       if (!hearingMode) {
         stopHearingTap();
         avatarClip = null;
+        avatarQueue.length = 0;
+        lastCaptionLine = "";
       }
       if (want && !enabled) {
         enabled = true;
@@ -117,23 +122,21 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     }
     if (data.type === "LSA_SPEECH_STOP") stopHearingTap();
     if (data.type === "LSA_AVATAR" && data.clip && data.clip.ok && window.LsaAvatar) {
-      avatarClip = window.LsaAvatar.start(data.clip);
-      const ms = Math.max(SUBTITLE_HOLD_MS, window.LsaAvatar.durationMs(avatarClip) + 600);
-      if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
-      window.__lsaCaptionTimer = setTimeout(() => {
-        caption.spanish = "";
-      }, ms);
+      enqueueAvatarClip(data.clip, lastCaptionLine || caption.spanish);
     }
     if (data.type === "LSA_CAPTION") {
       // Solo `line`: oyente manda glosas del semántico; sordo manda el español.
       // Nunca usar `glosses` crudas del clasificador.
       const line = typeof data.line === "string" ? data.line.trim() : "";
       if (line) {
-        caption.spanish = line;
-        if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
-        window.__lsaCaptionTimer = setTimeout(() => {
-          caption.spanish = "";
-        }, SUBTITLE_HOLD_MS);
+        lastCaptionLine = line;
+        if (!avatarBusy()) {
+          caption.spanish = line;
+          if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
+          window.__lsaCaptionTimer = setTimeout(() => {
+            if (!avatarBusy() && !avatarQueue.length) caption.spanish = "";
+          }, SUBTITLE_HOLD_MS);
+        }
       }
     }
   });
@@ -588,12 +591,52 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     ctx.restore();
   }
 
+  function avatarBusy() {
+    if (!avatarClip || !window.LsaAvatar) return false;
+    return performance.now() < avatarClip.t0 + window.LsaAvatar.durationMs(avatarClip);
+  }
+
+  function holdCaptionForClip(play) {
+    const ms = Math.max(SUBTITLE_HOLD_MS, window.LsaAvatar.durationMs(play) + 600);
+    if (window.__lsaCaptionTimer) clearTimeout(window.__lsaCaptionTimer);
+    window.__lsaCaptionTimer = setTimeout(() => {
+      if (!avatarBusy() && !avatarQueue.length) caption.spanish = "";
+    }, ms);
+  }
+
+  function beginAvatarClip(clip, line) {
+    if (!window.LsaAvatar || !clip) return;
+    avatarClip = window.LsaAvatar.start(clip);
+    if (line) caption.spanish = line;
+    holdCaptionForClip(avatarClip);
+  }
+
+  function enqueueAvatarClip(clip, line) {
+    if (!clip || !clip.frames || !clip.frames.length) return;
+    if (avatarBusy()) {
+      if (avatarQueue.length >= AVATAR_QUEUE_MAX) avatarQueue.shift();
+      avatarQueue.push({ clip, line: line || "" });
+      return;
+    }
+    beginAvatarClip(clip, line);
+  }
+
+  function pumpAvatarQueue() {
+    if (avatarBusy()) return;
+    avatarClip = null;
+    const next = avatarQueue.shift();
+    if (next) beginAvatarClip(next.clip, next.line);
+  }
+
   function drawSkeletonPanel(ctx, w, h) {
     if (!window.LsaAvatar) return;
     const half = Math.floor(w / 2);
     const panelW = w - half;
-    const view = window.LsaAvatar.sample(avatarClip, performance.now());
-    if (view && view.done) avatarClip = null;
+    let view = window.LsaAvatar.sample(avatarClip, performance.now());
+    if (view && view.done) {
+      pumpAvatarQueue();
+      view = window.LsaAvatar.sample(avatarClip, performance.now());
+    }
     window.LsaAvatar.draw(ctx, view, half, 0, panelW, h);
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.fillRect(half, 0, 1, h);

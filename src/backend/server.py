@@ -105,6 +105,7 @@ def health():
         "semantic_label": semantic_label,
         "semantic_load": semantic_load,
         "device": str(getattr(session, "device", "")) if session else "",
+        "left_handed": bool(session and getattr(session, "left_handed", False)),
         "metrics": _health_metrics(),
     }
 
@@ -128,8 +129,9 @@ def metrics_summary():
 
 @app.post("/session")
 def open_session(body: SessionIn):
-    get_session().reset_session(left_handed=body.left_handed)
-    return get_session().snapshot()
+    session = get_session()
+    session.reset_session(left_handed=getattr(session, "left_handed", False))
+    return session.snapshot()
 
 
 @app.post("/sign")
@@ -264,7 +266,12 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def init_session(enable_llm: bool = True, mode: str = "signer", semantic_model_id: str | None = None):
+def init_session(
+    enable_llm: bool = True,
+    mode: str = "signer",
+    semantic_model_id: str | None = None,
+    left_handed: bool = False,
+):
     global _session, _mode
     _mode = "hearing" if mode == "hearing" else "signer"
     if _mode == "hearing":
@@ -274,7 +281,11 @@ def init_session(enable_llm: bool = True, mode: str = "signer", semantic_model_i
         return
     from backend.session import LSASession
 
-    _session = LSASession(enable_llm=enable_llm, semantic_model_id=semantic_model_id)
+    _session = LSASession(
+        enable_llm=enable_llm,
+        semantic_model_id=semantic_model_id,
+        left_handed=left_handed,
+    )
 
 
 def main(argv=None):

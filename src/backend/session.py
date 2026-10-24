@@ -41,15 +41,23 @@ from semantic.config import DEFAULT_MODEL_ID
 
 
 class LSASession:
-    def __init__(self, enable_llm: bool = True, semantic_model_id: str | None = None):
+    def __init__(
+        self,
+        enable_llm: bool = True,
+        semantic_model_id: str | None = None,
+        left_handed: bool = False,
+    ):
         # La LLM en un hilo aparte: si carga acá, /health se queda mudo un rato.
         self.lock = threading.RLock()
         self._llm_gate = threading.Lock()
         self.enable_llm = enable_llm
         self._wanted_model_id = semantic_model_id or DEFAULT_MODEL_ID
-        self.left_handed = False
+        self.left_handed = bool(left_handed)
         self.device = torch.device("cpu")
-        print("[backend] Clasificador en CPU. Traductor: servidor remoto.")
+        print(
+            "[backend] Clasificador en CPU. Traductor: servidor remoto. "
+            f"Mano: {'zurda' if self.left_handed else 'diestra'}."
+        )
         self.model, self.idx_to_class = load_classifier_bundle(self.device)
         print(f"[backend] Clasificador: {len(self.idx_to_class)} señas en {self.device}")
         self.buffer = UtteranceBuffer(
@@ -238,11 +246,22 @@ class LSASession:
         )
         snap = self.snapshot()
         total_ms = (time.perf_counter() - t0) * 1000
+        conf1 = float(top3[0][1]) if top3 else None
+        reject_reason = ""
+        if not added:
+            if conf1 is None or conf1 < cfg.CONFIDENCE_THRESHOLD:
+                reject_reason = "confidence"
+            elif gloss == "DESCONOCIDO":
+                reject_reason = "confidence"
+            else:
+                reject_reason = "repeat"
         snap.update({
             "accepted": True,
             "added": added,
             "activity": activity,
-            "gloss": top3[0][0] if top3 else None,
+            "gloss": gloss or (top3[0][0] if top3 else None),
+            "confidence": conf1,
+            "reject_reason": reject_reason,
             "ms": round(total_ms, 1),
         })
         from backend.metrics import log_event
@@ -354,6 +373,9 @@ class LSASession:
             return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:
             print(f"[backend] Error Cloud Run /sign: {e}")
+            with self.lock:
+                self.semantic_error = str(e)
+                self.semantic_ready = False
             return collapsed, "fallback", 0.0, None
 
     def capture_config(self) -> dict[str, Any]:
@@ -374,4 +396,5 @@ class LSASession:
             "utterance_pause_sec": cfg.UTTERANCE_PAUSE_SEC,
             "pose_dim": cfg.POSE_DIM,
             "mode": "signer",
+            "left_handed": self.left_handed,
         }

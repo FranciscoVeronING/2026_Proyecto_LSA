@@ -21,6 +21,14 @@
 #lsa-meet-root .lsa-card.lsa-dragging {
   cursor: grabbing;
 }
+#lsa-meet-root .lsa-card.lsa-alert {
+  background: #5a2422;
+  border-color: #E89A94;
+}
+#lsa-meet-root .lsa-card.lsa-alert .lsa-status {
+  color: #E89A94;
+  font-weight: 700;
+}
 
 #lsa-meet-root .lsa-cap {
   font-size: 11px;
@@ -42,6 +50,27 @@
   color: #EAF4FA;
   font-size: 12px;
   margin-top: 4px;
+}
+#lsa-meet-root .lsa-gloss-added {
+  color: #5BCBE8;
+  font-weight: 700;
+}
+#lsa-meet-root .lsa-gloss-confidence {
+  color: #E89A94;
+  font-weight: 700;
+}
+#lsa-meet-root .lsa-gloss-repeat {
+  color: #EAF4FA;
+  font-weight: 650;
+}
+#lsa-meet-root .lsa-pending {
+  color: #5BCBE8;
+  font-size: 12px;
+  font-weight: 650;
+  margin-top: 2px;
+}
+#lsa-meet-root .lsa-pending[hidden] {
+  display: none;
 }
 
 #lsa-meet-root .lsa-spanish {

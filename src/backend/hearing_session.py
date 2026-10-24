@@ -81,6 +81,7 @@ class HearingSession:
             except Exception as exc:
                 print(f"[backend] Oyente remoto falló: {exc}")
                 self.semantic_error = str(exc)
+                self.semantic_ready = False
         self.gloss_text = glosses
         clip = None
         if glosses:

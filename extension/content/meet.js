@@ -9,6 +9,7 @@ let running = false;
 let extDead = false;
 let meetMode = "signer";
 let lastHealthOkAt = 0;
+let ilsaLeftHanded = false;
 const ILSA_DOWN_MS = 8000;
 let framesSeen = 0;
 let pending = false;
@@ -21,8 +22,11 @@ let prefs = { showLandmarks: false, outputMode: "subtitles", hearingInput: "both
 const hudState = {
   capturing: false,
   lastGloss: "—",
+  glossKind: "",
+  pendingText: "",
   spanish: "",
   statusText: "Buscando ILSA…",
+  alert: false,
 };
 
 function hearingInputMode() {
@@ -123,6 +127,14 @@ function sendToOyente(spanish, source) {
   setHud({ debug: "Traduciendo a glosas…", capturing: true, lastGloss: source });
   LsaApi.hearing(text, true)
     .then((s) => {
+      if (s && s.semantic_ready === false) {
+        setHud({
+          debug: "El traductor no responde. Reiniciá ILSA.",
+          capturing: false,
+          alert: true,
+        });
+        return;
+      }
       const glosses = String((s && (s.caption || s.glosses)) || "").trim();
       if (!glosses) {
         setHud({ debug: "El traductor no devolvió glosas", capturing: false });
@@ -144,8 +156,9 @@ function sendToOyente(spanish, source) {
     })
     .catch((err) => {
       setHud({
-        debug: "Sin traductor: " + ((err && err.message) || "error"),
+        debug: "El traductor no responde. Reiniciá ILSA.",
         capturing: false,
+        alert: true,
       });
     });
 }
@@ -291,6 +304,7 @@ function ensureHud() {
         <span class="lsa-status" id="lsa-status">Listo</span>
       </div>
       <div class="lsa-gloss" id="lsa-gloss">Última glosa: —</div>
+      <div class="lsa-pending" id="lsa-pending" hidden></div>
       <div class="lsa-hear" id="lsa-hear" hidden>
         <span class="lsa-hear-label">Captura</span>
         <button type="button" class="lsa-hear-btn" data-hear="voice">Voz</button>
@@ -379,11 +393,30 @@ function bindHudDrag(root) {
 function paintHud() {
   const root = ensureHud();
   root.classList.remove("lsa-hidden");
+  const card = root.querySelector(".lsa-card");
+  if (card) card.classList.toggle("lsa-alert", Boolean(hudState.alert));
   const cap = root.querySelector("#lsa-cap");
   cap.textContent = hudState.capturing ? "ON" : "OFF";
   cap.className = "lsa-cap " + (hudState.capturing ? "on" : "off");
   root.querySelector("#lsa-status").textContent = hudState.statusText;
-  root.querySelector("#lsa-gloss").textContent = "Última glosa: " + (hudState.lastGloss || "—");
+  const glossEl = root.querySelector("#lsa-gloss");
+  const token = hudState.lastGloss || "—";
+  let glossLine = "Última glosa: " + token;
+  if (token && token !== "—" && hudState.glossKind === "added") {
+    glossLine = "En el mensaje: " + token;
+  } else if (token && token !== "—" && hudState.glossKind === "confidence") {
+    glossLine = "Poca confianza: " + token;
+  } else if (token && token !== "—" && hudState.glossKind === "repeat") {
+    glossLine = "No se agregó: " + token;
+  }
+  glossEl.textContent = glossLine;
+  glossEl.className = "lsa-gloss" + (hudState.glossKind ? " lsa-gloss-" + hudState.glossKind : "");
+  const pendingEl = root.querySelector("#lsa-pending");
+  if (pendingEl) {
+    const pending = String(hudState.pendingText || "").trim();
+    pendingEl.hidden = !pending;
+    pendingEl.textContent = pending ? "Frase: " + pending : "";
+  }
   const sp = root.querySelector("#lsa-spanish");
   if (sp) sp.textContent = hudState.spanish || "";
   const hear = root.querySelector("#lsa-hear");
@@ -399,8 +432,21 @@ function paintHud() {
  * @param {object} partial
  */
 function setHud(partial) {
+  if (typeof partial.alert === "boolean") hudState.alert = partial.alert;
   if (typeof partial.capturing === "boolean") hudState.capturing = partial.capturing;
-  if (partial.lastGloss) hudState.lastGloss = partial.lastGloss;
+  if (partial.lastGloss) {
+    hudState.lastGloss = partial.lastGloss;
+    if (partial.lastGloss === "—") {
+      hudState.glossKind = "";
+      hudState.pendingText = "";
+    }
+  }
+  if (typeof partial.glossAdded === "boolean") {
+    if (partial.glossAdded) hudState.glossKind = "added";
+    else if (partial.glossReject === "repeat") hudState.glossKind = "repeat";
+    else hudState.glossKind = "confidence";
+  }
+  if (typeof partial.pendingText === "string") hudState.pendingText = partial.pendingText;
   if (typeof partial.spanish === "string" && partial.spanish) {
     hudState.spanish = partial.spanish;
     if (window.__lsaHudCaptionTimer) clearTimeout(window.__lsaHudCaptionTimer);
@@ -421,6 +467,9 @@ function setHud(partial) {
       error: partial.error || "Error",
     };
     hudState.statusText = map[partial.status] || partial.error || partial.status;
+  }
+  if (hudState.alert) {
+    hudState.statusText = "El traductor no responde. Reiniciá ILSA.";
   }
   paintHud();
 }
@@ -478,6 +527,8 @@ function startBridge(mode) {
   pending = false;
   hudState.capturing = false;
   hudState.lastGloss = "—";
+  hudState.glossKind = "";
+  hudState.pendingText = "";
   ensureHud();
   postToPage({ type: "LSA_SET_ENABLED", enabled: true, hearing: meetMode === "hearing" });
   applyPrefsToPage();
@@ -492,7 +543,7 @@ function startBridge(mode) {
   }
   postToPage({ type: "LSA_SPEECH_STOP" });
   setHud({ status: "escuchando", capturing: false });
-  sendExt({ type: "lsa-meet-offscreen-start", leftHanded: false });
+  sendExt({ type: "lsa-meet-offscreen-start", leftHanded: ilsaLeftHanded });
   loop();
   setTimeout(() => {
     if (running && meetMode === "signer" && !framesSeen) {
@@ -509,7 +560,7 @@ function stopBridge() {
   stopVoice();
   postToPage({ type: "LSA_SPEECH_STOP" });
   postToPage({ type: "LSA_SET_ENABLED", enabled: false });
-  setHud({ debug: "Encendé ILSA para traducir", capturing: false, lastGloss: "—" });
+  setHud({ debug: "Encendé ILSA para traducir", capturing: false, lastGloss: "—", alert: false });
 }
 
 window.addEventListener("message", (event) => {
@@ -558,7 +609,20 @@ async function tickLocal() {
   }
   if (h && h.ok) {
     lastHealthOkAt = Date.now();
+    ilsaLeftHanded = Boolean(h.left_handed);
     startBridge(h.mode === "hearing" ? "hearing" : "signer");
+    if (h.semantic_ready === false) {
+      setHud({
+        debug: "El traductor no responde. Reiniciá ILSA.",
+        capturing: false,
+        alert: true,
+      });
+    } else if (hudState.alert) {
+      setHud({
+        alert: false,
+        debug: meetMode === "hearing" ? hearingHint() : "Mostrá las manos para capturar",
+      });
+    }
     return;
   }
   if (running && lastHealthOkAt && Date.now() - lastHealthOkAt >= ILSA_DOWN_MS) {

@@ -229,7 +229,7 @@ async function proxyIlsaApi(msg) {
   const path = String((msg && msg.path) || "");
   if (!path.startsWith("/")) throw new Error("Pedido inválido.");
   const method = String((msg && msg.method) || "GET").toUpperCase();
-  const opts = { method, signal: AbortSignal.timeout(method === "GET" ? 4000 : 25000) };
+  const opts = { method, signal: AbortSignal.timeout(method === "GET" ? 4000 : 240000) };
   if (msg && msg.body) {
     opts.headers = { "Content-Type": "application/json" };
     opts.body = typeof msg.body === "string" ? msg.body : JSON.stringify(msg.body);

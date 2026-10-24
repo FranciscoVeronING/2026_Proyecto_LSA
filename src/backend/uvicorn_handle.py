@@ -18,6 +18,7 @@ class BackendHandle:
         self.enable_llm = enable_llm
         self.mode = "signer"
         self.semantic_model_id = ""
+        self.left_handed = False
         self.server = None
         self.thread = None
         self.starting = False
@@ -68,6 +69,7 @@ class BackendHandle:
                 enable_llm=llm,
                 mode=self.mode,
                 semantic_model_id=self.semantic_model_id or None,
+                left_handed=self.left_handed,
             )
             config = uvicorn.Config(
                 srv.app,
@@ -102,8 +104,10 @@ class BackendHandle:
     def restart(self) -> None:
         mode = self.mode
         model = self.semantic_model_id
+        left_handed = self.left_handed
         self.stop()
         time.sleep(0.25)
         self.mode = mode
         self.semantic_model_id = model
+        self.left_handed = left_handed
         self.start()

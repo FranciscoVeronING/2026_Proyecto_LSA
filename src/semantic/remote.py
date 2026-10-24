@@ -13,7 +13,7 @@ from pathlib import Path
 
 from semantic.config import CLOUD_SEMANTIC_URL, SEMANTIC_TOKEN
 
-_TIMEOUT = 120.0
+_TIMEOUT = 240.0
 _KEEPALIVE_SEC = 240.0
 _last_timing: dict = {"roundtrip_ms": None, "server_ms": None}
 _keepalive_started = False
@@ -98,7 +98,7 @@ def last_timing() -> dict:
     return dict(_last_timing)
 
 
-def ping(timeout: float = 60.0) -> bool:
+def ping(timeout: float = _TIMEOUT) -> bool:
     base = semantic_url()
     if not base:
         print("[semantic] ping: no hay URL")
@@ -127,7 +127,7 @@ def _ensure_keepalive() -> None:
         while True:
             time.sleep(_KEEPALIVE_SEC)
             try:
-                ping(timeout=12.0)
+                ping(timeout=_TIMEOUT)
             except Exception:
                 pass
 
