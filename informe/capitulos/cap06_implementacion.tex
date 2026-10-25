@@ -1,60 +1,67 @@
 % ====================================================================
 \chapter{Implementación y Desarrollo}
+\label{cap:implementacion}
 % ====================================================================
 
 \section{Implementación del subsistema de reconocimiento gestual}
-El subsistema de clasificación convierte secuencias cinemáticas en glosas de un vocabulario de 100 clases.
 
-\subsection{Preprocesamiento de datos}
+\subsection{Preprocesamiento de datos y pipeline de extracción}
+El pipeline procesa fotogramas de entrada mediante \textit{MediaPipe Holistic} para estructurar un vector instantáneo de 225 coordenadas ($33 \times 3$ de pose, $21 \times 3$ de mano izquierda y $21 \times 3$ de mano derecha). Para corregir discrepancias en la relación de aspecto de las cámaras ($4:3$ versus $16:9$), se aplica un reencuadre con bandas de relleno a una resolución uniforme de $853 \times 480$ píxeles previa extracción. Cada vector se centra en el punto medio de los hombros y se normaliza dividiendo por la distancia inter-hombros.
 
-% TODO: Agregar un diag de flujo que describa la secuencia completa desde el frame RGB crudo hasta la generación del tensor .npy
-
-\paragraph{Pipeline de captura e ingesta con MediaPipe Holistic.}
-La extracción de datos utiliza MediaPipe Holistic para obtener 33 puntos de pose y 21 puntos por cada mano, conformando un descriptor instantáneo de 225 coordenadas ($33 \times 3 + 21 \times 3 + 21 \times 3$).
-
-\paragraph{Normalización geométrica y corrección de aspecto.}
-Cada fotograma se centra en el punto medio de los hombros y se escala por la distancia inter-hombros. Para corregir la distorsión producida por la relación de aspecto entre cámaras ($4:3$ vs. $16:9$), se implementó un algoritmo de relleno con bandas a $853 \times 480$ previa extracción, evitando deformaciones en el espacio cartesiano.
-
-% TODO: Capaz q meter la ecuacion o explicar un poco mas la matematica de esto?
-
-\subsection{Preprocesamiento y arquitectura neuronal TinySkeletonClassifier}
-El flujo de entrada se procesa mediante tres etapas: interpolación lineal de fotogramas nulos, recortes de silencio inicial/final y submuestreo uniforme a una longitud fija de $T=16$ fotogramas.
-
-La red neuronal \textit{TinySkeletonClassifier} está compuesta por:
+\subsection{Arquitectura neuronal TinySkeletonClassifier}
+La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante el modelo \textit{TinySkeletonClassifier}, cuya implementación comprende:
 \begin{enumerate}
-    \item Dos capas de convolución 1D temporal (núcleo 3, 128 canales, BatchNorm, ReLU y Dropout 0,2).
-    \item Codificación posicional sinusoidal y un Transformer Encoder de 2 capas con 4 cabezas de atención.
-    \item Capa de agregación por atención (\textit{Attention Pooling}) que asigna un peso ponderado a cada instante según su relevancia informativa.
-    \item Capa lineal final hacia los logits de clasificación.
+    \item Dos capas de convolución unidimensional temporal (núcleo de tamaño 3, 128 canales, normalización por lotes, activación ReLU y regularización Dropout de 0,2).
+    \item Un módulo de codificación posicional sinusoidal sumado a la representación de 128 dimensiones.
+    \item Un codificador Transformer de 2 capas con 4 cabezas de atención.
+    \item Una capa de agregación por atención (\textit{Attention Pooling}) que asigna un escalar de relevancia $a_t$ a cada fotograma $t$, reduciendo la secuencia temporal a un vector único de 128 dimensiones:
+    \begin{equation}
+    \mathbf{v} = \sum_{t=1}^{T} a_t \mathbf{h}_t
+    \label{eq:attention_pooling}
+    \end{equation}
+    \item Una capa densa lineal final hacia las 100 clases del vocabulario gestual.
 \end{enumerate}
 
-% TODO: ACA METER GRAFICO BONITO DE IA
+% TODO: GRAFCO DE TINY SKELETON
 
-\section{Implementación del subsistema de traducción semántica bidireccional}
+\section{Implementación del subsistema de traducción semántico bidireccional}
 
 \subsection{Selección y especificación de la suite de modelos de lenguaje}
-Los canales semántico directo (LSA $\rightarrow$ Español) e inverso (Español $\rightarrow$ LSA) entrenan la misma suite de modelos de lenguaje pequeños, entre 0,5B y 3B parámetros:
+Para la traducción semántica bidireccional se adaptaron modelos de lenguaje pequeños de entre 0,5B y 3B parámetros:
 \begin{itemize}
-    \item \textbf{Familia Qwen2.5:} variantes de instrucciones de 0,5B, 1,5B y 3B.
-    \item \textbf{Familia Llama 3.2 \parencite{dubey2024llama3}:} variante de instrucciones de 1B.
-    \item \textbf{Familia SmolLM2 \parencite{allal2024smollm2}:} variante de instrucciones de 1,7B.
+    \item \textbf{Familia Qwen2.5:} Variantes de instrucciones de 0,5B, 1,5B y 3B parámetros.
+    \item \textbf{Familia Llama 3.2:} Variante de instrucciones de 1B parámetros.
+    \item \textbf{Familia SmolLM2:} Variante de instrucciones de 1,7B parámetros.
+\end{itemize}
+En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en la Sección~\ref{sec:api-semantico-remoto}.
+
+\subsection{Régimen de entrenamiento y ajuste LoRA}
+El canal directo y el canal inverso comparten el mismo procedimiento de entrenamiento. El corpus se divide en un 85\,\% para entrenamiento y un 15\,\% para evaluación. Esta separación utiliza una semilla fija para asegurar que cualquier prueba sea reproducible en las mismas condiciones. Cada ejemplo del conjunto de datos representa una interacción de tres partes: las instrucciones iniciales del sistema (\textit{prompt}), el mensaje del usuario y la respuesta esperada. La ventana de procesamiento admite hasta $2048$ tokens.
+
+Para adaptar el modelo a la lengua de señas sin modificar sus miles de millones de parámetros originales, se utiliza la técnica LoRA. Se eligió un rango de adaptación $r = 16$ y un factor de escala $\alpha = 32$. La relación $\alpha / r = 2$. Estos valores responden a la configuración recomendada para modelos de este volumen.
+
+Las matrices que reciben entrenamiento son las cuatro capas de proyección de atención y las tres capas de la red de avance. En cambio, la tabla de tokens de entrada y la capa de salida permanecen fijas. Esta elección se debe a que el vocabulario base del modelo no cambia; la tarea solo necesita reorganizar y conectar palabras que la red ya conoce.
+
+El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, el paso matemático del optimizador es idéntico entre todas las opciones y los resultados son comparables.
+
+El \textit{learning rate} es de $3 \times 10^{-4}$ para el modelo de 3B y de $5 \times 10^{-4}$ para las versiones más pequeñas. Se asignó un valor menor al modelo grande porque un ajuste brusco en una red con más capas provoca inestabilidad en el aprendizaje. El optimizador elegido es AdamW cuantizado a 8 bits. Esta elección reduce el uso de memoria RAM en la GPU, ya que el estado del optimizador se guarda en $8$ bits y convive sin problemas junto al modelo base de $4$ bits. El decaimiento de pesos de $0{,}01$ evita que los adaptadores crezcan demasiado y memoricen los datos. Se incluyen $10$ pasos de calentamiento para que la tasa de aprendizaje suba de forma gradual desde cero, lo que evita desajustes iniciales bruscos en las matrices de LoRA que arrancan con valores al azar. Luego, un planificador de tipo coseno reduce de forma suave la tasa de aprendizaje hacia el cierre del entrenamiento para afinar los ajustes finales.
+
+Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara calcula el error únicamente sobre la respuesta deseada, mientras que el \textit{prompt} del sistema y la entrada del usuario quedan fuera de la actualización de pesos. De este modo, la red concentra todo su aprendizaje en la fluidez de la traducción.
+
+Por último, antes de ingresar al entrenamiento, los datos reciben una limpieza específica. Las letras sueltas y consecutivas del dataset se unen en un solo token con mayúscula inicial, y los dígitos sueltos forman un número consolidado. Tres letras idénticas seguidas se reducen a dos para corregir errores de tipeo o captura. Las secuencias de palabras sin separación previa, como \textit{Mar del Plata}, se agrupan en un único token \textit{Mardelplata} para que la falta de espacios no confunda al modelo durante el aprendizaje.
+
+\subsubsection{Procedimiento de evaluación y post-entrenamiento}
+Al cierre del entrenamiento, el 15\,\% del conjunto de datos reservado se evalúa sobre el binario en formato GGUF cuantizado a 4 bits. Esta prueba mide el rendimiento real sobre el servidor de inferencia en producción, y no el del modelo en precisión flotante original.La evaluación configura los siguientes parámetros generales de generación y medición:
+\begin{itemize}
+    \item \textbf{Determinismo:} Una temperatura de valor $0$ anula la aleatoriedad en la generación de texto y fuerza al modelo a elegir siempre el token de mayor probabilidad matemática. De esta forma, las respuestas resultan estrictamente reproducibles.
+    \item \textbf{Control de repetición y parada:} Se aplica una penalización de repetición de $1{,}05$ para desincentivar que el modelo entre en bucles de palabras o glosas idénticas durante la inferencia. El proceso se detiene ante la aparición de un salto de línea o de la marca de fin de turno, lo que evita el consumo innecesario de cómputo.
+    \item \textbf{Múltiples referencias:} Cuando existen varias salidas válidas para una misma entrada, el sistema las agrupa a todas como referencias aceptadas para no penalizar variantes correctas.
+    \item \textbf{Métricas de rendimiento:} La prueba registra cinco métricas cuantitativas complementarias: acierto exacto (coincidencias idénticas); acierto tras normalizar puntuación y mayúsculas (evalúa contenido sin penalizar formato); BLEU, ROUGE-L y METEOR (precisión de palabras, fluidez estructural y sinónimos); y la latencia para verificar un tiempo de respuesta adecuado para la comunicación.
 \end{itemize}
 
-En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en el Capítulo~5.
-
-\subsection{Régimen común del entrenamiento}
-Los dos canales comparten el procedimiento. El corpus se parte en 85\,\% de entrenamiento y 15\,\% de evaluación, con semilla fija. Cada ejemplo es un diálogo de tres partes: \textit{prompt}, entrada del usuario y respuesta. La carga admite 2048 tokens y guarda los pesos en 4 bits solo en esta etapa.
-
-La adaptación es LoRA \parencite{hu2022lora}, con rango $r = 16$ y escala $\alpha = 32$, sobre las cuatro proyecciones de la atención y las tres de la red de avance. El modelo de 3B usa lotes de 2 y acumula el gradiente 8 pasos. El resto usa lotes de 4 y acumula 4 pasos. La tasa es $3 \times 10^{-4}$ para 3B y $5 \times 10^{-4}$ para los demás. El optimizador es Adam de 8 bits, con decaimiento $0{,}01$, diez pasos de calentamiento y planificador coseno. Usa precisión \textit{bfloat16}.
-
-La pérdida no mira todo el diálogo. Una máscara toma la salida del modelo y la respuesta esperada. El \textit{prompt} y la entrada quedan fuera del gradiente. El error cae solo sobre la respuesta.
-
-Para el entrenamiento, en los dos corpus, las letras sueltas y consecutivas del datatset se funden en un token con mayúscula inicial y los dígitos sueltos en un número. Tres letras iguales seguidas se reducen a dos. Una ráfaga sin separación, como \textit{Mar del Plata}, queda en un solo token \textit{Mardelplata}.
-
-\subsection{\texorpdfstring{Canal directo (LSA $\rightarrow$ Español)}{Canal directo (LSA a Español)}}
-El par de este canal es glosas hacia una oración en español rioplatense. La entrada del usuario antepone «Glosas:» a la secuencia ya compacta. La respuesta es la oración esperada. La máscara deja el error sobre esa oración.
-
-La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la entrada \parencite{massoneparte2}:
+\subsection{Canal directo (LSA $\rightarrow$ Español)}
+El par de este canal es glosas hacia una oración en español rioplatense. La entrada del usuario antepone «Glosas:» a la secuencia ya compacta.
+La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la entrada:
 \begin{itemize}
     \item El español es rioplatense y usa voseo. La oración incorpora artículos, preposiciones y concordancia verbal. La traducción no es palabra por palabra.
     \item Los pronombres de entrada son \texttt{YO}, \texttt{VOS}, \texttt{EL}, \texttt{NOSOTROS} y \texttt{ELLOS}. Sin una marca de género al lado, el sujeto queda tácito.
@@ -66,160 +73,92 @@ La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la en
     \item Un token en capitalización de nombre, o una cifra, se copia tal cual. La consigna prohíbe sustituirlo o alterarlo.
     \item La entrada sigue el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
 \end{itemize}
-Al cierre de la corrida, el 15\,\% reservado se evalúa sobre el binario ya cuantizado. Esa evaluación usa temperatura $0$, tope de 24 tokens y penalización de repetición $1{,}05$, y se detiene ante un salto de línea o la marca de fin de turno. Si varias oraciones comparten las mismas glosas, todas cuentan como referencia. La corrida registra acierto exacto, acierto tras normalizar puntuación y mayúsculas, BLEU, ROUGE-L, METEOR y la latencia.
+Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens para la salida. Esta restricción responde a que las oraciones traducidas del vocabulario base son breves, y frena la generación de texto infinito en caso de un fallo en la red.
 
-\subsection{\texorpdfstring{Canal inverso (Español $\rightarrow$ LSA)}{Canal inverso (Español a LSA)}}
-El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas.
-
-Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español \parencite{massoneparte2}:
+\subsection{Canal inverso (Español $\rightarrow$ LSA)}
+El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas.Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español:
 \begin{itemize}
     \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y nunca letra por letra. Una cifra, como un documento o una cantidad, va en un solo token numérico.
     \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación.
-    \item Los pronombres se explicitan aunque el español los omita. ``Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}.
-    \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita.
-    \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. ``Me llamo X'' o ``Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre.
-    \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis ``voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega token temporal.
+    \item Los pronombres se explicitan aunque el español los omita. Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. Me llamo X'' o Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega token temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
 \end{itemize}
+Mediante estas reglas, el modelo aprende a emitir nombres propios y cifras ya empaquetados para la rutina de dactilología del avatar, en lugar de generar cadenas incoherentes de letras.En la evaluación post-entrenamiento de este canal, el límite de generación se fija en $48$ tokens. Este margen es más amplio que el del canal directo porque las oraciones en español que contienen nombres propios o cifras largas producen secuencias extensas de caracteres dactilológicos en la salida.
 
-El modelo aprende así a emitir el nombre o la cifra ya compactos, no una lista de letras.
-
-La evaluación del 15\,\% usa temperatura $0$, tope de 48 tokens y penalización $1{,}05$. Se detiene ante un salto de línea o la marca de fin de turno. Si la salida trae un bloque de razonamiento, ese bloque se descarta y queda la primera línea. Si varias secuencias de glosas comparten la misma oración, todas cuentan como referencia. Las métricas son las mismas del canal directo.
-
-\subsection{Cuantización GGUF Q4\_K\_M y servicio de inferencia}
-
-\paragraph{Formulación analítica para la estimación de memoria RAM en tiempo de inferencia.}
-Esta estimación no forma parte del servicio. Acota la memoria del binario Q4\_K\_M en el procesador, con la ventana de 2048 tokens del entorno publicado:
-
+\subsection{Cuantización GGUF Q4\_K\_M y estimación de memoria}
+Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantización \texttt{Q4\_K\_M}. La memoria RAM requerida durante la inferencia se calcula mediante la relación:
 \begin{equation}
-\text{RAM de inferencia} \approx \mathbf{W} + KV_{\text{fp16}}(ctx=2048) + \text{Buffer de trabajo}
-\label{eq:runtime_ram_formula}
+\text{RAM} \approx \mathbf{W} + KV_{\text{fp16}}(ctx=2048) + \text{Buffer}
+\label{eq:ram_runtime}
 \end{equation}
+donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados ($\sim 0{,}5$ bytes por parámetro), $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto, y el buffer reserva espacio para las activaciones intermedias.
 
-donde:
+\section{Integración en Google Meet y arquitectura de la extensión}
+
+\subsection{Secuencia completa de inferencia y comunicación multidireccional}
+
+El motor local de la plataforma determina el modo operativo antes de cualquier interacción con la extensión de navegador. A través del panel de control, el usuario configura la lateralidad (diestro o zurdo) y el canal de comunicación (Sordo u Oyente). Las acciones de encendido, reinicio o apagado retornan a la pantalla de carga. La interfaz principal solo habilita sus funciones si el traductor semántico y el servidor de posturas responden correctamente.
+
+El proceso principal escucha peticiones en una dirección de red local. Dado que las políticas de seguridad de Google Chrome identifican esa dirección como una red interna restringida, la página de la llamada no puede comunicarse con ella de forma directa. Por este motivo, el módulo en segundo plano de la extensión opera como intermediario, mientras que el documento secundario sin pantalla y la ventana emergente —al pertenecer al mismo origen de la extensión— entran en contacto directo con el motor local.
+
+Durante la navegación en una llamada activa, el módulo en segundo plano efectúa una consulta inicial sobre el estado del sistema. Si el motor local se encuentra encendido, la extensión inyecta herramientas en dos entornos aislados del navegador:
 \begin{itemize}
-    \item $\mathbf{W}$ es el espacio de los tensores cuantizados, del orden de $0{,}5$ bytes por parámetro en \texttt{GGUF Q4\_K\_M}.
-    \item $KV_{\text{fp16}}$ es la caché de claves y valores en \texttt{fp16} para 2048 tokens \parencite{pope2023efficiently}.
-    \item El buffer de trabajo reserva memoria temporal para las activaciones ($2 \times d_{\text{model}} \times ctx \times 2$ bytes).
+\item \textbf{Entorno de soporte:} Gestiona la interfaz flotante, las preferencias del usuario y el envío de solicitudes de red.
+\item \textbf{Entorno de la página principal:} Encargado de la renderización en pantalla y de tomar el control de la transmisión de la cámara web.
 \end{itemize}
 
-\section{Integración en Google Meet y extensión de navegador}
+El sistema reitera la validación de estado cada dos segundos. Si el traductor no se encuentra listo, la interfaz solicita el reinicio del servicio y detiene el flujo. La modalidad seleccionada determina el canal activo, con la restricción de que el modo Sordo y el modo Oyente nunca se ejecutan en simultáneo.
 
-La integración con la plataforma Google Meet se implementó como una extensión de navegador desarrollada bajo la especificación Manifest V3 de Chromium \parencite{chrome2024manifestv3}. La arquitectura física del código distribuye las responsabilidades en un script en segundo plano (\textit{service worker}), un documento oculto (\textit{offscreen}), una página de entorno aislado (\textit{sandbox}) y dos scripts de contenido (\textit{content scripts}) inyectados sobre el dominio de la videollamada \parencite{chrome2024manifestv3}. La Figura~\ref{fig:paquetes_extension} muestra ese reparto. El motor ILSA queda fuera de la extensión.
+El ciclo continuo de inferencia, procesamiento y comunicación se articula a través de las siguientes etapas:
 
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-        font=\footnotesize,
-        pkg/.style={draw, rounded corners=2pt, align=center, inner sep=4pt, fill=white, text width=3.3cm},
-        arr/.style={-{Stealth[length=2.2mm]}, thick}
-    ]
-        \node[pkg] (sw) {\textit{Service worker}};
-        \node[pkg, below left=0.7cm and 0.15cm of sw] (cs) {Script de contenido\\\texttt{inject-gum.js}};
-        \node[pkg, below=0.7cm of cs] (canvas) {Lienzo\\\texttt{canvas}};
-        \node[pkg, below right=0.7cm and 0.15cm of sw] (off) {Documento \textit{offscreen}};
-        \node[pkg, below=0.7cm of off] (sb) {\textit{Sandbox}\\MediaPipe Holistic};
-        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(sw)(cs)(off)(sb)(canvas),
-              label={[font=\scriptsize]above:Extensión Manifest V3}] (ext) {};
-        \node[pkg, right=2.2cm of off] (ilsa) {Motor ILSA\\\texttt{127.0.0.1:8765}};
-        \draw[arr, dashed] (sw) -- (cs);
-        \draw[arr, dashed] (sw) -- (off);
-        \draw[arr] (cs) -- node[left, font=\scriptsize] {cámara} (canvas);
-        \draw[arr] (off.south) -- (sb.north);
-        \draw[arr] (sb.west) to[out=180, in=180, looseness=1.15]
-            node[left, font=\scriptsize] {225 puntos} (off.west);
-        \draw[arr] (off.east) -- node[above, font=\scriptsize] {\texttt{POST /sign}} (ilsa.west);
-        \coordinate (bajo) at ($(ilsa.south |- ext.south)+(0,-0.45)$);
-        \coordinate (llega) at (bajo -| canvas.south);
-        \draw[arr] (ilsa.south) -- (ilsa.south |- bajo) -- (llega) -- (canvas.south);
-        \node[font=\scriptsize, below] at ($(bajo)!0.5!(llega)$) {clip};
-    \end{tikzpicture}
-    \caption{Paquetes de la extensión. La extracción corre en el \textit{sandbox}. El lienzo recibe el clip ya armado.}
-    \label{fig:paquetes_extension}
-\end{figure}
-
-\subsection{Despliegue en Chrome Manifest V3: aislamiento offscreen y sandbox}
-
-El script en segundo plano coordina la mensajería entre el emergente de la extensión, la videollamada de Google Meet y el documento en segundo plano \parencite{chrome2024manifestv3}. Al detectar la carga activa de una videollamada, el script verifica la disponibilidad del servicio local ILSA en el puerto local \parencite{tiangolo2018fastapi}. Al confirmar la conectividad, instancia el documento en segundo plano mediante la API \texttt{chrome.offscreen} \parencite{chrome2024manifestv3}.
-
-Dentro de este esquema, el documento \textit{offscreen} carga un marco iframe configurado como entorno aislado (\textit{sandbox}) con políticas de seguridad relajadas (\texttt{Content-Security-Policy}), permitiendo la ejecución de código WebAssembly y la instanciación de los trabajadores auxiliares (\textit{web workers}) de MediaPipe Holistic \parencite{google2020mediapipe, lugaresi2019mediapipe}. Para reducir la carga de CPU, las imágenes de la cámara se escalan a $320 \times 240$ píxeles antes de transferirse mediante \texttt{postMessage} hacia el entorno aislado. La subrutina de visión calcula los 225 puntos articulares tridimensionales y devuelve las coordenadas vectoriales al documento \textit{offscreen}, el cual consolida la ventana temporal de 16 fotogramas y despacha la petición al motor local \parencite{chrome2024manifestv3}.
-
-\subsection{Intercepción de la captura de cámara y lienzo virtual}
-
-La captura de video se resuelve mediante la inyección del script \texttt{inject-gum.js} en el contexto principal de la página web (\textit{MAIN world}), el cual sobrescribe el método estándar \texttt{navigator.mediaDevices.getUserMedia} \parencite{w3c2024mediacapture}. 
-
-Cuando la videollamada solicita acceso a la cámara web, el script intercepta la llamada, obtiene el flujo directo del hardware y lo vincula a un elemento \texttt{<video>} oculto en el DOM \parencite{w3c2024mediacapture}. En paralelo, los fotogramas se redibujan sobre un elemento \texttt{<canvas>} virtual que opera a 24 cuadros por segundo. A través del método \texttt{canvas.captureStream()}, la extensión genera un flujo sintético de medios que se entrega a Google Meet como si fuera el dispositivo físico original \parencite{w3c2024mediacapture}.
-
-Esta derivación permite superponer la capa visual de subtítulos en la franja inferior del lienzo sobre un fondo semitransparente antes de emitir la señal a la videollamada \parencite{w3c2024mediacapture}. De esta manera, el interlocutor oyente puede visualizar las traducciones directamente en la señal de video transmitida por WebRTC sin necesidad de instalar la extensión en su propio navegador \parencite{w3c2024mediacapture}. La renderización aplica un reflejo horizontal coincidente con la vista previa local y sostiene la visibilidad del subtítulo durante un intervalo de 8 segundos por oración.
-
-La secuencia de eventos que rige la ejecución integrada del canal directo comprende los siguientes pasos:
 \begin{enumerate}
-    \item \textbf{Intercepción de video y aislamiento:} El script inyectado redirige el flujo de la cámara física hacia el lienzo sintético \texttt{<canvas>} mediante \texttt{captureStream()} \parencite{w3c2024mediacapture} y transmite los fotogramas comprimidos al documento \textit{offscreen} \parencite{chrome2024manifestv3}.
-    \item \textbf{Extracción cinemática en Sandbox:} El entorno aislado procesa los fotogramas con MediaPipe Holistic y retorna los 225 puntos articulares tridimensionales de torso y manos \parencite{google2020mediapipe, zhang2020mediapipehands, bazarevsky2020blazepose}.
-    \item \textbf{Clasificación temporal continua en el motor local (ILSA):} La extensión serializa la secuencia de 16 fotogramas ($16 \times 225$) y la transmite mediante una petición HTTP POST al endpoint \texttt{/sign} del servidor local FastAPI \parencite{tiangolo2018fastapi}.
-    \item \textbf{Inferencia local y filtrado heurístico (\texttt{RepeatGate}):} El clasificador \textit{TinySkeletonClassifier} genera la predicción. La compuerta de validación evalúa la glosa según su categoría léxica (admitiendo repeticiones en dígitos, un máximo de dos en letras y descartando repeticiones inmediatas en vocabulario general) y actualiza el búfer acumulador \parencite{gamma1994design}.
-    \item \textbf{Temporización y cierre de enunciado:} Al transcurrir un intervalo continuo de 4 segundos sin actividad gestual, el acumulador declara el cierre del enunciado y dispara la solicitud de traducción.
-    \item \textbf{Invocación al servicio semántico:} El motor local transmite la lista de glosas mediante \texttt{POST /sordo} al servidor remoto. \texttt{POST /translate} acepta el mismo cuerpo \parencite{tiangolo2018fastapi}.
-    \item \textbf{Emisión concurrente de resultados:} La oración traducida en español se retorna a la extensión para dibujarse como subtítulo sobre el lienzo virtual de Google Meet \parencite{w3c2024mediacapture} y, en simultáneo, se envía al hilo secundario de síntesis de voz (\texttt{pyttsx3}) para su emisión audible hacia el oyente \parencite{pressman2014software}.
+\item \textbf{Gestión de la señal de captura en cámara única:}
+La extensión intercepta y sustituye la función nativa de acceso a la cámara. El dispositivo físico realiza una única apertura y deriva su señal de video hacia un elemento oculto dentro de la página. La llamada de la plataforma no recibe este flujo directo; en su lugar, recibe la señal sintética de un lienzo virtual a 24 cuadros por segundo. El transmisor de video de la llamada sustituye su fuente original por la de este lienzo. Al apagar la extensión, la página devuelve la señal nativa a la llamada sin detener abruptamente el hardware. Esta estrategia evita errores de dispositivo ocupado o no disponible, los cuales ocurren cuando la llamada exige el control exclusivo de la cámara física.
+
+\item \textbf{Transmisión de fotogramas hacia el clasificador (Modo Sordo):} 
+En la modalidad para personas sordas, la extensión extrae las imágenes de la cámara oculta y las comprime en un formato liviano con resolución y calidad reducidas. El sistema envía fotogramas y aguarda la confirmación antes de despachar el siguiente. El mensaje viaja internamente a través del módulo en segundo plano sin abandonar la computadora ni ingresar de forma directa al motor principal ILSA. Si la cámara de la llamada se cierra, la página emite un aviso para reiniciar el proceso de captura y recorte.
+
+\item \textbf{Estimación de puntos articulares en el entorno aislado:} 
+Las restricciones de seguridad del navegador impiden ejecutar la herramienta de visión artificial directamente en el módulo en segundo plano. Por esta razón, el sistema decodifica la imagen comprimida sobre un lienzo, extrae los píxeles y los transfiere hacia un documento aislado y protegido. Con esta información, el sistema estructura un vector cinemático. Si el usuario seleccionó la opción de lateralidad zurda, el servidor activa la inversión automática de ejes y el cruce de manos en el vector, ajustando los datos al modelo original que fue entrenado con muestras de mano derecha. La imagen comprimida no viaja en este envío.
+
+\item \textbf{Criterio de corte y segmentación gestual:} 
+El algoritmo de recorte opera dentro de la extensión en modo automático, sin evaluar el movimiento de los píxeles para evitar interferencias si hay personas caminando en el fondo. El inicio de la seña se registra al detectar una mano utilizable en la imagen. El cierre ocurre cuando las manos abandonan el encuadre, con un margen de tolerancia frente a eventuales pérdidas temporales de detección. El sistema no interrumpe una seña estática por falta de movimiento. El espacio de memoria guarda hasta 60 cuadros y realiza un muestreo de 16 posiciones antes de la transmisión.
+
+\item \textbf{Clasificación local y filtrado mediante compuertas:} 
+Cada seña segmentada se envía mediante un paquete de datos que contiene únicamente el vector de coordenadas. El clasificador procesa la información dentro del motor local. Si el nivel de confianza es inferior al umbral mínimo del 75\,\%, la predicción se descarta y la interfaz la presenta en color coral con la etiqueta «Poca confianza». Si alcanza el umbral pero la compuerta de validación frena la entrada, la interfaz la despliega en tono gris como «No se agregó». Si la seña aprueba las validaciones, ingresa a la frase, el panel la destaca en cian con la indicación «En el mensaje» y el listado de la frase se actualiza.
+
+\item \textbf{Finalización de enunciado y traducción semántica:} 
+Tras un intervalo de 4 segundos sin actividad manual en la cámara, el sistema transmite la orden de cierre de frase. El motor local no envía la totalidad de los datos a servicios en la nube: las secuencias de deletreo, las series numéricas o las señas aisladas se resuelven de forma local. Las cadenas complejas se envían como texto de señas hacia el servidor semántico remoto. Si el módulo de traducción no emite respuesta, el motor conserva las señas aceptadas en formato de texto original sin reestructurar la oración.
+
+\item \textbf{Emisión de salidas en el Canal Directo (Modo Sordo):} 
+El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En las configuraciones con Audio o Salida Doble, la página solicita una locución en español a la interfaz de voz nativa del navegador. Si una frase traducida es idéntica a la inmediata anterior, el sistema no la vuelve a reproducir.
+
+\item \textbf{Procesamiento de entrada por voz en el Canal Inverso (Modo Oyente):} 
+En la modalidad para personas oyentes el sistema captura el audio a través de un módulo de procesamiento sonoro. La extensión envía el bloque de audio comprimido al motor local, donde un modelo de reconocimiento de voz realiza la transcripción de forma totalmente privada y local. El modelo opera exclusivamente en idioma español. Si la conversión no produce texto, la interfaz solicita repetir la locución o recurrir al canal de texto.
+
+\item \textbf{Procesamiento de entrada por texto en el Canal Inverso (Modo Oyente):} 
+El sistema captura el contenido escrito sin pasar por el módulo de voz. La entrada de voz y la de texto pueden permanecer activas de forma concurrente; ambas representan distintas vías de ingreso para el mismo caso de uso y no constituyen un modo separado.
+
+\item \textbf{Generación de glosas y renderización de animación sintética:} 
+La cadena de texto en español ingresa al motor local. Las palabras aisladas se procesan como señas directas sin consultar al traductor remoto, mientras que las oraciones compuestas se envían al servicio en la nube y retornan estructuradas como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descartando el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
 \end{enumerate}
 
 \subsection{Motor local ILSA (FastAPI)}
 
-El servidor local se implementó en Python mediante el framework asíncrono FastAPI y se ejecuta sobre un servidor ASGI Uvicorn \parencite{tiangolo2018fastapi}. El servicio se enlaza exclusivamente a la interfaz de bucle local (\texttt{127.0.0.1:8765}) para denegar conexiones externas no autorizadas.
+El servidor local se implementó en Python mediante el framework asíncrono FastAPI y se ejecuta sobre un servidor Uvicorn. El servicio se enlaza exclusivamente a la interfaz de bucle local (\texttt{127.0.0.1:8765}) para denegar conexiones externas no autorizadas.
 
-Para cumplir con las políticas de seguridad del navegador, el middleware del servidor implementa reglas CORS que restringen los orígenes admitidos a \texttt{https://meet.google.com} y al identificador de la extensión (\texttt{chrome-extension://*}) \parencite{chrome2024manifestv3, tiangolo2018fastapi}. Asimismo, responde con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}) requerida cuando una página HTTPS realiza peticiones hacia el dominio local \parencite{chrome2024manifestv3}.
+Para cumplir con las políticas de seguridad del navegador, el middleware del servidor implementa reglas CORS que restringen los orígenes admitidos a \texttt{https://meet.google.com} y al identificador de la extensión (\texttt{chrome-extension://*}). Asimismo, responde con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}) requerida cuando una página HTTPS realiza peticiones hacia el dominio local.
 
-La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, evitando bloqueos en la atención de las solicitudes HTTP de la API \parencite{pressman2014software}. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) utilizando PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
+La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, evitando bloqueos en la atención de las solicitudes HTTP de la API. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) utilizando PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
 
 \section{Implementación del avatar}
 
-\subsection{Tecnologías empleadas}
-\label{sec:impl_tpose}
-
-El servicio de archivos es un proceso aparte del traductor. La imagen parte de Python 3.10 en su variante reducida. Dentro van el programa y la carpeta de poses. El código anterior de captura y clasificación no se copia. El directorio de trabajo del contenedor es \texttt{/app}. El proceso arranca con el programa principal y lee el puerto de la variable de entorno. Si esa variable no existe, usa 8080.
-
-La publicación se hizo en Cloud Run, con el nombre \texttt{tpose-server}, en la región \texttt{southamerica-east1} y en el proyecto \texttt{ilsa-511622}. El comando de despliegue parte de la raíz del repositorio, sube el código, construye la imagen y deja el servicio abierto sin token de usuario. El puerto declarado hacia la plataforma es 8080. El proceso, igual, lee el puerto que la plataforma inyecta al arrancar. Los nombres de la carpeta son ASCII. Un archivo con eñe o con tilde en el nombre hace fallar la importación del contenedor, aunque la imagen se construya bien.
-
-El dibujo corre en el lienzo de la extensión de Meet. El motor local, el mismo FastAPI de la Sección anterior, arma la lista de fotogramas. La extensión no estima puntos y no pide archivos por su cuenta. La Figura~\ref{fig:despliegue_prototipo} muestra la instancia con la que se probó el prototipo: una sola copia de cada servicio, sin el balanceador de la proyección de producción.
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-        font=\footnotesize,
-        box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt, fill=white, text width=3.6cm},
-        arr/.style={-{Stealth[length=2.2mm]}, thick}
-    ]
-        \node[box] (chrome) {Chrome\\extensión de Meet};
-        \node[box, below=0.6cm of chrome] (ilsa) {ILSA\\\texttt{127.0.0.1:8765}};
-        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(chrome)(ilsa),
-              label={[font=\scriptsize]above:Equipo del usuario}] (pc) {};
-        \node[box, right=2.4cm of chrome] (sem) {Traductor\\una instancia Cloud Run};
-        \node[box, below=0.6cm of sem] (pose) {\texttt{tpose-server}\\\texttt{southamerica-east1}\\puerto 8080};
-        \node[draw, rounded corners=3pt, inner sep=8pt, fit=(sem)(pose),
-              label={[font=\scriptsize]above:Google Cloud Run}] (cloud) {};
-        \draw[arr] (chrome) -- node[right, font=\scriptsize] {HTTP local} (ilsa);
-        \draw[arr] (ilsa.east) -- node[above, font=\scriptsize] {texto} (sem.west);
-        \draw[arr] (ilsa.south east) -- node[below, font=\scriptsize] {\texttt{GET /tposes}} (pose.west);
-    \end{tikzpicture}
-    \caption{Despliegue del prototipo probado. El video no sale del equipo. Cada servicio remoto es una sola instancia.}
-    \label{fig:despliegue_prototipo}
-\end{figure}
-
 \subsection{Vía descartada: retarget hacia un avatar VRM}
-
 Antes del diccionario de poses se probó un personaje VRM, con malla y huesos de longitud fija, animado por rotaciones. El fundamento del ensayo es el \textit{retarget}: el paso de posiciones de \textit{landmarks} a rotaciones de otro esqueleto. MediaPipe Holistic entrega posiciones, y el avatar exige rotaciones sobre su propio esqueleto. El visor se armó con Three.js. Para la mano se probó Kalidokit, una biblioteca de JavaScript para ese \textit{retarget}. Toma los \textit{landmarks} de MediaPipe y calcula rotaciones de Euler del esqueleto y pesos de \textit{blendshape} del rostro. En la mano resume cada dedo en un único ángulo de rizo. También se probó una cinemática inversa que lleva el extremo del hueso hasta el punto medido.
 
 La prueba no se retuvo. El desarrollo no contaba con práctica suficiente de animación tridimensional, y las bibliotecas de \textit{retarget} no sostuvieron de forma estable el paso de la pose al esqueleto VRM. El emparejamiento fallaba con frecuencia porque la pose pierde la profundidad en el eje Z: la coordenada de la mano queda relativa a la muñeca y en una escala distinta del desplazamiento en el plano, de modo que el hueso no recibe una distancia utilizable. Si se respeta la longitud del hueso, la yema no cae sobre el punto medido. Si la cinemática inversa alarga el miembro hasta ese punto, la mano pierde la configuración y, en el alfabeto manual, la letra cambia. Kalidokit, además, confunde configuraciones próximas.
 
 El diccionario de \texttt{.pose} evita ese paso: dibuja los puntos medidos y no los convierte en rotaciones de otro cuerpo. Si más adelante se retoma el avatar tridimensional, una línea de mejora es filmar cada seña desde tres ángulos, para reconstruir la profundidad que una sola toma frontal no conserva.
-
-\subsection{Estructura del pedido}
-
-ILSA, en modo oyente, no lee un diccionario de poses del disco de la videollamada. Después de obtener las glosas del canal inverso, normaliza cada nombre y pide \texttt{GET /tposes/\{glosa\}.pose}. \texttt{GET /health} solo indica que el proceso está arriba. Un 200 del archivo trae el binario. Un 404 indica que esa glosa no tiene clip.
-
-En el motor local, \texttt{POST /hearing} hace las dos consultas: primero la oración hacia el canal inverso y después los archivos. La respuesta trae la oración, las glosas y el clip. En modo señante esa ruta responde 400. La dirección del servicio se reemplaza por configuración, sin recompilar el motor. Los archivos ya bajados quedan en la caché local del equipo. Una glosa repetida no vuelve a viajar por la red.
-
-Si el nombre de una glosa no tiene archivo, ILSA no inventa el movimiento. Pide las letras de esa glosa al mismo servicio, cada una como un archivo. Si el servicio no responde, las glosas siguen disponibles como texto y el clip queda vacío. El tope de la cadena es 24 archivos.
 
 \subsection{Decisiones técnicas de la reproducción}
 \label{sec:impl_esqueleto}
@@ -248,6 +187,28 @@ No hay un archivo aparte llamado reposo. El cuerpo y las manos de la espera se c
 \paragraph{Reflejo de la miniatura local.}
 La videollamada muestra la miniatura de quien usa el sistema como un reflejo. La extensión deshace ese reflejo solo en ese video local. El esqueleto que viaja hacia la otra persona no se invierte. Las dos vistas quedan iguales: la cámara en la mitad izquierda y el esqueleto, sin darlo vuelta, en la mitad derecha.
 
-\section{Instancia de validación del prototipo mediante túnel seguro}
+\section{Instancia de validación del prototipo mediante microservicios en la nube}
+\label{sec:arquitectura_produccion}
+Para la validación funcional del prototipo en un entorno de producción representativo, se completó el desacoplamiento del backend semántico y del servidor de poses del avatar hacia la infraestructura serverless de Google Cloud Run.
 
-La validación funcional del microservicio semántico remoto se realizó mediante un túnel seguro cifrado (\textit{ngrok}). Esta instancia conectó el motor ILSA local con un servidor semántico desacoplado montado en una máquina independiente, demostrando la viabilidad de la partición híbrida sobre redes residenciales reales sin incurrir en costos de infraestructura elástica comercial.
+La arquitectura se dividió en dos microservicios independientes, empaquetados en contenedores Docker:
+
+\begin{itemize}
+    \item \textbf{Servidor Semántico:} 
+    Este microservicio gestiona los modelos cuantizados a 4 bits (GGUF \texttt{Q4\_K\_M}) para la traducción directa e inversa. Se desplegó en la región \textit{us-central1} con una asignación de $8\text{~GiB}$ de memoria RAM y $4\text{~vCPU}$.
+    
+    \item \textbf{Servidor de Poses y Activos del Avatar:} 
+    Este microservicio empaqueta y entrega los archivos de configuración, coordenadas de pose (\textit{T-Poses}) y recursos de animación ($600\text{~MB}$ de archivos estáticos en formatos \texttt{.json}, \texttt{.gltf} y \texttt{.bin}). Se desplegó en la región \textit{southamerica-east1} con una asignación de $512\text{~MiB}$ de memoria RAM y $1\text{~vCPU}$.
+\end{itemize}
+
+El proceso de despliegue e integración en la nube se llevó a cabo bajo los siguientes criterios técnicos:
+
+\begin{enumerate}
+    \item \textbf{Empaquetamiento e integración continua (CI/CD):} Mediante la herramienta \texttt{gcloud builds}, el código fuente y las dependencias de cada rama se enviaron a Google Cloud Build para construir las imágenes de contenedor, las cuales quedaron almacenadas en Google Artifact Registry (\texttt{ilsa-repo}).
+    
+    \item \textbf{Gestión dinámica de puertos y comprobación de estado:} A fin de evitar fallos de inicialización (\textit{health-check timeouts}), cada contenedor se configuró para adaptar su punto de entrada a la variable de entorno \texttt{\$PORT} inyectada de forma dinámica por la plataforma Cloud Run, habilitando la escucha en la interfaz \texttt{0.0.0.0} con un tiempo de espera de hasta $300\text{~segundos}$ para absorber la latencia de arranque inicial (\textit{cold start}).
+    
+    \item \textbf{Política de asignación de instancias y control presupuestario:} Con el propósito de optimizar el consumo de créditos y acotar los costos operativos dentro del marco del Trabajo Final de Grado, se configuró una política de instancias delimitada entre cero y una réplica (\texttt{--min-instances 0}, \texttt{--max-instances 1}). El escalado a cero libera los recursos cuando no existen llamadas activas.
+\end{enumerate}
+
+El motor local ILSA y la extensión de navegador se enlazaron con las URLs públicas HTTPS de ambas instancias en Cloud Run. Esta integración confirmó la correcta transmisión de cargas textuales y la recuperación de activos para la sintaxis del avatar en tiempo pseudo-real, manteniendo liberados los núcleos de cómputo y la memoria del dispositivo cliente.

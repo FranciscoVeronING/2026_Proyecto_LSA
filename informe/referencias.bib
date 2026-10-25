@@ -71,13 +71,6 @@
   howpublished = {\url{https://www.linkedin.com/company/signall-technologies/about/}}
 }
 
-@misc{signall2026linkedin,
-  author       = {Coldewey, Devin},
-  title        = {{SignAll} is slowly but surely building a sign language translation platform},
-  year         = {2018},
-  howpublished = {\url{https://techcrunch.com/2018/02/14/signall-is-slowly-but-surely-building-a-sign-language-translation-platform/}}
-}
-
 @misc{handtalk2025,
   author       = {{Hand Talk}},
   title        = {Acessibilidade digital em l{\'\i}nguas de sinais},
@@ -146,6 +139,16 @@
 }
 
 % --- Lingüística de LSA y morfología ---
+@article{liddell1989phonological,
+  author    = {Liddell, Scott K. and Johnson, Robert E.},
+  title     = {American {Sign Language}: The Phonological Base},
+  journal   = {Sign Language Studies},
+  volume    = {64},
+  pages     = {195--277},
+  year      = {1989},
+  publisher = {Gallaudet University Press}
+}
+
 @article{massoneparte1,
   author    = {Massone, Mar{\'i}a Ignacia},
   title     = {El n{\'u}mero y el g{\'e}nero en la {Lengua de Se{\~n}as Argentina}},
@@ -162,6 +165,15 @@
   publisher = {Cultura Sorda},
   year      = {2012},
   url       = {http://www.cultura-sorda.eu}
+}
+
+@book{massoneparte4,
+  author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
+  title     = {Curso de {Lengua de Se{\~n}as Argentina}: Parte {IV}},
+  publisher = {Cultura Sorda},
+  year      = {2012},
+  url       = {http://www.cultura-sorda.eu},
+  note      = {Ejemplo 26, p.~23 del PDF}
 }
 
 @book{massone1993lengua,
@@ -248,9 +260,16 @@
 }
 
 % --- Estándares Web e Intercepción de Video ---
+@misc{w3c2024mediacapturestreams,
+  author       = {{W3C}},
+  title        = {Media Capture and Streams},
+  year         = {2024},
+  howpublished = {\url{https://www.w3.org/TR/mediacapture-streams/}}
+}
+
 @misc{w3c2024mediacapture,
   author       = {{W3C}},
-  title        = {Media Capture from {DOM} Elements: \texttt{HTMLMediaElement.captureStream()}},
+  title        = {Media Capture from {DOM} Elements},
   year         = {2024},
   howpublished = {\url{https://www.w3.org/TR/mediacapture-fromelement/}}
 }
@@ -260,6 +279,20 @@
   title        = {Overview of {Manifest V3}},
   year         = {2024},
   howpublished = {\url{https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3}}
+}
+
+@misc{chrome2024sandbox,
+  author       = {{Google Chrome Developers}},
+  title        = {\texttt{sandbox} ({Manifest V3})},
+  year         = {2024},
+  howpublished = {\url{https://developer.chrome.com/docs/extensions/reference/manifest/sandbox}}
+}
+
+@misc{chrome2024offscreen,
+  author       = {{Google Chrome Developers}},
+  title        = {\texttt{chrome.offscreen}},
+  year         = {2024},
+  howpublished = {\url{https://developer.chrome.com/docs/extensions/reference/api/offscreen}}
 }
 
 @inproceedings{lugaresi2019mediapipe,
@@ -287,22 +320,14 @@
   primaryClass = {cs.CV}
 }
 
+@misc{moryossef2021poseformat,
+  author       = {Moryossef, Amit and M{\"u}ller, Mathias and Fahrni, Rebecka},
+  title        = {pose-format: Library for viewing, augmenting, and handling {.pose} files},
+  year         = {2021},
+  howpublished = {\url{https://github.com/sign-language-processing/pose}}
+}
+
 % --- Calculos de huella de memoria de modelo semantico quantizado ---
-
-@article{gerganov2023llamacpp,
-  author    = {Gerganov, Georgi},
-  title     = {llama.cpp: Inference of LLaMA model in C/C++},
-  journal   = {GitHub repository},
-  year      = {2023},
-  url       = {https://github.com/ggerganov/llama.cpp}
-}
-
-@article{frantar2022gptq,
-  title     = {GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers},
-  author    = {Frantar, Elias and Ashkboos, Saleh and Torfi, Coleman and Alistarh, Dan},
-  journal   = {arXiv preprint arXiv:2210.17323},
-  year      = {2022}
-}
 
 @article{pope2023efficiently,
   title     = {Efficiently scaling transformer inference},

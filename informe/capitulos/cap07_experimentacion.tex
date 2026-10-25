@@ -30,6 +30,10 @@ Dos regrabaciones quedaron incompletas y condicionan los errores finales. La let
 
 La selección del modelo no sigue la exactitud de validación. El criterio de integración es el acierto top-1 y top-3 frente a la cámara, con una toma por seña, mano diestra y modo \texttt{auto}. A lo largo de julio, agosto y septiembre ese criterio descartó la red de mayor capacidad, la búsqueda automática de hiperparámetros y una línea paralela de \textit{transfer learning}, y retuvo el baseline de 16 fotogramas.
 
+\subsection{Protocolo de la pasada local}
+\label{sec:protocolo_camara}
+La evaluación de integración corre en una computadora local. Un script pide cada seña del vocabulario, de a una, y el clasificador devuelve la glosa y la confianza. El corte de entrenamiento y validación del corpus es por clip, no por persona. Esta pasada no garantiza un señante ausente del entrenamiento.
+
 \subsection{Métricas offline vs. rendimiento en cámara real}
 
 La Tabla~\ref{tab:brecha_offline_camara} resume la brecha que se repite en cada iteración. La validación, sobre clips del mismo corpus y del mismo extractor, supera el 96\,\%. La cámara, con otra óptica, otra luz y una sola toma, cae entre 15 y 35 puntos según la sesión.
@@ -175,12 +179,15 @@ Sobre las 94 señas en común con la evaluación del 31/08, el baseline de agost
 \section{Evaluación de los módulos de traducción semántica}
 \subsection{Benchmark comparativo de modelos SLM (Familias Qwen2.5, Llama 3.2 y SmolLM2)}
 \subsection{Evaluación cuantitativa: BLEU, ROUGE-L, METEOR y exactitud}
+\label{sec:eval_semantica_cuant}
 \subsection{Análisis de simetría en el aprendizaje: traducción directa vs. estructuración inversa}
 \subsection{Compromiso entre calidad lingüística y latencia de inferencia}
 
 \section{Evaluación del sistema integrado y rendimiento en tiempo real}
 \subsection{Validación funcional de extremo a extremo en videollamadas reales}
 \subsection{Análisis de latencias totales por etapa del pipeline}
+\label{sec:latencias_pipeline}
 \subsection{Consumo de recursos de hardware: máquina de desarrollo vs. máquina objetivo}
+\label{sec:hardware_objetivo}
 \subsection{Discusión técnica y lecciones de ingeniería aprendidas}
 
