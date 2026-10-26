@@ -260,7 +260,17 @@ El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e increment
 
 \paragraph{Fidelidad semántica}
 \label{sec:fidelidad_semantica}
-La fidelidad semántica, en este trabajo, es la conservación de la proposición dentro de los mensajes que el prototipo admite: quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. BLEU, ROUGE-L y METEOR comparan el texto producido con una referencia. Miden solapamiento de palabras. Un puntaje alto puede convivir con un cambio de significado, y una paráfrasis correcta puede puntuar bajo. El error de significado se revisa aparte, sobre esos mismos pares, y se informa en la Sección~\ref{sec:eval_semantica_cuant}. La comprensión del avatar es otra pregunta: si una persona sorda entiende el esqueleto. Esas métricas textuales no la responden, y este alcance no incluye un ensayo de usuarios.
+La fidelidad semántica, en este trabajo, es la conservación de la proposición dentro de los mensajes que el prototipo admite: quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. La evaluación automática compara la salida con una referencia. Se registran cinco métricas porque cada una mira un fallo distinto. BLEU y ROUGE-L castigan una paráfrasis correcta y pueden premiar un texto que repite palabras pero cambia la persona, el tiempo, la negación o la pregunta. METEOR afloja esa exigencia cuando coincide la raíz. \texttt{bertscore\_f1} acepta palabras distintas si sus vectores quedan cerca. \texttt{comet\_score} mira también la entrada, no solo la referencia.
+
+\begin{itemize}
+    \item \textbf{BLEU} \parencite{papineni2002bleu}. Precisión de n-gramas: qué porción de las secuencias de la salida ya está en la referencia. Una salida corta recibe una penalización. No premia, con el mismo peso, las palabras de la referencia que la salida omitió.
+    \item \textbf{ROUGE-L} \parencite{lin2004rouge}. La subsecuencia común más larga, respetando el orden. Dos textos pueden compartir palabras y aun así bajar si esas palabras no aparecen en el mismo orden.
+    \item \textbf{METEOR} \parencite{banerjee2005meteor}. Alinea palabras sueltas. Cuenta la coincidencia exacta, la raíz y, si hay un léxico de sinónimos, el sinónimo. Junta precisión y recall, y baja si el texto queda partido en muchos fragmentos.
+    \item \textbf{\texttt{BERT Score}} \parencite{zhang2020bertscore}. Compara el vector de cada token de la salida con los de la referencia, mediante un modelo de lenguaje preentrenado. El F1 de esa alineación sube cuando el sentido está cerca aunque las palabras no coincidan.
+    \item \textbf{\texttt{Comet Score}} \parencite{rei2020comet}. Un modelo entrenado para aproximar juicios humanos de traducción. Usa la entrada, la salida y la referencia. Estima si el sentido de la entrada llegó a la salida.
+\end{itemize}
+
+Un puntaje alto de solapamiento puede convivir con un cambio de significado, y una paráfrasis correcta puede puntuar bajo en BLEU o en ROUGE-L. \texttt{BERT Score} y \texttt{Comet Score} achican ese hueco. No lo cierran. El error de significado se revisa aparte, sobre esos mismos pares, y se informa en la Sección~\ref{sec:eval_semantica_cuant}.
 
 \subsection{Declaración sobre el uso de herramientas de inteligencia artificial}
 \paragraph{Herramientas empleadas.}

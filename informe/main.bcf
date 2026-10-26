@@ -2411,10 +2411,15 @@
     <bcf:citekey order="50" intorder="1">dubey2024llama3</bcf:citekey>
     <bcf:citekey order="51" intorder="1">gerganov2023llamacpp</bcf:citekey>
     <bcf:citekey order="52" intorder="1">chrome2024manifestv3</bcf:citekey>
-    <bcf:citekey order="53" intorder="1">chrome2024manifestv3</bcf:citekey>
-    <bcf:citekey order="54" intorder="1">ronchetti2016lsa64</bcf:citekey>
-    <bcf:citekey order="55" intorder="1">akiba2019optuna</bcf:citekey>
-    <bcf:citekey order="56" intorder="1">mann1947test</bcf:citekey>
+    <bcf:citekey order="53" intorder="1">papineni2002bleu</bcf:citekey>
+    <bcf:citekey order="54" intorder="1">lin2004rouge</bcf:citekey>
+    <bcf:citekey order="55" intorder="1">banerjee2005meteor</bcf:citekey>
+    <bcf:citekey order="56" intorder="1">zhang2020bertscore</bcf:citekey>
+    <bcf:citekey order="57" intorder="1">rei2020comet</bcf:citekey>
+    <bcf:citekey order="58" intorder="1">chrome2024manifestv3</bcf:citekey>
+    <bcf:citekey order="59" intorder="1">ronchetti2016lsa64</bcf:citekey>
+    <bcf:citekey order="60" intorder="1">akiba2019optuna</bcf:citekey>
+    <bcf:citekey order="61" intorder="1">mann1947test</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
