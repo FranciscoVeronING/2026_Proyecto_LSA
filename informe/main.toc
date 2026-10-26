@@ -109,5 +109,5 @@
 \contentsline {subsection}{\numberline {8.2.2}Expansión del corpus multiseñante y mitigación de variabilidad}{53}{subsection.8.2.2}%
 \contentsline {subsection}{\numberline {8.2.3}Incorporación de rasgos no manuales (expresiones faciales)}{53}{subsection.8.2.3}%
 \contentsline {subsection}{\numberline {8.2.4}Generalización a nuevas plataformas de comunicación virtual}{53}{subsection.8.2.4}%
-\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{57}{appendix.A}%
-\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{58}{appendix.C}%
+\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{57}{appendix.Alph1}%
+\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{58}{appendix.Alph3}%
