@@ -1,33 +1,13 @@
-dataset/
-*.mp4
-extraction/*.pdf
-extraction/out/videos/
-extraction/out/poses/
-
 __pycache__/
 *.pyc
 .venv/
 .env
-
-# Caché autogenerada por Unsloth al importar sus trainers
 unsloth_compiled_cache/
-src/semantic/logs/
-src/semantic/outputs/
-
-# Salidas del modo --eval
-eval_*.csv
-
-/models/
-*.h5
-*.tflite
-
-# Diccionario visual opcional (no forma parte del runtime)
-señario1/
-señario2/
 
 # Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip
 extension/bin/*.exe
+*.rar
 
 # Empaquetado PyInstaller
 build/

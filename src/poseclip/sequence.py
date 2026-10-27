@@ -1,39 +1,17 @@
-"""Arma una frase de glosas en memoria para el canvas de Meet.
-
-No escribe mp4. Reusa el compositor (`render_pose_pair.prepare_sign` y
-`compose_sequence`): trim, park, EMA, canvas y puentes. El navegador dibuja
-los frames con `canvas.captureStream`.
-
-Los `.pose` los baja `avatar.remote` del servidor de T-pose.
-"""
+"""Frase de glosas en memoria para el canvas de Meet (sin mp4)."""
 
 from __future__ import annotations
 
-import importlib.util
-import sys
 import threading
 from pathlib import Path
 
 import numpy as np
 
+from poseclip.compose import SETTINGS, compose_sequence, prepare_sign
 
-def _extraction_dir() -> Path:
-    here = Path(__file__).resolve().parent
-    if (here / "render_pose_pair.py").is_file():
-        return here
-    if getattr(sys, "frozen", False):
-        meipass = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent / "_internal"))
-        bundled = meipass / "extraction"
-        if (bundled / "render_pose_pair.py").is_file():
-            return bundled
-    return here
-
-
-ROOT = _extraction_dir()
 _MAX_FRAMES = 1200
 
 # Contornos de FaceMesh (sin iris: Holistic tiene 468 puntos, el iris empieza en 468).
-# Óvalo, cejas, ojos, nariz y labios. La teselación completa no se lee en medio Meet.
 _FACE_EDGES = (
     (10, 338), (338, 297), (297, 332), (332, 284), (284, 251), (251, 389),
     (389, 356), (356, 454), (454, 323), (323, 361), (361, 288), (288, 397),
@@ -63,7 +41,6 @@ _FACE_EDGES = (
     (80, 81), (81, 82), (82, 13), (13, 312), (312, 311), (311, 310), (310, 415),
     (415, 308),
 )
-# Hombros, codos, muñecas, caderas. Sin cara de pose, sin puntas y sin piernas.
 _POSE_IDX = (11, 12, 13, 14, 15, 16, 23, 24)
 _FACE_START = 33
 _LEFT_HAND = 33 + 468
@@ -71,7 +48,6 @@ _RIGHT_HAND = _LEFT_HAND + 21
 
 _CACHE: dict[str, object] = {}
 _LOCK = threading.Lock()
-_RP = None
 
 
 def _fail(error: str, missing: list[str] | None = None) -> dict:
@@ -83,60 +59,13 @@ def _fail(error: str, missing: list[str] | None = None) -> dict:
     }
 
 
-def _load_rp():
-    global _RP
-    if _RP is not None:
-        return _RP
-    path = _extraction_dir() / "render_pose_pair.py"
-    if not path.is_file():
-        raise ImportError(
-            f"No está el compositor ({path}). En el exe hay que reconstruir ILSA "
-            "con packaging\\build_exe.bat."
-        )
-    spec = importlib.util.spec_from_file_location("render_pose_pair", path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"No se pudo cargar {path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    _RP = module
-    return module
-
-
-def _args(rp):
-    import argparse
-
-    return argparse.Namespace(
-        fps=rp.DEFAULT_FPS,
-        trim_mode=rp.DEFAULT_TRIM_MODE,
-        trim=rp.DEFAULT_TRIM,
-        missing_conf=rp.MISSING_CONF_MIN,
-        missing_xy=rp.MISSING_XY_PX,
-        fill_missing=rp.FILL_MISSING,
-        fill_max_gap=rp.FILL_MAX_GAP,
-        park_idle=rp.PARK_IDLE_HANDS,
-        ema=rp.DEFAULT_EMA,
-        center=rp.CENTER_ON_SHOULDERS,
-        canvas_width=rp.CANVAS_WIDTH,
-        canvas_height=rp.CANVAS_HEIGHT,
-        shoulder_px=rp.CANVAS_SHOULDER_PX,
-        shoulder_y=rp.CANVAS_SHOULDER_Y,
-        hide_legs=rp.HIDE_LEGS,
-        bridge_min=rp.BRIDGE_MIN_FRAMES,
-        bridge_max=rp.BRIDGE_MAX_FRAMES,
-        bridge_dist_short=rp.BRIDGE_DIST_SHORT_PX,
-        bridge_dist_long=rp.BRIDGE_DIST_LONG_PX,
-        easing=rp.BRIDGE_EASING,
-        bridge_fixed=rp.BRIDGE_FIXED_FRAMES,
-    )
-
-
-def _prepare(rp, path: Path, args):
+def _prepare(path: Path):
     key = str(path.resolve())
     with _LOCK:
         cached = _CACHE.get(key)
     if cached is not None:
         return cached
-    pose, _filled, _parked = rp.prepare_sign(path, args)
+    pose = prepare_sign(path, SETTINGS)
     with _LOCK:
         _CACHE[key] = pose
     return pose
@@ -162,8 +91,7 @@ def _pack(data: np.ndarray, conf: np.ndarray, indices: list[int] | tuple[int, ..
     pts = np.rint(data[:, 0, sel, :2]).astype(np.int32)
     bad = conf[:, 0, sel] < 0.15
     pts[bad] = -1
-    flat = pts.reshape(len(pts), -1)
-    return flat.tolist()
+    return pts.reshape(len(pts), -1).tolist()
 
 
 def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None = None) -> dict:
@@ -171,29 +99,19 @@ def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None
     missing = list(missing or [])
     if not found:
         return _fail("Ninguna glosa tiene clip.", missing=missing)
-    try:
-        rp = _load_rp()
-    except ImportError as exc:
-        return _fail(
-            f"Falta una librería del compositor ({exc}). pip install pose-format",
-            missing=missing,
-        )
-    except Exception as exc:
-        return _fail(f"No se pudo cargar el compositor: {exc}", missing=missing)
 
-    args = _args(rp)
     poses = []
     names: list[str] = []
     for query, path in found:
         try:
-            poses.append(_prepare(rp, path, args))
-            names.append(rp.label_for(query, path) if hasattr(rp, "label_for") else str(query))
+            poses.append(_prepare(path))
+            names.append(str(query))
         except Exception:
             missing.append(query)
     if not poses:
         return _fail("No se pudo preparar ninguna glosa.", missing=missing)
 
-    pose, _labels, _bridges = rp.compose_sequence(poses, names, args)
+    pose = compose_sequence(poses, SETTINGS)
     data = np.ma.filled(pose.body.data, 0.0).astype(np.float32)
     conf = np.ma.filled(pose.body.confidence, 0.0).astype(np.float32)
     if len(data) > _MAX_FRAMES:
@@ -206,11 +124,11 @@ def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None
     hand = list(range(21))
     return {
         "ok": True,
-        "fps": float(pose.body.fps or args.fps),
-        "w": int(args.canvas_width),
-        "h": int(args.canvas_height),
-        "shoulder": float(args.shoulder_px),
-        "shoulder_y": float(args.shoulder_y),
+        "fps": float(pose.body.fps or SETTINGS.fps),
+        "w": int(SETTINGS.canvas_width),
+        "h": int(SETTINGS.canvas_height),
+        "shoulder": float(SETTINGS.shoulder_px),
+        "shoulder_y": float(SETTINGS.shoulder_y),
         "played": names,
         "missing": missing,
         "face_edges": face_edges,

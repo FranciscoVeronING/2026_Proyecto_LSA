@@ -1,4 +1,4 @@
-"""Ventana ILSA: modo y el switch de uvicorn. La seña se clasifica en session."""
+"""Ventana ILSA: modo, mano, Encender/Apagar y el switch de uvicorn."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ class IlsaWindow:
         self.log_lines: deque[str] = deque(maxlen=400)
         self._hook_logs()
 
-        self.backend = BackendHandle(args.host, args.port, enable_llm=not args.no_llm)
+        self.backend = BackendHandle(args.host, args.port, enable_semantic=not args.no_semantic)
         self.backend.semantic_model_id = DEFAULT_MODEL_ID
         self.log_win: tk.Toplevel | None = None
         self.log_text: tk.Text | None = None
@@ -238,7 +238,7 @@ class IlsaWindow:
             from avatar.remote import ping as ping_avatar
             from semantic.remote import configured, ping as ping_semantic
 
-            if not self.args.no_llm:
+            if not self.args.no_semantic:
                 if not configured():
                     raise RuntimeError("Falta la URL del traductor semántico")
                 self._boot_q.put(("status", "Comprobando traductor (puede tardar unos minutos)…"))
@@ -711,7 +711,7 @@ class IlsaWindow:
                     data = json.loads(resp.read().decode("utf-8"))
                 if data.get("ok"):
                     mode = data.get("mode") or self.backend.mode
-                    semantic_ok = bool(data.get("semantic_ready")) or self.args.no_llm
+                    semantic_ok = bool(data.get("semantic_ready")) or self.args.no_semantic
                     if not semantic_ok:
                         self.status_var.set("Traductor caído · Reiniciá ILSA")
                         self._set_dot(BAD)

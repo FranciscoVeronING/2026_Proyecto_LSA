@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LSA Intérprete",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "description": "LSA o voz a subtítulos en Meet, con el motor local ILSA.",
   "icons": {
     "16": "icons/icon16.png",
@@ -32,7 +32,7 @@
   "content_scripts": [
     {
       "matches": ["https://meet.google.com/*"],
-      "js": ["content/skeleton.js", "content/inject-gum.js"],
+      "js": ["content/skeleton.js", "content/camera-hook.js"],
       "run_at": "document_start",
       "world": "MAIN"
     },

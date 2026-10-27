@@ -15,7 +15,12 @@ from semantic.config import CLOUD_SEMANTIC_URL, SEMANTIC_TOKEN
 
 _TIMEOUT = 240.0
 _KEEPALIVE_SEC = 240.0
-_last_timing: dict = {"roundtrip_ms": None, "server_ms": None}
+_last_timing: dict = {
+    "roundtrip_ms": None,
+    "server_ms": None,
+    "queued_ms": None,
+    "infer_ms": None,
+}
 _keepalive_started = False
 _keepalive_lock = threading.Lock()
 
@@ -84,11 +89,20 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
         raise RuntimeError(f"No se alcanzó el semántico en {base}: {exc.reason}") from exc
     data = json.loads(body) if body else {}
     roundtrip = (time.perf_counter() - t0) * 1000
-    server_ms = data.get("ms")
+    infer_ms = data.get("ms")
+    queued_ms = data.get("queued_ms")
+    infer_val = float(infer_ms) if isinstance(infer_ms, (int, float)) else None
+    queued_val = float(queued_ms) if isinstance(queued_ms, (int, float)) else None
     _last_timing["roundtrip_ms"] = round(roundtrip, 1)
-    _last_timing["server_ms"] = float(server_ms) if isinstance(server_ms, (int, float)) else None
-    srv = _last_timing["server_ms"]
-    extra = f" server={srv:.0f}ms" if srv is not None else ""
+    _last_timing["infer_ms"] = round(infer_val, 1) if infer_val is not None else None
+    _last_timing["queued_ms"] = round(queued_val, 1) if queued_val is not None else None
+    # `server_ms` = inferencia (RNF-01). La cola va en `queued_ms`.
+    _last_timing["server_ms"] = _last_timing["infer_ms"]
+    extra = ""
+    if queued_val is not None:
+        extra += f" cola={queued_val:.0f}ms"
+    if infer_val is not None:
+        extra += f" infer={infer_val:.0f}ms"
     print(f"[semantic] POST {path} roundtrip={roundtrip:.0f}ms{extra}")
     _ensure_keepalive()
     return data

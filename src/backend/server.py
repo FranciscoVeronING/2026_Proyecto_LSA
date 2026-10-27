@@ -25,7 +25,7 @@ if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
 else:
     REPO_ROOT = Path(__file__).resolve().parents[2]
-_EXE_NAMES = ("ILSA.exe", "IRIS.exe", "LSABackend.exe")
+_EXE_NAMES = ("ILSA.exe", "LSABackend.exe")
 _EXE_DIRS = (
     REPO_ROOT / "dist" / "LSABackend",
     REPO_ROOT / "dist",
@@ -33,7 +33,7 @@ _EXE_DIRS = (
 )
 EXE_CANDIDATES = [d / n for d in _EXE_DIRS for n in _EXE_NAMES]
 
-app = FastAPI(title="LSA Backend", version="1.0.0")
+app = FastAPI(title="ILSA", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -251,7 +251,13 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Backend LSA para la extensión Chrome.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
-    parser.add_argument("--no-llm", action="store_true")
+    parser.add_argument(
+        "--no-semantic",
+        "--no-llm",
+        dest="no_semantic",
+        action="store_true",
+        help="No llama al traductor Cloud Run.",
+    )
     parser.add_argument(
         "--headless",
         action="store_true",
@@ -267,7 +273,7 @@ def parse_args(argv=None):
 
 
 def init_session(
-    enable_llm: bool = True,
+    enable_semantic: bool = True,
     mode: str = "signer",
     semantic_model_id: str | None = None,
     left_handed: bool = False,
@@ -279,10 +285,10 @@ def init_session(
 
         _session = HearingSession()
         return
-    from backend.session import LSASession
+    from backend.signer_session import SignerSession
 
-    _session = LSASession(
-        enable_llm=enable_llm,
+    _session = SignerSession(
+        enable_semantic=enable_semantic,
         semantic_model_id=semantic_model_id,
         left_handed=left_handed,
     )
@@ -293,17 +299,17 @@ def main(argv=None):
     if args.host not in ("127.0.0.1", "localhost", "::1"):
         print(
             "[ilsa] Advertencia: el API debería escuchar solo en localhost. "
-            f"host={args.host!r} expone clasificador y LLM en la red."
+            f"host={args.host!r} expone el clasificador en la red."
         )
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ.setdefault("LSA_BACKEND", "1")
     if args.headless:
-        init_session(enable_llm=not args.no_llm, mode=args.mode)
+        init_session(enable_semantic=not args.no_semantic, mode=args.mode)
         import uvicorn
 
         uvicorn.run(app, host=args.host, port=args.port, log_level="info")
         return
-    from backend.iris_app import launch
+    from backend.window import launch
 
     launch(args)
 

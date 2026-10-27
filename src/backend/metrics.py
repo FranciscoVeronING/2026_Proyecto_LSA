@@ -90,7 +90,11 @@ def summary() -> dict[str, Any]:
     cap = _nums("sign", "capture_ms")
     hol = _nums("sign", "holistic_ms")
     rem = _nums("utterance", "remote_ms") + _nums("hearing", "remote_ms")
-    inf = _nums("utterance", "server_ms") + _nums("hearing", "server_ms")
+    inf = _nums("utterance", "infer_ms") + _nums("hearing", "infer_ms")
+    if not inf:
+        inf = _nums("utterance", "server_ms") + _nums("hearing", "server_ms")
+    cola = _nums("utterance", "queued_ms") + _nums("hearing", "queued_ms")
+    entrega = _nums("hearing", "delivery_ms")
     return {
         "file": str(log_path()),
         "n_sign": len(signs),
@@ -109,7 +113,12 @@ def summary() -> dict[str, Any]:
             "classifier_p95": _pct(clf, 95),
             "remote_p50": _pct(rem, 50),
             "remote_p95": _pct(rem, 95),
+            "cola_p50": _pct(cola, 50),
+            "cola_p95": _pct(cola, 95),
             "llm_server_p50": _pct(inf, 50),
+            "infer_p95": _pct(inf, 95),
+            "entrega_p50": _pct(entrega, 50),
+            "entrega_p95": _pct(entrega, 95),
         },
         "last": events[-8:],
     }
@@ -124,5 +133,5 @@ def health_line() -> str:
     if ms.get("classifier_p50") is not None:
         bits.append(f"clf {ms['classifier_p50']:.0f} ms")
     if ms.get("remote_p50") is not None:
-        bits.append(f"LLM {ms['remote_p50']:.0f} ms")
+        bits.append(f"traductor {ms['remote_p50']:.0f} ms")
     return " · ".join(bits)

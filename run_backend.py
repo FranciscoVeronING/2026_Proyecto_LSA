@@ -3,7 +3,7 @@ Arranca el motor ILSA (ventana) o solo la API.
 
     python run_backend.py
     python run_backend.py --headless
-    python run_backend.py --no-llm
+    python run_backend.py --no-semantic
     python run_backend.py --port 8765
 """
 

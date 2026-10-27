@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import re
-import sys
 import threading
 import time
 import urllib.error
@@ -187,15 +186,8 @@ def clip_for_glosses(glosses: str) -> dict:
             "frames": [],
             "missing": missing,
         }
-    if getattr(sys, "frozen", False):
-        root = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent / "_internal"))
-    else:
-        root = Path(__file__).resolve().parents[2]
-    if str(root) not in sys.path:
-        sys.path.insert(0, str(root))
     from backend.ensure_pkg import ensure_module
+    from poseclip.sequence import sequence_from_files
 
     ensure_module("pose_format", "pose-format")
-    from extraction.meet_sequence import sequence_from_files
-
     return sequence_from_files(found, missing)

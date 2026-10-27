@@ -8,7 +8,7 @@ from typing import Optional, Sequence
 # Letras que el clasificador intercambia entre sí o con una seña léxica:
 # I, T y OJO tienen casi la misma configuración de mano y solo se distinguen
 # por dónde se apoya (mejilla / debajo de la boca / junto al ojo).
-# Un deletreo que las contenga necesita el criterio de la LLM.
+# Un deletreo que las contenga necesita el criterio del traductor.
 AMBIGUOUS_LETTERS = frozenset({"I", "T"})
 
 # Señas léxicas que el clasificador confunde con una letra (misma forma de mano).
@@ -59,7 +59,7 @@ def resolve_letter_lookalikes(glosses: Sequence[str]) -> list[str]:
 
 def collapse_literal_runs(glosses: Sequence[str]) -> list[str]:
     """
-    Junta letras o dígitos **seguidos** antes de mandarlos a la LLM.
+    Junta letras o dígitos **seguidos** antes de mandarlos al traductor.
 
     ``NOMBRE MIO P E P A`` → ``["NOMBRE", "MIO", "Pepa"]``
     ``EDAD TUYO 6 7`` → ``["EDAD", "TUYO", "67"]``
@@ -96,13 +96,13 @@ def format_literal_utterance(
 ) -> Optional[str]:
     """
     Si el enunciado es solo deletreo o solo dígitos, arma el texto a mostrar/decir.
-    Evita depender de la LLM (que a veces responde vacío).
+    Evita depender del traductor (que a veces responde vacío).
 
-    Devuelve None cuando conviene que decida la LLM con el contexto.
+    Devuelve None cuando conviene que decida el traductor con el contexto.
 
     Nota sobre O/0 y 2/V: no necesitan excepción acá. Si la secuencia quedó toda
     de un tipo, el carácter ya es del tipo correcto; y si el clasificador eligió
-    el tipo equivocado, la secuencia queda mixta y cae igual en la LLM.
+    el tipo equivocado, la secuencia queda mixta y cae igual en el traductor.
     """
     if not glosses:
         return None

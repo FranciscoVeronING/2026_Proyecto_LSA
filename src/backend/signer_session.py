@@ -40,17 +40,17 @@ from core.repeat_policy import (
 from semantic.config import DEFAULT_MODEL_ID
 
 
-class LSASession:
+class SignerSession:
     def __init__(
         self,
-        enable_llm: bool = True,
+        enable_semantic: bool = True,
         semantic_model_id: str | None = None,
         left_handed: bool = False,
     ):
-        # La LLM en un hilo aparte: si carga acá, /health se queda mudo un rato.
+        # El ping al traductor va en un hilo: si carga acá, /health se queda mudo.
         self.lock = threading.RLock()
-        self._llm_gate = threading.Lock()
-        self.enable_llm = enable_llm
+        self._semantic_gate = threading.Lock()
+        self.enable_semantic = enable_semantic
         self._wanted_model_id = semantic_model_id or DEFAULT_MODEL_ID
         self.left_handed = bool(left_handed)
         self.device = torch.device("cpu")
@@ -75,10 +75,10 @@ class LSASession:
         self.semantic_error = ""
         self._translate_glosses = None
         self._current_model_id = ""
-        if enable_llm:
-            threading.Thread(target=self._bootstrap_llm, daemon=True).start()
+        if enable_semantic:
+            threading.Thread(target=self._bootstrap_semantic, daemon=True).start()
 
-    def _bootstrap_llm(self):
+    def _bootstrap_semantic(self):
         try:
             self._ensure_remote()
             if not self.semantic_ready:
@@ -88,7 +88,7 @@ class LSASession:
             with self.lock:
                 self.semantic_error = str(e)
                 self.semantic_ready = False
-            print(f"[backend] LLM remota no disponible: {e}")
+            print(f"[backend] Traductor remoto no disponible: {e}")
 
     def _ensure_remote(self) -> None:
         """Vuelve a pinguear Cloud Run si el hilo de arranque todavía no dejó el cliente."""
@@ -97,7 +97,7 @@ class LSASession:
         with self.lock:
             if self._translate_glosses is not None:
                 return
-        if not self.enable_llm:
+        if not self.enable_semantic:
             return
         if not configured():
             with self.lock:
@@ -109,7 +109,7 @@ class LSASession:
                 self.semantic_error = "El traductor Cloud Run no responde"
                 self.semantic_ready = False
             return
-        with self._llm_gate:
+        with self._semantic_gate:
             with self.lock:
                 self._translate_glosses = translate_sordo
                 self._current_model_id = "remote"
@@ -319,11 +319,21 @@ class LSASession:
         })
         from backend.metrics import log_event
 
+        timing = {}
+        if via == "llm":
+            from semantic.remote import last_timing
+
+            timing = last_timing()
         log_event(
             "utterance",
             glosses=" ".join(closed),
             spanish=text,
             via=via,
+            pause_ms=round(cfg.UTTERANCE_PAUSE_SEC * 1000, 1),
+            queued_ms=timing.get("queued_ms"),
+            infer_ms=timing.get("infer_ms") if timing.get("infer_ms") is not None else (
+                round(server_ms, 1) if server_ms is not None else None
+            ),
             remote_ms=round(remote_ms, 1),
             server_ms=round(server_ms, 1) if server_ms is not None else None,
             total_ms=round(total_ms, 1),
@@ -354,7 +364,7 @@ class LSASession:
         collapsed = " ".join(collapse_literal_runs(glosses))
         print(f"[backend] Enunciado → Cloud Run POST /sign: {collapsed}")
         self._ensure_remote()
-        with self._llm_gate:
+        with self._semantic_gate:
             with self.lock:
                 fn = self._translate_glosses
         if fn is None:

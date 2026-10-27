@@ -16,12 +16,11 @@ _WEIGHTS_DIR = _CLASSIFIER_DIR / "weights"
 
 WEIGHTS_PATH = str(_WEIGHTS_DIR / "tinyskeleton_best.pth")
 CLASSES_PATH = str(_WEIGHTS_DIR / "mapeo_clases.json")
-METRICS_PATH = str(_WEIGHTS_DIR / "metrics.json")
 
 MAX_FRAMES = 16
 
 # Etiquetas del clasificador: mismo orden que ``mapeo_clases.json``.
-# No es el texto de la LLM; eso pasa por ``normalize_gloss``.
+# No es el texto del traductor; eso pasa por ``normalize_gloss``.
 def _sign_classes_from_mapeo() -> list[str]:
     import json
 
@@ -37,11 +36,6 @@ SIGN_CLASSES = _sign_classes_from_mapeo()
 POSE_DIM = 33 * 3
 HANDS_DIM = (21 * 3) * 2
 FRAME_FEATURES_DIM = POSE_DIM + HANDS_DIM
-
-# ==========================================
-# VOICE
-# ==========================================
-VOICE = True
 
 # ==========================================
 # TINY SKELETON CLASSIFIER
@@ -68,7 +62,7 @@ STATIC_HANDS_FRAMES_TO_START = 4
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
-# Fin de seña por manos quietas (no la pausa del enunciado hacia la LLM).
+# Fin de seña por manos quietas (no la pausa del enunciado hacia el traductor).
 STILL_FRAMES_LIMIT = 10
 CAPTURE_BUFFER_SIZE = 60
 MISSING_HANDS_LIMIT = 12
@@ -79,9 +73,9 @@ MIN_CAPTURE_FRAMES = 5
 CAPTURE_MODE = "auto"
 
 # ==========================================
-# BUFFER (glosses → LLM)
+# BUFFER (glosas → traductor)
 # ==========================================
-# Pausa sin actividad de señado → cerrar la lista y mandarla a la LLM.
+# Pausa sin actividad de señado → cerrar la lista y mandarla al traductor.
 # Cuenta desde la última seña reconocida o desde que las manos dejaron de
 # moverse en cámara, lo que haya pasado último.
 UTTERANCE_PAUSE_SEC = 4.0
@@ -89,7 +83,7 @@ UTTERANCE_PAUSE_SEC = 4.0
 # Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
 LETTER_MAX_CONSECUTIVE = 2
 
-# Alias clasificador → token que ve la LLM.
+# Alias clasificador → token que ve el traductor.
 GLOSS_NORMALIZER = {
     "el_ella": "EL",
     "esposo_a": "ESPOSO",

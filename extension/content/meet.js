@@ -279,7 +279,7 @@ try {
 } catch (_) {}
 
 /**
- * Mensaje al mundo MAIN (inject-gum).
+ * Mensaje al mundo MAIN (camera-hook).
  * @param {object} payload Campos extra (`type`, `enabled`, `spanish`, …).
  */
 function postToPage(payload) {

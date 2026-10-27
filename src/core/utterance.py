@@ -6,7 +6,7 @@ from core.repeat_policy import RepeatGate
 
 def normalize_gloss(raw_name: str) -> str:
     """
-    Nombre de clase del ``.pth`` → token que ve la LLM.
+    Nombre de clase del ``.pth`` → token que ve el traductor.
 
     ``GLOSS_NORMALIZER`` solo tiene **alias** (``el_ella`` → ``EL``).
     El resto se pasa a MAYÚSCULAS (``hola`` → ``HOLA``).

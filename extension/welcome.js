@@ -88,8 +88,8 @@ async function refreshHealth() {
       h.mode === "hearing"
         ? "Transcripción lista."
         : h.semantic_ready
-          ? "LLM lista."
-          : "LLM cargando.";
+          ? "Traductor listo."
+          : "Traductor no disponible.";
     healthText.textContent = `ILSA en marcha (${mode}). ${extra}`;
   } catch {
     dot.classList.remove("on");

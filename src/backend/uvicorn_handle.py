@@ -12,10 +12,10 @@ import time
 class BackendHandle:
     """uvicorn en un hilo. start() tiene que ser el hilo de Tk."""
 
-    def __init__(self, host: str, port: int, enable_llm: bool):
+    def __init__(self, host: str, port: int, enable_semantic: bool):
         self.host = host
         self.port = port
-        self.enable_llm = enable_llm
+        self.enable_semantic = enable_semantic
         self.mode = "signer"
         self.semantic_model_id = ""
         self.left_handed = False
@@ -64,9 +64,9 @@ class BackendHandle:
         try:
             self._port_free()
             os.environ.setdefault("LSA_BACKEND", "1")
-            llm = self.enable_llm and self.mode == "signer"
+            semantic = self.enable_semantic and self.mode == "signer"
             srv.init_session(
-                enable_llm=llm,
+                enable_semantic=semantic,
                 mode=self.mode,
                 semantic_model_id=self.semantic_model_id or None,
                 left_handed=self.left_handed,

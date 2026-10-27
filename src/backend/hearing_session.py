@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 from semantic.remote import configured, ping
@@ -68,7 +69,6 @@ class HearingSession:
         else:
             try:
                 from semantic.remote import last_timing, ping, translate_oyente
-                import time
 
                 if not self.semantic_ready:
                     self.semantic_ready = ping()
@@ -84,11 +84,14 @@ class HearingSession:
                 self.semantic_ready = False
         self.gloss_text = glosses
         clip = None
+        delivery_ms = 0.0
         if glosses:
             try:
                 from avatar.remote import clip_for_glosses
 
+                t_del = time.perf_counter()
                 clip = clip_for_glosses(glosses)
+                delivery_ms = (time.perf_counter() - t_del) * 1000
             except Exception as exc:
                 print(f"[backend] T-pose remoto falló: {exc}")
                 clip = {"ok": False, "error": str(exc), "frames": [], "missing": []}
@@ -106,8 +109,11 @@ class HearingSession:
             "hearing",
             spanish=text,
             glosses=glosses,
+            queued_ms=timing.get("queued_ms"),
+            infer_ms=timing.get("infer_ms") if timing.get("infer_ms") is not None else timing.get("server_ms"),
             remote_ms=round(remote_ms, 1),
             server_ms=timing.get("server_ms"),
+            delivery_ms=round(delivery_ms, 1),
         )
         return snap
 
