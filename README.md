@@ -1,87 +1,39 @@
-# Servicio de glosas del avatar
+# Poses del avatar
 
-Esta rama publica los archivos de seña del avatar. Un cliente pide una glosa por HTTP y recibe el archivo `.pose` correspondiente. El servicio está pensado para correr en Google Cloud Run y también se puede probar en local.
-
-Los archivos viven en `poses/`. El nombre de cada archivo, sin la extensión, es la glosa.
-
-## Qué responde el servicio
-
-El proceso escucha en `0.0.0.0` y toma el puerto de la variable de entorno `PORT`. Si esa variable no existe, usa el puerto `8080`. Cloud Run inyecta `PORT` al arrancar el contenedor.
-
-Hay tres rutas.
-
-### `GET /health`
-
-Indica que el proceso está arriba. Responde `200` con este JSON:
-
-```json
-{"status": "ok"}
-```
-
-Sirve para el monitoreo de disponibilidad. No revisa si una glosa existe.
-
-### `GET /tposes/{glosa}.pose`
-
-Devuelve el archivo de esa glosa. El nombre tiene que coincidir exactamente con un archivo de `poses/`, incluida la extensión `.pose`.
-
-Ejemplos:
-
-- `GET /tposes/HOLA.pose`
-- `GET /tposes/HOYAHORA.pose`
-- `GET /tposes/ENIE.pose`
-- `GET /tposes/PADRE.pose`
-
-Si el archivo existe, la respuesta es `200` y el cuerpo es el binario `.pose`, con `Content-Type: application/octet-stream`. Si no existe, la respuesta es `404`. El servidor no deletrea esa palabra: un nombre ausente sigue siendo un 404.
-
-### `GET /fingerspell`
-
-Pide varias letras en una sola solicitud. Sirve solo para deletreo, no para glosas de palabras. Las letras van separadas por comas, o repetidas en el parámetro `letters`. El orden de la respuesta es el orden del pedido.
+Esta rama publica los archivos `.pose` del avatar. El nombre de cada archivo en `poses/`, sin extensión, es la glosa. El servicio escucha en `0.0.0.0`. El puerto sale de `PORT` y, si no está definida, es `8080`.
 
 ```text
-GET /fingerspell?letters=H,O,L,A
-GET /fingerspell?letters=CH,I,L,E
-GET /fingerspell?letters=N&letters=ENIE
+app/config.py        rutas, límites y tipos de archivo
+app/fingerspell.py   deletreo
+app/main.py          aplicación y arranque
+poses/               glosas
 ```
 
-Cada letra es un archivo de una sola letra: `A` a `Z`, `CH` o `ENIE`. `Ñ` se acepta y se resuelve como `ENIE`. Una palabra completa, un número u otra glosa responde `400`.
+Si falta `poses/` al arrancar, el proceso termina y no abre el puerto. Acepta `GET`, `HEAD` y `OPTIONS` desde cualquier origen. El navegador puede leer el encabezado `X-Count`.
 
-El máximo es 20 letras por solicitud. El abecedario tiene 27 letras más `CH`, así que una sola llamada no puede llevarse todas. Si el pedido supera 20, la respuesta es `400` e indica el límite.
+## Archivos
 
-Si todas existen, la respuesta es `200` con `Content-Type: multipart/mixed`. Cada parte es el `.pose` de esa letra, en orden, con estos encabezados:
+`GET /health` responde `200` con `{"status": "ok"}`. No comprueba si una glosa existe.
 
-- `Content-Disposition` trae el nombre del archivo, por ejemplo `H.pose`.
-- `X-Indice` es la posición, empezando en 0.
-- `X-Letra` es la letra canónica: `H`, `CH` o `ENIE`.
+`GET /tposes/{GLOSA}.pose` devuelve ese archivo. Si existe, responde `200` con `Content-Type: application/octet-stream`. Si no existe, responde `404`. No deletrea el nombre que falta.
 
-El encabezado `X-Cantidad` de la respuesta dice cuántas letras volvieron. Si falta el archivo de alguna letra pedida, la respuesta es `404` y no se devuelve un deletreo a medias.
+La misma carpeta también publica `.json`, `.gltf`, `.bin` y `.fbx` cuando se agregan ahí. Sus tipos son `application/json`, `model/gltf+json` y `application/octet-stream`.
 
-La misma carpeta también puede servir `.json`, `.gltf`, `.bin` y `.fbx` si más adelante se agregan ahí. Esos formatos salen con su tipo de contenido correspondiente: JSON, `model/gltf+json` para `.gltf`, y binario para `.bin` y `.fbx`.
+## Glosas
 
-Al arrancar, el servicio exige que exista la carpeta `poses/`. Si no está, el proceso termina y no abre el puerto.
-
-## CORS
-
-El servicio acepta `GET`, `HEAD` y `OPTIONS` desde cualquier origen. Un cliente que corre en el navegador, en otro dominio, puede pedir las glosas sin que el navegador bloquee la respuesta.
-
-## Formato de las glosas
-
-ILSA tiene que transformar la glosa antes de armar la solicitud. El nombre final es una sola cadena de letras mayúsculas y números, sin tildes, sin espacios y sin otros signos. Después se pide así:
+ILSA arma el nombre antes de pedir el archivo:
 
 ```text
 /tposes/{GLOSA}.pose
 ```
 
-Reglas, en este orden:
+1. Pasar la glosa a mayúsculas.
+2. Quitar el sufijo de género `_A`, `_a` o `_RA`. `ABOGADO_A` queda `ABOGADO`. `PROFESOR_RA` queda `PROFESOR`. `EL_ELLA` queda `EL`.
+3. Sacar las tildes de las vocales: `Á É Í Ó Ú Ü` pasan a `A E I O U U`. `CAFÉ` queda `CAFE`.
+4. Borrar espacios, `_`, guiones, paréntesis y cualquier carácter que no sea letra o número.
+5. Si una seña tiene más de un significado, concatenar las glosas sin separador.
 
-1. Pasar toda la glosa a mayúsculas.
-2. Dejar la forma masculina. Si trae el sufijo de género `_A`, `_a` o `_RA`, se quita. `ABOGADO_A` queda `ABOGADO`. `PROFESOR_RA` queda `PROFESOR`. `EL_ELLA` queda `EL`.
-3. Sacar las tildes de las vocales. `Á É Í Ó Ú Ü` pasan a `A E I O U U`. `CAFÉ` queda `CAFE`.
-4. Borrar espacios, `_`, guiones, paréntesis, signos de exclamación y cualquier carácter que no sea letra o número.
-5. Si una seña significa más de una cosa, las glosas se concatenan en un solo nombre, sin separador. No se piden como archivos distintos.
-
-Ejemplos de señas con más de una glosa:
-
-| Significado | Nombre del archivo |
+| Significado | Archivo |
 | --- | --- |
 | Hoy / ahora | `HOYAHORA.pose` |
 | Anual / por período | `ANUALPORPERIODO.pose` |
@@ -90,77 +42,55 @@ Ejemplos de señas con más de una glosa:
 | Países Bajos / Holanda | `PAISESBAJOSHOLANDA.pose` |
 | Época / período | `EPOCAPERIODO.pose` |
 
-`PERIODO.pose` es otra grabación y se pide aparte de `EPOCAPERIODO.pose`.
+`PERIODO.pose` es otra grabación y se pide aparte. Dentro de una palabra, `Ñ` pasa a `N`: `ESPAÑA` queda `ESPANA` y `MAÑANA` queda `MANANA`.
 
-Cuando `Ñ` aparece dentro de una palabra, se reemplaza por `N`. `ESPAÑA` queda `ESPANA`. `MAÑANA` queda `MANANA`. `AÑOS` queda `ANOS`.
+Dos sustituciones valen solo cuando son la glosa completa:
 
-## Excepciones
+- La letra `Ñ` se pide como `ENIE.pose`. La letra `N` sigue en `N.pose`.
+- La glosa `PAPA`, como parentesco, se pide como `PADRE.pose`. `PAPA.pose` es la papa como alimento. `PAPEL` y `PAPASFRITAS` no cambian.
 
-Estas dos sustituciones se aplican a la glosa completa. No se buscan adentro de otra palabra.
+Los nombres de `poses/` son ASCII. Un archivo con `Ñ` o con tilde hace fallar la importación del contenedor en Cloud Run.
 
-- La letra `Ñ`, cuando esa es toda la glosa, se envía como `ENIE`. El archivo es `ENIE.pose`. La letra `N` sigue siendo `N.pose`.
-- La glosa `PAPA` se envía como `PADRE`. El archivo es `PADRE.pose`.
+## Deletreo
 
-`PAPEL`, `PAPASFRITAS` y el resto de las palabras que contienen esas letras no cambian por estas excepciones. `PAPA.pose` existe en la carpeta y corresponde a la papa como alimento. La glosa de parentesco `PAPA` que ILSA envía al avatar se transforma a `PADRE` antes de la solicitud.
+`GET /fingerspell` pide solo letras, en el orden enviado. Las letras van en `letters`, separadas por comas o repetidas:
 
-## Ejecución local
+```text
+GET /fingerspell?letters=H,O,L,A
+GET /fingerspell?letters=CH,I,L,E
+GET /fingerspell?letters=N&letters=ENIE
+```
 
-Desde la raíz del repositorio, con Python 3.10 o superior:
+Las letras válidas son `A`–`Z`, `CH` y `ENIE`. `Ñ` se resuelve como `ENIE`. Una palabra, un número u otra glosa responde `400`.
+
+El máximo es 20 letras. El abecedario tiene 27 letras más `CH`, así que una solicitud no puede pedirlas todas. Si se pasa el límite, responde `400` con `received` y `limit`.
+
+Si todas existen, responde `200` con `multipart/mixed`. Cada parte es el `.pose`, con `Content-Disposition` (`H.pose`), `X-Index` desde 0 y `X-Letter` (`H`, `CH` o `ENIE`). `X-Count` indica cuántas volvieron. Si falta una letra, responde `404` y no entrega un deletreo incompleto. Los errores JSON usan `detail` y, cuando corresponde, `letter`.
+
+## Ejecución
+
+Python 3.10 o superior, desde la raíz:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python main.py
+python -m app.main
 ```
 
-Queda disponible en `http://localhost:8080`. Para comprobarlo:
+Las dependencias son FastAPI `0.115.12` y Uvicorn `0.34.2`.
 
-```text
-GET http://localhost:8080/health
-GET http://localhost:8080/tposes/HOLA.pose
-```
-
-Las dependencias fijas son FastAPI `0.115.12` y Uvicorn `0.34.2`, elegidas porque funcionan con la imagen `python:3.10-slim`.
-
-## Imagen de contenedor
-
-`Dockerfile` parte de `python:3.10-slim`, instala `requirements.txt`, copia `main.py` y la carpeta `poses/`, y arranca con `python main.py`. El directorio de trabajo dentro del contenedor es `/app`.
-
-`.dockerignore` deja afuera el entorno virtual, la caché de Python, `.git`, `.env` y `src/`. El código de `src/` no entra en la imagen: el contenedor solo publica archivos.
-
-Para construirla y levantarla en local:
+La imagen usa `python:3.10-slim`, instala las dependencias y copia `app/` y `poses/`. El arranque es `python -m app.main`.
 
 ```powershell
 docker build -t tpose-server .
 docker run --rm -p 8080:8080 tpose-server
 ```
 
-## Despliegue en Cloud Run
-
-El despliegue se hace desde la raíz del repositorio, que es donde está el `Dockerfile`. La región usada es `southamerica-east1` y el proyecto es `ilsa-511622`.
+Cloud Run, desde la raíz, en `southamerica-east1` y el proyecto `ilsa-511622`:
 
 ```powershell
 gcloud run deploy tpose-server --source . --region southamerica-east1 --port 8080 --allow-unauthenticated --project ilsa-511622
 ```
 
-Ese comando sube el código, construye la imagen y publica el servicio `tpose-server`. `--allow-unauthenticated` deja las glosas accesibles para el cliente del navegador. `--port 8080` le dice a Cloud Run en qué puerto escucha el contenedor. El puerto real del proceso sigue saliendo de `PORT`.
-
-Los nombres de `poses/` tienen que ser ASCII. Un archivo con `Ñ` o con tilde en el nombre hace fallar la importación del contenedor en Cloud Run, aunque el build termine bien. Por eso la letra `Ñ` está en `ENIE.pose` y el resto de las eñes del nombre quedó escrito con `N`.
-
-Si `gcloud` tiene guardado el número de proyecto en lugar del ID, el comando necesita `--project ilsa-511622`, o hay que dejar el ID configurado:
-
-```powershell
-gcloud config set project ilsa-511622
-```
-
-## Qué más hay en la rama
-
-`src/` es el código anterior de captura y clasificación de señas. No lo usa este servicio y no se copia al contenedor.
-
-- `src/camera.py` abre la cámara, toma landmarks con MediaPipe y clasifica la seña con un modelo pequeño.
-- `src/preprocessing.py` convierte videos del dataset en secuencias de landmarks.
-- `src/utils.py` normaliza la pose respecto de los hombros y deja todas las secuencias en la misma cantidad de frames.
-- `src/config.py` define las clases de seña de ese modelo, el tamaño de frame y los parámetros de entrenamiento.
-
-Esas clases no son el índice de `poses/`. Para pedir una animación al avatar se usa el nombre del archivo en `poses/`, con el formato descrito arriba.
+Si `gcloud` tiene guardado el número de proyecto, hace falta `--project ilsa-511622` o `gcloud config set project ilsa-511622`.
