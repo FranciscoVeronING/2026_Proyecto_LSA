@@ -1336,39 +1336,6 @@
       \field{pages}{2685\bibrangedash 2702}
       \range{pages}{18}
     \endentry
-    \entry{mann1947test}{article}{}{}
-      \name{author}{2}{}{%
-        {{hash=5cf19aa5110d49e31bafd83ce394b092}{%
-           family={Mann},
-           familyi={M\bibinitperiod},
-           given={Henry\bibnamedelima B.},
-           giveni={H\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
-        {{hash=c28a32eaa7f3921fc42ff47698be3a36}{%
-           family={Whitney},
-           familyi={W\bibinitperiod},
-           given={Donald\bibnamedelima R.},
-           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
-      }
-      \strng{namehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{fullhash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{fullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{bibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorbibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authornamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorfullhash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorfullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{The Annals of Mathematical Statistics}
-      \field{number}{1}
-      \field{title}{On a Test of Whether One of Two Random Variables is Stochastically Larger than the Other}
-      \field{volume}{18}
-      \field{year}{1947}
-      \field{pages}{50\bibrangedash 60}
-      \range{pages}{11}
-    \endentry
   \enddatalist
 \endrefsection
 \endinput

@@ -1,60 +1,90 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {chapter}{\numberline {7}Experimentación, Resultados y Discusión}{44}{chapter.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}Pruebas, Resultados y Discusión}{47}{chapter.7}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {7.1}Corpus y metodología de adquisición de Datos de LSA}{44}{section.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1.1}Definición y validación del vocabulario de 100 clases}{44}{subsection.7.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1.2}Protocolo de grabación y curación del dataset propio}{44}{subsection.7.1.2}\protected@file@percent }
+\newlabel{cap:pruebas_resultados_discusion}{{7}{47}{Pruebas, Resultados y Discusión}{chapter.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.1}Corpus y metodología de adquisición de datos de LSA}{47}{section.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1.1}Definición y validación del vocabulario de 100 clases}{47}{subsection.7.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1.2}Protocolo de grabación y curación del dataset propio}{47}{subsection.7.1.2}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {section}{\numberline {7.2}Evaluación empírica del clasificador gestual}{45}{section.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.1}Protocolo de la pasada local}{45}{subsection.7.2.1}\protected@file@percent }
-\newlabel{sec:protocolo_camara}{{7.2.1}{45}{Protocolo de la pasada local}{subsection.7.2.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.2}Métricas offline vs. rendimiento en cámara real}{45}{subsection.7.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.2}Evaluación empírica del clasificador gestual (TinySkeletonClassifier)}{48}{section.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.1}Protocolo de evaluación en cámara real}{48}{subsection.7.2.1}\protected@file@percent }
+\newlabel{sec:protocolo_camara}{{7.2.1}{48}{Protocolo de evaluación en cámara real}{subsection.7.2.1}{}}
 \def\@LN@column{1}
-\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces Exactitud de validación y acierto en cámara del clasificador. Top-1 y top-3 de cámara son crudos: no colapsan homógrafos.}}{46}{table.7.1}\protected@file@percent }
-\newlabel{tab:brecha_offline_camara}{{7.1}{46}{Exactitud de validación y acierto en cámara del clasificador. Top-1 y top-3 de cámara son crudos: no colapsan homógrafos}{table.7.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.3}Impacto de la resolución temporal: 16 vs. 32 fotogramas}{46}{subsection.7.2.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.2}{\ignorespaces Resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}}{46}{table.7.2}\protected@file@percent }
-\newlabel{tab:frames_julio}{{7.2}{46}{Resolución temporal en julio de 2026 (91 clases, 50 videos por clase)}{table.7.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.2}Comparativa entre métricas fuera de línea y rendimiento en cámara}{49}{subsection.7.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces Exactitud de validación fuera de línea frente al acierto en cámara real (Top-1 y Top-3 crudos, sin colapsar homógrafos).}}{49}{table.7.1}\protected@file@percent }
+\newlabel{tab:brecha_offline_camara}{{7.1}{49}{Exactitud de validación fuera de línea frente al acierto en cámara real (Top-1 y Top-3 crudos, sin colapsar homógrafos)}{table.7.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.3}Impacto de la resolución temporal: 16 frente a 32 fotogramas}{49}{subsection.7.2.3}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.1}{\ignorespaces Curva de aprendizaje de la iteración A (16 fotogramas, 29/07/2026). La pérdida de validación se estanca cerca de 1{,}05 desde la época 7, mientras la de entrenamiento sigue en descenso.}}{47}{figure.7.1}\protected@file@percent }
-\newlabel{fig:curva_16}{{7.1}{47}{Curva de aprendizaje de la iteración A (16 fotogramas, 29/07/2026). La pérdida de validación se estanca cerca de 1{,}05 desde la época 7, mientras la de entrenamiento sigue en descenso}{figure.7.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.2}{\ignorespaces Curva de aprendizaje de la iteración B (32 fotogramas, 128 dimensiones, 4 cabezas y 2 capas, 31/07/2026). La pérdida de validación se estabiliza cerca de 1{,}04 desde la época 4.}}{47}{figure.7.2}\protected@file@percent }
-\newlabel{fig:curva_32}{{7.2}{47}{Curva de aprendizaje de la iteración B (32 fotogramas, 128 dimensiones, 4 cabezas y 2 capas, 31/07/2026). La pérdida de validación se estabiliza cerca de 1{,}04 desde la época 4}{figure.7.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.2}{\ignorespaces Evaluación de la resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}}{50}{table.7.2}\protected@file@percent }
+\newlabel{tab:frames_julio}{{7.2}{50}{Evaluación de la resolución temporal en julio de 2026 (91 clases, 50 videos por clase)}{table.7.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.1}{\ignorespaces Curva de aprendizaje para la iteración A (16 fotogramas, 29/07/2026). La pérdida de validación se estabiliza cerca de $1{,}05$ desde la época 7, mientras la pérdida de entrenamiento sigue en descenso.}}{50}{figure.7.1}\protected@file@percent }
+\newlabel{fig:curva_16}{{7.1}{50}{Curva de aprendizaje para la iteración A (16 fotogramas, 29/07/2026). La pérdida de validación se estabiliza cerca de $1{,}05$ desde la época 7, mientras la pérdida de entrenamiento sigue en descenso}{figure.7.1}{}}
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.4}Búsqueda automatizada de hiperparámetros con Optuna y Análisis de sobreajuste}{48}{subsection.7.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.5}Diagnóstico de confusiones mediante feature engineering y separabilidad}{48}{subsection.7.2.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7.2}{\ignorespaces Curva de aprendizaje para la iteración B (32 fotogramas, 128 dimensiones, 4 cabezas y 2 capas, 31/07/2026). La pérdida de validación alcanza la estabilidad en $1{,}04$ desde la época 4.}}{51}{figure.7.2}\protected@file@percent }
+\newlabel{fig:curva_32}{{7.2}{51}{Curva de aprendizaje para la iteración B (32 fotogramas, 128 dimensiones, 4 cabezas y 2 capas, 31/07/2026). La pérdida de validación alcanza la estabilidad en $1{,}04$ desde la época 4}{figure.7.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.4}Búsqueda automatizada con Optuna y análisis de sobreajuste}{51}{subsection.7.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ronda de julio de 2026.}{51}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ronda de agosto de 2026.}{51}{section*.15}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.6}Impacto cuantitativo de la corrección de aspect ratio}{49}{subsection.7.2.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.3}{\ignorespaces Corrección de relación de aspecto sobre 36 letras y números ya grabados (checkpoint del 29/08).}}{49}{table.7.3}\protected@file@percent }
-\newlabel{tab:aspect}{{7.3}{49}{Corrección de relación de aspecto sobre 36 letras y números ya grabados (checkpoint del 29/08)}{table.7.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.5}Diagnóstico de confusiones mediante feature engineering}{52}{subsection.7.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.6}Impacto cuantitativo de la corrección de relación de aspecto}{52}{subsection.7.2.6}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.7}Desempeño final del clasificador baseline en vivo}{50}{subsection.7.2.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7.3}{\ignorespaces Curva de aprendizaje del reentrenamiento del 21/09/2026: 16 fotogramas, 128 dimensiones, 4 cabezas, 2 capas y 97 clases. La pérdida de validación mínima archivada es $0{,}052$ (exactitud top-1 de 99{,}14\,\%).}}{50}{figure.7.3}\protected@file@percent }
-\newlabel{fig:curva_final}{{7.3}{50}{Curva de aprendizaje del reentrenamiento del 21/09/2026: 16 fotogramas, 128 dimensiones, 4 cabezas, 2 capas y 97 clases. La pérdida de validación mínima archivada es $0{,}052$ (exactitud top-1 de 99{,}14\,\%)}{figure.7.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.3}{\ignorespaces Efecto de la corrección de relación de aspecto sobre 36 tomas de letras y dígitos (checkpoint del 29/08).}}{53}{table.7.3}\protected@file@percent }
+\newlabel{tab:aspect}{{7.3}{53}{Efecto de la corrección de relación de aspecto sobre 36 tomas de letras y dígitos (checkpoint del 29/08)}{table.7.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.7}Desempeño final del clasificador en tiempo real}{53}{subsection.7.2.7}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.4}{\ignorespaces Matriz de confusión en validación del mismo reentrenamiento (21/09/2026, 97 clases). La masa se concentra en la diagonal. Los errores de cámara del 17/09 no aparecen en esta figura.}}{51}{figure.7.4}\protected@file@percent }
-\newlabel{fig:matriz_final}{{7.4}{51}{Matriz de confusión en validación del mismo reentrenamiento (21/09/2026, 97 clases). La masa se concentra en la diagonal. Los errores de cámara del 17/09 no aparecen en esta figura}{figure.7.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.3}{\ignorespaces Curva de aprendizaje del reentrenamiento del 21/09/2026 (16 fotogramas, 97 clases). La pérdida de validación mínima fue de $0{,}052$ (exactitud Top-1 fuera de línea del 99{,}14\,\%).}}{54}{figure.7.3}\protected@file@percent }
+\newlabel{fig:curva_final}{{7.3}{54}{Curva de aprendizaje del reentrenamiento del 21/09/2026 (16 fotogramas, 97 clases). La pérdida de validación mínima fue de $0{,}052$ (exactitud Top-1 fuera de línea del 99{,}14\,\%)}{figure.7.3}{}}
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {section}{\numberline {7.3}Evaluación de los módulos de traducción semántica}{52}{section.7.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.1}Benchmark comparativo de modelos SLM (Familias Qwen2.5, Llama 3.2 y SmolLM2)}{52}{subsection.7.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.2}Evaluación cuantitativa: BLEU, ROUGE-L, METEOR y exactitud}{52}{subsection.7.3.2}\protected@file@percent }
-\newlabel{sec:eval_semantica_cuant}{{7.3.2}{52}{Evaluación cuantitativa: BLEU, ROUGE-L, METEOR y exactitud}{subsection.7.3.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.3}Análisis de simetría en el aprendizaje: traducción directa vs. estructuración inversa}{52}{subsection.7.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.4}Compromiso entre calidad lingüística y latencia de inferencia}{52}{subsection.7.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.4}Evaluación del sistema integrado y rendimiento en tiempo real}{52}{section.7.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.1}Validación funcional de extremo a extremo en videollamadas reales}{52}{subsection.7.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.2}Análisis de latencias totales por etapa del pipeline}{52}{subsection.7.4.2}\protected@file@percent }
-\newlabel{sec:latencias_pipeline}{{7.4.2}{52}{Análisis de latencias totales por etapa del pipeline}{subsection.7.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.3}Consumo de recursos de hardware: máquina de desarrollo vs. máquina objetivo}{52}{subsection.7.4.3}\protected@file@percent }
-\newlabel{sec:hardware_objetivo}{{7.4.3}{52}{Consumo de recursos de hardware: máquina de desarrollo vs. máquina objetivo}{subsection.7.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.4}Discusión técnica y lecciones de ingeniería aprendidas}{52}{subsection.7.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7.4}{\ignorespaces Matriz de confusión en validación fuera de línea para la corrida del 21/09/2026 (97 clases). La concentración de masa en la diagonal refleja la alta separabilidad del dataset estático.}}{55}{figure.7.4}\protected@file@percent }
+\newlabel{fig:matriz_final}{{7.4}{55}{Matriz de confusión en validación fuera de línea para la corrida del 21/09/2026 (97 clases). La concentración de masa en la diagonal refleja la alta separabilidad del dataset estático}{figure.7.4}{}}
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.5}{\ignorespaces Curva de aprendizaje del reentrenamiento del 15/10/2026 (16 fotogramas, 100 clases), checkpoint integrado en el prototipo. La pérdida de validación mínima, $0{,}0528$, se alcanza en la época 19 (exactitud Top-1 fuera de línea del 99{,}08\,\%).}}{56}{figure.7.5}\protected@file@percent }
+\newlabel{fig:curva_100}{{7.5}{56}{Curva de aprendizaje del reentrenamiento del 15/10/2026 (16 fotogramas, 100 clases), checkpoint integrado en el prototipo. La pérdida de validación mínima, $0{,}0528$, se alcanza en la época 19 (exactitud Top-1 fuera de línea del 99{,}08\,\%)}{figure.7.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.3}Evaluación de los módulos de traducción semántica}{56}{section.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.1}Estrategia de generación asistida del dataset}{56}{subsection.7.3.1}\protected@file@percent }
+\newlabel{sec:estrategia_dataset}{{7.3.1}{56}{Estrategia de generación asistida del dataset}{subsection.7.3.1}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.2}Corrida histórica previa a la compresión de tokens (Canal Directo)}{57}{subsection.7.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.4}{\ignorespaces Canal directo, evaluación histórica antes de la compresión de tokens de deletreo y dígitos. Muestra de 115 oraciones. Índices en escala 0--100.}}{57}{table.7.4}\protected@file@percent }
+\newlabel{tab:sem_previo}{{7.4}{57}{Canal directo, evaluación histórica antes de la compresión de tokens de deletreo y dígitos. Muestra de 115 oraciones. Índices en escala 0--100}{table.7.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.3}Resultados finales y reevaluación semántica}{57}{subsection.7.3.3}\protected@file@percent }
+\newlabel{sec:eval_semantica_cuant}{{7.3.3}{57}{Resultados finales y reevaluación semántica}{subsection.7.3.3}{}}
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {7.5}{\ignorespaces Canal directo (LSA $\rightarrow $ Español), resultados finales (119 oraciones de evaluación). Índices en escala 0--100.}}{58}{table.7.5}\protected@file@percent }
+\newlabel{tab:sem_directo}{{7.5}{58}{Canal directo (LSA $\rightarrow $ Español), resultados finales (119 oraciones de evaluación). Índices en escala 0--100}{table.7.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.6}{\ignorespaces Canal inverso (Español $\rightarrow $ LSA), resultados finales (102 oraciones de evaluación). Índices en escala 0--100.}}{58}{table.7.6}\protected@file@percent }
+\newlabel{tab:sem_inverso}{{7.6}{58}{Canal inverso (Español $\rightarrow $ LSA), resultados finales (102 oraciones de evaluación). Índices en escala 0--100}{table.7.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.4}Análisis cualitativo de errores en la inferencia}{58}{subsection.7.3.4}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.5}Análisis de asimetría direccional}{59}{subsection.7.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3.6}Compromiso entre latencia y capacidad lingüística}{59}{subsection.7.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7.4}Evaluación del sistema integrado y rendimiento en tiempo real}{59}{section.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.1}Validación funcional de extremo a extremo}{59}{subsection.7.4.1}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {7.7}{\ignorespaces Resultados de la batería de pruebas sobre la lógica de control del motor local.}}{60}{table.7.7}\protected@file@percent }
+\newlabel{tab:bateria_logica}{{7.7}{60}{Resultados de la batería de pruebas sobre la lógica de control del motor local}{table.7.7}{}}
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {7.8}{\ignorespaces Fallas detectadas en la integración con Google Meet y correcciones aplicadas.}}{61}{table.7.8}\protected@file@percent }
+\newlabel{tab:fallas_integracion}{{7.8}{61}{Fallas detectadas en la integración con Google Meet y correcciones aplicadas}{table.7.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.2}Análisis de latencias totales por etapa del pipeline}{61}{subsection.7.4.2}\protected@file@percent }
+\newlabel{sec:latencias_pipeline}{{7.4.2}{61}{Análisis de latencias totales por etapa del pipeline}{subsection.7.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.9}{\ignorespaces Desglose de los componentes del retardo en el canal directo.}}{61}{table.7.9}\protected@file@percent }
+\newlabel{tab:latencias_etapas}{{7.9}{61}{Desglose de los componentes del retardo en el canal directo}{table.7.9}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4.3}Consumo de recursos de hardware: máquina de desarrollo frente a equipo objetivo}{62}{subsection.7.4.3}\protected@file@percent }
+\newlabel{sec:hardware_objetivo}{{7.4.3}{62}{Consumo de recursos de hardware: máquina de desarrollo frente a equipo objetivo}{subsection.7.4.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.10}{\ignorespaces Comparativa de desempeño del sistema según la plataforma de hardware (con traductor local).}}{62}{table.7.10}\protected@file@percent }
+\newlabel{tab:hw_comparacion}{{7.10}{62}{Comparativa de desempeño del sistema según la plataforma de hardware (con traductor local)}{table.7.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.5}Discusión técnica y lecciones de ingeniería aprendidas}{62}{section.7.5}\protected@file@percent }
+\def\@LN@column{1}
 \@setckpt{capitulos/cap07_experimentacion}{
-\setcounter{page}{53}
+\setcounter{page}{64}
 \setcounter{equation}{0}
-\setcounter{enumi}{3}
+\setcounter{enumi}{7}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
 \setcounter{enumiv}{0}
@@ -62,22 +92,22 @@
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{chapter}{7}
-\setcounter{section}{4}
-\setcounter{subsection}{4}
+\setcounter{section}{5}
+\setcounter{subsection}{0}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{4}
-\setcounter{table}{3}
+\setcounter{figure}{5}
+\setcounter{table}{10}
 \setcounter{parentequation}{0}
-\setcounter{section@level}{2}
-\setcounter{Item}{30}
+\setcounter{section@level}{1}
+\setcounter{Item}{48}
 \setcounter{Hfootnote}{0}
-\setcounter{bookmark@seq@number}{91}
+\setcounter{bookmark@seq@number}{100}
 \setcounter{float@type}{8}
 \setcounter{FancyVerbLine}{0}
 \setcounter{linenumber}{1}
-\setcounter{LN@truepage}{59}
+\setcounter{LN@truepage}{70}
 \setcounter{FancyVerbWriteLine}{0}
 \setcounter{FancyVerbBufferLine}{0}
 \setcounter{FV@TrueTabGroupLevel}{0}

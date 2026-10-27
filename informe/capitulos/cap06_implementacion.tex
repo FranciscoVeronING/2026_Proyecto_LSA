@@ -3,6 +3,39 @@
 \label{cap:implementacion}
 % ====================================================================
 
+\section{Estructura del código}
+\label{sec:estructura_codigo}
+
+El código del prototipo no vive en una única rama del repositorio. Cada pieza del sistema tiene su rama, con una responsabilidad acotada, de modo que el cliente de la videollamada, los entrenamientos, el servicio que ejecuta los traductores en la nube y el servicio de poses se pueden leer y ampliar por separado. Esta sección indica para qué existe cada rama. El detalle de directorios, módulos y convenciones de nombres queda en el \texttt{README} de cada uno.
+
+\subsection{Repositorio del clasificador}
+% TODO: Compelta fran
+
+\subsection{Cliente de la videollamada}
+Este repositorio produce lo que la persona instala para usar el prototipo en una llamada. La extensión se obtendria desde la tienda del navegador y, al instalarse, abre una página desde la cual se descarga el motor local. 
+
+El código que arma esas dos piezas se reparte en tres zonas. \texttt{extension/} es la extensión: los scripts de la página de la llamada, el dibujo del avatar y la página de bienvenida que entrega el motor. \texttt{src/} es el motor local, con \texttt{backend/} para la ventana y la API, \texttt{classifier/} y \texttt{core/} para la seña y la frase, \texttt{semantic/} como cliente del traductor remoto, \texttt{avatar/} como cliente de las poses y \texttt{poseclip/} para componer el clip. \texttt{packaging/} empaqueta ese motor en el archivo que descarga la página de bienvenida.
+
+\subsection{Servicio semántico en la nube}
+Este repositorio es el servicio que el motor local consulta para traducir. Atiende las dos direcciones, de glosas hacia español y de español hacia glosas, con los binarios que entregan los repositorios de entrenamiento. Su tarea es responder un enunciado ya armado, y no forma parte de lo que se instala en la computadora de quien llama.
+
+El arranque está en \texttt{run\_semantic\_server.py}. El servicio vive en \texttt{src/semantic/}: \texttt{api.py} expone las rutas, \texttt{service.py} separa los dos canales y \texttt{engine.py} ejecuta el binario. Los pesos no comparten carpeta. \texttt{models/sign/} guarda el canal de glosas hacia español y \texttt{models/hearing/} el canal inverso. En cada una hay un binario principal, un respaldo y el \texttt{sys\_prompt.txt} de esa dirección.
+
+\subsection{Entrenamiento del canal directo}
+Este repositorio ajusta y evalúa los modelos que pasan de glosas a una oración en español. El binario que resulta de ese entrenamiento es el que después carga el servicio en la nube para el canal directo.
+
+Todo el código está en \texttt{src/semantic/}. \texttt{train.py} ajusta un modelo y exporta el binario, \texttt{eval\_trial.py} lo compara sobre oraciones fuera del corte, y \texttt{models.py} es el catálogo: sumar una familia es agregar una entrada ahí. El corpus está en \texttt{dataset\_glosses.json}, las oraciones de prueba en \texttt{dataset\_trial.json} y las instrucciones del modelo en \texttt{prompts/sys\_prompt.txt}. Los pesos y los registros salen a \texttt{outputs/}. Cada familia se identifica con un id estable, como \texttt{qwen2.5-1.5b} o \texttt{llama-3.2-1b}, y ese mismo id nombra su carpeta de salida.
+
+\subsection{Entrenamiento del canal inverso}
+Este repositorio ajusta y evalúa los modelos que pasan de una oración en español a una secuencia de glosas. El corpus y el binario son propios de esta dirección, y el servicio en la nube los usa para el canal inverso.
+
+La disposición repite la del canal directo, también bajo \texttt{src/semantic/} y también con los módulos en inglés: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El corpus, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
+
+\subsection{Servicio de poses del avatar}
+Este repositorio publica los archivos de pose que el motor local pide para dibujar el avatar. No entrena modelos ni traduce texto. El cliente de la videollamada solicita esas poses a este servicio.
+
+El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El nombre del archivo, sin extensión, es la glosa ya normalizada: mayúsculas, sin tildes y en ASCII. Dentro de una palabra la eñe pasa a ene, y la letra eñe, cuando es la glosa entera, se pide como \texttt{ENIE}.
+
 \section{Implementación del subsistema de reconocimiento gestual}
 
 \subsection{Preprocesamiento de datos y pipeline de extracción}
@@ -92,6 +125,74 @@ Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantizac
 \label{eq:ram_runtime}
 \end{equation}
 donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados ($\sim 0{,}5$ bytes por parámetro), $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto, y el buffer reserva espacio para las activaciones intermedias.
+
+Las Figuras~\ref{fig:ram_teorica} y~\ref{fig:pesos_cuantizacion} aplican esa cuenta a los cinco modelos. El término de pesos usa los totales publicados: 0{,}49 mil millones para Qwen2.5 0{,}5B, 1{,}54 para el 1{,}5B, 3{,}09 para el 3B \parencite{qwen2024qwen25}, 1{,}23 para Llama 3.2 1B \parencite{dubey2024llama3} y 1{,}71 para SmolLM2 1{,}7B \parencite{allal2024smollm2}. Antes de cuantizar, el modelo fusionado queda en 16 bits, es decir 2 bytes por parámetro. Después, la aproximación de la ecuación usa 0{,}5 bytes por parámetro. La caché no cambia con la cuantización, porque la ecuación la deja en fp16:
+
+\[
+KV_{\text{fp16}} = 2 \cdot L \cdot n_{\mathrm{kv}} \cdot d \cdot 2048 \cdot 2
+\]
+
+en bytes. El primer 2 son las matrices de claves y de valores. El último 2 es el tamaño de un valor fp16. $L$ es el número de capas, $n_{\mathrm{kv}}$ el de cabezas de clave y valor, y $d$ el ancho de cada cabeza. Esos anchos salen de la configuración publicada: 64, 128 y 128 para los tres Qwen, 64 para Llama y 64 para SmolLM2. Las cabezas de clave y valor son 2, 2, 2, 8 y 32, en el mismo orden. El buffer de la ecuación no tiene un valor fijo en este capítulo, así que las barras no lo suman. La cifra es teórica. No es la memoria que midió el proceso en la máquina de las pruebas.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=7pt,
+            width=0.92\textwidth,
+            height=6.6cm,
+            ylabel={GiB},
+            symbolic x coords={{0,5B},{1,5B},{3B},{Llama},{Smol}},
+            xtick=data,
+            x tick label style={font=\small},
+            ymin=0,
+            ymax=7.2,
+            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=2, font=\small},
+            enlarge x limits=0.18,
+            ylabel style={font=\small},
+            tick label style={font=\small},
+            nodes near coords,
+            every node near coord/.append style={font=\scriptsize, rotate=90, anchor=west},
+        ]
+            \addplot coordinates {({0,5B},0.936) ({1,5B},2.923) ({3B},5.826) ({Llama},2.354) ({Smol},3.560)};
+            \addplot coordinates {({0,5B},0.252) ({1,5B},0.772) ({3B},1.509) ({Llama},0.635) ({Smol},1.171)};
+            \legend{{16 bits + caché}, {Q4\_K\_M + caché}}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{RAM teórica de inferencia, $W + KV_{\text{fp16}}(2048)$, en GiB. El orden del eje es Qwen2.5 0{,}5B, 1{,}5B y 3B, Llama 3.2 1B y SmolLM2 1{,}7B. El buffer no entra.}
+    \label{fig:ram_teorica}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=7pt,
+            width=0.92\textwidth,
+            height=6.6cm,
+            ylabel={GiB},
+            symbolic x coords={{0,5B},{1,5B},{3B},{Llama},{Smol}},
+            xtick=data,
+            x tick label style={font=\small},
+            ymin=0,
+            ymax=7.2,
+            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=2, font=\small},
+            enlarge x limits=0.18,
+            ylabel style={font=\small},
+            tick label style={font=\small},
+            nodes near coords,
+            every node near coord/.append style={font=\scriptsize, rotate=90, anchor=west},
+        ]
+            \addplot coordinates {({0,5B},0.913) ({1,5B},2.868) ({3B},5.756) ({Llama},2.291) ({Smol},3.185)};
+            \addplot coordinates {({0,5B},0.228) ({1,5B},0.717) ({3B},1.439) ({Llama},0.573) ({Smol},0.796)};
+            \legend{{Antes, 16 bits}, {Después, 0{,}5 bytes/param}}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Tamaño teórico de los pesos, antes y después de la cuantización, en GiB. Mismo orden de modelos que la Figura~\ref{fig:ram_teorica}. La barra comprimida usa los 0{,}5 bytes por parámetro de la ecuación~\ref{eq:ram_runtime}. El promedio cercano a 5 bits del preset, en el marco teórico, queda un poco por encima de esa barra.}
+    \label{fig:pesos_cuantizacion}
+\end{figure}
 
 \section{Integración en Google Meet y arquitectura de la extensión}
 

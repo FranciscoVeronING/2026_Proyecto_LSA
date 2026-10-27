@@ -353,6 +353,7 @@
       \strng{authornamehash}{b34ec7ee85af98aed1e55ed4599fbd0e}
       \strng{authorfullhash}{16cfb3f5ef97452df4f7505f2118712e}
       \strng{authorfullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
+      \field{extraname}{1}
       \field{sortinit}{9}
       \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
@@ -1151,38 +1152,189 @@
       \field{title}{The {Llama 3} Herd of Models}
       \field{year}{2024}
     \endentry
-    \entry{mann1947test}{article}{}{}
-      \name{author}{2}{}{%
-        {{hash=5cf19aa5110d49e31bafd83ce394b092}{%
-           family={Mann},
-           familyi={M\bibinitperiod},
-           given={Henry\bibnamedelima B.},
-           giveni={H\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
-        {{hash=c28a32eaa7f3921fc42ff47698be3a36}{%
-           family={Whitney},
+    \entry{papineni2002bleu}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=7f72c67734e28d79452d687f2b2825d0}{%
+           family={Papineni},
+           familyi={P\bibinitperiod},
+           given={Kishore},
+           giveni={K\bibinitperiod}}}%
+        {{hash=fcdf7cf3f3cfe87d0f08f8f4d98b1137}{%
+           family={Roukos},
+           familyi={R\bibinitperiod},
+           given={Salim},
+           giveni={S\bibinitperiod}}}%
+        {{hash=630f7af400534d0e9f11cc0befbb3fe3}{%
+           family={Ward},
            familyi={W\bibinitperiod},
-           given={Donald\bibnamedelima R.},
-           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+           given={Todd},
+           giveni={T\bibinitperiod}}}%
+        {{hash=ecc966c09b4816bda3be0efb9bedb125}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Wei-Jing},
+           giveni={W\bibinithyphendelim J\bibinitperiod}}}%
       }
-      \strng{namehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{fullhash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{fullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{bibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorbibnamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authornamehash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorfullhash}{faa025e01f364e80ee2e1076e0bc30ac}
-      \strng{authorfullhashraw}{faa025e01f364e80ee2e1076e0bc30ac}
+      \strng{namehash}{d4eb40956a6de2c2fe50bfef6a72df63}
+      \strng{fullhash}{0a6e6b36539eaebe00a3fef93d4cd32a}
+      \strng{fullhashraw}{0a6e6b36539eaebe00a3fef93d4cd32a}
+      \strng{bibnamehash}{0a6e6b36539eaebe00a3fef93d4cd32a}
+      \strng{authorbibnamehash}{0a6e6b36539eaebe00a3fef93d4cd32a}
+      \strng{authornamehash}{d4eb40956a6de2c2fe50bfef6a72df63}
+      \strng{authorfullhash}{0a6e6b36539eaebe00a3fef93d4cd32a}
+      \strng{authorfullhashraw}{0a6e6b36539eaebe00a3fef93d4cd32a}
       \field{sortinit}{5}
       \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{The Annals of Mathematical Statistics}
-      \field{number}{1}
-      \field{title}{On a Test of Whether One of Two Random Variables is Stochastically Larger than the Other}
-      \field{volume}{18}
-      \field{year}{1947}
-      \field{pages}{50\bibrangedash 60}
-      \range{pages}{11}
+      \field{booktitle}{Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics}
+      \field{title}{{BLEU}: a Method for Automatic Evaluation of Machine Translation}
+      \field{year}{2002}
+      \field{pages}{311\bibrangedash 318}
+      \range{pages}{8}
+    \endentry
+    \entry{lin2004rouge}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=bc6dfe0750848d77d639c1de6b9934e4}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Chin-Yew},
+           giveni={C\bibinithyphendelim Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{fullhash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{fullhashraw}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{bibnamehash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{authorbibnamehash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{authornamehash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{authorfullhash}{bc6dfe0750848d77d639c1de6b9934e4}
+      \strng{authorfullhashraw}{bc6dfe0750848d77d639c1de6b9934e4}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Text Summarization Branches Out}
+      \field{title}{{ROUGE}: A Package for Automatic Evaluation of Summaries}
+      \field{year}{2004}
+      \field{pages}{74\bibrangedash 81}
+      \range{pages}{8}
+    \endentry
+    \entry{banerjee2005meteor}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=82e9bc9432281635a52d33d808963314}{%
+           family={Banerjee},
+           familyi={B\bibinitperiod},
+           given={Satanjeev},
+           giveni={S\bibinitperiod}}}%
+        {{hash=b1ffa393a913fbcab4c0074cc07754c5}{%
+           family={Lavie},
+           familyi={L\bibinitperiod},
+           given={Alon},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f1287e5e266f735dc7989938b1685084}
+      \strng{fullhash}{f1287e5e266f735dc7989938b1685084}
+      \strng{fullhashraw}{f1287e5e266f735dc7989938b1685084}
+      \strng{bibnamehash}{f1287e5e266f735dc7989938b1685084}
+      \strng{authorbibnamehash}{f1287e5e266f735dc7989938b1685084}
+      \strng{authornamehash}{f1287e5e266f735dc7989938b1685084}
+      \strng{authorfullhash}{f1287e5e266f735dc7989938b1685084}
+      \strng{authorfullhashraw}{f1287e5e266f735dc7989938b1685084}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the {ACL} Workshop on Intrinsic and Extrinsic Evaluation Measures for Machine Translation and/or Summarization}
+      \field{title}{{METEOR}: An Automatic Metric for {MT} Evaluation with Improved Correlation with Human Judgments}
+      \field{year}{2005}
+      \field{pages}{65\bibrangedash 72}
+      \range{pages}{8}
+    \endentry
+    \entry{zhang2020bertscore}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=733e3732b7e3ce5cf2b04cf5e9bd9cf1}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Tianyi},
+           giveni={T\bibinitperiod}}}%
+        {{hash=68f7171bfe61e73c62ff3ffc4c84e5ab}{%
+           family={Kishore},
+           familyi={K\bibinitperiod},
+           given={Varsha},
+           giveni={V\bibinitperiod}}}%
+        {{hash=5d3c3a632d3c15054a532172777a7e40}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Felix},
+           giveni={F\bibinitperiod}}}%
+        {{hash=68a0238356fbd88b34be8886f25938a7}{%
+           family={Weinberger},
+           familyi={W\bibinitperiod},
+           given={Kilian\bibnamedelima Q.},
+           giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod}}}%
+        {{hash=bda57b6734e461152eada7e447798ca8}{%
+           family={Artzi},
+           familyi={A\bibinitperiod},
+           given={Yoav},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{b7341c276394125587ea24e5ba844df4}
+      \strng{fullhash}{0f3fc6c6b2643b223fd923710ae91526}
+      \strng{fullhashraw}{0f3fc6c6b2643b223fd923710ae91526}
+      \strng{bibnamehash}{0f3fc6c6b2643b223fd923710ae91526}
+      \strng{authorbibnamehash}{0f3fc6c6b2643b223fd923710ae91526}
+      \strng{authornamehash}{b7341c276394125587ea24e5ba844df4}
+      \strng{authorfullhash}{0f3fc6c6b2643b223fd923710ae91526}
+      \strng{authorfullhashraw}{0f3fc6c6b2643b223fd923710ae91526}
+      \field{extraname}{2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Conference on Learning Representations}
+      \field{title}{{BERTScore}: Evaluating Text Generation with {BERT}}
+      \field{year}{2020}
+    \endentry
+    \entry{rei2020comet}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=09d70d7e95a225e50433397df1f0d8b9}{%
+           family={Rei},
+           familyi={R\bibinitperiod},
+           given={Ricardo},
+           giveni={R\bibinitperiod}}}%
+        {{hash=a740a7dbd510e741fbf196f28db08447}{%
+           family={Stewart},
+           familyi={S\bibinitperiod},
+           given={Craig},
+           giveni={C\bibinitperiod}}}%
+        {{hash=e99fa9a8450a8abcf235a6ca75b9ef0a}{%
+           family={Farinha},
+           familyi={F\bibinitperiod},
+           given={Ana\bibnamedelima C.},
+           giveni={A\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=b1ffa393a913fbcab4c0074cc07754c5}{%
+           family={Lavie},
+           familyi={L\bibinitperiod},
+           given={Alon},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{360ee160aae14af25966e1440067abc8}
+      \strng{fullhash}{cb038e1f5748686a6d5d1a4c72488848}
+      \strng{fullhashraw}{cb038e1f5748686a6d5d1a4c72488848}
+      \strng{bibnamehash}{cb038e1f5748686a6d5d1a4c72488848}
+      \strng{authorbibnamehash}{cb038e1f5748686a6d5d1a4c72488848}
+      \strng{authornamehash}{360ee160aae14af25966e1440067abc8}
+      \strng{authorfullhash}{cb038e1f5748686a6d5d1a4c72488848}
+      \strng{authorfullhashraw}{cb038e1f5748686a6d5d1a4c72488848}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing}
+      \field{title}{{COMET}: A Neural Framework for {MT} Evaluation}
+      \field{year}{2020}
+      \field{pages}{2685\bibrangedash 2702}
+      \range{pages}{18}
     \endentry
   \enddatalist
 \endrefsection
