@@ -1,27 +1,27 @@
 /**
- * Recorte temporal de una seña. Corre **en la extensión**, con landmarks
- * que ya trajo Holistic. El backend no participa hasta `onSign` → `POST /sign`.
+ * Temporal crop of a sign. Runs **in the extension**, with landmarks
+ * Holistic already produced. The backend is not involved until `onSign` → `POST /sign`.
  *
- * No se usa movimiento de píxeles (gente detrás de cámara en Meet). En `auto`,
- * abre tras N frames seguidos con mano usable; termina cuando las manos salen
- * (~0,4 s de gracia por si Holistic pierde un frame). No corta por “manos
- * quietas”: las señas estáticas (HOLA, números, etc.) tienen que grabarse.
+ * Pixel motion is not used (people behind the camera in Meet). In `auto`,
+ * it opens after N consecutive frames with a usable hand; it ends when the hands leave
+ * (~0.4 s grace if Holistic drops a frame). It does not cut on “still hands”:
+ * static signs (HOLA, numbers, etc.) still have to be recorded.
  */
 
 /**
- * Umbrales por si `/config` todavía no respondió.
- * Los nombres coinciden con `src/classifier/config.py`.
+ * Thresholds if `/config` has not answered yet.
+ * Names match `src/classifier/config.py`.
  *
  * @typedef {object} CaptureConfig
- * @property {number} landmark_motion_threshold Movimiento minimo L2 de manos para “está señando”.
- * @property {number} capture_buffer_size Máximo de frames crudos de una seña.
- * @property {number} missing_hands_limit Frames @30fps equivalentes a la gracia sin manos.
- * @property {number} min_capture_frames Frames con mano real; por debajo se descarta.
- * @property {number} hands_frames_to_start Seguidos con mano para abrir (modo auto).
- * @property {number} max_frames Tamaño que consume TinySkeleton.
+ * @property {number} landmark_motion_threshold Minimum L2 hand motion for “signing”.
+ * @property {number} capture_buffer_size Max raw frames of a sign.
+ * @property {number} missing_hands_limit Frames @30fps equivalent to the no-hands grace.
+ * @property {number} min_capture_frames Frames with a real hand; below that it is discarded.
+ * @property {number} hands_frames_to_start Consecutive frames with a hand to open (auto mode).
+ * @property {number} max_frames Size TinySkeleton consumes.
  * @property {"auto"|"dynamic"|"static"} capture_mode
- * @property {number} utterance_pause_sec Silencio → cerrar enunciado.
- * @property {number} static_hands_frames_to_start Solo modo `static`.
+ * @property {number} utterance_pause_sec Silence → close utterance.
+ * @property {number} static_hands_frames_to_start `static` mode only.
  */
 const FALLBACK_CFG = {
   motion_pixel_threshold: 500,
@@ -38,11 +38,11 @@ const FALLBACK_CFG = {
 };
 
 /**
- * Submuestreo uniforme (índices `floor`, mismo criterio que un linspace entero).
+ * Uniform subsample (floor indices, same criterion as an integer linspace).
  *
- * @param {object[]} frames Buffer crudo de `packFrame`.
- * @param {number} target Cantidad deseada (16).
- * @returns {object[]} `frames` si ya es corto; si no, `target` muestras.
+ * @param {object[]} frames Raw `packFrame` buffer.
+ * @param {number} target Desired count (16).
+ * @returns {object[]} `frames` if already short; otherwise `target` samples.
  */
 function uniformSampleFrames(frames, target) {
   const n = frames.length;
@@ -57,17 +57,17 @@ function uniformSampleFrames(frames, target) {
 }
 
 /**
- * ¿Hay que empezar a grabar este frame?
+ * Should recording start on this frame?
  *
- * Meet usa `capture_mode: "auto"`: hace falta N frames seguidos con mano usable.
- * Un solo frame fantasma de Holistic (moverse de lado) no abre la seña.
- * `dynamic` sí exige L2 de manos; `static` exige N frames con manos.
+ * Meet uses `capture_mode: "auto"`: N consecutive frames with a usable hand are required.
+ * A single Holistic ghost frame (moving sideways) does not open the sign.
+ * `dynamic` does require hand L2; `static` requires N frames with hands.
  *
  * @param {string} mode `auto` | `dynamic` | `static`.
- * @param {boolean} handsPresent Al menos una mano usable (`anyHandPresent`).
- * @param {boolean} isMoving L2 de manos > umbral (solo modo dynamic).
- * @param {number} consecutiveHands Frames seguidos con manos.
- * @param {number} startFrames Umbral de frames para abrir (`hands_frames_to_start`).
+ * @param {boolean} handsPresent At least one usable hand (`anyHandPresent`).
+ * @param {boolean} isMoving Hand L2 > threshold (dynamic mode only).
+ * @param {number} consecutiveHands Consecutive frames with hands.
+ * @param {number} startFrames Frame threshold to open (`hands_frames_to_start`).
  * @returns {boolean}
  */
 function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, startFrames) {
@@ -78,13 +78,13 @@ function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, st
 }
 
 /**
- * Crea el motor de captura. Un `step` por cada resultado de Holistic.
+ * Create the capture engine. One `step` per Holistic result.
  *
- * @param {() => Partial<CaptureConfig>|null|undefined} getCfg Config viva (p. ej. la de `/config`).
+ * @param {() => Partial<CaptureConfig>|null|undefined} getCfg Live config (e.g. from `/config`).
  * @param {object} callbacks
- * @param {(frames: object[]) => void} callbacks.onSign Seña lista (ya submuestreada).
- * @param {() => void} callbacks.onSigningActivity Manos en movimiento con glosas pendientes.
- * @param {() => (void|Promise<void>)} callbacks.onUtterancePause Pausa larga: pedir español.
+ * @param {(frames: object[]) => void} callbacks.onSign Sign ready (already subsampled).
+ * @param {() => void} callbacks.onSigningActivity Hands moving with pending glosses.
+ * @param {() => (void|Promise<void>)} callbacks.onUtterancePause Long pause: request Spanish.
  * @returns {{
  *   markPending: (hasGlosses: boolean) => void,
  *   noteInferenceActivity: () => void,
@@ -113,8 +113,8 @@ function createCaptureEngine(getCfg, callbacks) {
   }
 
   /**
-   * Marca actividad para el reloj de enunciado.
-   * @param {boolean} fromHands Si viene de movimiento real, avisa al backend (`/activity`).
+   * Mark activity for the utterance clock.
+   * @param {boolean} fromHands If it comes from real motion, notify the backend (`/activity`).
    */
   function bumpActivity(fromHands) {
     const now = Date.now() / 1000;
@@ -123,7 +123,7 @@ function createCaptureEngine(getCfg, callbacks) {
   }
 
   /**
-   * Cierra la seña actual: descarta si hay pocas manos reales; si no, submuestrea.
+   * Close the current sign: discard if there are few real hands; otherwise subsample.
    * @returns {void}
    */
   function flushSign() {
@@ -158,22 +158,22 @@ function createCaptureEngine(getCfg, callbacks) {
 
   return {
     /**
-     * @param {boolean} hasGlosses Hay glosas en el buffer del backend.
+     * @param {boolean} hasGlosses There are glosses in the backend buffer.
      */
     markPending(hasGlosses) {
       pendingGlosses = Boolean(hasGlosses);
     },
-    /** Tras un `/sign` aceptado: el enunciado sigue vivo. */
+    /** After an accepted `/sign`: the utterance is still alive. */
     noteInferenceActivity() {
       bumpActivity(false);
       pendingGlosses = true;
     },
     /**
-     * Un tick de Holistic.
+     * One Holistic tick.
      *
      * @param {object} args
      * @param {object} args.results `poseLandmarks` / `leftHandLandmarks` / `rightHandLandmarks`.
-     * @param {boolean} args.leftHanded Espeja el vector si el usuario es zurdo.
+     * @param {boolean} args.leftHanded Mirror the vector if the user is left-handed.
      * @returns {{ recording: boolean, bufferLen: number, still: number, handsPresent: boolean, moving: boolean }}
      */
     step({ results, video, motionCtx, leftHanded }) {
@@ -249,7 +249,7 @@ function createCaptureEngine(getCfg, callbacks) {
         moving: isMoving,
       };
     },
-    /** Limpia buffer y relojes (stop de Meet / nueva sesión). */
+    /** Clear buffer and clocks (Meet stop / new session). */
     reset() {
       frames = [];
       prevHand = null;

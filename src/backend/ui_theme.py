@@ -1,4 +1,4 @@
-"""Colores de ILSA."""
+"""ILSA colors."""
 
 BG = "#1D3E53"
 BG2 = "#26516D"
@@ -16,7 +16,7 @@ DISABLED_BG = "#152A38"
 DISABLED_FG = "#7A9BB0"
 ROW_ACTIVE = "#1A4A63"
 
-# `state=disabled` en Windows ignora el color; apagamos el botón a mano.
+# `state=disabled` on Windows ignores color; we paint the button by hand.
 BTN_DEAD = dict(
     state="normal",
     bg=DISABLED_BG,

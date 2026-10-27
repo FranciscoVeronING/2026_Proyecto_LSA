@@ -1,5 +1,5 @@
-# Solo para packaging/build_exe.bat (ILSA.exe en CPU, zip < 2 GB).
-# No uses este archivo para entrenar ni para el env lsa_extension.
+# Only for packaging/build_exe.bat (ILSA.exe on CPU, zip < 2 GB).
+# Do not use this file to train or for the lsa_extension env.
 
 numpy==1.26.4
 fastapi==0.115.12

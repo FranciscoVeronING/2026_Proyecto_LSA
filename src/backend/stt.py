@@ -1,4 +1,4 @@
-"""STT local: WAV de Meet → texto con Vosk (español, en esta PC)."""
+"""Local STT: Meet WAV → text with Vosk (Spanish, on this PC)."""
 
 from __future__ import annotations
 
@@ -45,13 +45,13 @@ def _frozen_internal() -> Path:
 
 
 def _prepare_vosk_native() -> None:
-    """En el exe, Vosk busca DLLs en _internal/vosk. Si PyInstaller no las copió, las bajamos."""
+    """In the exe, Vosk looks for DLLs in _internal/vosk. If PyInstaller skipped them, download them."""
     dest = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "ILSA" / "vosk-native"
     if getattr(sys, "frozen", False):
         dest = _frozen_internal() / "vosk"
     dest.mkdir(parents=True, exist_ok=True)
     if not (dest / "libvosk.dll").is_file():
-        print("[backend] STT: bajando libvosk (una vez)…")
+        print("[backend] STT: downloading libvosk (once)…")
         _extract_vosk_dlls(dest)
     if hasattr(os, "add_dll_directory"):
         try:
@@ -72,7 +72,7 @@ def _extract_vosk_dlls(dest: Path) -> None:
             wheel = str(item.get("url") or "")
             break
     if not wheel:
-        raise RuntimeError("No encontré el wheel de Vosk para Windows.")
+        raise RuntimeError("Could not find the Vosk wheel for Windows.")
     zpath = dest / "vosk.whl"
     urllib.request.urlretrieve(wheel, zpath)
     with zipfile.ZipFile(zpath, "r") as zf:
@@ -89,7 +89,7 @@ def _extract_vosk_dlls(dest: Path) -> None:
     except OSError:
         pass
     if not (dest / "libvosk.dll").is_file():
-        raise RuntimeError("No pude extraer libvosk.dll.")
+        raise RuntimeError("Could not extract libvosk.dll.")
 
 
 def _vosk_model():
@@ -100,14 +100,14 @@ def _vosk_model():
     try:
         from vosk import Model, SetLogLevel
     except ImportError as exc:
-        raise RuntimeError("Falta Vosk. pip install vosk  (o reconstruí ILSA.exe)") from exc
+        raise RuntimeError("Vosk is missing. pip install vosk  (or rebuild ILSA.exe)") from exc
     except OSError as exc:
         raise RuntimeError(
-            "Vosk no cargó las DLL. Dejá que ILSA baje libvosk o reconstruí el exe."
+            "Vosk did not load the DLLs. Let ILSA download libvosk or rebuild the exe."
         ) from exc
     SetLogLevel(-1)
     path = _ensure_model_dir()
-    print(f"[backend] STT Vosk cargando {path}")
+    print(f"[backend] STT Vosk loading {path}")
     _model = Model(str(path))
     return _model
 
@@ -119,7 +119,7 @@ def _ensure_model_dir() -> Path:
         return dest
     base.mkdir(parents=True, exist_ok=True)
     zpath = base / f"{_MODEL_NAME}.zip"
-    print(f"[backend] STT bajando modelo español ({_MODEL_NAME})…")
+    print(f"[backend] STT downloading Spanish model ({_MODEL_NAME})…")
     urllib.request.urlretrieve(_MODEL_URL, zpath)
     with zipfile.ZipFile(zpath, "r") as zf:
         zf.extractall(base)
@@ -128,7 +128,7 @@ def _ensure_model_dir() -> Path:
     except OSError:
         pass
     if not dest.is_dir():
-        raise RuntimeError("No se pudo extraer el modelo Vosk.")
+        raise RuntimeError("Could not extract the Vosk model.")
     return dest
 
 
@@ -139,7 +139,7 @@ def _wav_to_pcm16(wav_bytes: bytes) -> tuple[bytes, int]:
         rate = w.getframerate()
         raw = w.readframes(w.getnframes())
     if width != 2:
-        raise RuntimeError("WAV debe ser PCM 16 bit")
+        raise RuntimeError("WAV must be 16-bit PCM")
     if ch == 1:
         return raw, rate
     out = bytearray()

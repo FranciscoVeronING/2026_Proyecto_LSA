@@ -1,6 +1,6 @@
-"""Une clips `.pose` en una frase: recorte, park, EMA, canvas y puentes.
+"""Join `.pose` clips into a phrase: trim, park, EMA, canvas, and bridges.
 
-No escribe mp4. El navegador dibuja los frames con `canvas.captureStream`.
+Does not write mp4. The browser draws frames with `canvas.captureStream`.
 """
 
 from __future__ import annotations
@@ -491,7 +491,7 @@ def bridge_poses(
 
 def compose_sequence(poses: list[Pose], settings: ComposeSettings | None = None) -> Pose:
     if not poses:
-        raise ValueError("No hay clips para componer.")
+        raise ValueError("No clips to compose.")
     settings = settings or SETTINGS
     data_parts = [np.ma.filled(poses[0].body.data, 0.0)]
     conf_parts = [np.ma.filled(poses[0].body.confidence, 0.0)]

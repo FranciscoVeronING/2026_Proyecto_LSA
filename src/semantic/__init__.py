@@ -1,1 +1,1 @@
-"""Cliente HTTP del traductor semántico (Cloud Run)."""
+"""HTTP client for the semantic translator (Cloud Run)."""

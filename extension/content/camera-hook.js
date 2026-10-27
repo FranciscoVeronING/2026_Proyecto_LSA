@@ -1,8 +1,8 @@
 /**
- * Hook de getUserMedia en el mundo MAIN.
- * Con LSA off deja el stream nativo (si no, Meet dice cámara bloqueada).
- * Con LSA on Meet recibe un canvas (captureStream).
- * Modo oyente: mitad izquierda cámara, mitad derecha esqueleto, misma altura.
+ * getUserMedia hook in the MAIN world.
+ * With LSA off, leave the native stream (otherwise Meet says the camera is blocked).
+ * With LSA on, Meet receives a canvas (captureStream).
+ * Hearing mode: left half camera, right half skeleton, same height.
  */
 (function () {
   if (window.__lsaGumHooked) return;
@@ -125,8 +125,8 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       enqueueAvatarClip(data.clip, lastCaptionLine || caption.spanish);
     }
     if (data.type === "LSA_CAPTION") {
-      // Solo `line`: oyente manda glosas del semántico; sordo manda el español.
-      // Nunca usar `glosses` crudas del clasificador.
+      // Only `line`: hearing sends semantic glosses; signer sends Spanish.
+      // Never use raw classifier `glosses`.
       const line = typeof data.line === "string" ? data.line.trim() : "";
       if (line) {
         lastCaptionLine = line;
@@ -160,10 +160,10 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * true = el botón de Meet dice que el micrófono está silenciado.
-   * false = el botón lo muestra prendido. null = no se encontró el control.
-   * “Desactivar / silenciar” es la acción: el mic está prendido.
-   * “Activar el micrófono” también cuenta (hay un “el” en el medio).
+   * true = Meet's button says the microphone is muted.
+   * false = the button shows it on. null = the control was not found.
+   * “Turn off / mute” is the action: the mic is on.
+   * “Turn on the microphone” also counts (there is an extra word in the middle).
    */
   function meetUiMicMuted() {
     const els = document.querySelectorAll("button, [role='button']");
@@ -201,7 +201,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     return fallback;
   }
 
-  /** true = cámara apagada en la UI de Meet. */
+  /** true = camera off in Meet's UI. */
   function meetUiCamOff() {
     const els = document.querySelectorAll("button, [role='button']");
     for (let i = 0; i < els.length; i++) {
@@ -236,7 +236,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
 
   /**
    * true = hay media de `kind` saliendo a la llamada; false = mute WebRTC;
-   * null = todavía no hay senders (antes de unirse).
+   * null = there are no senders yet (before joining).
    * @param {"audio"|"video"} kind
    */
   function outboundKindLive(kind) {
@@ -408,7 +408,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_ERROR",
-          error: "Meet no está enviando tu mic. Prendé el micrófono de la llamada.",
+          error: "Meet is not sending your mic. Unmute the call microphone.",
         },
         "*"
       );
@@ -430,7 +430,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_ERROR",
-          error: "No se pudo abrir el tap de audio (AudioWorklet).",
+          error: "Could not open the audio tap (AudioWorklet).",
         },
         "*"
       );
@@ -463,7 +463,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_UI",
-          debug: open ? "Escuchando el mic de Meet" : "Micrófono de Meet silenciado",
+          debug: open ? "Listening to the Meet mic" : "Meet microphone muted",
         },
         "*"
       );
@@ -520,9 +520,9 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Por voz solo se guarda audio si Meet no tiene el micrófono silenciado.
-   * El track crudo de getUserMedia sigue sonando aunque el botón esté en mute:
-   * manda la UI del botón y, si no aparece, el sender de la llamada.
+   * Voice capture only keeps audio if Meet does not have the microphone muted.
+   * The raw getUserMedia track still sounds even if the button is muted:
+   * trust the button UI, and if it is missing, the call sender.
    */
   function voiceCaptureAllowed() {
     if (!hearingMode || hearingInput === "text") return false;
@@ -550,7 +550,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Parte `text` en hasta 3 líneas que entren en `maxWidth`.
+   * Split `text` into up to 3 lines that fit in `maxWidth`.
    * @param {CanvasRenderingContext2D} ctx
    * @param {string} text
    * @param {number} maxWidth
@@ -575,7 +575,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     ctx.drawImage(video, 0, 0, w, h);
   }
 
-  /** Cámara recortada (cover) dentro de un rectángulo, sin deformar. */
+  /** Camera cropped (cover) inside a rectangle, without stretching. */
   function drawCover(ctx, video, x, y, w, h) {
     const vw = video.videoWidth;
     const vh = video.videoHeight;
@@ -642,7 +642,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     ctx.fillRect(half, 0, 1, h);
   }
 
-  /** Cuántos espejos en X tiene el elemento (transform, scale, rotateY). */
+  /** How many X-flips the element has (transform, scale, rotateY). */
   function flipCount(el) {
     let count = 0;
     let cs;
@@ -710,7 +710,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     }
   }
 
-  /** Izquierda: cámara. Derecha: esqueleto. Las dos mitades ocupan toda la altura. */
+  /** Left: camera. Right: skeleton. Both halves fill the full height. */
   function drawSplit(ctx, video, w, h) {
     const half = Math.floor(w / 2);
     ctx.fillStyle = "#111";
@@ -755,8 +755,8 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Subtítulo abajo, derecho en el canvas. Meet puede espejar la miniatura
-   * del oyente; quien recibe ve este dibujo sin ese CSS.
+   * Caption at the bottom, upright on the canvas. Meet may mirror the hearing
+   * user's thumbnail; the receiver sees this drawing without that CSS.
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} w
    * @param {number} h
@@ -793,9 +793,9 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Suelta la cámara real y el canvas. Si no, Meet cree que está bloqueada
-   * (el dispositivo sigue ocupado o le devolvemos un track de canvas mudo).
-   * @param {boolean} releaseCamera Parar también los tracks nativos.
+   * Release the real camera and the canvas. Otherwise Meet thinks it is blocked
+   * (the device is still busy, or we return a silent canvas track).
+   * @param {boolean} releaseCamera Also stop the native tracks.
    */
   function stopPipeline(releaseCamera) {
     if (!pipeline) return;
@@ -822,7 +822,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: false }, "*");
   }
 
-  /** Meet vuelve a ver el stream nativo; no paramos esos tracks. */
+  /** Meet sees the native stream again; do not stop those tracks. */
   function restoreNativeCamera() {
     if (!pipeline) return;
     const real = pipeline.real;
@@ -845,12 +845,12 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     stopPipeline(false);
   }
   /**
-   * Crea video oculto `#lsa-real-cam` + canvas que Meet ve como “cámara”.
-   * Hay que devolver el stream YA: si getUserMedia tarda varios segundos,
-   * Meet pone “cámara bloqueada”. DroidCam puede pintar después; un canvas
-   * negro a 24 fps alcanza para que el track no quede mudo.
+   * Create hidden video `#lsa-real-cam` + canvas that Meet sees as “camera”.
+   * The stream must be returned NOW: if getUserMedia takes several seconds,
+   * Meet shows “camera blocked”. DroidCam can paint later; a black canvas
+   * at 24 fps is enough so the track is not silent.
    *
-   * @param {MediaStream} realStream Resultado nativo de `getUserMedia`.
+   * @param {MediaStream} realStream Native `getUserMedia` result.
    */
   function createPipeline(realStream) {
     if (pipeline && pipeline.real === realStream && pipeline.alive()) {
@@ -953,8 +953,8 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Si Meet ya tomó DroidCam nativa, el español pintado en el canvas no se ve.
-   * Ponemos el canvas en el preview y en el track que se manda a la llamada.
+   * If Meet already took native DroidCam, Spanish painted on the canvas is not seen.
+   * Put the canvas on the preview and on the track sent to the call.
    */
   function syncCanvasToMeet() {
     if (!pipeline || !pipeline.out) return;
@@ -1012,7 +1012,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   }
 
   /**
-   * Reusa el canvas. Nunca devolvemos DroidCam cruda: ahí no hay subtítulos.
+   * Reuse the canvas. Never return raw DroidCam: there are no captions there.
    */
   function existingStream() {
     if (!enabled || !pipeline || pipeline.stopped || !pipeline.alive()) return null;

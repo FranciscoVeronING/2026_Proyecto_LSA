@@ -1,4 +1,4 @@
-"""Cliente HTTP del servidor semántico en Cloud Run."""
+"""HTTP client for the semantic server on Cloud Run."""
 
 from __future__ import annotations
 
@@ -70,7 +70,7 @@ def _headers() -> dict[str, str]:
 def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
     base = semantic_url()
     if not base:
-        raise RuntimeError("Falta la URL del traductor semántico.")
+        raise RuntimeError("Semantic translator URL is missing.")
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(
         f"{base}{path}",
@@ -84,9 +84,9 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
             body = resp.read().decode("utf-8")
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"semántico HTTP {exc.code}: {detail}") from exc
+        raise RuntimeError(f"semantic HTTP {exc.code}: {detail}") from exc
     except urllib.error.URLError as exc:
-        raise RuntimeError(f"No se alcanzó el semántico en {base}: {exc.reason}") from exc
+        raise RuntimeError(f"Could not reach semantic service at {base}: {exc.reason}") from exc
     data = json.loads(body) if body else {}
     roundtrip = (time.perf_counter() - t0) * 1000
     infer_ms = data.get("ms")
@@ -96,11 +96,11 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
     _last_timing["roundtrip_ms"] = round(roundtrip, 1)
     _last_timing["infer_ms"] = round(infer_val, 1) if infer_val is not None else None
     _last_timing["queued_ms"] = round(queued_val, 1) if queued_val is not None else None
-    # `server_ms` = inferencia (RNF-01). La cola va en `queued_ms`.
+    # `server_ms` = inference (RNF-01). Queue time is `queued_ms`.
     _last_timing["server_ms"] = _last_timing["infer_ms"]
     extra = ""
     if queued_val is not None:
-        extra += f" cola={queued_val:.0f}ms"
+        extra += f" queue={queued_val:.0f}ms"
     if infer_val is not None:
         extra += f" infer={infer_val:.0f}ms"
     print(f"[semantic] POST {path} roundtrip={roundtrip:.0f}ms{extra}")
@@ -115,7 +115,7 @@ def last_timing() -> dict:
 def ping(timeout: float = _TIMEOUT) -> bool:
     base = semantic_url()
     if not base:
-        print("[semantic] ping: no hay URL")
+        print("[semantic] ping: no URL")
         return False
     req = urllib.request.Request(f"{base}/health", headers=_headers(), method="GET")
     try:
@@ -156,13 +156,13 @@ def _first_str(data: dict, *keys: str) -> str:
     return ""
 
 
-def translate_sordo(glosses: str) -> str:
-    """Cloud Run `POST /sign`: glosas → oración."""
+def translate_sign(glosses: str) -> str:
+    """Cloud Run `POST /sign`: glosses → sentence."""
     data = _post("/sign", {"glosses": glosses})
     return _first_str(data, "spanish", "text", "output")
 
 
-def translate_oyente(spanish: str) -> str:
-    """Cloud Run `POST /hearing`: oración → glosas."""
+def translate_hearing(spanish: str) -> str:
+    """Cloud Run `POST /hearing`: sentence → glosses."""
     data = _post("/hearing", {"spanish": spanish})
     return _first_str(data, "glosses", "caption", "text", "output")

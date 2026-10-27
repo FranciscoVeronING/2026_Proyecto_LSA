@@ -1,1 +1,1 @@
-"""Cliente HTTP del diccionario de T-pose / clips (Cloud Run, rama avatar-cloud)."""
+"""HTTP client for the T-pose / clip dictionary (Cloud Run, avatar-cloud branch)."""

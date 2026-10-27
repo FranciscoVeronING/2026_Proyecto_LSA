@@ -1,6 +1,6 @@
 /**
- * Meet, mundo aislado: HUD + JPEG al SW (sordo).
- * Oyente: audio de Meet + chat → POST /stt y /hearing → glosas en el canvas.
+ * Isolated Meet world: HUD + JPEG to the SW (signer).
+ * Hearing: Meet audio + chat → POST /stt and /hearing → glosses on the canvas.
  */
 
 const SUBTITLE_HOLD_MS = 8000;
@@ -25,7 +25,7 @@ const hudState = {
   glossKind: "",
   pendingText: "",
   spanish: "",
-  statusText: "Buscando ILSA…",
+  statusText: "Looking for ILSA…",
   alert: false,
 };
 
@@ -44,9 +44,9 @@ function wantsHearingText() {
 
 function hearingHint() {
   const mode = hearingInputMode();
-  if (mode === "voice") return "Hablá con el mic de Meet";
-  if (mode === "text") return "Escribí en el chat de Meet";
-  return "Hablá (mic de Meet) o escribí en el chat";
+  if (mode === "voice") return "Speak into the Meet mic";
+  if (mode === "text") return "Type in the Meet chat";
+  return "Speak (Meet mic) or type in chat";
 }
 
 function applyPrefsToPage() {
@@ -82,20 +82,20 @@ function stopVoice() {
 
 function transcribeMeetAudio(wavB64) {
   if (!running || meetMode !== "hearing" || !wantsHearingVoice() || !wavB64) return;
-  setHud({ debug: "Transcribiendo tu voz…", capturing: true, lastGloss: "voz" });
+  setHud({ debug: "Transcribing your voice…", capturing: true, lastGloss: "voice" });
   LsaApi.stt(wavB64, "es-ES")
     .then((s) => {
       const spanish = String((s && s.spanish) || "").trim();
       if (!spanish) {
         setHud({
           debug: wantsHearingText()
-            ? "No se entendió el audio; repetí o usá el chat"
-            : "No se entendió el audio; repetí",
+            ? "Audio was not understood; repeat or use chat"
+            : "Audio was not understood; repeat",
           capturing: false,
         });
         return;
       }
-      sendToOyente(spanish, "voz");
+      sendToHearing(spanish, "voice");
     })
     .catch((err) => {
       setHud({
@@ -107,29 +107,29 @@ function transcribeMeetAudio(wavB64) {
 
 function applyAvatarClip(clip) {
   if (!clip || clip.ok === false || !(clip.frames && clip.frames.length)) {
-    setHud({ debug: "Esqueleto en reposo: " + ((clip && clip.error) || "sin clips") });
+    setHud({ debug: "Skeleton idle: " + ((clip && clip.error) || "no clips") });
     return;
   }
   postToPage({ type: "LSA_AVATAR", clip });
   const miss = (clip.missing || []).filter(Boolean);
   setHud({
-    debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
+    debug: miss.length ? "No clip: " + miss.join(", ") : "Skeleton on the video",
   });
 }
 
-/** Español (voz o chat) → POST /hearing → glosas quemadas en el video. */
-function sendToOyente(spanish, source) {
+/** Spanish (voice or chat) → POST /hearing → glosses burned into the video. */
+function sendToHearing(spanish, source) {
   const text = String(spanish || "").trim();
   if (!text || !running || meetMode !== "hearing") return;
   const now = Date.now();
   if (text === lastHearingSent.text && now - lastHearingSent.at < 2500) return;
   lastHearingSent = { text, at: now };
-  setHud({ debug: "Traduciendo a glosas…", capturing: true, lastGloss: source });
+  setHud({ debug: "Translating to glosses…", capturing: true, lastGloss: source });
   LsaApi.hearing(text, true)
     .then((s) => {
       if (s && s.semantic_ready === false) {
         setHud({
-          debug: "El traductor no responde. Reiniciá ILSA.",
+          debug: "Translator is not responding. Restart ILSA.",
           capturing: false,
           alert: true,
         });
@@ -137,12 +137,12 @@ function sendToOyente(spanish, source) {
       }
       const glosses = String((s && (s.caption || s.glosses)) || "").trim();
       if (!glosses) {
-        setHud({ debug: "El traductor no devolvió glosas", capturing: false });
+        setHud({ debug: "Translator returned no glosses", capturing: false });
         return;
       }
       setHud({
         spanish: glosses,
-        debug: "Glosas en tu video",
+        debug: "Glosses on your video",
         capturing: false,
         lastGloss: source,
       });
@@ -156,7 +156,7 @@ function sendToOyente(spanish, source) {
     })
     .catch((err) => {
       setHud({
-        debug: "El traductor no responde. Reiniciá ILSA.",
+        debug: "Translator is not responding. Restart ILSA.",
         capturing: false,
         alert: true,
       });
@@ -194,7 +194,7 @@ function hookMeetChat() {
       const root = chatRoot(ev.target);
       if (!root || !isMeetChatBox(root)) return;
       const text = chatBoxText(root);
-      if (text) sendToOyente(text, "chat");
+      if (text) sendToHearing(text, "chat");
     },
     true
   );
@@ -210,7 +210,7 @@ function hookMeetChat() {
         chatRoot(document.activeElement) ||
         document.querySelector("[role='textbox'], textarea, [contenteditable='true']");
       const text = chatBoxText(root);
-      if (text) sendToOyente(text, "chat");
+      if (text) sendToHearing(text, "chat");
     },
     true
   );
@@ -301,15 +301,15 @@ function ensureHud() {
       <div class="lsa-row">
         <span class="lsa-badge">LSA</span>
         <span class="lsa-cap off" id="lsa-cap">OFF</span>
-        <span class="lsa-status" id="lsa-status">Listo</span>
+        <span class="lsa-status" id="lsa-status">Ready</span>
       </div>
-      <div class="lsa-gloss" id="lsa-gloss">Última glosa: —</div>
+      <div class="lsa-gloss" id="lsa-gloss">Last gloss: —</div>
       <div class="lsa-pending" id="lsa-pending" hidden></div>
       <div class="lsa-hear" id="lsa-hear" hidden>
-        <span class="lsa-hear-label">Captura</span>
-        <button type="button" class="lsa-hear-btn" data-hear="voice">Voz</button>
-        <button type="button" class="lsa-hear-btn" data-hear="text">Texto</button>
-        <button type="button" class="lsa-hear-btn" data-hear="both">Ambas</button>
+        <span class="lsa-hear-label">Capture</span>
+        <button type="button" class="lsa-hear-btn" data-hear="voice">Voice</button>
+        <button type="button" class="lsa-hear-btn" data-hear="text">Text</button>
+        <button type="button" class="lsa-hear-btn" data-hear="both">Both</button>
       </div>
       <div class="lsa-spanish" id="lsa-spanish"></div>
     </div>
@@ -349,7 +349,7 @@ function placeHud(root, left, top) {
 }
 
 /**
- * Arrastra el cartel desde cualquier parte que no sea un botón.
+ * Drag the chip from anywhere that is not a button.
  * @param {HTMLElement} root
  */
 function bindHudDrag(root) {
@@ -401,13 +401,13 @@ function paintHud() {
   root.querySelector("#lsa-status").textContent = hudState.statusText;
   const glossEl = root.querySelector("#lsa-gloss");
   const token = hudState.lastGloss || "—";
-  let glossLine = "Última glosa: " + token;
+  let glossLine = "Last gloss: " + token;
   if (token && token !== "—" && hudState.glossKind === "added") {
-    glossLine = "En el mensaje: " + token;
+    glossLine = "In the message: " + token;
   } else if (token && token !== "—" && hudState.glossKind === "confidence") {
-    glossLine = "Poca confianza: " + token;
+    glossLine = "Low confidence: " + token;
   } else if (token && token !== "—" && hudState.glossKind === "repeat") {
-    glossLine = "No se agregó: " + token;
+    glossLine = "Not added: " + token;
   }
   glossEl.textContent = glossLine;
   glossEl.className = "lsa-gloss" + (hudState.glossKind ? " lsa-gloss-" + hudState.glossKind : "");
@@ -415,7 +415,7 @@ function paintHud() {
   if (pendingEl) {
     const pending = String(hudState.pendingText || "").trim();
     pendingEl.hidden = !pending;
-    pendingEl.textContent = pending ? "Frase: " + pending : "";
+    pendingEl.textContent = pending ? "Phrase: " + pending : "";
   }
   const sp = root.querySelector("#lsa-spanish");
   if (sp) sp.textContent = hudState.spanish || "";
@@ -428,7 +428,7 @@ function paintHud() {
 
 /**
  * Fusiona un parche de estado (captions / debug) y refresca el HUD.
- * El español se borra solo a los {@link SUBTITLE_HOLD_MS} ms.
+ * Spanish clears on its own after {@link SUBTITLE_HOLD_MS} ms.
  * @param {object} partial
  */
 function setHud(partial) {
@@ -459,23 +459,23 @@ function setHud(partial) {
     hudState.statusText = partial.debug;
   } else if (partial.status || partial.error) {
     const map = {
-      escuchando: "Mostrá las manos para capturar",
-      grabando: "Grabando seña",
-      enviando: "Clasificando seña…",
-      traduciendo: "Traduciendo…",
-      listo: "Subtítulo en tu video",
+      escuchando: "Show your hands to capture",
+      grabando: "Recording sign",
+      enviando: "Classifying sign…",
+      traduciendo: "Translating…",
+      listo: "Caption on your video",
       error: partial.error || "Error",
     };
     hudState.statusText = map[partial.status] || partial.error || partial.status;
   }
   if (hudState.alert) {
-    hudState.statusText = "El traductor no responde. Reiniciá ILSA.";
+    hudState.statusText = "Translator is not responding. Restart ILSA.";
   }
   paintHud();
 }
 
 /**
- * JPEG chico del video real (no del canvas de Meet) para Holistic.
+ * Small JPEG of the real video (not Meet's canvas) for Holistic.
  * @returns {{ width: number, height: number, dataUrl: string }|null}
  */
 function grabJpeg() {
@@ -498,7 +498,7 @@ function grabJpeg() {
 
 let lastSendAt = 0;
 let meetCamOpen = true;
-/** Loop rAF: como máximo un JPEG cada ~70 ms, espera ACK implícito de `pending`. */
+/** rAF loop: at most one JPEG every ~70 ms; waits for implicit ACK via `pending`. */
 function loop() {
   if (!running || !extAlive()) return;
   const now = performance.now();
@@ -516,7 +516,7 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-/** Activa el puente en Meet. `mode`: signer (LSA) o hearing (voz → subtítulos). */
+/** Enable the Meet bridge. `mode`: signer (LSA) or hearing (voice → captions). */
 function startBridge(mode) {
   const next = mode === "hearing" ? "hearing" : "signer";
   if (running && meetMode === next) return;
@@ -547,12 +547,12 @@ function startBridge(mode) {
   loop();
   setTimeout(() => {
     if (running && meetMode === "signer" && !framesSeen) {
-      setHud({ debug: "Sin video. Apagá y prendé la cámara de Meet." });
+      setHud({ debug: "No video. Turn Meet camera off and on." });
     }
   }, 5000);
 }
 
-/** Apaga el gancho de gUM (Meet vuelve a la cámara nativa en el próximo pedido). */
+/** Disable the gUM hook (Meet returns to the native camera on the next request). */
 function stopBridge() {
   running = false;
   pending = false;
@@ -560,7 +560,7 @@ function stopBridge() {
   stopVoice();
   postToPage({ type: "LSA_SPEECH_STOP" });
   postToPage({ type: "LSA_SET_ENABLED", enabled: false });
-  setHud({ debug: "Encendé ILSA para traducir", capturing: false, lastGloss: "—", alert: false });
+  setHud({ debug: "Start ILSA to translate", capturing: false, lastGloss: "—", alert: false });
 }
 
 window.addEventListener("message", (event) => {
@@ -574,7 +574,7 @@ window.addEventListener("message", (event) => {
       if (!open) {
         sendExt({ type: "lsa-capture-reset" });
         if (running && meetMode === "signer") {
-          setHud({ debug: "Cámara de Meet apagada", capturing: false });
+          setHud({ debug: "Meet camera off", capturing: false });
         }
       } else if (running && meetMode === "signer") {
         setHud({ status: "escuchando", capturing: false });
@@ -582,7 +582,7 @@ window.addEventListener("message", (event) => {
     }
   }
   if (data.type === "LSA_PIPELINE" && running && meetMode !== "hearing" && !framesSeen) {
-    setHud({ debug: "Mostrá las manos para capturar", capturing: false });
+    setHud({ debug: "Show your hands to capture", capturing: false });
   }
   if (data.type === "LSA_AUDIO_WAV" && running && meetMode === "hearing" && wantsHearingVoice()) {
     transcribeMeetAudio(data.wavB64);
@@ -592,7 +592,7 @@ window.addEventListener("message", (event) => {
   }
   if (data.type === "LSA_SPEECH_ERROR") {
     if (meetMode === "hearing" && !wantsHearingVoice()) return;
-    setHud({ debug: "Voz: " + (data.error || "error"), capturing: false });
+    setHud({ debug: "Voice: " + (data.error || "error"), capturing: false });
   }
 });
 
@@ -613,14 +613,14 @@ async function tickLocal() {
     startBridge(h.mode === "hearing" ? "hearing" : "signer");
     if (h.semantic_ready === false) {
       setHud({
-        debug: "El traductor no responde. Reiniciá ILSA.",
+        debug: "Translator is not responding. Restart ILSA.",
         capturing: false,
         alert: true,
       });
     } else if (hudState.alert) {
       setHud({
         alert: false,
-        debug: meetMode === "hearing" ? hearingHint() : "Mostrá las manos para capturar",
+        debug: meetMode === "hearing" ? hearingHint() : "Show your hands to capture",
       });
     }
     return;
@@ -629,7 +629,7 @@ async function tickLocal() {
     stopBridge();
     return;
   }
-  if (!running) setHud({ debug: "Encendé ILSA para traducir", capturing: false });
+  if (!running) setHud({ debug: "Start ILSA to translate", capturing: false });
 }
 
 requestMeetSync();
@@ -667,7 +667,7 @@ try {
     if (msg.type === "lsa-meet-content-error") {
       running = true;
       ensureHud();
-      setHud({ debug: msg.error || "No se pudo conectar con ILSA", capturing: false });
+      setHud({ debug: msg.error || "Could not connect to ILSA", capturing: false });
     }
     if (msg.type === "lsa-landmarks") {
       postToPage({ type: "LSA_LANDMARKS", landmarks: msg.landmarks || null });

@@ -1,4 +1,4 @@
-"""Acumulación de glosas hasta formar un enunciado."""
+"""Accumulate glosses until they form an utterance."""
 
 import classifier.config as cfg
 from core.repeat_policy import RepeatGate
@@ -6,10 +6,10 @@ from core.repeat_policy import RepeatGate
 
 def normalize_gloss(raw_name: str) -> str:
     """
-    Nombre de clase del ``.pth`` → token que ve el traductor.
+    Classifier class name from the ``.pth`` → token the translator sees.
 
-    ``GLOSS_NORMALIZER`` solo tiene **alias** (``el_ella`` → ``EL``).
-    El resto se pasa a MAYÚSCULAS (``hola`` → ``HOLA``).
+    ``GLOSS_NORMALIZER`` only holds **aliases** (``el_ella`` → ``EL``).
+    Everything else is uppercased (``hola`` → ``HOLA``).
     """
     key = (raw_name or "").strip()
     mapped = cfg.GLOSS_NORMALIZER.get(key)
@@ -23,16 +23,15 @@ def normalize_gloss(raw_name: str) -> str:
 
 class UtteranceBuffer:
     """
-    Junta glosas aceptadas. Cuando pasan `pause_sec` sin actividad de señado,
-    cierra el enunciado para que lo tome el traductor.
+    Collect accepted glosses. After `pause_sec` with no signing activity,
+    close the utterance so the translator can take it.
 
-    La decisión de aceptar una glosa repetida se delega en RepeatGate.
+    Whether a repeated gloss is accepted is delegated to RepeatGate.
 
-    "Actividad" no es lo mismo que "glosa aceptada". La cuenta regresiva se
-    reinicia con cualquier seña reconocida, incluso si RepeatGate la descarta
-    por repetida, y con las manos moviéndose frente a la cámara. Si solo
-    contara las aceptadas, repetir una seña dejaría correr el reloj y el
-    enunciado podría cerrarse en medio de la frase.
+    "Activity" is not the same as "accepted gloss". The countdown restarts on
+    any recognized sign, even if RepeatGate drops it as a repeat, and when
+    hands move in front of the camera. If only accepted glosses counted,
+    repeating a sign would let the clock run and close the utterance mid-phrase.
     """
 
     def __init__(
@@ -49,15 +48,15 @@ class UtteranceBuffer:
 
     def try_add(self, gloss_raw, confidence, now):
         """
-        Intenta encolar una predicción del clasificador.
+        Try to enqueue a classifier prediction.
 
         Args:
-            gloss_raw: Nombre de clase crudo (``el_ella``, ``A``, …).
-            confidence: Softmax de la top-1.
-            now: Timestamp Unix (segundos).
+            gloss_raw: Raw class name (``el_ella``, ``A``, …).
+            confidence: Top-1 softmax.
+            now: Unix timestamp (seconds).
 
         Returns:
-            True si la glosa quedó en ``self.glosses``.
+            True if the gloss landed in ``self.glosses``.
         """
         if confidence < self.min_confidence:
             return False
@@ -66,7 +65,7 @@ class UtteranceBuffer:
             return False
 
         accepted = self.repeat_gate.allow(gloss)
-        # Reconocer una seña cuenta como actividad aunque se descarte.
+        # Recognizing a sign counts as activity even if it is dropped.
         self.last_activity_at = now
         if not accepted:
             return False
@@ -74,17 +73,17 @@ class UtteranceBuffer:
         return True
 
     def note_signing_activity(self, now):
-        """Manos moviéndose en cámara: la persona sigue señando aunque el
-        clasificador todavía no haya resuelto nada."""
+        """Hands moving on camera: the person is still signing even if the
+        classifier has not resolved anything yet."""
         if self.glosses:
             self.last_activity_at = now
 
     def maybe_close(self, now):
         """
-        Si pasó ``pause_sec`` sin actividad, devuelve las glosas y vacía el buffer.
+        If ``pause_sec`` passed with no activity, return the glosses and empty the buffer.
 
         Returns:
-            Lista de glosas o None si todavía no cierra.
+            List of glosses, or None if it is not time to close.
         """
         if not self.glosses or self.last_activity_at is None:
             return None
@@ -97,5 +96,5 @@ class UtteranceBuffer:
         return closed
 
     def pending_text(self) -> str:
-        """Glosas actuales unidas con espacio, o cadena vacía."""
+        """Current glosses joined with spaces, or an empty string."""
         return " ".join(self.glosses) if self.glosses else ""

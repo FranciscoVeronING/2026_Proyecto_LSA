@@ -1,7 +1,7 @@
 """
 TinySkeleton: Conv1D + Transformer encoder + attention pooling.
 
-Entrada de inferencia: tensor (N, T, F) con T=MAX_FRAMES (16) y F=225.
+Inference input: tensor (N, T, F) with T=MAX_FRAMES (16) and F=225.
 """
 
 import math
@@ -29,9 +29,9 @@ class PositionalEncoding(nn.Module):
 
 class TinySkeletonClassifier(nn.Module):
     """
-    Conv1D + Transformer para secuencias de landmarks.
-    Usa attention pooling en lugar de mean pooling para enfatizar
-    los frames más informativos (útil en señas cortas/estáticas).
+    Conv1D + Transformer for landmark sequences.
+    Uses attention pooling instead of mean pooling to emphasize
+    the most informative frames (useful for short/static signs).
     """
 
     def __init__(
@@ -69,7 +69,7 @@ class TinySkeletonClassifier(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            x: ``(batch, frames, features)`` — en vivo ``(1, 16, 225)``.
+            x: ``(batch, frames, features)`` — live ``(1, 16, 225)``.
 
         Returns:
             Logits ``(batch, num_classes)``.
@@ -89,7 +89,7 @@ class TinySkeletonClassifier(nn.Module):
 
 
 def load_classifier_bundle(device: str = "cpu"):
-    """Carga mapeo_clases.json + tinyskeleton_best.pth. num_classes = tamaño del mapeo."""
+    """Load mapeo_clases.json + tinyskeleton_best.pth. num_classes = mapping size."""
     import json
     from pathlib import Path
 
@@ -99,16 +99,16 @@ def load_classifier_bundle(device: str = "cpu"):
     idx_to_class = {int(v): str(k) for k, v in class_to_idx.items()}
     n_labels = len(idx_to_class)
     if n_labels == 0:
-        raise RuntimeError(f"mapeo_clases.json vacío: {cfg.CLASSES_PATH}")
+        raise RuntimeError(f"mapeo_clases.json is empty: {cfg.CLASSES_PATH}")
 
     ckpt = torch.load(cfg.WEIGHTS_PATH, map_location=device, weights_only=True)
     if "classification_head.weight" not in ckpt:
-        raise RuntimeError(f"Checkpoint sin classification_head: {cfg.WEIGHTS_PATH}")
+        raise RuntimeError(f"Checkpoint has no classification_head: {cfg.WEIGHTS_PATH}")
     n_ckpt = int(ckpt["classification_head.weight"].shape[0])
     if n_ckpt != n_labels:
         raise RuntimeError(
-            f"El mapeo tiene {n_labels} señas pero {cfg.WEIGHTS_PATH} tiene {n_ckpt} salidas. "
-            "Copiá el tinyskeleton_best.pth entrenado con esas clases (mismo mapeo_clases.json)."
+            f"The mapping has {n_labels} signs but {cfg.WEIGHTS_PATH} has {n_ckpt} outputs. "
+            "Copy the tinyskeleton_best.pth trained with those classes (same mapeo_clases.json)."
         )
 
     model = TinySkeletonClassifier(

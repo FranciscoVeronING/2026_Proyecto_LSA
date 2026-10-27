@@ -1,8 +1,8 @@
 """
-Hiperparámetros del clasificador y de la captura en vivo.
+Classifier and live-capture hyperparameters.
 
-La extensión pide un subconjunto vía ``GET /config``. Cambiar ``MAX_FRAMES``
-obliga a reentrenar: el ``.pth`` espera T=16.
+The extension asks for a subset via ``GET /config``. Changing ``MAX_FRAMES``
+requires retraining: the ``.pth`` expects T=16.
 """
 
 # ==========================================
@@ -10,7 +10,7 @@ obliga a reentrenar: el ``.pth`` espera T=16.
 # ==========================================
 from pathlib import Path
 
-# Absolutos: el proyecto debe poder ejecutarse desde cualquier directorio
+# Absolute: the project must run from any working directory.
 _CLASSIFIER_DIR = Path(__file__).resolve().parent
 _WEIGHTS_DIR = _CLASSIFIER_DIR / "weights"
 
@@ -19,8 +19,8 @@ CLASSES_PATH = str(_WEIGHTS_DIR / "mapeo_clases.json")
 
 MAX_FRAMES = 16
 
-# Etiquetas del clasificador: mismo orden que ``mapeo_clases.json``.
-# No es el texto del traductor; eso pasa por ``normalize_gloss``.
+# Classifier labels: same order as ``mapeo_clases.json``.
+# Not translator text; that goes through ``normalize_gloss``.
 def _sign_classes_from_mapeo() -> list[str]:
     import json
 
@@ -56,13 +56,13 @@ INFERENCE_COOLDOWN_SEC = 1.0 # Wait time after a prediction before accepting a n
 MOTION_PIXEL_THRESHOLD = 500
 LANDMARK_MOTION_THRESHOLD = 0.008
 
-# En Meet Holistic suele ir a 5–15 fps. Umbrales en frames se sienten lentos
-# en una notebook justa: 6 ticks ≈ 1 s solo para empezar a grabar.
+# In Meet, Holistic often runs at 5–15 fps. Frame thresholds feel slow on a
+# modest laptop: 6 ticks ≈ 1 s just to start recording.
 STATIC_HANDS_FRAMES_TO_START = 4
 STATIC_GESTURE_MOTION_THRESHOLD = 0.012
 
 # Sign end detection thresholds
-# Fin de seña por manos quietas (no la pausa del enunciado hacia el traductor).
+# Sign end from still hands (not the utterance pause toward the translator).
 STILL_FRAMES_LIMIT = 10
 CAPTURE_BUFFER_SIZE = 60
 MISSING_HANDS_LIMIT = 12
@@ -73,17 +73,17 @@ MIN_CAPTURE_FRAMES = 5
 CAPTURE_MODE = "auto"
 
 # ==========================================
-# BUFFER (glosas → traductor)
+# BUFFER (glosses → translator)
 # ==========================================
-# Pausa sin actividad de señado → cerrar la lista y mandarla al traductor.
-# Cuenta desde la última seña reconocida o desde que las manos dejaron de
-# moverse en cámara, lo que haya pasado último.
+# Pause with no signing activity → close the list and send it to the translator.
+# Counted from the last recognized sign or from when the hands stopped moving
+# on camera, whichever happened last.
 UTTERANCE_PAUSE_SEC = 4.0
-# Letras consecutivas iguales permitidas (la 3ª+ se descarta). Dígitos: sin límite.
-# Las señas léxicas ("other") nunca se aceptan dos veces seguidas.
+# Consecutive equal letters allowed (the 3rd+ is dropped). Digits: no limit.
+# Lexical signs ("other") are never accepted twice in a row.
 LETTER_MAX_CONSECUTIVE = 2
 
-# Alias clasificador → token que ve el traductor.
+# Classifier alias → token the translator sees.
 GLOSS_NORMALIZER = {
     "el_ella": "EL",
     "esposo_a": "ESPOSO",

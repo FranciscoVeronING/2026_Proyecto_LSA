@@ -1,6 +1,6 @@
-# Sube extension\bin\ILSA.zip al GitHub Release (tag ilsa-llama-1b).
-# GitHub admite como máximo 2 GB por archivo.
-# Uso (después de packaging\build_exe.bat):
+# Upload extension\bin\ILSA.zip to the GitHub Release (tag ilsa-llama-1b).
+# GitHub allows at most 2 GB per file.
+# Usage (after packaging\build_exe.bat):
 #   powershell -File packaging\upload_ilsa_zip.ps1
 
 $ErrorActionPreference = "Stop"
@@ -11,14 +11,14 @@ $tag = "ilsa-llama-1b"
 $zip = Join-Path $repoRoot "extension\bin\ILSA.zip"
 
 if (-not (Test-Path $zip)) {
-  Write-Error "No está extension\bin\ILSA.zip. Primero: packaging\build_exe.bat"
+  Write-Error "extension\bin\ILSA.zip is missing. First: packaging\build_exe.bat"
 }
 
 $zi = Get-Item $zip
 $gb = [math]::Round($zi.Length / 1GB, 2)
 Write-Host "Zip: $zip ($gb GB)"
 if ($zi.Length -gt 2GB) {
-  Write-Error "GitHub no acepta archivos de más de 2 GB. Este zip pesa $gb GB. Regeneralo con packaging\build_exe.bat."
+  Write-Error "GitHub does not accept files over 2 GB. This zip is $gb GB. Rebuild with packaging\build_exe.bat."
 }
 
 $gh = Get-Command gh -ErrorAction SilentlyContinue
@@ -29,7 +29,7 @@ if (-not $gh) {
   $ghBin = $gh.Source
 }
 if (-not $ghBin) {
-  Write-Error "Falta GitHub CLI (gh)."
+  Write-Error "GitHub CLI (gh) is missing."
 }
 
 $prevEap = $ErrorActionPreference
@@ -39,18 +39,18 @@ $exists = ($LASTEXITCODE -eq 0)
 $ErrorActionPreference = $prevEap
 
 if (-not $exists) {
-  Write-Host "Creando release $tag ..."
-  & $ghBin release create $tag $zip --repo $repo --title "ILSA" --notes "Motor ILSA (clasificador CPU). Traduce contra Cloud Run."
+  Write-Host "Creating release $tag ..."
+  & $ghBin release create $tag $zip --repo $repo --title "ILSA" --notes "ILSA engine (CPU classifier). Translates against Cloud Run."
   if ($LASTEXITCODE -ne 0) {
-    Write-Error "gh falló al crear el release"
+    Write-Error "gh failed to create the release"
   }
 } else {
-  Write-Host "Subiendo ILSA.zip a $tag ..."
+  Write-Host "Uploading ILSA.zip to $tag ..."
   & $ghBin release upload $tag $zip --repo $repo --clobber
   if ($LASTEXITCODE -ne 0) {
-    Write-Error "gh falló al subir ILSA.zip"
+    Write-Error "gh failed to upload ILSA.zip"
   }
 }
 
-Write-Host "Listo. El botón de la extensión baja:"
+Write-Host "Done. The extension button downloads:"
 Write-Host "https://github.com/$repo/releases/download/$tag/ILSA.zip"

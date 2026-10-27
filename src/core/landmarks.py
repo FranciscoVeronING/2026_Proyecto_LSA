@@ -5,7 +5,7 @@ import classifier.config as cfg
 
 
 def get_anchor_and_scale(pose_landmarks: Any) -> Tuple[np.ndarray, float]:
-    """Calcula ancla (punto medio de hombros) y escala inter-hombros."""
+    """Compute anchor (midpoint of shoulders) and inter-shoulder scale."""
     if not pose_landmarks:
         return np.array([0.0, 0.0, 0.0]), 1.0
 
@@ -45,8 +45,8 @@ def normalize_spatial_points(
 
 def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: Optional[int] = None) -> np.ndarray:
     """
-    Espeja landmarks normalizados para usuarios zurdos.
-    Flip en X alrededor del origen corporal + swap bloques mano izq/der.
+    Mirror normalized landmarks for left-handed users.
+    Flip X around the body origin and swap left/right hand blocks.
     """
     pose_dim = pose_dim if pose_dim is not None else cfg.POSE_DIM
     hand_dim = 21 * 3
@@ -66,8 +66,8 @@ def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: Optional[int]
 
 def interpolate_zero_frames(sequence: List[np.ndarray]) -> List[np.ndarray]:
     """
-    Rellena frames donde MediaPipe devolvió ceros usando interpolación lineal
-    por coordenada entre frames válidos consecutivos.
+    Fill frames where MediaPipe returned zeros using linear interpolation
+    per coordinate between consecutive valid frames.
     """
     if len(sequence) < 2:
         return sequence
@@ -115,13 +115,13 @@ def compute_landmark_hand_motion(
     hand_start: int,
 ) -> float:
     """
-    Distancia euclídea (norma L2) entre las manos de dos frames consecutivos::
+    Euclidean distance (L2) between the hands of two consecutive frames::
 
-        sqrt(sum((mano_ahora - mano_antes)^2))
+        sqrt(sum((hand_now - hand_before)^2))
 
-    Mide cuánto se movió el **esqueleto**, no los píxeles de la cámara.
-    En la extensión el equivalente es ``handMotion``; no abre la seña en modo
-    ``auto`` (eso es “hay mano”).
+    Measures how much the **skeleton** moved, not camera pixels.
+    In the extension the equivalent is ``handMotion``; it does not open the
+    sign in ``auto`` mode (that is “there is a hand”).
     """
     if previous_vector is None:
         return 0.0
@@ -165,7 +165,7 @@ def trim_gesture_buffer(
 
 
 def uniform_subsampling(sequence_data: List[np.ndarray], target_frames: int = 16) -> np.ndarray:
-    """Comprime una secuencia variable a target_frames con índices equiespaciados."""
+    """Compress a variable-length sequence to target_frames with evenly spaced indices."""
     total_frames = len(sequence_data)
 
     if total_frames == 0:
@@ -190,8 +190,8 @@ def sequence_buffer_to_model_input(
     Args:
         buffer: Vectores (225,) en orden temporal.
         target_frames: Por defecto ``MAX_FRAMES`` (16).
-        hand_start: Índice donde empiezan las manos en el vector (99 = pose).
-        static_motion_threshold: Si no hay pico de movimiento, se quedan los últimos frames.
+        hand_start: Index where the hands start in the vector (99 = pose).
+        static_motion_threshold: If there is no motion peak, keep the last frames.
         min_frames: Debajo de esto se devuelve una matriz de ceros.
 
     Returns:

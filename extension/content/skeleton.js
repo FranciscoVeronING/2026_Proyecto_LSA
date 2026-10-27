@@ -1,6 +1,6 @@
 /**
- * Esqueleto de PoseVisualizer en el canvas de Meet (mundo MAIN).
- * Cada dedo tiene su color. El panel se dibuja derecho (quien recibe).
+ * PoseVisualizer skeleton on the Meet canvas (MAIN world).
+ * Each finger has its own color. The panel is drawn upright (the receiver).
  */
 (function () {
   if (window.LsaAvatar) return;
@@ -8,15 +8,15 @@
   const POSE_EDGES = [
     [0, 1], [0, 2], [2, 4], [1, 3], [3, 5], [0, 6], [1, 7], [6, 7],
   ];
-  // Cuerpo y manos de los primeros cuadros de HOLA.pose, en anchos de hombro,
-  // con el centro de los hombros en el origen. La mano sigue el antebrazo
-  // (muñeca recta): casi horizontal, un poco hacia abajo.
+  // Body and hands from the first frames of HOLA.pose, in shoulder widths,
+  // with the shoulder center at the origin. The hand follows the forearm
+  // (straight wrist): almost horizontal, slightly downward.
   const IDLE_P = [0.5,-0.019,-0.5,0.019,0.752,0.764,-0.785,0.822,0.265,0.918,-0.289,0.904,0.315,1.296,-0.316,1.293];
   const IDLE_L = [0.25,0.917,0.12,0.88,0.007,0.883,-0.069,0.899,-0.133,0.921,0.009,0.939,-0.089,0.975,-0.163,1.007,-0.223,1.03,0.025,0.978,-0.082,1.018,-0.161,1.048,-0.235,1.07,0.047,1.013,-0.06,1.056,-0.135,1.086,-0.205,1.108,0.07,1.044,-0.011,1.083,-0.074,1.105,-0.131,1.123];
   const IDLE_R = [-0.299,0.888,-0.201,0.827,-0.093,0.801,-0.001,0.788,0.067,0.763,-0.083,0.813,0.048,0.829,0.118,0.846,0.169,0.86,-0.094,0.873,0.045,0.915,0.116,0.943,0.165,0.964,-0.111,0.933,0.01,0.981,0.076,1.008,0.121,1.025,-0.133,0.987,-0.041,1.024,0.007,1.043,0.045,1.052];
   const BODY = "#d5dde6";
   const SIGN_FACE = "rgba(214, 218, 224, 0.92)";
-  // Cada dedo un color, igual en las dos manos, para leer la forma.
+  // One color per finger, the same on both hands, to read the shape.
   const FINGER = ["#f4f4f4", "#ff5c5c", "#ff9a32", "#ffe14a", "#3ddc84", "#4aa3ff"];
   const INTRO = 6 / 30;
   const FINGER_EDGES = [
@@ -51,7 +51,7 @@
   }
 
   /**
-   * Espera tomada de HOLA.pose. Izquierda anatómica a la derecha de la imagen.
+   * Idle pose taken from HOLA.pose. Anatomical left is on the right of the image.
    * @returns {{p:number[], l:number[], r:number[]}}
    */
   function idlePose(spec) {
@@ -301,7 +301,7 @@
   }
 
   /**
-   * Dibuja el esqueleto dentro del rectángulo de la mitad derecha.
+   * Draw the skeleton inside the right-half rectangle.
    * @param {CanvasRenderingContext2D} ctx
    */
   function draw(ctx, view, x, y, w, h) {

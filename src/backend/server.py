@@ -1,7 +1,7 @@
-"""API local para la extensión.
+"""Local API for the extension.
 
-Meet hace fetch con origin meet.google.com (content script), no chrome-extension://.
-Por eso CORS incluye Meet. No bindear 0.0.0.0: queda el modelo en la LAN.
+Meet fetches with origin meet.google.com (content script), not chrome-extension://.
+That is why CORS includes Meet. Do not bind 0.0.0.0: the model would sit on the LAN.
 """
 
 from __future__ import annotations
@@ -72,7 +72,7 @@ def _health_metrics() -> str:
 def get_session():
     global _session
     if _session is None:
-        raise HTTPException(status_code=503, detail="Backend aún no inicializó el pipeline.")
+        raise HTTPException(status_code=503, detail="Backend has not initialized the pipeline yet.")
     return _session
 
 
@@ -86,13 +86,13 @@ def health():
     semantic_load = ""
     if _mode == "signer":
         if session and getattr(session, "semantic_error", ""):
-            semantic_label = "Traductor no disponible"
+            semantic_label = "Translator unavailable"
             semantic_load = ""
         elif session and not getattr(session, "semantic_ready", False):
-            semantic_label = "Sin traductor"
+            semantic_label = "No translator"
             semantic_load = ""
         else:
-            semantic_label = "Traductor remoto"
+            semantic_label = "Remote translator"
             semantic_load = "cloud"
     return {
         "ok": session is not None,
@@ -136,12 +136,12 @@ def open_session(body: SessionIn):
 
 @app.post("/sign")
 def ingest_sign(body: SignIn):
-    # Landmarks, no JPEG. Holistic corre en la extensión.
+    # Landmarks, not JPEG. Holistic runs in the extension.
     if _mode == "hearing":
-        raise HTTPException(status_code=400, detail="Modo oyente: no se clasifican señas.")
+        raise HTTPException(status_code=400, detail="Hearing mode: signs are not classified.")
     if not body.frames:
-        print("[backend] POST /sign: body vacío")
-        raise HTTPException(status_code=400, detail="Falta el conjunto de frames de la seña.")
+        print("[backend] POST /sign: empty body")
+        raise HTTPException(status_code=400, detail="Missing sign frames.")
     print(f"[backend] POST /sign: {len(body.frames)} frames")
     return get_session().ingest_sign(body.frames, client=body.client)
 
@@ -149,16 +149,16 @@ def ingest_sign(body: SignIn):
 @app.post("/stt")
 def stt_wav(body: SttIn):
     if _mode != "hearing":
-        raise HTTPException(status_code=400, detail="Solo en modo oyente.")
+        raise HTTPException(status_code=400, detail="Hearing mode only.")
     import base64
 
     raw = (body.wav_b64 or "").strip()
     if not raw:
-        raise HTTPException(status_code=400, detail="Falta el audio.")
+        raise HTTPException(status_code=400, detail="Missing audio.")
     try:
         wav = base64.b64decode(raw)
     except Exception as exc:
-        raise HTTPException(status_code=400, detail="WAV inválido") from exc
+        raise HTTPException(status_code=400, detail="Invalid WAV") from exc
     from backend.stt import transcribe_wav
 
     try:
@@ -173,11 +173,11 @@ def stt_wav(body: SttIn):
 @app.post("/hearing")
 def hearing_speech(body: HearingIn):
     if _mode != "hearing":
-        raise HTTPException(status_code=400, detail="Solo en modo oyente.")
+        raise HTTPException(status_code=400, detail="Hearing mode only.")
     session = get_session()
     ingest = getattr(session, "ingest_speech", None)
     if ingest is None:
-        raise HTTPException(status_code=400, detail="Esta sesión no acepta voz.")
+        raise HTTPException(status_code=400, detail="This session does not accept speech.")
     return ingest(body.spanish, final=body.final)
 
 
@@ -196,16 +196,16 @@ def utterance_end():
 def mediapipe_asset(name: str):
     safe = Path(name).name
     if safe != name or ".." in name or not safe:
-        raise HTTPException(status_code=400, detail="Nombre inválido")
+        raise HTTPException(status_code=400, detail="Invalid name")
     allowed = {".wasm", ".js", ".data", ".tflite", ".binarypb"}
     if Path(safe).suffix.lower() not in allowed:
-        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido")
+        raise HTTPException(status_code=400, detail="File type not allowed")
     path = (REPO_ROOT / "extension" / "vendor" / "mediapipe" / safe).resolve()
     root = (REPO_ROOT / "extension" / "vendor" / "mediapipe").resolve()
     if root not in path.parents and path.parent != root:
-        raise HTTPException(status_code=400, detail="Nombre inválido")
+        raise HTTPException(status_code=400, detail="Invalid name")
     if not path.is_file():
-        raise HTTPException(status_code=404, detail=f"No está {safe}")
+        raise HTTPException(status_code=404, detail=f"Missing {safe}")
     suffix = path.suffix.lower()
     media = {
         ".wasm": "application/wasm",
@@ -238,17 +238,17 @@ def download_exe():
     if bat.is_file():
         return FileResponse(
             bat,
-            filename="LSA-iniciar-motor.bat",
+            filename="LSA-start-engine.bat",
             media_type="application/octet-stream",
         )
     raise HTTPException(
         status_code=404,
-        detail="No hay .exe. En desarrollo usá: python run_backend.py",
+        detail="No .exe. In development use: python run_backend.py",
     )
 
 
 def parse_args(argv=None):
-    parser = argparse.ArgumentParser(description="Backend LSA para la extensión Chrome.")
+    parser = argparse.ArgumentParser(description="LSA backend for the Chrome extension.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument(
@@ -256,18 +256,18 @@ def parse_args(argv=None):
         "--no-llm",
         dest="no_semantic",
         action="store_true",
-        help="No llama al traductor Cloud Run.",
+        help="Do not call the Cloud Run translator.",
     )
     parser.add_argument(
         "--headless",
         action="store_true",
-        help="Sin ventana ILSA: solo uvicorn en consola (desarrollo / scripts).",
+        help="No ILSA window: uvicorn in the console only (dev / scripts).",
     )
     parser.add_argument(
         "--mode",
         choices=("signer", "hearing"),
         default="signer",
-        help="signer = LSA→español; hearing = voz→subtítulos. Solo aplica con --headless.",
+        help="signer = LSA→Spanish; hearing = voice→captions. Only applies with --headless.",
     )
     return parser.parse_args(argv)
 
@@ -298,8 +298,8 @@ def main(argv=None):
     args = parse_args(argv)
     if args.host not in ("127.0.0.1", "localhost", "::1"):
         print(
-            "[ilsa] Advertencia: el API debería escuchar solo en localhost. "
-            f"host={args.host!r} expone el clasificador en la red."
+            "[ilsa] Warning: the API should listen on localhost only. "
+            f"host={args.host!r} exposes the classifier on the network."
         )
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ.setdefault("LSA_BACKEND", "1")

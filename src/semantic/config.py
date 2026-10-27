@@ -1,4 +1,4 @@
-# Cliente ILSA → FastAPI semántico en Cloud Run.
+# ILSA client → semantic FastAPI on Cloud Run.
 CLOUD_SEMANTIC_URL = (
     "https://ilsa-semantic-service-705664945052.us-central1.run.app"
 )

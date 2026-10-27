@@ -1,6 +1,6 @@
 /**
- * Offscreen: JPEG de Meet → sandbox (Holistic extrae landmarks) →
- * `capture.js` recorta la seña → `LsaApi.sign` (solo puntos, no video).
+ * Offscreen: Meet JPEG → sandbox (Holistic extracts landmarks) →
+ * `capture.js` crops the sign → `LsaApi.sign` (points only, no video).
  */
 
 const work = document.getElementById("work");
@@ -29,7 +29,7 @@ function enqueueSign(frames, client) {
       const post_ms = Math.round(performance.now() - tPost);
       if (s && s.accepted === false) {
         emit({
-          debug: s.reason === "cooldown" ? "Esperá un segundo…" : "Seña corta, repetí",
+          debug: s.reason === "cooldown" ? "Wait a second…" : "Sign too short, repeat",
           capturing: false,
         });
         return;
@@ -101,7 +101,7 @@ const engine = createCaptureEngine(
 );
 
 /**
- * Reenvía estado al service worker (HUD + subtítulos).
+ * Forward state to the service worker (HUD + captions).
  * @param {object} payload
  */
 function emit(payload) {
@@ -116,9 +116,9 @@ function emit(payload) {
 let lastSpanish = "";
 
 /**
- * Aplica un snapshot del backend al HUD. Solo incluye `spanish` si vino en este tick
- * (si no, el subtítulo de Meet nunca caducaría).
- * @param {object|null|undefined} s Respuesta de `/sign`, `/session` o `/utterance/end`.
+ * Apply a backend snapshot to the HUD. Only include `spanish` if it came in this tick
+ * (otherwise the Meet caption would never expire).
+ * @param {object|null|undefined} s Response from `/sign`, `/session`, or `/utterance/end`.
  */
 function applyState(s) {
   if (!s) return;
@@ -151,7 +151,7 @@ window.addEventListener("message", (event) => {
   if (data.type === "need-frame" || data.type === "error") {
     frameBusy = false;
     if (data.type === "error") {
-      sandboxLastError = data.message || "Error en MediaPipe";
+      sandboxLastError = data.message || "MediaPipe error";
       emit({ status: "error", error: sandboxLastError });
     }
     pumpFrame();
@@ -192,7 +192,7 @@ function emitLandmarks(data) {
   }).catch(() => {});
 }
 /**
- * Texto de estado del HUD, como máximo cada 350 ms.
+ * HUD status text, at most every 350 ms.
  * @param {{ recording: boolean, bufferLen: number, handsPresent: boolean }} info
  */
 function emitDebug(info) {
@@ -203,11 +203,11 @@ function emitDebug(info) {
   const max = cfg.capture_buffer_size || 60;
   let debug;
   if (info.recording) {
-    debug = `Grabando seña ${info.bufferLen}/${max}`;
+    debug = `Recording sign ${info.bufferLen}/${max}`;
   } else if (info.handsPresent) {
-    debug = "Manos a la vista";
+    debug = "Hands in view";
   } else {
-    debug = "Mostrá las manos para capturar";
+    debug = "Show your hands to capture";
   }
   emit({
     status: info.recording ? "grabando" : "escuchando",
@@ -235,7 +235,7 @@ function waitSandboxReady(timeoutMs) {
         clearInterval(id);
         reject(
           new Error(
-            "MediaPipe no arrancó. Faltan los WASM (.data/.wasm) en extension/vendor/mediapipe. Corré py -3 packaging/fetch_extension_assets.py y recargá la extensión."
+            "MediaPipe did not start. Missing WASM (.data/.wasm) in extension/vendor/mediapipe. Run py -3 packaging/fetch_extension_assets.py and reload the extension."
           )
         );
       }
@@ -243,7 +243,7 @@ function waitSandboxReady(timeoutMs) {
   });
 }
 
-/** Recarga `sandbox.html` si el iframe todavía no dijo `ready`. */
+/** Reload `sandbox.html` if the iframe has not said `ready` yet. */
 async function ensureSandbox() {
   if (sandboxReady && sandbox.contentWindow) return;
   sandboxReady = false;
@@ -253,7 +253,7 @@ async function ensureSandbox() {
 }
 
 /**
- * Health + config + sesión HTTP + WASM.
+ * Health + config + HTTP session + WASM.
  * @param {number} tabId
  * @param {boolean} handed
  * @returns {Promise<void>}
@@ -266,7 +266,7 @@ async function startSession(tabId, handed) {
   }
   meetTabId = tabId;
   const h = await LsaApi.health();
-  if (!h.ok) throw new Error("El motor LSA no está encendido.");
+  if (!h.ok) throw new Error("The LSA engine is not on.");
   cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
   cfg.hands_frames_to_start = 1;
   cfg.min_capture_frames = Math.min(2, Number(cfg.min_capture_frames) || 2);
@@ -276,7 +276,7 @@ async function startSession(tabId, handed) {
   emit({ status: "escuchando", glosses: "", spanish: "" });
 }
 
-/** Resetea el recortador; no cierra Holistic (recargar WASM es caro). */
+/** Reset the cropper; do not close Holistic (reloading WASM is expensive). */
 function stopSession() {
   engine.reset();
   meetTabId = null;
@@ -291,8 +291,8 @@ let latestDataUrl = null;
 const decodeImg = new Image();
 
 /**
- * Decodifica un dataURL JPEG y se lo manda al sandbox (transferible ImageData).
- * Serializa con `frameBusy` para no saturar Holistic.
+ * Decode a JPEG dataURL and send it to the sandbox (transferable ImageData).
+ * Serialize with `frameBusy` so Holistic is not saturated.
  */
 function pumpFrame() {
   if (frameBusy || !sandboxReady || !sandbox.contentWindow || !latestDataUrl) return;

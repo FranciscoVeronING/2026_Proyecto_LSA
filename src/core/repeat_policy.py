@@ -1,18 +1,18 @@
-"""Política de aceptación de glosas repetidas y formato de secuencias literales."""
+"""Repeat-gloss acceptance and literal-sequence formatting."""
 
 from __future__ import annotations
 
 from typing import Optional, Sequence
 
 
-# Letras que el clasificador intercambia entre sí o con una seña léxica:
-# I, T y OJO tienen casi la misma configuración de mano y solo se distinguen
-# por dónde se apoya (mejilla / debajo de la boca / junto al ojo).
-# Un deletreo que las contenga necesita el criterio del traductor.
+# Letters the classifier swaps with each other or with a lexical sign:
+# I, T and OJO share almost the same handshape and differ by where they rest
+# (cheek / below the mouth / next to the eye).
+# A fingerspell that contains them needs the translator's judgment.
 AMBIGUOUS_LETTERS = frozenset({"I", "T"})
 
-# Señas léxicas que el clasificador confunde con una letra (misma forma de mano).
-# Si aparecen al lado o entre letras, casi seguro querían deletrear la letra.
+# Lexical signs the classifier confuses with a letter (same handshape).
+# Next to or between letters, they almost certainly meant to spell the letter.
 LETTER_LOOKALIKES = {
     "OJO": "I",
     "VIERNES": "V",
@@ -21,7 +21,7 @@ LETTER_LOOKALIKES = {
 
 
 def classify_gloss(gloss: str) -> str:
-    """Clasifica una glosa normalizada: digit | letter | other."""
+    """Classify a normalized gloss: digit | letter | other."""
     if not gloss or len(gloss) != 1:
         return "other"
     if gloss.isdigit():
@@ -33,10 +33,10 @@ def classify_gloss(gloss: str) -> str:
 
 def resolve_letter_lookalikes(glosses: Sequence[str]) -> list[str]:
     """
-    OJO / VIERNES / AÑOS pegadas a letras → I / V / G.
+    OJO / VIERNES / AÑOS next to letters → I / V / G.
 
-    Varias pasadas: ``M OJO VIERNES A`` primero cambia VIERNES (junto a A)
-    y después OJO (junto a V). Un OJO o AÑOS sueltos se dejan como seña.
+    Several passes: ``M OJO VIERNES A`` first rewrites VIERNES (next to A)
+    then OJO (next to V). A lone OJO or AÑOS stays as a sign.
     """
     out = [str(g) for g in glosses]
     changed = True
@@ -59,12 +59,12 @@ def resolve_letter_lookalikes(glosses: Sequence[str]) -> list[str]:
 
 def collapse_literal_runs(glosses: Sequence[str]) -> list[str]:
     """
-    Junta letras o dígitos **seguidos** antes de mandarlos al traductor.
+    Join **consecutive** letters or digits before sending them to the translator.
 
     ``NOMBRE MIO P E P A`` → ``["NOMBRE", "MIO", "Pepa"]``
     ``EDAD TUYO 6 7`` → ``["EDAD", "TUYO", "67"]``
 
-    Una letra o un dígito suelto se deja igual (puede ser glosa, no deletreo).
+    A lone letter or digit is left as-is (it may be a gloss, not fingerspelling).
     """
     out: list[str] = []
     i = 0
@@ -95,14 +95,14 @@ def format_literal_utterance(
     ambiguous_letters: frozenset = AMBIGUOUS_LETTERS,
 ) -> Optional[str]:
     """
-    Si el enunciado es solo deletreo o solo dígitos, arma el texto a mostrar/decir.
-    Evita depender del traductor (que a veces responde vacío).
+    If the utterance is only fingerspelling or only digits, build the display text.
+    Avoid depending on the translator (which sometimes returns empty).
 
-    Devuelve None cuando conviene que decida el traductor con el contexto.
+    Returns None when the translator should decide with context.
 
-    Nota sobre O/0 y 2/V: no necesitan excepción acá. Si la secuencia quedó toda
-    de un tipo, el carácter ya es del tipo correcto; y si el clasificador eligió
-    el tipo equivocado, la secuencia queda mixta y cae igual en el traductor.
+    Note on O/0 and 2/V: no extra exception here. If the sequence is all one
+    kind, the character is already the right kind; if the classifier picked the
+    wrong kind, the sequence is mixed and still falls through to the translator.
     """
     if not glosses:
         return None
@@ -113,14 +113,14 @@ def format_literal_utterance(
         return f"{''.join(glosses)}."
 
     if all(k == "letter" for k in kinds):
-        # Una letra sola puede ser en realidad una seña léxica mal clasificada.
+        # A single letter may actually be a misclassified lexical sign.
         if len(glosses) == 1:
             return None
-        # I y T son intercambiables entre sí: solo el sentido de la palabra decide.
+        # I and T are interchangeable: only word sense decides.
         if any(g.upper() in ambiguous_letters for g in glosses):
             return None
         word = "".join(glosses)
-        # Título simple: JUAN → Juan.
+        # Simple title case: JUAN → Juan.
         if word.isupper():
             word = word.capitalize()
         return f"{word}."
@@ -130,8 +130,8 @@ def format_literal_utterance(
 
 def simple_lexical_spanish(glosses: Sequence[str]) -> Optional[str]:
     """
-    Una sola glosa léxica (HOLA, GRACIAS, …) ya es la palabra en español.
-    No hace falta el GGUF de Cloud Run (~segundos de CPU).
+    A single lexical gloss (HOLA, GRACIAS, …) is already the Spanish word.
+    No need for the Cloud Run GGUF (~seconds of CPU).
     """
     if len(glosses) != 1:
         return None
@@ -148,19 +148,18 @@ def simple_lexical_spanish(glosses: Sequence[str]) -> Optional[str]:
 
 class RepeatGate:
     """
-    Decide si una glosa consecutivamente repetida se acepta.
+    Decide whether a consecutively repeated gloss is accepted.
 
-    - digit: siempre aceptar (un documento puede ser 1 1 2 2 3)
-    - letter: hasta max_letter_consecutive consecutivas (existe ANNA, no ANNNA)
-    - other: nunca dos veces seguidas
+    - digit: always accept (a document number can be 1 1 2 2 3)
+    - letter: up to max_letter_consecutive in a row (ANNA exists, ANNNA does not)
+    - other: never twice in a row
 
-    La regla de `other` es por igualdad, no por tiempo. Antes había una ventana
-    de dedup en segundos, pero era inalcanzable: el cooldown entre inferencias
-    (1 s) es igual o mayor que la ventana, así que dos glosas consecutivas
-    siempre llegaban "tarde" y ninguna se descartaba. Además, dos señas léxicas
-    idénticas pegadas no tienen significado propio en un enunciado: si aparecen,
-    es rebote del clasificador. Para volver a decir HOLA hay que cerrar el
-    enunciado, y al cerrarse se llama a reset().
+    The `other` rule is equality, not time. There used to be a seconds-based
+    dedup window, but it was unreachable: the inference cooldown (1 s) is at
+    least as long as the window, so two consecutive glosses always arrived
+    "late" and none were dropped. Also, two identical lexical signs in a row
+    have no meaning in an utterance: if they appear, it is classifier bounce.
+    To say HOLA again the utterance must close, and close calls reset().
     """
 
     def __init__(self, max_letter_consecutive: int = 2):
@@ -175,10 +174,10 @@ class RepeatGate:
     def allow(self, gloss: str) -> bool:
         """
         Args:
-            gloss: Ya normalizada (mayúsculas, ``EL/ELLA``, …).
+            gloss: Already normalized (uppercase, ``EL/ELLA``, …).
 
         Returns:
-            False si es repetición prohibida (letra 3ª+, léxica duplicada).
+            False if this is a forbidden repeat (3rd+ letter, duplicated lexical).
         """
         if self.last_gloss != gloss:
             self.last_gloss = gloss

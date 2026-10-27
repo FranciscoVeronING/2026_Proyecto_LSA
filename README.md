@@ -1,21 +1,21 @@
-# ILSA — rama `extension`
+# ILSA — `extension` branch
 
-Intérprete de LSA en Google Meet: extensión Chrome + motor local. Traduce
-**LSA ↔ español** en la llamada. El video no sale de la PC. A la nube van
-glosas o español, nunca JPEG.
+Argentine Sign Language (LSA) interpreter for Google Meet: a Chrome extension
+plus a local engine. It translates **LSA ↔ Spanish** in the call. Video never
+leaves the PC. Cloud Run only sees glosses or Spanish, never JPEG.
 
-Esta rama es el **cliente**. El GGUF vive en Cloud Run (`semantic-cloud`).
-Los `.pose` viven en Cloud Run (`avatar-cloud` / `tpose-server`).
+This branch is the **client**. The GGUF lives on Cloud Run (`semantic-cloud`).
+`.pose` clips live on Cloud Run (`avatar-cloud` / `tpose-server`).
 
 ```
-Chrome (extensión)
-  Meet: cámara, mic, chat, Holistic WASM, canvas, HUD
-        │ HTTP 127.0.0.1:8765  (el service worker proxya lsa-api;
-        │                       Meet no hace fetch a loopback)
+Chrome (extension)
+  Meet: camera, mic, chat, Holistic WASM, canvas, HUD
+        │ HTTP 127.0.0.1:8765  (the service worker proxies lsa-api;
+        │                       Meet does not fetch loopback)
         ▼
-ILSA (ventana / ILSA.exe)
-  Sordo:  TinySkeleton CPU → pausa 4 s → POST /sign
-  Oyente: Vosk y/o chat → POST /hearing → T-pose + compositor
+ILSA (window / ILSA.exe)
+  Signer:  TinySkeleton CPU → 4 s pause → POST /sign
+  Hearing: Vosk and/or chat → POST /hearing → T-pose + compositor
         │                              │
         ▼                              ▼
   ilsa-semantic-service          tpose-server
@@ -23,161 +23,159 @@ ILSA (ventana / ILSA.exe)
   POST /sign  POST /hearing      GET /tposes/{STEM}.pose
 ```
 
-Meet, con ILSA encendido, **no** envía el stream crudo: envía
-`canvas.captureStream`. La cámara física se abre **una sola vez** (Windows
-suele tomar el device en modo exclusive; un segundo `getUserMedia` falla con
+With ILSA on, Meet does **not** send the raw camera stream: it sends
+`canvas.captureStream`. The physical camera is opened **once** (Windows often
+takes the device in exclusive mode; a second `getUserMedia` fails with
 `NotReadableError`).
 
 ---
 
-## Modos
+## Modes
 
-Elegí el modo **antes** de Encender. No se cambia a mitad de sesión (Reiniciar).
+Pick the mode **before** Start. It cannot change mid-session (Restart).
 
-| Modo | Quién | Entrada | Salida en Meet |
-|------|--------|---------|----------------|
-| **Sordo** | Quien seña | Cámara → Holistic → `POST /sign` | Español abajo del video (TTS local opcional, no va a la llamada) |
-| **Oyente** | Quien habla / escribe | Mic de Meet y/o chat | Glosas pintadas + esqueleto a la derecha |
+| Mode | Who | Input | Output in Meet |
+|------|-----|-------|----------------|
+| **Signer** | The person who signs | Camera → Holistic → `POST /sign` | Spanish under the video (optional local TTS, not mixed into the call) |
+| **Hearing** | The person who speaks / types | Meet mic and/or chat | Gloss overlay + skeleton on the right |
 
-En sordo, **Zurdo / Diestro** (Diestro por defecto). El clasificador se entrenó
-diestro: zurdo espeja X y cruza las manos.
+In signer mode, **Left-handed / Right-handed** (Right-handed by default). The
+classifier was trained right-handed: left-handed mirrors X and swaps hands.
 
-**Seña (sordo).** Empieza con una mano usable. Termina a 60 frames o cuando
-faltan las dos manos ~0,4 s. Se recorta a 16×225 (pose+manos; sin cara).
-Confianza baja o repetición no entra al enunciado. A los **4 s** sin señar se
-cierra y va al traductor.
+**Sign (signer).** Starts with one usable hand. Ends at 60 frames or when both
+hands are missing ~0.4 s. Cropped to 16×225 (pose+hands; no face). Low
+confidence or repeats stay out of the utterance. After **4 s** without signing
+it closes and goes to the translator.
 
-**Oyente.** El tap de audio **no** pide otro `getUserMedia`: copia el track de
-Meet. Una palabra suelta no pasa por Cloud Run (va derecho al T-pose). Una
-oración sí (`POST /hearing`).
+**Hearing.** The audio tap does **not** call `getUserMedia` again: it copies
+Meet's track. A single word skips Cloud Run (goes straight to T-pose). A
+sentence uses `POST /hearing`.
 
 ---
 
-## Mapa
+## Layout
 
 ```
-run_backend.py                 Arranque (ventana o --headless)
-LSABackend.bat                 Atajo Windows
-requirements.txt               pip del motor (sin MediaPipe)
+run_backend.py                 Entry (window or --headless)
+LSABackend.bat                 Windows shortcut
+requirements.txt               Engine pip deps (no MediaPipe)
 assets/                        Logo
-packaging/                     PyInstaller, WASM Holistic, íconos, zip
-scripts/bench_latencia.py      Banco cola / inferencia / entrega
+packaging/                     PyInstaller, Holistic WASM, icons, zip
+scripts/bench_latency.py       Queue / inference / delivery bench
 src/
-  backend/                     API FastAPI 8765 + ventana Tk
-    window.py                  Splash (ping semántico + T-pose), modo, mano
-    server.py                  Rutas
-    signer_session.py          Clasificador + buffer + /sign remoto
-    hearing_session.py         Vosk ya vino; /hearing + clips
-    metrics.py                 JSONL en %LOCALAPPDATA%\ILSA\metrics
+  backend/                     FastAPI 8765 + Tk window
+    window.py                  Splash (semantic + T-pose ping), mode, hand
+    server.py                  Routes
+    signer_session.py          Classifier + buffer + remote /sign
+    hearing_session.py         Incoming Vosk; /hearing + clips
+    metrics.py                 JSONL under %LOCALAPPDATA%\ILSA\metrics
   classifier/                  TinySkeleton + weights/
-  core/                        Landmarks, enunciado, repetición
-  semantic/                    Cliente HTTP Cloud Run
-  avatar/                      Cliente T-pose (stems, GET, caché)
-  poseclip/                    Compositor de .pose en RAM (oyente)
+  core/                        Landmarks, utterance, repeat policy
+  semantic/                    Cloud Run HTTP client
+  avatar/                      T-pose client (stems, GET, cache)
+  poseclip/                    In-memory .pose compositor (hearing)
 extension/                     Manifest V3
   content/camera-hook.js       getUserMedia, canvas, mic
   content/meet.js              HUD, JPEG, STT, chat
-  content/skeleton.js          Dibujo del avatar
+  content/skeleton.js          Avatar drawing
   offscreen.js + sandbox.js    Holistic WASM
   lib/                         api, capture, landmarks, prefs
 ```
 
-No hay laboratorio de PDF/QR/YouTube en esta rama. Fabricar `.pose` es
-`avatar-cloud`. Entrenar el GGUF es `semantic-cloud`.
+No PDF/QR/YouTube lab pipeline lives here. Building `.pose` files is
+`avatar-cloud`. Training the GGUF is `semantic-cloud`.
 
 ---
 
-## Correr
+## Run
 
-Python 3.9–3.12, Windows, Chrome, Internet (Cloud Run). Pesos:
-`git lfs pull`.
+Python 3.9–3.12, Windows, Chrome, Internet (Cloud Run). Weights: `git lfs pull`.
 
 ```bash
 pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
-py -3 packaging/fetch_extension_assets.py   # WASM Holistic → extension/vendor/
-python run_backend.py                       # o LSABackend.bat
+py -3 packaging/fetch_extension_assets.py   # Holistic WASM → extension/vendor/
+python run_backend.py                       # or LSABackend.bat
 ```
 
-Chrome → `chrome://extensions` → modo desarrollador → cargar `extension/`.
-Tras tocar content scripts, recargar la extensión **y** la pestaña de Meet.
+Chrome → `chrome://extensions` → developer mode → load `extension/`.
+After editing content scripts, reload the extension **and** the Meet tab.
 
-ILSA: splash comprueba traductor (hasta 4 min, arranque en frío) y T-pose
-(20 s). Después: modo → (si sordo) mano → Encender. El popup de la extensión
-no enciende el motor. `--no-semantic` saltea el ping al traductor.
+ILSA: splash checks the translator (up to 4 min, cold start) and T-pose
+(20 s). Then: mode → (if signer) hand → Start. The extension popup does not
+start the engine. `--no-semantic` skips the translator ping.
 
-Overrides: `LSA_SEMANTIC_URL`, `LSA_AVATAR_URL`, o
-`%LOCALAPPDATA%\ILSA\avatar_url.txt`. Defaults en
-`src/semantic/config.py` y `src/avatar/config.py`.
+Overrides: `LSA_SEMANTIC_URL`, `LSA_AVATAR_URL`, or
+`%LOCALAPPDATA%\ILSA\avatar_url.txt`. Defaults in
+`src/semantic/config.py` and `src/avatar/config.py`.
 
-**Exe:** `packaging\build_exe.bat` → `extension/bin/ILSA.zip`. El GGUF no viaja.
-Subida al release: `packaging\upload_ilsa_zip.ps1`.
+**Exe:** `packaging\build_exe.bat` → `extension/bin/ILSA.zip`. The GGUF is not
+bundled. Upload: `packaging\upload_ilsa_zip.ps1`.
 
 ---
 
-## API local (`127.0.0.1:8765`)
+## Local API (`127.0.0.1:8765`)
 
-Meet no hace `fetch` a loopback (Chrome LNA). El service worker proxya
-`lsa-api`. CORS incluye `https://meet.google.com`.
+Meet does not `fetch` loopback (Chrome LNA). The service worker proxies
+`lsa-api`. CORS includes `https://meet.google.com`.
 
-| Método | Ruta | Uso |
+| Method | Path | Use |
 |--------|------|-----|
 | GET | `/health` | `ok`, `mode`, `semantic_ready`, `left_handed` |
-| GET | `/config` | Umbrales de captura |
-| GET | `/metrics` | Resumen de la sesión |
-| POST | `/session` | Reset de buffer (la mano la fija ILSA) |
+| GET | `/config` | Capture thresholds |
+| GET | `/metrics` | Session summary |
+| POST | `/session` | Reset buffer (handedness is set by ILSA) |
 | POST | `/sign` | Frames `{pose, left_hand, right_hand}` |
-| POST | `/utterance/end` | Cierra enunciado → Cloud Run `/sign` |
+| POST | `/utterance/end` | Close utterance → Cloud Run `/sign` |
 | POST | `/stt` | WAV → Vosk |
-| POST | `/hearing` | Español → glosas + clip avatar |
-| POST | `/activity` | Mantiene el enunciado abierto |
+| POST | `/hearing` | Spanish → glosses + avatar clip |
+| POST | `/activity` | Keep the utterance open |
 
-Cloud Run semántico responde `ms` (inferencia, RNF-01 ≤ 2 s) y `queued_ms`
-(cola del candado `infer_slot`). `/sign` y `/hearing` **no** se piden a la vez
-en una llamada: un ILSA es un modo. Mezclarlos en un banco infla la cola.
+Cloud Run returns `ms` (inference, RNF-01 ≤ 2 s) and `queued_ms` (queue behind
+the `infer_slot` lock). `/sign` and `/hearing` are **not** called at the same
+time in a call: one ILSA is one mode. Mixing them in a bench inflates the queue.
 
-Timeouts del cliente: traductor 240 s (cold start), T-pose 20 s (health) /
-60 s (GET `.pose`). Cola de avatar en Meet: 20 clips. Tope de señas por frase
-animada: 24 (`_MAX_SIGNS`; alinea con ~40 s a 30 fps, no es un límite LSA).
+Client timeouts: translator 240 s (cold start), T-pose 20 s (health) /
+60 s (GET `.pose`). Avatar queue in Meet: 20 clips. Max signs per animated
+phrase: 24 (`_MAX_SIGNS`; ~40 s at 30 fps, not an LSA rule).
 
 ---
 
-## Métricas
+## Metrics
 
-En vivo: `%LOCALAPPDATA%\ILSA\metrics\live-YYYYMMDD.jsonl` (`sign`,
-`utterance`, `hearing`). Campos: `pause_ms` (4 s anotados), `queued_ms`,
-`infer_ms`, `remote_ms` (roundtrip), `delivery_ms` (T-pose + compositor,
-oyente).
+Live: `%LOCALAPPDATA%\ILSA\metrics\live-YYYYMMDD.jsonl` (`sign`, `utterance`,
+`hearing`). Fields: `pause_ms` (annotated 4 s), `queued_ms`, `infer_ms`,
+`remote_ms` (roundtrip), `delivery_ms` (T-pose + compositor, hearing).
 
-Banco contra Cloud Run de producción (glosas **válidas** del dataset sordo,
-distintas longitudes):
+Bench against production Cloud Run (valid signer-dataset glosses, mixed
+lengths):
 
 ```bash
-python scripts/bench_latencia.py --canal sordo --n 20
-python scripts/bench_latencia.py --canal oyente --n 20
-python scripts/bench_latencia.py --canal ambos --n 15
+python scripts/bench_latency.py --channel signer --n 20
+python scripts/bench_latency.py --channel hearing --n 20
+python scripts/bench_latency.py --channel both --n 15
 ```
 
-`--canal ambos` corre sordo y **después** oyente. `--intervalo 2` aísla
-inferencia; `0` es ráfaga (cola). Oyente incluye entrega de clips salvo
-`--sin-avatar`. El HUD de Meet no entra en el banco (entrega sordo = 0).
+`--channel both` runs signer and **then** hearing. `--interval 2` isolates
+inference; `0` is a burst (queue). Hearing includes clip delivery unless
+`--no-avatar`. The Meet HUD is not in the bench (signer delivery = 0).
 
-| Etapa | Qué es | Dónde se mide |
-|-------|--------|----------------|
-| Pausa | Manos fuera → 4 s → cierra frase | Constante; no es el modelo |
-| Cola | Pedido en el servidor → el modelo lo toma | `queued_ms` |
-| Inferencia | El modelo toma el pedido → texto | `ms` / `infer_ms` |
-| Entrega | Texto en el cliente: HUD/voz (sordo) o T-pose+canvas (oyente) | `delivery_ms` en oyente |
+| Stage | What | Where |
+|-------|------|-------|
+| Pause | Hands away → 4 s → close phrase | Constant; not the model |
+| Queue | Request on the server → model takes it | `queued_ms` |
+| Inference | Model takes the request → text | `ms` / `infer_ms` |
+| Delivery | Text on the client: HUD/voice (signer) or T-pose+canvas (hearing) | `delivery_ms` in hearing |
 
 ---
 
-## Cámara
+## Camera
 
-`camera-hook.js` llama al `getUserMedia` nativo **una vez**, deja el stream en
-`#lsa-real-cam` y le da a Meet el canvas. Si Meet pide de nuevo, reusa el
-track. Con LSA apagado no envuelve (si no, Meet dice cámara bloqueada). Al
-apagar no hace `stop()` de los tracks reales.
+`camera-hook.js` calls native `getUserMedia` **once**, keeps the stream on
+`#lsa-real-cam`, and gives Meet the canvas. If Meet asks again, it reuses the
+track. With LSA off it does not wrap (otherwise Meet says the camera is
+blocked). On stop it does not `stop()` real tracks.
 
-En Windows, Media Foundation abre en *controlling mode* (un cliente activo).
-Chrome trata a Zoom/Teams/Cámara como exclusive. Varias pestañas del mismo
-Chrome sí pueden compartir. ILSA.exe **no** abre la webcam.
+On Windows, Media Foundation opens in *controlling mode* (one active client).
+Chrome treats Zoom/Teams/Camera as exclusive. Several tabs of the same Chrome
+can share. ILSA.exe **does not** open the webcam.

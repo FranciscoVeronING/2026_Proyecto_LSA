@@ -1,10 +1,10 @@
 /**
- * Preferencias del popup (chrome.storage.local).
+ * Popup preferences (chrome.storage.local).
  * `outputMode`: subtitles | audio | both
- * `hearingInput`: voice | text | both  (oyente: mic de Meet, chat, o los dos)
+ * `hearingInput`: voice | text | both  (hearing: Meet mic, chat, or both)
  * `utterancePauseSec`: 2 | 3 | 4
  *
- * En offscreen a veces no hay `chrome.storage`; nunca hay que tirar el script.
+ * Offscreen sometimes has no `chrome.storage`; never throw the script.
  */
 
 const LSA_PREFS_KEY = "lsaPrefs";

@@ -1,7 +1,7 @@
 """
-JSON de landmarks (ya extraídos en el navegador) → vector 225 del clasificador.
+Landmark JSON (already extracted in the browser) → classifier 225-vector.
 
-No corre MediaPipe. ``POST /sign`` trae ``{pose, left_hand, right_hand}``.
+Does not run MediaPipe. ``POST /sign`` brings ``{pose, left_hand, right_hand}``.
 """
 
 from types import SimpleNamespace
@@ -64,7 +64,7 @@ def _flat_or_zeros(bag, n_points: int) -> np.ndarray:
 
 
 def vector_from_frame(frame: dict, left_handed: bool) -> np.ndarray:
-    # Holistic ya sacó los puntos. Acá ancla a hombros; None → ceros.
+    # Holistic already extracted the points. Here they are anchored to shoulders; None → zeros.
     pose = _landmark_bag(frame.get("pose"))
     left_hand = _landmark_bag(frame.get("left_hand"))
     right_hand = _landmark_bag(frame.get("right_hand"))

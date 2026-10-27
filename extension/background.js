@@ -1,11 +1,11 @@
 /**
- * Service worker MV3: única pieza que habla con popup, Meet y el documento offscreen.
+ * MV3 service worker: the only piece that talks to popup, Meet, and the offscreen document.
  *
- * Mensajes:
- * - `lsa-meet-sync` — Meet pregunta si ILSA está encendido; arranca o corta solo.
- * - `lsa-meet-start-request` / `stop-request` — compatibilidad / apagado.
- * - `lsa-frame` — JPEG desde meet.js → reenvío `lsa-offscreen-frame`.
- * - `lsa-caption` — estado desde offscreen → meet.js.
+ * Messages:
+ * - `lsa-meet-sync` — Meet asks if ILSA is on; start or stop by itself.
+ * - `lsa-meet-start-request` / `stop-request` — compatibility / shutdown.
+ * - `lsa-frame` — JPEG from meet.js → forward `lsa-offscreen-frame`.
+ * - `lsa-caption` — state from offscreen → meet.js.
  */
 
 importScripts("lib/prefs.js");
@@ -23,7 +23,7 @@ const ILSA_DOWN_MS = 8000;
 const API_BASE = "http://127.0.0.1:8765";
 
 /**
- * @returns {Promise<boolean>} true si ya hay un documento offscreen de esta extensión.
+ * @returns {Promise<boolean>} true if this extension already has an offscreen document.
  */
 async function hasOffscreen() {
   if (chrome.offscreen.hasDocument) {
@@ -222,12 +222,12 @@ function parseApiBody(text) {
 }
 
 /**
- * Fetch a ILSA desde el SW (origen de la extensión). Meet no puede ir a loopback.
+ * Fetch ILSA from the SW (extension origin). Meet cannot hit loopback.
  * @param {{path?: string, method?: string, body?: string|null}} msg
  */
 async function proxyIlsaApi(msg) {
   const path = String((msg && msg.path) || "");
-  if (!path.startsWith("/")) throw new Error("Pedido inválido.");
+  if (!path.startsWith("/")) throw new Error("Invalid request.");
   const method = String((msg && msg.method) || "GET").toUpperCase();
   const opts = { method, signal: AbortSignal.timeout(method === "GET" ? 4000 : 240000) };
   if (msg && msg.body) {
@@ -238,7 +238,7 @@ async function proxyIlsaApi(msg) {
   try {
     res = await fetch(`${API_BASE}${path}`, opts);
   } catch (_) {
-    throw new Error("ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
+    throw new Error("ILSA is not responding on 127.0.0.1:8765. Start the engine.");
   }
   const data = parseApiBody(await res.text());
   if (!res.ok) {
@@ -271,7 +271,7 @@ async function pingHealth() {
 }
 
 /**
- * Si ILSA está encendido, traduce en Meet. Si se apagó el exe, corta.
+ * If ILSA is on, translate in Meet. If the exe was stopped, cut.
  * @param {number} tabId
  */
 async function syncMeetTab(tabId) {
@@ -357,7 +357,7 @@ async function sendToOffscreen(message, tries = 40) {
       const ack = new Promise((resolve, reject) => {
         const t = setTimeout(() => {
           offscreenAcks.delete(id);
-          reject(new Error("El procesador de video no respondió."));
+          reject(new Error("The video processor did not respond."));
         }, 25000);
         offscreenAcks.set(id, {
           resolve: (msg) => {
@@ -376,12 +376,12 @@ async function sendToOffscreen(message, tries = 40) {
     }
     await new Promise((r) => setTimeout(r, 80));
   }
-  throw lastErr || new Error("El procesador de video no conectó.");
+  throw lastErr || new Error("The video processor did not connect.");
 }
 
 /**
  * Arranque Meet: offscreen + content script.
- * @param {number} tabId Pestaña `https://meet.google.com/…`.
+ * @param {number} tabId Tab `https://meet.google.com/…`.
  * @param {boolean} leftHanded
  * @returns {Promise<void>}
  */
@@ -389,10 +389,10 @@ async function startMeet(tabId, leftHanded) {
   const tab = await chrome.tabs.get(tabId);
   const url = tab.url || tab.pendingUrl || "";
   if (!url.startsWith("https://meet.google.com/")) {
-    throw new Error("Abrí una llamada de Google Meet y volvé a intentar.");
+    throw new Error("Open a Google Meet call and try again.");
   }
   const h = await pingHealth();
-  if (!h) throw new Error("ILSA no está encendido. Elegí un modo y dale a Encender.");
+  if (!h) throw new Error("ILSA is not on. Pick a mode and press Start.");
   const mode = h.mode === "hearing" ? "hearing" : "signer";
   if (meetTabId === tabId && meetModeOn === mode) return;
   if (meetTabId && (meetTabId !== tabId || meetModeOn !== mode)) {
@@ -415,12 +415,12 @@ async function startMeet(tabId, leftHanded) {
       leftHanded: Boolean(leftHanded),
     });
     if (started && started.ok === false) {
-      throw new Error(started.error || "No se pudo iniciar el intérprete.");
+      throw new Error(started.error || "Could not start the interpreter.");
     }
   }
 }
 
-/** Para captura y HUD; no corta los tracks de la cámara de Meet. */
+/** For capture and HUD; does not stop Meet camera tracks. */
 async function stopMeet() {
   const tabId = meetTabId;
   meetTabId = null;

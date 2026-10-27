@@ -1,1 +1,1 @@
-"""Lógica de dominio sin dependencias de cámara, GPU ni modelos."""
+"""Domain logic with no camera, GPU, or model dependencies."""

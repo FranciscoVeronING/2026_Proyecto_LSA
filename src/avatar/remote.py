@@ -1,4 +1,4 @@
-"""Pide `/tposes/{GLOSA}.pose` al servidor. Igualdad de nombre, sin diccionario local."""
+"""GET `/tposes/{GLOSS}.pose` from the server. Exact name match, no local dictionary."""
 
 from __future__ import annotations
 
@@ -68,10 +68,10 @@ def _headers() -> dict[str, str]:
 
 
 def ping(timeout: float = 20.0) -> bool:
-    """GET `/health` del servidor de T-pose."""
+    """GET `/health` on the T-pose server."""
     base = avatar_url()
     if not base:
-        print("[avatar] ping: no hay URL")
+        print("[avatar] ping: no URL")
         return False
     req = urllib.request.Request(f"{base}/health", headers=_headers(), method="GET")
     try:
@@ -101,9 +101,9 @@ def fetch_tpose(stem: str) -> Path | None:
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return None
-        raise RuntimeError(f"T-pose HTTP {exc.code} para {key}") from exc
+        raise RuntimeError(f"T-pose HTTP {exc.code} for {key}") from exc
     except urllib.error.URLError as exc:
-        raise RuntimeError(f"No se alcanzó el servidor de T-pose: {exc.reason}") from exc
+        raise RuntimeError(f"Could not reach the T-pose server: {exc.reason}") from exc
     if not blob:
         return None
     tmp = dest.with_suffix(".pose.part")
@@ -171,10 +171,10 @@ def resolve_chain(text: str) -> tuple[list[tuple[str, Path]], list[str]]:
 
 
 def clip_for_glosses(glosses: str) -> dict:
-    """Glosas del semántico oyente → frames. Cada seña es GET al servidor de T-pose."""
+    """Hearing-semantic glosses → frames. Each sign is a GET to the T-pose server."""
     text = (glosses or "").strip()
     if not text:
-        return {"ok": False, "error": "No llegaron glosas.", "frames": [], "missing": []}
+        return {"ok": False, "error": "No glosses arrived.", "frames": [], "missing": []}
     try:
         found, missing = resolve_chain(text)
     except Exception as exc:
@@ -182,7 +182,7 @@ def clip_for_glosses(glosses: str) -> dict:
     if not found:
         return {
             "ok": False,
-            "error": "Ninguna glosa tiene T-pose en el servidor.",
+            "error": "No gloss has a T-pose on the server.",
             "frames": [],
             "missing": missing,
         }

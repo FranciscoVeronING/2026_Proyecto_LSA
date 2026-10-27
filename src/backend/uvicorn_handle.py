@@ -39,8 +39,8 @@ class BackendHandle:
         except OSError:
             return
         raise RuntimeError(
-            f"El puerto {self.port} está ocupado. Cerrá otra ventana ILSA "
-            "o el python run_backend.py que ya esté corriendo."
+            f"Port {self.port} is in use. Close the other ILSA window "
+            "or the python run_backend.py that is already running."
         )
 
     def _run_uvicorn(self) -> None:
@@ -52,7 +52,7 @@ class BackendHandle:
             asyncio.set_event_loop(asyncio.new_event_loop())
             self.server.run()
         except Exception as exc:
-            print(f"[ilsa] uvicorn no arrancó: {exc}")
+            print(f"[ilsa] uvicorn did not start: {exc}")
 
     def start(self) -> None:
         if self.running or self.starting:

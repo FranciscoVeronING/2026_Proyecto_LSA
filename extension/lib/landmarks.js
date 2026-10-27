@@ -1,23 +1,23 @@
 /**
- * Empaquetado y vectorización de landmarks **ya extraídos** por Holistic.
+ * Packing and vectorization of landmarks **already extracted** by Holistic.
  *
- * Este archivo no mira píxeles. El esqueleto sale de `sandbox.js` (MediaPipe).
- * Acá se decide si una mano es usable, se arma el JSON de `POST /sign` y el
- * vector 225 para medir movimiento L2 en `capture.js`.
+ * This file does not look at pixels. The skeleton comes from `sandbox.js` (MediaPipe).
+ * Here we decide if a hand is usable, build the `POST /sign` JSON, and the
+ * 225-d vector used to measure L2 motion in `capture.js`.
  *
- * Un frame para el clasificador:
- *   pose 33×3  +  mano izq. 21×3  +  mano der. 21×3  =  225 floats.
+ * One frame for the classifier:
+ *   pose 33×3  +  left hand 21×3  +  right hand 21×3  =  225 floats.
  */
 
-/** Dimensión del bloque de pose en el vector plano. */
+/** Dimension of the pose block in the flat vector. */
 const POSE_DIM = 33 * 3;
-/** Dimensión de una mano. */
+/** Dimension of one hand. */
 const HAND_DIM = 21 * 3;
 
 /**
- * Serializa una lista de puntos MediaPipe a arrays `[x,y,z]`.
+ * Serialize a list of MediaPipe points to `[x,y,z]` arrays.
  * @param {Array<{x:number,y:number,z?:number}>|null|undefined} landmarks
- * @returns {number[][]|null} `null` si no hay puntos (el backend interpreta ceros).
+ * @returns {number[][]|null} `null` if there are no points (the backend treats zeros).
  */
 function lmList(landmarks) {
   if (!landmarks || !landmarks.length) return null;
@@ -25,8 +25,8 @@ function lmList(landmarks) {
 }
 
 /**
- * Empaqueta un resultado Holistic para `POST /sign`.
- * El backend recibe estos puntos, no el video.
+ * Pack a Holistic result for `POST /sign`.
+ * The backend receives these points, not the video.
  * @param {{ poseLandmarks?: object[], leftHandLandmarks?: object[], rightHandLandmarks?: object[] }} results
  * @returns {{ pose: number[][]|null, left_hand: number[][]|null, right_hand: number[][]|null }}
  */
@@ -43,12 +43,12 @@ function packFrame(results) {
 }
 
 /**
- * ¿Esta mano es usable? Holistic inventa manos al mover el torso:
- * puntos en (0,0), bbox minúsculo o lejos de la muñeca de la pose.
- * Las manos de Holistic no traen `visibility` (solo x, y, z).
+ * Is this hand usable? Holistic invents hands when the torso moves:
+ * points at (0,0), a tiny bbox, or far from the pose wrist.
+ * Holistic hands have no `visibility` (only x, y, z).
  *
  * @param {Array<{x:number,y:number}>|number[][]|null|undefined} lms
- * @param {{x:number,y:number,visibility?:number}|number[]|null|undefined} [wrist] Muñeca de la pose.
+ * @param {{x:number,y:number,visibility?:number}|number[]|null|undefined} [wrist] Pose wrist.
  * @returns {boolean}
  */
 function xyOf(p) {
@@ -111,11 +111,11 @@ function anyHandPresent(results) {
 }
 
 /**
- * Lista de puntos → vector plano `expected * 3`.
- * `new Float32Array(n)` ya nace lleno de ceros; no hace falta un helper extra.
+ * List of points → flat vector `expected * 3`.
+ * `new Float32Array(n)` is already zeros; no extra helper is needed.
  *
  * @param {Array<{x:number,y:number,z?:number}>|null|undefined} landmarks
- * @param {number} expected 33 (pose) o 21 (mano).
+ * @param {number} expected 33 (pose) or 21 (hand).
  * @returns {Float32Array}
  */
 function flattenLandmarks(landmarks, expected) {
@@ -132,10 +132,10 @@ function flattenLandmarks(landmarks, expected) {
 }
 
 /**
- * Invarianza a posición/tamaño: (punto - ancla) / distancia entre hombros.
+ * Position/size invariance: (point - anchor) / shoulder distance.
  * @param {Float32Array} flat
- * @param {number[]} anchor `[x,y,z]` punto medio de hombros.
- * @param {number} scale Distancia inter-hombros.
+ * @param {number[]} anchor `[x,y,z]` midpoint of the shoulders.
+ * @param {number} scale Inter-shoulder distance.
  * @returns {Float32Array}
  */
 function normalizeSpatial(flat, anchor, scale) {
@@ -154,12 +154,12 @@ function normalizeSpatial(flat, anchor, scale) {
 }
 
 /**
- * Un frame Holistic → vector 225 alineado con el clasificador.
- * Si `leftHanded`, espeja X y cruza bloques de manos (el modelo se entrenó diestro).
+ * One Holistic frame → 225-d vector aligned with the classifier.
+ * If `leftHanded`, mirror X and swap hand blocks (the model was trained right-handed).
  *
- * @param {object} results Landmarks Holistic.
+ * @param {object} results Holistic landmarks.
  * @param {boolean} leftHanded
- * @returns {Float32Array} Longitud `POSE_DIM + 2 * HAND_DIM`.
+ * @returns {Float32Array} Length `POSE_DIM + 2 * HAND_DIM`.
  */
 function extractNormalizedVector(results, leftHanded) {
   const pose = results.poseLandmarks;
@@ -190,16 +190,16 @@ function extractNormalizedVector(results, leftHanded) {
 }
 
 /**
- * Distancia euclídea (norma L2) entre las manos de dos frames:
- * √(Σ (actual − anterior)²) sobre las coordenadas de ambas manos.
+ * Euclidean distance (L2 norm) between the hands of two frames:
+ * √(Σ (current − previous)²) over both hands' coordinates.
  *
- * No mira píxeles de la cámara. En modo `auto` (Meet) **no** abre la seña:
- * el arranque es “hay mano usable” (`shouldStartRecording`). Este valor
- * alimenta `/activity` y el modo `dynamic`.
+ * Does not look at camera pixels. In `auto` mode (Meet) this does **not** open the sign:
+ * start is “there is a usable hand” (`shouldStartRecording`). This value
+ * feeds `/activity` and `dynamic` mode.
  *
  * @param {Float32Array} current
  * @param {Float32Array|null} previous
- * @returns {number} 0 si falta previo o algún vector es todo ceros.
+ * @returns {number} 0 if there is no previous or a vector is all zeros.
  */
 function handMotion(current, previous) {
   if (!previous) return 0;

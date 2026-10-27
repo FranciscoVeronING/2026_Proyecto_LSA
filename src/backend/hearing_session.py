@@ -1,4 +1,4 @@
-"""Modo oyente: Chrome transcribe; acá se pide español → glosas al semántico remoto."""
+"""Hearing mode: Chrome transcribes; here Spanish → glosses on the remote semantic service."""
 
 from __future__ import annotations
 
@@ -19,15 +19,15 @@ class HearingSession:
         self.gloss_text = ""
         try:
             if not configured():
-                raise RuntimeError("Falta la URL del traductor semántico")
+                raise RuntimeError("Semantic translator URL is missing")
             if not ping():
-                raise RuntimeError("El traductor Cloud Run no responde")
+                raise RuntimeError("Cloud Run translator is not responding")
             self.semantic_ready = True
-            print("[backend] Modo oyente: voz → glosas (semántico remoto).")
+            print("[backend] Hearing mode: voice → glosses (remote semantic).")
         except Exception as exc:
             self.semantic_error = str(exc)
             self.semantic_ready = False
-            print(f"[backend] Modo oyente sin traductor: {exc}")
+            print(f"[backend] Hearing mode without translator: {exc}")
 
     def capture_config(self) -> dict[str, Any]:
         return {"mode": "hearing"}
@@ -49,7 +49,7 @@ class HearingSession:
         return None
 
     def ingest_sign(self, frames: list) -> dict[str, Any]:
-        raise RuntimeError("Modo oyente: no hay clasificación de señas.")
+        raise RuntimeError("Hearing mode: signs are not classified.")
 
     def ingest_speech(self, spanish: str, final: bool = True) -> dict[str, Any]:
         text = (spanish or "").strip()
@@ -62,24 +62,24 @@ class HearingSession:
         remote_ms = 0.0
         timing = {}
         tokens = text.split()
-        # Una sola palabra: va al T-pose como glosa. Una oración tiene que pasar por Cloud Run.
+        # A single word goes to T-pose as a gloss. A sentence must go through Cloud Run.
         if len(tokens) <= 1:
             glosses = tokens[0].strip().upper() if tokens else ""
-            print(f"[backend] /hearing palabra suelta (sin semántico): {text!r} → {glosses!r}")
+            print(f"[backend] /hearing single word (no semantic): {text!r} → {glosses!r}")
         else:
             try:
-                from semantic.remote import last_timing, ping, translate_oyente
+                from semantic.remote import last_timing, ping, translate_hearing
 
                 if not self.semantic_ready:
                     self.semantic_ready = ping()
                 print(f"[backend] /hearing → Cloud Run POST /hearing: {text!r}")
                 t0 = time.perf_counter()
-                glosses = translate_oyente(text)
+                glosses = translate_hearing(text)
                 remote_ms = (time.perf_counter() - t0) * 1000
                 timing = last_timing()
-                print(f"[backend] Cloud Run /hearing → glosas={glosses!r} {remote_ms:.0f}ms")
+                print(f"[backend] Cloud Run /hearing → glosses={glosses!r} {remote_ms:.0f}ms")
             except Exception as exc:
-                print(f"[backend] Oyente remoto falló: {exc}")
+                print(f"[backend] Remote hearing failed: {exc}")
                 self.semantic_error = str(exc)
                 self.semantic_ready = False
         self.gloss_text = glosses
@@ -93,7 +93,7 @@ class HearingSession:
                 clip = clip_for_glosses(glosses)
                 delivery_ms = (time.perf_counter() - t_del) * 1000
             except Exception as exc:
-                print(f"[backend] T-pose remoto falló: {exc}")
+                print(f"[backend] Remote T-pose failed: {exc}")
                 clip = {"ok": False, "error": str(exc), "frames": [], "missing": []}
         snap = self.snapshot()
         snap.update({

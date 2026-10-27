@@ -1,4 +1,4 @@
-"""Descarga MediaPipe Holistic (WASM) para la extensión y genera íconos PNG."""
+"""Download MediaPipe Holistic (WASM) for the extension and generate PNG icons."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def main() -> None:
             print(f"Ya existe {name}")
             continue
         url = BASE + name
-        print(f"Descargando {name} ...")
+        print(f"Downloading {name} ...")
         urllib.request.urlretrieve(url, dest)
         print(f"  {dest.stat().st_size} bytes")
 

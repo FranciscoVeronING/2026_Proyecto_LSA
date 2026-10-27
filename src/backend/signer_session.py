@@ -1,8 +1,8 @@
 """
-Sesión de interpretación: clasificador + buffer de glosas + traductor.
+Interpretation session: classifier + gloss buffer + translator.
 
-La extensión recorta señas (Holistic + capture.js) y manda el fin de
-enunciado. Acá no se extraen landmarks: se clasifica, se acumula y se traduce.
+The extension crops signs (Holistic + capture.js) and sends utterance end.
+Landmarks are not extracted here: classify, accumulate, translate.
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ class SignerSession:
         semantic_model_id: str | None = None,
         left_handed: bool = False,
     ):
-        # El ping al traductor va en un hilo: si carga acá, /health se queda mudo.
+        # Translator ping runs on a thread: loading it here would mute /health.
         self.lock = threading.RLock()
         self._semantic_gate = threading.Lock()
         self.enable_semantic = enable_semantic
@@ -55,11 +55,11 @@ class SignerSession:
         self.left_handed = bool(left_handed)
         self.device = torch.device("cpu")
         print(
-            "[backend] Clasificador en CPU. Traductor: servidor remoto. "
-            f"Mano: {'zurda' if self.left_handed else 'diestra'}."
+            "[backend] Classifier on CPU. Translator: remote server. "
+            f"Hand: {'left' if self.left_handed else 'right'}."
         )
         self.model, self.idx_to_class = load_classifier_bundle(self.device)
-        print(f"[backend] Clasificador: {len(self.idx_to_class)} señas en {self.device}")
+        print(f"[backend] Classifier: {len(self.idx_to_class)} signs on {self.device}")
         self.buffer = UtteranceBuffer(
             pause_sec=cfg.UTTERANCE_PAUSE_SEC,
             min_confidence=cfg.CONFIDENCE_THRESHOLD,
@@ -82,17 +82,17 @@ class SignerSession:
         try:
             self._ensure_remote()
             if not self.semantic_ready:
-                raise RuntimeError(self.semantic_error or "El traductor Cloud Run no responde")
-            print("[backend] Traductor remoto listo.")
+                raise RuntimeError(self.semantic_error or "Cloud Run translator is not responding")
+            print("[backend] Remote translator ready.")
         except Exception as e:
             with self.lock:
                 self.semantic_error = str(e)
                 self.semantic_ready = False
-            print(f"[backend] Traductor remoto no disponible: {e}")
+            print(f"[backend] Remote translator unavailable: {e}")
 
     def _ensure_remote(self) -> None:
-        """Vuelve a pinguear Cloud Run si el hilo de arranque todavía no dejó el cliente."""
-        from semantic.remote import configured, ping, translate_sordo
+        """Ping Cloud Run again if the boot thread has not left a client yet."""
+        from semantic.remote import configured, ping, translate_sign
 
         with self.lock:
             if self._translate_glosses is not None:
@@ -101,17 +101,17 @@ class SignerSession:
             return
         if not configured():
             with self.lock:
-                self.semantic_error = "Falta la URL del traductor semántico"
+                self.semantic_error = "Semantic translator URL is missing"
                 self.semantic_ready = False
             return
         if not ping():
             with self.lock:
-                self.semantic_error = "El traductor Cloud Run no responde"
+                self.semantic_error = "Cloud Run translator is not responding"
                 self.semantic_ready = False
             return
         with self._semantic_gate:
             with self.lock:
-                self._translate_glosses = translate_sordo
+                self._translate_glosses = translate_sign
                 self._current_model_id = "remote"
                 self.semantic_ready = True
                 self.semantic_error = ""
@@ -153,7 +153,7 @@ class SignerSession:
             self.buffer.note_signing_activity(time.time())
 
     def ingest_sign(self, frames: list[dict], client: dict | None = None) -> dict[str, Any]:
-        # La seña ya viene recortada. Acá: EMA → (16, 225) → TinySkeleton.
+        # The sign is already cropped. Here: EMA → (16, 225) → TinySkeleton.
         t0 = time.perf_counter()
         now = time.time()
         client = client or {}
@@ -162,14 +162,14 @@ class SignerSession:
         with_lh = sum(1 for f in frames or [] if f.get("left_hand"))
         with_rh = sum(1 for f in frames or [] if f.get("right_hand"))
         print(
-            f"[backend] /sign recibido: {n} frames "
-            f"(pose={with_pose} mano_izq={with_lh} mano_der={with_rh})"
+            f"[backend] /sign received: {n} frames "
+            f"(pose={with_pose} left_hand={with_lh} right_hand={with_rh})"
         )
 
         with self.lock:
             cool = cfg.INFERENCE_COOLDOWN_SEC
             if now - self.last_enqueue_time < cool or now - self.last_inference_time < cool:
-                print("[backend] /sign rechazado: cooldown")
+                print("[backend] /sign rejected: cooldown")
                 from backend.metrics import log_event
 
                 log_event(
@@ -183,7 +183,7 @@ class SignerSession:
                 return {"accepted": False, "reason": "cooldown", **self.snapshot()}
             if n < cfg.MIN_CAPTURE_FRAMES:
                 print(
-                    f"[backend] /sign rechazado: too_short "
+                    f"[backend] /sign rejected: too_short "
                     f"({n} < min {cfg.MIN_CAPTURE_FRAMES})"
                 )
                 from backend.metrics import log_event
@@ -210,7 +210,7 @@ class SignerSession:
             f"tras muestreo={matrix.shape} (esperado {cfg.MAX_FRAMES}x{matrix.shape[1] if matrix.ndim == 2 else '?'})"
         )
         if matrix.shape[0] != cfg.MAX_FRAMES:
-            print("[backend] /sign rechazado: bad_tensor")
+            print("[backend] /sign rejected: bad_tensor")
             from backend.metrics import log_event
 
             log_event("sign", accepted=False, reason="bad_tensor", n_frames=n)
@@ -242,7 +242,7 @@ class SignerSession:
         print(
             "[backend] /sign top3: "
             + " | ".join(f"{n.upper()} ({c:.1%})" for n, c in top3)
-            + (f" → agregada {gloss}" if added else " → no se agregó (repetición/umbral)")
+            + (f" → added {gloss}" if added else " → not added (repeat/threshold)")
         )
         snap = self.snapshot()
         total_ms = (time.perf_counter() - t0) * 1000
@@ -281,8 +281,8 @@ class SignerSession:
             n_raw=client.get("n_raw"),
         )
         print(
-            f"[backend] /sign respuesta: accepted=True added={added} "
-            f"glosa={snap.get('gloss')} pending={snap.get('pending_text')!r}"
+            f"[backend] /sign response: accepted=True added={added} "
+            f"gloss={snap.get('gloss')} pending={snap.get('pending_text')!r}"
         )
         return snap
 
@@ -293,14 +293,14 @@ class SignerSession:
             self.buffer.repeat_gate.reset()
             self.buffer.last_activity_at = None
             if not closed:
-                print("[backend] /utterance/end: no había glosas pendientes")
+                print("[backend] /utterance/end: no pending glosses")
                 snap = self.snapshot()
                 snap.update({"closed": False, "glosses": [], "spanish": self.spanish_text})
                 return snap
             self.semantic_busy = True
             self.last_utterance = " ".join(closed)
 
-        print(f"[backend] /utterance/end recibido: {closed!r}")
+        print(f"[backend] /utterance/end received: {closed!r}")
         t0 = time.perf_counter()
         text, via, remote_ms, server_ms = self._translate(closed)
         total_ms = (time.perf_counter() - t0) * 1000
@@ -341,34 +341,34 @@ class SignerSession:
         )
         srv = f" server={server_ms:.0f}ms" if server_ms is not None else ""
         print(
-            f"[backend] /utterance/end respuesta: español={text!r} via={via} "
+            f"[backend] /utterance/end response: spanish={text!r} via={via} "
             f"{total_ms:.0f}ms{srv}"
         )
         return snap
 
     def _translate(self, glosses: list[str]) -> tuple[str, str, float, float | None]:
-        # Una glosa suelta o un deletreo/dígitos no van a Cloud Run. Una oración sí.
+        # A lone gloss or a fingerspell/digits run skips Cloud Run. A sentence does not.
         fixed = resolve_letter_lookalikes(glosses)
         if fixed != list(glosses):
-            print(f"[backend] Lookalikes letra: {glosses!r} => {fixed!r}")
+            print(f"[backend] Letter lookalikes: {glosses!r} => {fixed!r}")
             glosses = fixed
         joined = " ".join(glosses)
         literal = format_literal_utterance(glosses)
         if literal is not None:
-            print(f"[backend] Enunciado → literal (sin semántico): {joined} => {literal}")
+            print(f"[backend] Utterance → literal (no semantic): {joined} => {literal}")
             return literal, "literal", 0.0, None
         simple = simple_lexical_spanish(glosses)
         if simple is not None:
-            print(f"[backend] Enunciado → glosa suelta (sin semántico): {joined} => {simple}")
+            print(f"[backend] Utterance → single gloss (no semantic): {joined} => {simple}")
             return simple, "lexical", 0.0, None
         collapsed = " ".join(collapse_literal_runs(glosses))
-        print(f"[backend] Enunciado → Cloud Run POST /sign: {collapsed}")
+        print(f"[backend] Utterance → Cloud Run POST /sign: {collapsed}")
         self._ensure_remote()
         with self._semantic_gate:
             with self.lock:
                 fn = self._translate_glosses
         if fn is None:
-            print("[backend] Semántico no listo; no hay oración.")
+            print("[backend] Semantic not ready; no sentence.")
             return collapsed, "fallback", 0.0, None
         try:
             from semantic.remote import last_timing
@@ -378,7 +378,7 @@ class SignerSession:
             remote_ms = (time.perf_counter() - t0) * 1000
             timing = last_timing()
             if not text:
-                print("[backend] Cloud Run /sign devolvió vacío")
+                print("[backend] Cloud Run /sign returned empty")
                 return collapsed, "fallback", remote_ms, timing.get("server_ms")
             return text, "llm", remote_ms, timing.get("server_ms")
         except Exception as e:

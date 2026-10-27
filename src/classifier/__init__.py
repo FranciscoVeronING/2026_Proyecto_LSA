@@ -1,1 +1,1 @@
-"""Clasificador de señas: arquitectura, configuración y pesos entrenados."""
+"""Sign classifier: architecture, config, and trained weights."""

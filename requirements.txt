@@ -1,5 +1,5 @@
-# Dependencias de ILSA (clasificador CPU + API local + cliente de Cloud Run).
-# MediaPipe corre en la extensión Chrome, no acá.
+# ILSA dependencies (CPU classifier + local API + Cloud Run client).
+# MediaPipe runs in the Chrome extension, not here.
 #
 #   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 #   pip install -r requirements.txt

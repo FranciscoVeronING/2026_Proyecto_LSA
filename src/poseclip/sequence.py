@@ -1,4 +1,4 @@
-"""Frase de glosas en memoria para el canvas de Meet (sin mp4)."""
+"""In-memory gloss phrase for the Meet canvas (no mp4)."""
 
 from __future__ import annotations
 
@@ -95,10 +95,10 @@ def _pack(data: np.ndarray, conf: np.ndarray, indices: list[int] | tuple[int, ..
 
 
 def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None = None) -> dict:
-    """Clips `.pose` bajados del servidor de T-pose → frames del canvas."""
+    """`.pose` clips downloaded from the T-pose server → canvas frames."""
     missing = list(missing or [])
     if not found:
-        return _fail("Ninguna glosa tiene clip.", missing=missing)
+        return _fail("No gloss has a clip.", missing=missing)
 
     poses = []
     names: list[str] = []
@@ -109,7 +109,7 @@ def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None
         except Exception:
             missing.append(query)
     if not poses:
-        return _fail("No se pudo preparar ninguna glosa.", missing=missing)
+        return _fail("Could not prepare any gloss.", missing=missing)
 
     pose = compose_sequence(poses, SETTINGS)
     data = np.ma.filled(pose.body.data, 0.0).astype(np.float32)
@@ -118,7 +118,7 @@ def sequence_from_files(found: list[tuple[str, Path]], missing: list[str] | None
         data = data[:_MAX_FRAMES]
         conf = conf[:_MAX_FRAMES]
     if len(data) == 0:
-        return _fail("El compositor no devolvió frames.", missing=missing)
+        return _fail("The compositor returned no frames.", missing=missing)
     face_order, face_edges = _face_layout()
     face_abs = [_FACE_START + i for i in face_order]
     hand = list(range(21))

@@ -1,4 +1,4 @@
-"""Métricas en vivo: JSONL + resumen. Sin etiquetas de verdad; eso es --eval-semantic."""
+"""Live metrics: JSONL + summary. No ground-truth labels; that is --eval-semantic."""
 
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ def log_event(kind: str, **fields: Any) -> dict[str, Any]:
             with dest.open("a", encoding="utf-8") as fh:
                 fh.write(line + "\n")
         except OSError as exc:
-            print(f"[metrics] no pude escribir {dest}: {exc}")
+            print(f"[metrics] could not write {dest}: {exc}")
     return record
 
 
@@ -127,11 +127,11 @@ def summary() -> dict[str, Any]:
 def health_line() -> str:
     s = summary()
     ms = s["ms"]
-    bits = [f"señas {s['n_accepted']}/{s['n_sign']}"]
+    bits = [f"signs {s['n_accepted']}/{s['n_sign']}"]
     if s["mean_conf1"] is not None:
         bits.append(f"conf {s['mean_conf1']:.0%}")
     if ms.get("classifier_p50") is not None:
         bits.append(f"clf {ms['classifier_p50']:.0f} ms")
     if ms.get("remote_p50") is not None:
-        bits.append(f"traductor {ms['remote_p50']:.0f} ms")
+        bits.append(f"translator {ms['remote_p50']:.0f} ms")
     return " · ".join(bits)

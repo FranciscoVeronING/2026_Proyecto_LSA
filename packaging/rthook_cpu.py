@@ -1,4 +1,4 @@
-# PyInstaller: el motor es 100% CPU (Torch CPU). El GGUF corre en otro proceso.
+# PyInstaller: the engine is 100% CPU (Torch CPU). The GGUF runs in another process.
 import os
 import sys
 from pathlib import Path

@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller: ILSA.exe, clasificador CPU, sin llama.cpp ni GGUF."""
+"""PyInstaller: ILSA.exe, CPU classifier, no llama.cpp or GGUF."""
 
 from pathlib import Path
 

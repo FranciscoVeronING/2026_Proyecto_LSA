@@ -1,4 +1,4 @@
-"""Si falta un módulo en desarrollo, lo instala con el mismo Python de ILSA."""
+"""If a module is missing in development, install it with ILSA's Python."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ def ensure_module(import_name: str, pip_spec: str) -> None:
         pass
     if getattr(sys, "frozen", False):
         raise ImportError(
-            f"No module named {import_name!r}. Reconstruí ILSA.exe con esa librería."
+            f"No module named {import_name!r}. Rebuild ILSA.exe with that library."
         )
     print(f"[ilsa] pip install {pip_spec}")
     subprocess.check_call(

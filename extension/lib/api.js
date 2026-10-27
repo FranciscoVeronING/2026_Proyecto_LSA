@@ -1,7 +1,7 @@
 /**
- * Cliente del motor en 127.0.0.1:8765.
- * Desde Meet (content script) Chrome trata el fetch como red local y lo
- * bloquea; ahí se pide al service worker. Popup/offscreen hablan directo.
+ * Engine client on 127.0.0.1:8765.
+ * From Meet (content script) Chrome treats the fetch as a local network
+ * request and blocks it; then we ask the service worker. Popup/offscreen talk directly.
  */
 
 const API_BASE = "http://127.0.0.1:8765";
@@ -37,7 +37,7 @@ async function apiViaWorker(path, options = {}) {
     body: options.body || null,
   });
   if (!reply || !reply.ok) {
-    throw new Error((reply && reply.error) || "ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
+    throw new Error((reply && reply.error) || "ILSA is not responding on 127.0.0.1:8765. Start the engine.");
   }
   return reply.data;
 }
@@ -54,7 +54,7 @@ async function apiDirect(path, options = {}) {
       headers,
     });
   } catch (_) {
-    throw new Error("Failed to fetch: ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
+    throw new Error("Failed to fetch: ILSA is not responding on 127.0.0.1:8765. Start the engine.");
   }
   const data = parseBody(await res.text());
   if (!res.ok) throw new Error(errorMessage(data, res.statusText));

@@ -1,1 +1,1 @@
-"""Compositor de .pose en RAM para el canvas de Meet (modo oyente)."""
+"""In-memory .pose compositor for the Meet canvas (hearing mode)."""

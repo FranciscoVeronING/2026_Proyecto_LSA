@@ -1,4 +1,4 @@
-"""Nombre de archivo en el servidor de T-pose: igualdad exacta de stem."""
+"""Filename on the T-pose server: exact stem match."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ _KEEP = re.compile(r"[^A-Z0-9Ñ]+")
 
 
 def tpose_stem(raw: str) -> str:
-    """Glosa del semántico → stem de `/tposes/{stem}.pose`."""
+    """Semantic gloss → stem of `/tposes/{stem}.pose`."""
     text = (raw or "").strip().upper()
     if not text:
         return ""
@@ -28,7 +28,7 @@ def tpose_stem(raw: str) -> str:
 
 
 def expand_spell(raw: str) -> list[str]:
-    """Parte una palabra en letras. CH y Ñ cuentan una. No aplica PAPA→PADRE."""
+    """Split a word into letters. CH and Ñ count as one. Does not apply PAPA→PADRE."""
     text = (raw or "").strip().upper().translate(_ACCENT)
     text = re.sub(r"[\s_\-]+", "", text)
     letters: list[str] = []

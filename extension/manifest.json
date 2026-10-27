@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "LSA Intérprete",
-  "version": "1.9.3",
-  "description": "LSA o voz a subtítulos en Meet, con el motor local ILSA.",
+  "name": "LSA Interpreter",
+  "version": "1.9.4",
+  "description": "LSA or speech to captions in Meet, with the local ILSA engine.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "LSA Intérprete",
+    "default_title": "LSA Interpreter",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

@@ -1,4 +1,4 @@
-"""stdout/logging → cola del panel de registros."""
+"""stdout/logging → queue for the log panel."""
 
 from __future__ import annotations
 

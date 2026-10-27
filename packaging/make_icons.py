@@ -1,4 +1,4 @@
-"""Recorta el logo y genera PNG/ICO de la app y la extensión."""
+"""Crop the logo and generate PNG/ICO for the app and the extension."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ def square_pad(im: Image.Image) -> Image.Image:
 
 def main() -> None:
     if not PNG.is_file():
-        raise SystemExit(f"Falta {PNG}")
+        raise SystemExit(f"Missing {PNG}")
     im = Image.open(PNG).convert("RGBA")
     cropped = square_pad(im)
     PNG.parent.mkdir(parents=True, exist_ok=True)

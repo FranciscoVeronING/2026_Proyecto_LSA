@@ -1,10 +1,10 @@
 /**
- * Iframe sandbox: **acá se extraen los landmarks** (MediaPipe Holistic WASM).
+ * Sandbox iframe: **landmarks are extracted here** (MediaPipe Holistic WASM).
  *
- * El padre manda píxeles `{ type: "frame", width, height, buffer }`.
- * Holistic devuelve esqueleto; este script postea
- * `{ type: "landmarks", pose, left_hand, right_hand }` al offscreen.
- * El backend nunca ve el JPEG.
+ * The parent sends pixels `{ type: "frame", width, height, buffer }`.
+ * Holistic returns a skeleton; this script posts
+ * `{ type: "landmarks", pose, left_hand, right_hand }` to offscreen.
+ * The backend never sees the JPEG.
  */
 
 /**
@@ -50,9 +50,9 @@ function locateFile(file) {
 }
 
 /**
- * El loader de Emscripten hace XHR del `.data`. Si falta el archivo (está en
- * .gitignore) o Chrome bloquea chrome-extension:// desde el sandbox, Holistic
- * nunca manda `ready`. Probamos extensión y, si falla, ILSA `/mediapipe/`.
+ * The Emscripten loader XHRs the `.data`. If the file is missing (it is in
+ * .gitignore) or Chrome blocks chrome-extension:// from the sandbox, Holistic
+ * never sends `ready`. Try the extension first; on failure, ILSA `/mediapipe/`.
  * @returns {Promise<void>}
  */
 async function resolveAssetBase() {
@@ -73,13 +73,13 @@ async function resolveAssetBase() {
     }
   }
   throw new Error(
-    "Falta holistic_solution_packed_assets.data. En la carpeta del repo corré: py -3 packaging/fetch_extension_assets.py y recargá la extensión. " +
+    "Missing holistic_solution_packed_assets.data. In the repo folder run: py -3 packaging/fetch_extension_assets.py and reload the extension. " +
       last
   );
 }
 
 /**
- * Logs internos de MediaPipe (I0000 / OpenGL) no aportan al debug de LSA.
+ * Internal MediaPipe logs (I0000 / OpenGL) do not help LSA debugging.
  * @param {any[]} args
  * @returns {boolean}
  */
@@ -118,13 +118,13 @@ function ensureCtx() {
 }
 
 /**
- * Instancia Holistic (complexity 0 = lite). `onResults` es la extracción
- * de pose + manos a partir del canvas `#input`.
+ * Instantiate Holistic (complexity 0 = lite). `onResults` is the extraction
+ * of pose + hands from the `#input` canvas.
  * @returns {Promise<void>}
  */
 async function init() {
   if (typeof Holistic !== "function") {
-    throw new Error("No cargó holistic.js en el sandbox");
+    throw new Error("holistic.js did not load in the sandbox");
   }
   await resolveAssetBase();
   holistic = new Holistic({ locateFile });
@@ -218,7 +218,7 @@ window.addEventListener("error", (event) => {
 });
 
 window.addEventListener("unhandledrejection", (event) => {
-  post({ type: "error", message: String(event.reason || "MediaPipe rechazó una promesa") });
+  post({ type: "error", message: String(event.reason || "MediaPipe rejected a promise") });
 });
 
 init().catch((err) => {

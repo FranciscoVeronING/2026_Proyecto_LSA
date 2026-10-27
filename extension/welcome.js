@@ -1,9 +1,9 @@
 /**
- * Guía: descargar ILSA (el exe/zip empaquetado) y comprobar que el motor responde.
+ * Guide: download ILSA (the packaged exe/zip) and check that the engine responds.
  *
- * El paquete NO sale de localhost: vive en `extension/bin/ILSA.zip` (lo genera
- * packaging/build_exe.bat) o en GitHub Releases. Un <a download> evita cargar
- * el archivo entero en memoria.
+ * The package does NOT leave localhost: it lives in `extension/bin/ILSA.zip`
+ * (built by packaging/build_exe.bat) or on GitHub Releases. An <a download>
+ * avoids loading the whole file into memory.
  */
 
 const PACKAGED_ZIP = chrome.runtime.getURL("bin/ILSA.zip");
@@ -17,7 +17,7 @@ const btnExe = document.getElementById("btn-exe");
 const exeHint = document.getElementById("exe-hint");
 
 /**
- * ¿Hay un ILSA.zip dentro de la extensión? HEAD, sin bajar el binario.
+ * Is there an ILSA.zip inside the extension? HEAD, without downloading the binary.
  * @param {string} url
  * @returns {Promise<boolean>}
  */
@@ -31,7 +31,7 @@ async function resourceExists(url) {
 }
 
 /**
- * Dispara la descarga del navegador (no navega a una URL).
+ * Trigger a browser download (does not navigate to a URL).
  * @param {string} url
  * @param {string} filename
  */
@@ -46,54 +46,54 @@ function saveAs(url, filename) {
 }
 
 /**
- * Baja ILSA.zip desde la extensión o, si no está, desde GitHub Releases.
+ * Download ILSA.zip from the extension or, if missing, from GitHub Releases.
  * @returns {Promise<void>}
  */
 async function downloadIlsa() {
   btnExe.disabled = true;
-  exeHint.textContent = "Preparando descarga…";
+  exeHint.textContent = "Preparing download…";
   try {
     if (await resourceExists(PACKAGED_ZIP)) {
       saveAs(PACKAGED_ZIP, "ILSA.zip");
       exeHint.textContent =
-        "Listo. Descomprimí ILSA.zip, abrí ILSA.exe y dejá esa ventana abierta.";
+        "Done. Unzip ILSA.zip, open ILSA.exe, and leave that window open.";
       return;
     }
     if (await resourceExists(RELEASE_ZIP)) {
       saveAs(RELEASE_ZIP, "ILSA.zip");
       exeHint.textContent =
-        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta.";
+        "Downloading from GitHub. Unzip, open ILSA.exe, and leave the window open.";
       return;
     }
     exeHint.textContent =
-      "No se encuentra ILSA.zip en el release ilsa.";
+      "ILSA.zip was not found in the ilsa release.";
   } catch (err) {
-    exeHint.textContent = err && err.message ? err.message : "No se pudo descargar ILSA.";
+    exeHint.textContent = err && err.message ? err.message : "Could not download ILSA.";
   } finally {
     btnExe.disabled = false;
   }
 }
 
 /**
- * GET /health: ILSA ya está corriendo en este PC.
+ * GET /health: ILSA is already running on this PC.
  * @returns {Promise<void>}
  */
 async function refreshHealth() {
   try {
     const h = await LsaApi.health();
-    if (!h.ok) throw new Error("pipeline no listo");
+    if (!h.ok) throw new Error("pipeline not ready");
     dot.classList.add("on");
-    const mode = h.mode === "hearing" ? "oyente · voz → subtítulos" : "sordo · LSA";
+    const mode = h.mode === "hearing" ? "hearing · voice → captions" : "signer · LSA";
     const extra =
       h.mode === "hearing"
-        ? "Transcripción lista."
+        ? "Transcription ready."
         : h.semantic_ready
-          ? "Traductor listo."
-          : "Traductor no disponible.";
-    healthText.textContent = `ILSA en marcha (${mode}). ${extra}`;
+          ? "Translator ready."
+          : "Translator unavailable.";
+    healthText.textContent = `ILSA running (${mode}). ${extra}`;
   } catch {
     dot.classList.remove("on");
-    healthText.textContent = "ILSA no está abierto. Descargalo, ejecutalo y volvé a comprobar.";
+    healthText.textContent = "ILSA is not open. Download it, run it, and check again.";
   }
 }
 

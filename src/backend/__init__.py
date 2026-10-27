@@ -1,1 +1,1 @@
-"""Motor local para la extensión (FastAPI en 127.0.0.1)."""
+"""Local engine for the extension (FastAPI on 127.0.0.1)."""
