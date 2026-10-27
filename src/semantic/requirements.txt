@@ -1,0 +1,32 @@
+# Dependencias de entrenar.py y evaluar_trial.py
+#
+# Unsloth no va en este archivo: en Windows su instalador puede reemplazar
+# torch CUDA por la build de CPU. Se instala al final con --no-deps.
+# unbabel-comet fija transformers<5: también va con --no-deps.
+# El orden completo está en README.md.
+
+datasets>=3.4,<4.4
+evaluate>=0.4
+nltk>=3.8
+rouge-score>=0.1
+absl-py>=2.0
+trl>=0.18,<=0.24
+transformers>=4.51,<=5.5
+accelerate>=0.30
+bitsandbytes>=0.45
+sentencepiece>=0.2
+protobuf>=4.0
+peft>=0.18
+llama-cpp-python>=0.3
+bert-score==0.3.13
+bleurt-pytorch
+entmax>=1.1
+jsonargparse==3.13.1
+pytorch-lightning>=2.2
+lightning-utilities
+lightning-fabric
+torchmetrics
+sacrebleu>=2.0
+portalocker
+tabulate
+lxml
