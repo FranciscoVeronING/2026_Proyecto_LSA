@@ -1,4 +1,4 @@
-"""Carga y traduce los dos canales. Un lock serializa la inferencia."""
+"""Load and run both channels. One lock serializes inference."""
 
 from __future__ import annotations
 
@@ -67,17 +67,17 @@ class Channel:
         paths = list_ggufs(self.directory)
         if not paths:
             raise FileNotFoundError(
-                f"[semantic] No hay {PRIMARY_GGUF} ni {BACKUP_GGUF} en {self.directory}."
+                f"[semantic] Missing {PRIMARY_GGUF} and {BACKUP_GGUF} in {self.directory}."
             )
         loaded: Optional[LoadedModel] = None
         for path in paths:
             loaded = load_gguf(path, n_threads, self.name)
             if loaded is not None:
-                print(f"[semantic] Activo {self.name}: {loaded.path}", flush=True)
+                print(f"[semantic] Active {self.name}: {loaded.path}", flush=True)
                 break
         if loaded is None:
             names = ", ".join(p.name for p in paths)
-            raise RuntimeError(f"[semantic] Ningún GGUF de {self.name} cargó ({names}).")
+            raise RuntimeError(f"[semantic] No GGUF loaded for {self.name} ({names}).")
         self.models = [loaded]
         self.active = 0
         loaded.pin_system(self.system_prompt)
@@ -102,7 +102,7 @@ class Channel:
             collapsed = " ".join(collapse_letter_digit_runs(tokens))
             if collapsed != raw:
                 print(
-                    f"[semantic] Deletreo/números juntados: {raw!r} → {collapsed!r}",
+                    f"[semantic] Collapsed letter/digit run: {raw!r} → {collapsed!r}",
                     flush=True,
                 )
             raw = collapsed
@@ -123,11 +123,11 @@ class Channel:
                 return text, model.path.name
             except Exception as exc:
                 last_err = exc
-                print(f"[semantic] Fallo {self.name} {model.path.name}: {exc}", flush=True)
+                print(f"[semantic] Fail {self.name} {model.path.name}: {exc}", flush=True)
                 if model.path.name.lower() == PRIMARY_GGUF:
-                    print(f"[semantic] Conmutando {self.name} a {BACKUP_GGUF}", flush=True)
+                    print(f"[semantic] Switching {self.name} to {BACKUP_GGUF}", flush=True)
                     self.try_load_backup()
-        raise RuntimeError(f"[semantic] /{self.name} sin modelo usable: {last_err}")
+        raise RuntimeError(f"[semantic] /{self.name} has no usable model: {last_err}")
 
     def close(self) -> None:
         for model in self.models:
@@ -145,10 +145,10 @@ def infer_slot() -> Iterator[float]:
     t0 = time.perf_counter()
     got = _INFER_LOCK.acquire(blocking=False)
     if not got:
-        print("[semantic] Cola: el modelo está ocupado, esperando…", flush=True)
+        print("[semantic] Queue: model busy, waiting…", flush=True)
         _INFER_LOCK.acquire()
         waited = time.perf_counter() - t0
-        print(f"[semantic] Cola: entra a inferir tras {waited:.1f}s", flush=True)
+        print(f"[semantic] Queue: starting inference after {waited:.1f}s", flush=True)
     else:
         waited = 0.0
     try:
@@ -204,21 +204,21 @@ def load_models(force: bool = False) -> None:
             n_threads = _n_threads()
             SIGN.system_prompt = _read_sys_prompt(SIGN_DIR, _DEFAULT_SIGN_PROMPT)
             HEARING.system_prompt = _read_sys_prompt(HEARING_DIR, _DEFAULT_HEARING_PROMPT)
-            print("[semantic] Warmup: GGUF locales por canal.", flush=True)
+            print("[semantic] Warmup: local GGUF per channel.", flush=True)
             for ch in (SIGN, HEARING):
                 names = []
                 if ch.directory.is_dir():
                     names = sorted(p.name for p in ch.directory.iterdir())
                 print(
-                    f"[semantic] Dir {ch.name} {ch.directory}: {names or '(vacío o no existe)'}",
+                    f"[semantic] Dir {ch.name} {ch.directory}: {names or '(empty or missing)'}",
                     flush=True,
                 )
             SIGN.load_primary(n_threads)
             HEARING.load_primary(n_threads)
             _LOADED = True
-            print(f"[semantic] Cargado sign → {SIGN.current.path if SIGN.current else '—'}", flush=True)
+            print(f"[semantic] Loaded sign → {SIGN.current.path if SIGN.current else '—'}", flush=True)
             print(
-                f"[semantic] Cargado hearing → {HEARING.current.path if HEARING.current else '—'}",
+                f"[semantic] Loaded hearing → {HEARING.current.path if HEARING.current else '—'}",
                 flush=True,
             )
         except Exception as exc:

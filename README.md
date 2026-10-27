@@ -1,39 +1,41 @@
-# Servicio semántico LSA
+# LSA semantic service
 
-Rama **semantic-cloud**. Microservicio CPU que traduce glosas LSA ↔ español rioplatense con GGUF locales. Lo consume ILSA (edge). No hay cámara, entrenamiento ni memoria de conversación.
+Branch **semantic-cloud**. CPU microservice that translates LSA glosses ↔ Rioplatense Spanish with local GGUF files. ILSA (edge) is the client. No camera, training, or conversation memory.
 
-Cada petición es independiente: system prompt + enunciado actual.
+Each request is independent: system prompt + current utterance.
 
-## Canales
+Model **system prompts** (`sys_prompt.txt`) and the user prefixes `Glosas:` / `Español:` stay in Spanish. That is the training contract of the SLMs, not UI copy.
 
-| Canal | HTTP | Dirección | Carpeta | GGUF principal | Backup |
+## Channels
+
+| Channel | HTTP | Direction | Folder | Primary GGUF | Backup |
 | --- | --- | --- | --- | --- | --- |
-| sign | `POST /sign` | glosas → español | `src/semantic/models/sign/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
-| hearing | `POST /hearing` | español → glosas | `src/semantic/models/hearing/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
+| sign | `POST /sign` | glosses → Spanish | `src/semantic/models/sign/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
+| hearing | `POST /hearing` | Spanish → glosses | `src/semantic/models/hearing/` | `qwen2.5-1.5b.gguf` | `llama-3.2-1b.gguf` |
 
-En cada carpeta va el `sys_prompt.txt` de **ese** entrenamiento. Los dos Qwen son pesos distintos con el mismo nombre de archivo: no copiar el mismo GGUF a las dos carpetas.
+Each folder needs the `sys_prompt.txt` from **that** training run. The two Qwen files share a filename and **not** the same weights. Do not copy one GGUF into both folders.
 
-Qwen usa ChatML; Llama 3.2 usa plantilla Llama 3.
+Qwen uses ChatML; Llama 3.2 uses the Llama 3 template.
 
-En RAM entra el principal de cada canal. El backup se carga solo si el principal falla en una inferencia.
+RAM holds the primary model per channel. The backup loads only if the primary fails at inference time.
 
-`POST /sign` une letras o dígitos sueltos (`P E P A` → `Pepa`, `6 7` → `67`) antes del modelo.
+`POST /sign` joins consecutive single letters or digits (`P E P A` → `Pepa`, `6 7` → `67`) before the model.
 
-## Arranque
+## Startup
 
-`run_semantic_server.py` deja `CUDA_VISIBLE_DEVICES` vacío, carga ambos GGUF, ancla el system prompt en el KV y **después** abre el puerto. Cold start típico: 1–3 min. ILSA espera `GET /health` con HTTP 200 y `ready: true` antes de prender el clasificador.
+`run_semantic_server.py` clears `CUDA_VISIBLE_DEVICES`, loads both GGUFs, pins the system prompt in the KV cache, then opens the port. Typical cold start: 1–3 min. ILSA waits for `GET /health` with HTTP 200 and `ready: true` before enabling the local classifier.
 
-Cola en proceso: un lock, una inferencia a la vez. La espera va en `queued_ms`. No hay cola entre instancias de Cloud Run.
+In-process queue: one lock, one inference at a time. Wait time is `queued_ms`. There is no shared queue across Cloud Run instances.
 
 ## API
 
-CORS `*`. JSON UTF-8. Sin historial.
+CORS `*`. UTF-8 JSON. No history.
 
-Si existe `LSA_SEMANTIC_TOKEN`, hace falta `Authorization: Bearer …` o `X-LSA-Token`.
+If `LSA_SEMANTIC_TOKEN` is set, send `Authorization: Bearer …` or `X-LSA-Token`.
 
 ### `GET /health`
 
-`ready` es verdadero solo con ambos motores en RAM. `primary_present` es el archivo en disco, no el mmap.
+`ready` is true only when both engines are in RAM. `primary_present` means the file is on disk, not that it is mmap'd.
 
 ```json
 {
@@ -84,32 +86,32 @@ Si existe `LSA_SEMANTIC_TOKEN`, hace falta `Authorization: Bearer …` o `X-LSA-
 }
 ```
 
-Errores: **401** token; **422** JSON; **503** sin GGUF o inferencia vacía. En cold start el puerto no existe: reintentar `/health`.
+Errors: **401** bad token; **422** invalid JSON; **503** missing GGUF or empty generation. During cold start the port is not open: retry `/health`.
 
-## Inferencia
+## Inference
 
-| Parámetro | Valor |
+| Parameter | Value |
 | --- | --- |
-| GPU | ninguna (`n_gpu_layers=0`) |
-| `n_ctx` | 2048 si hay `PORT` (Cloud Run); 4096 local. Override: `LSA_N_CTX` |
+| GPU | none (`n_gpu_layers=0`) |
+| `n_ctx` | 2048 if `PORT` is set (Cloud Run); 4096 locally. Override: `LSA_N_CTX` |
 | `n_batch` | 512 |
-| hilos | `cpu_count()` |
+| threads | `cpu_count()` |
 | `max_tokens` | 64 |
 | `temperature` | 0.1 |
 
-El system prompt se evalúa una vez al arranque. Cada request rebobina a ese prefijo. En logs, `eval` chico es el atajo; `Prefijo sys no coincide` reevalúa todo (~8 s en CPU 1.5B).
+The system prompt is evaluated once at startup. Each request rewinds to that prefix. In logs, a small `eval` is the fast path; `sys prefix mismatch` re-evaluates the full prompt (~8 s on CPU 1.5B).
 
-## Código
+## Code layout
 
 ```
 run_semantic_server.py   warmup + Uvicorn
 src/semantic/
   api.py                 FastAPI
-  service.py             canales sign / hearing, cola, carga
-  engine.py              llama-cpp, plantillas, KV del sys
-  gguf.py                listado en disco
-  config.py              rutas y sampling
-  literals.py            deletreo (solo /sign)
+  service.py             sign / hearing channels, queue, load
+  engine.py              llama-cpp, chat templates, sys KV
+  gguf.py                on-disk inventory
+  config.py              paths and sampling
+  literals.py            letter/digit collapse (/sign only)
   models/sign/           GGUF + sys_prompt.txt
   models/hearing/        GGUF + sys_prompt.txt
 ```
@@ -126,14 +128,14 @@ curl -s -X POST http://127.0.0.1:8787/hearing -H "Content-Type: application/json
 
 ## Cloud Run
 
-`*.gguf` está en `.gitignore`; `.gcloudignore` **sí** los manda si están en disco. Confirmar con `Get-ChildItem` antes del deploy.
+`*.gguf` is in `.gitignore`; `.gcloudignore` still ships them if they exist on disk. Check with `Get-ChildItem` before deploy.
 
 ```powershell
 cd "D:\Mis Archivos\Proyectos\2026_Proyecto_LSA"
-Copy-Item "RUTA\qwen-sign.gguf"    "src\semantic\models\sign\qwen2.5-1.5b.gguf" -Force
-Copy-Item "RUTA\llama-sign.gguf"   "src\semantic\models\sign\llama-3.2-1b.gguf" -Force
-Copy-Item "RUTA\qwen-hearing.gguf" "src\semantic\models\hearing\qwen2.5-1.5b.gguf" -Force
-Copy-Item "RUTA\llama-hearing.gguf" "src\semantic\models\hearing\llama-3.2-1b.gguf" -Force
+Copy-Item "PATH\qwen-sign.gguf"     "src\semantic\models\sign\qwen2.5-1.5b.gguf" -Force
+Copy-Item "PATH\llama-sign.gguf"    "src\semantic\models\sign\llama-3.2-1b.gguf" -Force
+Copy-Item "PATH\qwen-hearing.gguf"  "src\semantic\models\hearing\qwen2.5-1.5b.gguf" -Force
+Copy-Item "PATH\llama-hearing.gguf" "src\semantic\models\hearing\llama-3.2-1b.gguf" -Force
 
 gcloud run deploy ilsa-semantic-service `
   --source . `
@@ -145,8 +147,8 @@ gcloud run deploy ilsa-semantic-service `
   --allow-unauthenticated
 ```
 
-Mínimo de instancias 0. `--cpu-boost` cubre el mmap. No dejar 4 vCPU fijas: el costo mensual es alto.
+Min instances: 0. `--cpu-boost` covers mmap. Do not keep 4 vCPUs allocated idle; monthly cost is high.
 
-ILSA: poll `/health` hasta `ready`; luego `/sign` y `/hearing`. Ping a `/health` solo mientras la sesión está abierta.
+ILSA: poll `/health` until `ready`, then `/sign` and `/hearing`. Optional `/health` ping only while a session is open.
 
-URL típica: `https://ilsa-semantic-service-705664945052.us-central1.run.app`
+Typical URL: `https://ilsa-semantic-service-705664945052.us-central1.run.app`

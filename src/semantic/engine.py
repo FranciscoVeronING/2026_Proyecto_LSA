@@ -1,4 +1,4 @@
-"""Un GGUF en RAM: mmap, plantilla de chat y ancla del system prompt."""
+"""One GGUF in RAM: mmap, chat template, and pinned system prompt."""
 
 from __future__ import annotations
 
@@ -117,7 +117,7 @@ def open_llama(model_path: str, n_threads: int):
         llm = Llama(**kwargs, use_mlock=True)
     except (TypeError, RuntimeError, OSError):
         llm = Llama(**kwargs)
-    print(f"[semantic] Llama() listo en {time.perf_counter() - t0:.1f}s", flush=True)
+    print(f"[semantic] Llama() ready in {time.perf_counter() - t0:.1f}s", flush=True)
     return llm
 
 
@@ -140,8 +140,8 @@ class LoadedModel:
         self.sys_tokens = tokens
         self.sys_n = len(tokens)
         print(
-            f"[semantic] Sys anclado {self.path.name}: {self.sys_n} tokens "
-            f"en {time.perf_counter() - t0:.1f}s",
+            f"[semantic] Sys pinned {self.path.name}: {self.sys_n} tokens "
+            f"in {time.perf_counter() - t0:.1f}s",
             flush=True,
         )
 
@@ -161,8 +161,8 @@ class LoadedModel:
         if tokens and self.sys_n and self.sys_tokens:
             if tokens[: self.sys_n] != self.sys_tokens:
                 print(
-                    f"[semantic] Prefijo sys no coincide {self.path.name}; "
-                    f"re-eval completo ({len(tokens)} tokens)",
+                    f"[semantic] sys prefix mismatch {self.path.name}; "
+                    f"full re-eval ({len(tokens)} tokens)",
                     flush=True,
                 )
                 self.sys_n = 0
@@ -176,7 +176,7 @@ class LoadedModel:
         elif tokens:
             extra = f" prompt_tokens={len(tokens)}"
         print(
-            f"[semantic] /{route} con {self.path.name} para {raw!r}{extra}",
+            f"[semantic] /{route} with {self.path.name} for {raw!r}{extra}",
             flush=True,
         )
         t0 = time.perf_counter()
@@ -189,9 +189,9 @@ class LoadedModel:
         )
         text = (response["choices"][0].get("text") or "").strip()
         if not text:
-            raise RuntimeError("respuesta vacía")
+            raise RuntimeError("empty response")
         print(
-            f"[semantic] {route} {self.path.name} en {time.perf_counter() - t0:.1f}s → {text!r}",
+            f"[semantic] {route} {self.path.name} in {time.perf_counter() - t0:.1f}s → {text!r}",
             flush=True,
         )
         return text
@@ -201,17 +201,17 @@ class LoadedModel:
             if hasattr(self.llm, "close"):
                 self.llm.close()
         except Exception as exc:
-            print(f"[semantic] Error al liberar {self.path.name}: {exc}")
+            print(f"[semantic] Error releasing {self.path.name}: {exc}")
 
 
 def load_gguf(path: Path, n_threads: int, channel: str) -> LoadedModel | None:
     resolved = path.resolve()
-    print(f"[semantic] Intentando {channel}: {resolved}", flush=True)
+    print(f"[semantic] Trying {channel}: {resolved}", flush=True)
     try:
         llm = open_llama(str(resolved), n_threads=n_threads)
     except Exception as exc:
-        print(f"[semantic] Falló inicialización {path.name}: {exc}", flush=True)
+        print(f"[semantic] Init failed {path.name}: {exc}", flush=True)
         return None
     chat = chat_format_for(path)
-    print(f"[semantic] GGUF en RAM ({channel}): {resolved} ({chat})", flush=True)
+    print(f"[semantic] GGUF in RAM ({channel}): {resolved} ({chat})", flush=True)
     return LoadedModel(path=resolved, llm=llm, chat=chat)

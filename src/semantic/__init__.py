@@ -1,1 +1,1 @@
-"""Servicio semántico LSA: POST /sign y POST /hearing sobre GGUF locales."""
+"""LSA semantic service: POST /sign and POST /hearing over local GGUF files."""

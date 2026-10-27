@@ -1,4 +1,4 @@
-"""Rutas y parámetros de inferencia. Sin descargas en runtime."""
+"""Paths and inference settings. No runtime downloads."""
 
 import os
 from pathlib import Path

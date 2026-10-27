@@ -1,8 +1,8 @@
-# Servidor semántico (GGUF + FastAPI). Sin visión, cámara ni UI de ILSA.
+# Semantic HTTP service (GGUF + FastAPI). No vision, camera, or ILSA UI.
 #
 #   pip install -r requirements.txt
 #
-# llama-cpp-python: rueda CPU si existe; si no, se compila (hace falta cmake/g++).
+# llama-cpp-python: CPU wheel if available; otherwise it compiles (needs cmake/g++).
 #   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 
 fastapi==0.115.12

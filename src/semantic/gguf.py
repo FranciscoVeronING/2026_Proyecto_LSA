@@ -1,4 +1,4 @@
-"""Inventario de GGUF en disco. No carga pesos."""
+"""On-disk GGUF inventory. Does not load weights."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from semantic.config import BACKUP_GGUF, PRIMARY_GGUF
 
 
 def list_ggufs(folder: Path) -> list[Path]:
-    """Principal, backup y el resto de ``*.gguf`` del directorio."""
+    """Primary, backup, then any other ``*.gguf`` in the folder."""
     found: list[Path] = []
     seen: set[Path] = set()
     for name in (PRIMARY_GGUF, BACKUP_GGUF):

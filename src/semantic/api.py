@@ -19,7 +19,7 @@ from semantic.service import (
     translate_sign,
 )
 
-app = FastAPI(title="LSA semántico", version="1.0.0")
+app = FastAPI(title="LSA semantic", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -50,7 +50,7 @@ def _check_token(authorization: Optional[str], x_lsa_token: Optional[str]) -> No
     if not got and x_lsa_token:
         got = x_lsa_token.strip()
     if got != expected:
-        raise HTTPException(status_code=401, detail="Token inválido")
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 @app.get("/health")
@@ -113,11 +113,11 @@ def hearing(
 
 
 def warmup() -> None:
-    print("[semantic] Cargando GGUF desde src/semantic/models/…", flush=True)
+    print("[semantic] Loading GGUF from src/semantic/models/…", flush=True)
     load_models()
     snap = health_snapshot()
     print(f"[semantic] sign RAM: {snap.get('sign_gguf')}", flush=True)
     print(f"[semantic] hearing RAM: {snap.get('hearing_gguf')}", flush=True)
     if not snap.get("ready"):
-        raise RuntimeError("[semantic] Warmup incompleto: falta GGUF en RAM")
-    print("[semantic] Listo GET /health POST /sign POST /hearing", flush=True)
+        raise RuntimeError("[semantic] Warmup incomplete: GGUF not in RAM")
+    print("[semantic] Ready GET /health POST /sign POST /hearing", flush=True)

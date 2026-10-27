@@ -4,7 +4,7 @@ __pycache__/
 venv/
 .env
 
-# Modelos GGUF (van en la imagen o se montan al correr)
+# GGUF weights (ship in the image or mount at runtime)
 *.gguf
 src/semantic/outputs/
 src/semantic/bin/

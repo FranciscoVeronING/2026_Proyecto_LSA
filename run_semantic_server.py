@@ -1,5 +1,5 @@
 """
-Entrypoint. Local: 127.0.0.1:8787. Cloud Run: 0.0.0.0 y variable PORT.
+Entrypoint. Local: 127.0.0.1:8787. Cloud Run: 0.0.0.0 and PORT.
 
     python run_semantic_server.py
 """
@@ -20,7 +20,7 @@ from semantic.config import LOCAL_PORT
 def main(argv=None) -> None:
     env_port = os.environ.get("PORT")
     in_cloud = bool(env_port)
-    parser = argparse.ArgumentParser(description="API semántica LSA (/sign, /hearing).")
+    parser = argparse.ArgumentParser(description="LSA semantic API (/sign, /hearing).")
     parser.add_argument("--host", default="0.0.0.0" if in_cloud else "127.0.0.1")
     parser.add_argument(
         "--port",
@@ -34,9 +34,9 @@ def main(argv=None) -> None:
     from semantic.api import app, warmup
     import uvicorn
 
-    print("[semantic] Cargando GGUF antes de abrir el puerto…", flush=True)
+    print("[semantic] Loading GGUF before opening the port…", flush=True)
     warmup()
-    print(f"[semantic] Escuchando {host}:{port}", flush=True)
+    print(f"[semantic] Listening {host}:{port}", flush=True)
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 

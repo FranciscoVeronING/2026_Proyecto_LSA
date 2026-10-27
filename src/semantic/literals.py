@@ -1,4 +1,4 @@
-"""Une letras o dígitos sueltos consecutivos antes de ``POST /sign``."""
+"""Join consecutive single letters or digits before ``POST /sign``."""
 
 from __future__ import annotations
 
