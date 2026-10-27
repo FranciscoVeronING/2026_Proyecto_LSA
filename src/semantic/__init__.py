@@ -1,1 +1,1 @@
-"""Traductor semántico: glosas ↔ español. El GGUF vive en run_semantic_server.py."""
+"""Servicio semántico LSA: POST /sign y POST /hearing sobre GGUF locales."""

@@ -1,37 +1,30 @@
-"""Junta letras y dígitos seguidos antes de mandarlos al GGUF.
-
-Vive acá (no en ``core``) para que el servidor semántico no dependa de ILSA.
-"""
+"""Une letras o dígitos sueltos consecutivos antes de ``POST /sign``."""
 
 from __future__ import annotations
 
 from typing import Sequence
 
 
-def classify_gloss(gloss: str) -> str:
-    """Clasifica una glosa normalizada: digit | letter | other."""
-    if not gloss or len(gloss) != 1:
+def _kind(token: str) -> str:
+    if not token or len(token) != 1:
         return "other"
-    if gloss.isdigit():
+    if token.isdigit():
         return "digit"
-    if gloss.isalpha():
+    if token.isalpha():
         return "letter"
     return "other"
 
 
-def collapse_literal_runs(glosses: Sequence[str]) -> list[str]:
-    """
-    ``NOMBRE MIO P E P A`` → ``["NOMBRE", "MIO", "Pepa"]``
-    ``EDAD TUYO 6 7`` → ``["EDAD", "TUYO", "67"]``
-    """
+def collapse_letter_digit_runs(glosses: Sequence[str]) -> list[str]:
+    """``NOMBRE MIO P E P A`` → ``NOMBRE MIO Pepa``; ``6 7`` → ``67``."""
     out: list[str] = []
     i = 0
     n = len(glosses)
     while i < n:
-        kind = classify_gloss(glosses[i])
+        kind = _kind(glosses[i])
         if kind in {"letter", "digit"}:
             j = i + 1
-            while j < n and classify_gloss(glosses[j]) == kind:
+            while j < n and _kind(glosses[j]) == kind:
                 j += 1
             run = [str(g) for g in glosses[i:j]]
             if len(run) >= 2:
