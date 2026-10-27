@@ -76,5 +76,21 @@ def model_folder_name(model_name: str) -> str:
     return model_name.replace("/", "_").replace(":", "_")
 
 
+def gguf_dir_for(output_base: Path, model_name: str) -> Path:
+    return output_base / f"{model_folder_name(model_name)}_gguf"
+
+
+def select_models(ids: list[str] | None) -> list[dict]:
+    """Filtra MODELS. Sin ids devuelve todos, en el orden de la lista."""
+    if not ids:
+        return list(MODELS)
+    by_id = {model["id"]: model for model in MODELS}
+    missing = [model_id for model_id in ids if model_id not in by_id]
+    if missing:
+        known = ", ".join(model["id"] for model in MODELS)
+        raise ValueError(f"IDs desconocidos: {', '.join(missing)}. Válidos: {known}")
+    return [by_id[model_id] for model_id in ids]
+
+
 def is_large_model(model_name: str) -> bool:
     return "3b" in model_name.lower()

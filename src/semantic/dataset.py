@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from config import DEFAULT_DATASET, SPLIT_SEED, TEST_SIZE
-from gloss_format import join_glosas
+from gloss import join_glosas
 
 
 def load_json(path: Path) -> Any:

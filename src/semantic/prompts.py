@@ -1,4 +1,4 @@
-"""Prompt de sistema y plantilla de chat."""
+"""System prompt y mensajes de entrenamiento o evaluación."""
 from __future__ import annotations
 
 from pathlib import Path

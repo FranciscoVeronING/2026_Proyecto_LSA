@@ -1,4 +1,4 @@
-# Dependencias de train_all_models.py
+# Dependencias de train.py y eval_trial.py
 #
 # Unsloth no está acá: en Windows `pip install unsloth` baja torch CPU.
 # Orden: torch+cu126 → este archivo → unsloth --no-deps
@@ -13,4 +13,22 @@ trl>=0.18,<=0.24
 transformers>=4.51,<=5.5
 accelerate>=0.30
 bitsandbytes>=0.45
+sentencepiece>=0.2
+protobuf>=4.0
 peft>=0.18
+
+# Métricas neuronales (eval). unbabel-comet fija transformers<5: instalarlo
+# aparte con --no-deps para no pisar el torch CUDA de Unsloth.
+#   pip install unbabel-comet==2.2.7 --no-deps
+bert-score==0.3.13
+bleurt-pytorch
+entmax>=1.1
+jsonargparse==3.13.1
+pytorch-lightning>=2.2
+lightning-utilities
+lightning-fabric
+torchmetrics
+sacrebleu>=2.0
+portalocker
+tabulate
+lxml

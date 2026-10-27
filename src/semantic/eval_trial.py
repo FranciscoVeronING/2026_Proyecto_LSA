@@ -1,4 +1,4 @@
-"""Evalúa los GGUF sobre dataset_trial y arma la comparativa en Markdown."""
+"""Evalúa los GGUF ya exportados sobre dataset_trial.json y escribe la comparativa."""
 from __future__ import annotations
 
 import argparse
@@ -9,16 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from config import (
-    DEFAULT_OUTPUT_BASE,
-    DEFAULT_TRIAL_DATASET,
-    MODELS,
-    model_folder_name,
-)
+from config import DEFAULT_OUTPUT_BASE, DEFAULT_TRIAL_DATASET, gguf_dir_for, select_models
 from dataset import load_trial_groups, load_trial_samples
-from gguf_export import find_q4_gguf
+from gguf import find_q4_gguf, load_gguf_engine
 from io_utils import log_line, save_json
-from metrics import evaluar_pares, load_gguf_engine
+from metrics import copiar_puntajes, evaluar_pares
 from prompts import load_system_prompt
 
 
@@ -32,17 +27,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _gguf_dir_for(output_base: Path, model_name: str) -> Path:
-    folder = model_folder_name(model_name)
-    return output_base / f"{folder}_gguf"
-
-
 def rank_key(metrics: dict) -> tuple:
     return (
         metrics["accuracy_normalized_percent"],
         metrics["bleu_score"],
         metrics["rouge_l_score"],
         metrics["meteor_score"],
+        metrics["bertscore_f1"],
+        metrics["comet_score"],
+        metrics["bleurt_score"],
         -(metrics["avg_latency_ms"] or 10**9),
     )
 
@@ -111,22 +104,23 @@ def fmt(value, width: int = 8) -> str:
 
 def print_table(results: list[dict]) -> None:
     print()
-    print("=" * 108)
+    print("=" * 132)
     print("COMPARATIVA dataset_trial  (español → glosas)")
-    print("=" * 108)
+    print("=" * 132)
     print(
         f"{'#':>2}  {'modelo':<28} {'back':<10} {'acc_n':>7} {'acc_s':>7} "
-        f"{'bleu':>7} {'rouge':>7} {'meteor':>7} {'lat_ms':>8}"
+        f"{'bleu':>7} {'rouge':>7} {'meteor':>7} {'bert':>7} {'comet':>7} {'bleurt':>7} {'lat_ms':>8}"
     )
-    print("-" * 108)
+    print("-" * 132)
     for i, model in enumerate(results, start=1):
         print(
             f"{i:>2}  {model['id']:<28} {model['backend']:<10} "
             f"{fmt(model['accuracy_normalized_percent'], 7)} {fmt(model['accuracy_strict_percent'], 7)} "
             f"{fmt(model['bleu_score'], 7)} {fmt(model['rouge_l_score'], 7)} {fmt(model['meteor_score'], 7)} "
+            f"{fmt(model['bertscore_f1'], 7)} {fmt(model['comet_score'], 7)} {fmt(model['bleurt_score'], 7)} "
             f"{fmt(model.get('avg_latency_ms'), 8)}"
         )
-    print("=" * 108)
+    print("=" * 132)
 
 
 def _cell(text: str) -> str:
@@ -145,8 +139,8 @@ def build_markdown(report: dict) -> str:
         "",
         "## Ranking",
         "",
-        "| # | Modelo | Backend | Acc. norm. % | Acc. estricta % | BLEU | ROUGE-L | METEOR | Latencia ms |",
-        "|---|--------|---------|--------------|-----------------|------|---------|--------|-------------|",
+        "| # | Modelo | Backend | Acc. norm. % | Acc. estricta % | BLEU | ROUGE-L | METEOR | BERTScore | COMET | BLEURT | Latencia ms |",
+        "|---|--------|---------|--------------|-----------------|------|---------|--------|-----------|-------|--------|-------------|",
     ]
     for i, model in enumerate(ranked, start=1):
         lat = model.get("avg_latency_ms")
@@ -155,7 +149,8 @@ def build_markdown(report: dict) -> str:
             f"| {i} | {model['label']} | {model['backend']} | "
             f"{model['accuracy_normalized_percent']:.2f} | {model['accuracy_strict_percent']:.2f} | "
             f"{model['bleu_score']:.2f} | {model['rouge_l_score']:.2f} | "
-            f"{model['meteor_score']:.2f} | {lat_s} |"
+            f"{model['meteor_score']:.2f} | {model['bertscore_f1']:.2f} | {model['comet_score']:.2f} | "
+            f"{model['bleurt_score']:.2f} | {lat_s} |"
         )
 
     if report.get("failures"):
@@ -205,14 +200,11 @@ def main() -> int:
         print(f"Error: no está el trial set en {dataset_path}", file=sys.stderr)
         return 1
 
-    selected = MODELS
-    if args.models:
-        wanted = set(args.models)
-        selected = [model for model in MODELS if model["id"] in wanted]
-        missing = wanted - {model["id"] for model in selected}
-        if missing:
-            print(f"IDs desconocidos: {', '.join(sorted(missing))}", file=sys.stderr)
-            return 1
+    try:
+        selected = select_models(args.models)
+    except ValueError as exc:
+        print(exc, file=sys.stderr)
+        return 1
 
     system_prompt = load_system_prompt()
     samples = load_trial_samples(dataset_path)
@@ -235,7 +227,7 @@ def main() -> int:
     with open(log_path, "w", encoding="utf-8") as log_fp:
         log_line(log_fp, f"Trial eval: {len(samples)} oraciones, {len(selected)} modelos")
         for model_cfg in selected:
-            gguf_dir = _gguf_dir_for(output_base, model_cfg["name"])
+            gguf_dir = gguf_dir_for(output_base, model_cfg["name"])
             try:
                 gguf_file = find_q4_gguf(gguf_dir)
             except FileNotFoundError as exc:
@@ -266,12 +258,7 @@ def main() -> int:
                 "label": model_cfg["label"],
                 "backend": "gguf",
                 "gguf": str(gguf_file),
-                "accuracy_strict_percent": metrics["accuracy_strict_percent"],
-                "accuracy_normalized_percent": metrics["accuracy_normalized_percent"],
-                "bleu_score": metrics["bleu_score"],
-                "rouge_l_score": metrics["rouge_l_score"],
-                "meteor_score": metrics["meteor_score"],
-                "avg_latency_ms": metrics["avg_latency_ms"],
+                **copiar_puntajes(metrics),
                 "by_category": accuracy_por_categoria(metrics["ejemplos_evaluados"]),
                 "ejemplos_evaluados": metrics["ejemplos_evaluados"],
             }
@@ -279,7 +266,8 @@ def main() -> int:
             log_line(
                 log_fp,
                 f"OK {model_cfg['id']} acc_norm={metrics['accuracy_normalized_percent']}% "
-                f"bleu={metrics['bleu_score']}",
+                f"bleu={metrics['bleu_score']} bert={metrics['bertscore_f1']} "
+                f"comet={metrics['comet_score']} bleurt={metrics['bleurt_score']}",
             )
 
         results.sort(key=rank_key, reverse=True)

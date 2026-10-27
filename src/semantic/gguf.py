@@ -1,13 +1,21 @@
-"""Export GGUF Q4_K_M. En Windows con espacios en la ruta usa D:/temp_gguf (o LSA_GGUF_TEMP)."""
+"""Exportar, encontrar y correr un GGUF Q4_K_M.
+
+En Windows, si la ruta del repo tiene espacios, Unsloth escribe el binario
+en D:/temp_gguf (o en LSA_GGUF_TEMP) y después se mueve a outputs/.
+"""
 from __future__ import annotations
 
 import os
 import shutil
 import tempfile
+import time
 from pathlib import Path
 from typing import Any, TextIO
 
+from config import GGUF_STOP, MAX_NEW_TOKENS, MAX_SEQ_LENGTH
+from gloss import limpiar_salida_modelo
 from io_utils import log_line
+from prompts import build_messages
 
 
 def default_gguf_scratch_dir() -> Path:
@@ -65,3 +73,29 @@ def find_q4_gguf(gguf_dir: Path) -> Path:
     if not candidates:
         raise FileNotFoundError(f"No se encontró binario GGUF en {gguf_dir}")
     return candidates[0]
+
+
+def load_gguf_engine(gguf_path: Path):
+    from llama_cpp import Llama
+
+    return Llama(
+        model_path=str(gguf_path),
+        n_gpu_layers=-1,
+        n_ctx=MAX_SEQ_LENGTH,
+        verbose=False,
+    )
+
+
+def predecir_glosas(llm: Any, system_prompt: str, spanish: str) -> tuple[str, float]:
+    messages = build_messages(system_prompt, spanish)
+    started = time.perf_counter()
+    response = llm.create_chat_completion(
+        messages=messages,
+        max_tokens=MAX_NEW_TOKENS,
+        temperature=0.0,
+        repeat_penalty=1.05,
+        stop=GGUF_STOP,
+    )
+    latency_ms = (time.perf_counter() - started) * 1000
+    raw = response["choices"][0]["message"]["content"].strip()
+    return limpiar_salida_modelo(raw), latency_ms

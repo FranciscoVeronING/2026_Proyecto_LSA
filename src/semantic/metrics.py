@@ -1,40 +1,28 @@
-"""BLEU / ROUGE / METEOR sobre GGUF. El módulo se llama metrics para no tapar `import evaluate`."""
+"""Puntúa predicciones de glosas. No se llama evaluate: ese nombre lo usa Hugging Face.
+
+Léxicas: accuracy, BLEU, ROUGE-L, METEOR.
+Neuronales: BERTScore, COMET, BLEURT, en metrics_neural.py.
+"""
 from __future__ import annotations
 
-import time
 from collections.abc import Sequence
 from typing import Any
 
-from config import GGUF_STOP, MAX_NEW_TOKENS, MAX_SEQ_LENGTH
-from gloss_format import limpiar_salida_modelo, normalizar_para_metricas
-from prompts import build_messages
+from gguf import predecir_glosas
+from gloss import normalizar_para_metricas
+from metrics_neural import mean_percent, score_neural_metrics
 
-
-def load_gguf_engine(gguf_path: Any):
-    from llama_cpp import Llama
-
-    return Llama(
-        model_path=str(gguf_path),
-        n_gpu_layers=-1,
-        n_ctx=MAX_SEQ_LENGTH,
-        verbose=False,
-    )
-
-
-def predecir_glosas(llm: Any, system_prompt: str, spanish: str) -> tuple[str, float]:
-    messages = build_messages(system_prompt, spanish)
-    started = time.time()
-    response = llm.create_chat_completion(
-        messages=messages,
-        max_tokens=MAX_NEW_TOKENS,
-        temperature=0.0,
-        repeat_penalty=1.05,
-        stop=GGUF_STOP,
-    )
-    latency_ms = (time.time() - started) * 1000
-    raw = response["choices"][0]["message"]["content"].strip()
-    predicho = limpiar_salida_modelo(raw)
-    return predicho, latency_ms
+SCORE_KEYS = (
+    "accuracy_strict_percent",
+    "accuracy_normalized_percent",
+    "bleu_score",
+    "rouge_l_score",
+    "meteor_score",
+    "bertscore_f1",
+    "comet_score",
+    "bleurt_score",
+    "avg_latency_ms",
+)
 
 
 def _max_score(metric, pred: str, refs: Sequence[str], key: str) -> float:
@@ -56,6 +44,7 @@ def evaluar_pares(
 
     predicciones: list[str] = []
     refs_multi: list[list[str]] = []
+    fuentes: list[str] = []
     latencies_ms: list[float] = []
     ejemplos: list[dict[str, Any]] = []
     exact_strict = 0
@@ -77,6 +66,7 @@ def evaluar_pares(
             exact_norm += 1
         predicciones.append(predicho)
         refs_multi.append(opciones)
+        fuentes.append(spanish)
         ejemplos.append(
             {
                 "category": item.get("category", ""),
@@ -99,6 +89,16 @@ def evaluar_pares(
         _max_score(meteor_metric, pred, refs, "meteor")
         for pred, refs in zip(predicciones, refs_multi)
     ]
+    neural = score_neural_metrics(predicciones, refs_multi, fuentes)
+    for row, bert_f1, comet_value, bleurt_value in zip(
+        ejemplos,
+        neural["bertscore_f1"],
+        neural["comet"],
+        neural["bleurt"],
+    ):
+        row["bertscore_f1"] = bert_f1
+        row["comet"] = comet_value
+        row["bleurt"] = bleurt_value
 
     return {
         "model_name": model_name,
@@ -110,6 +110,13 @@ def evaluar_pares(
         "bleu_score": round(bleu["bleu"] * 100, 2),
         "rouge_l_score": round((sum(rouge_scores) / total) * 100, 2) if total else 0.0,
         "meteor_score": round((sum(meteor_scores) / total) * 100, 2) if total else 0.0,
+        "bertscore_f1": mean_percent(neural["bertscore_f1"]),
+        "comet_score": mean_percent(neural["comet"]),
+        "bleurt_score": mean_percent(neural["bleurt"]),
         "avg_latency_ms": round(sum(latencies_ms) / len(latencies_ms), 2) if latencies_ms else 0.0,
         "ejemplos_evaluados": ejemplos,
     }
+
+
+def copiar_puntajes(metrics: dict[str, Any]) -> dict[str, Any]:
+    return {key: metrics[key] for key in SCORE_KEYS}
