@@ -3,21 +3,21 @@ __pycache__/
 .venv/
 .env
 
-# Caché de Unsloth (se regenera al entrenar)
+# Unsloth cache (recreated on training)
 unsloth_compiled_cache/
 src/semantic/unsloth_compiled_cache/
 _unsloth_temporary_saved_buffers/
 
-# Artefactos de entrenamiento (pesos, GGUF, logs)
+# Training artifacts (weights, GGUF, logs)
 src/semantic/logs/
 src/semantic/outputs/*
 
-# Conservar reportes livianos de evaluación
+# Keep the lightweight evaluation reports
 !src/semantic/outputs/eval_trial/
 !src/semantic/outputs/eval_trial/**
 !src/semantic/outputs/training_summary.json
 
-# Resto del proyecto (reconocimiento / web), no forma parte de este módulo
+# Rest of the project (recognition / web), outside this module
 dataset/
 videos/
 web/

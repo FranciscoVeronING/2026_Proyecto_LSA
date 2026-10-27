@@ -1,9 +1,9 @@
-"""Métricas de glosas LSA → español.
+"""Metrics for LSA glosses to Spanish.
 
-Superficie: BLEU (corpus, multi-referencia), ROUGE-L y METEOR (máximo por oración).
-Neuronales: BERTScore F1 (es), COMET (glosas como fuente) y BLEURT-20.
-Con varias referencias, las neuronales también toman el máximo por oración.
-``score_all`` devuelve todo en escala 0–100, más las listas por oración.
+Surface: corpus BLEU (multi-reference), ROUGE-L and METEOR (best reference per sentence).
+Neural: BERTScore F1 (es), COMET (glosses as the source), and BLEURT-20.
+With several references, the neural metrics also take the maximum per sentence.
+``score_all`` returns every score on a 0-100 scale, plus the per-sentence lists.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def mean_percent(values: list[float]) -> float:
 
 
 def score_surface(predictions: list[str], references: list[list[str]]) -> dict:
-    """BLEU de corpus y, por oración, el mejor ROUGE-L y METEOR entre referencias."""
+    """Corpus BLEU and, per sentence, the best ROUGE-L and METEOR across references."""
     import evaluate
 
     bleu_metric = evaluate.load("bleu")
@@ -47,7 +47,7 @@ def score_surface(predictions: list[str], references: list[list[str]]) -> dict:
 
 
 def score_all(predictions: list[str], references: list[list[str]], sources: list[str]) -> dict:
-    """Puntajes de corpus en 0–100 y listas crudas por oración."""
+    """Corpus scores on a 0-100 scale and raw per-sentence lists."""
     surface = score_surface(predictions, references)
     neural = score_neural_metrics(predictions, references, sources)
     total = len(predictions) or 1
@@ -71,14 +71,14 @@ def score_neural_metrics(
     references: list[list[str]],
     sources: list[str],
 ) -> dict[str, list[float]]:
-    """Devuelve listas por oración: bertscore_f1, comet y bleurt."""
+    """Return per-sentence lists: bertscore_f1, comet, and bleurt."""
     preds = [_blank(text) for text in predictions]
     refs = [[_blank(ref) for ref in group] or [" "] for group in references]
     srcs = [_blank(text) for text in sources]
     if not preds:
         return {"bertscore_f1": [], "comet": [], "bleurt": []}
 
-    print("Calculando BERTScore, COMET y BLEURT...", flush=True)
+    print("Scoring BERTScore, COMET, and BLEURT...", flush=True)
     bertscore = _bertscore(preds, refs)
     _empty_cache()
     comet = _max_over_refs(preds, refs, srcs, _comet_scores)
@@ -144,7 +144,7 @@ def _max_over_refs(predictions, references, sources, scorer) -> list[float]:
 
 
 def _patch_comet_encoder() -> None:
-    """transformers 5 ya no devuelve (hidden, pooler, layers) como tupla."""
+    """transformers 5 no longer returns (hidden, pooler, layers) as a tuple."""
     from comet.encoders.xlmr import XLMREncoder
 
     if getattr(XLMREncoder.forward, "_lsa_patched", False):
@@ -161,7 +161,7 @@ def _patch_comet_encoder() -> None:
         last_hidden_states = outputs.last_hidden_state
         all_layers = outputs.hidden_states
         if not all_layers:
-            raise RuntimeError("XLM-R no devolvió las capas ocultas que COMET necesita")
+            raise RuntimeError("XLM-R did not return the hidden layers COMET needs")
         return {
             "sentemb": last_hidden_states[:, 0, :],
             "wordemb": last_hidden_states,
@@ -205,7 +205,7 @@ def _comet_scores(predictions: list[str], references: list[str], sources: list[s
 
 
 def _patch_bleurt_import() -> None:
-    """transformers 5 movió APIs que bleurt-pytorch importa al cargar."""
+    """transformers 5 moved APIs that bleurt-pytorch imports at load time."""
     import sys
     import types
 
@@ -240,7 +240,7 @@ def _patch_bleurt_import() -> None:
         class BertTokenizerFast:
             @classmethod
             def from_pretrained(cls, *args, **kwargs):
-                raise OSError("Este BLEURT no usa el tokenizer WordPiece.")
+                raise OSError("This BLEURT model does not use the WordPiece tokenizer.")
 
         stub.BertTokenizerFast = BertTokenizerFast
         sys.modules[module_name] = stub
@@ -274,7 +274,7 @@ def _bleurt_bundle():
             for name, piece in (("cls", "[CLS]"), ("sep", "[SEP]"), ("pad", "[PAD]"))
         }
         if any(token_id < 0 for token_id in special.values()):
-            raise RuntimeError("El SentencePiece de BLEURT-20 no tiene [CLS], [SEP] o [PAD]")
+            raise RuntimeError("The BLEURT-20 SentencePiece model has no [CLS], [SEP], or [PAD]")
 
         model = BleurtForSequenceClassification.from_pretrained(BLEURT_MODEL)
         model.eval()

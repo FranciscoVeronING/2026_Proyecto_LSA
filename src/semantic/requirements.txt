@@ -1,9 +1,9 @@
-# Dependencias de entrenar.py y evaluar_trial.py
+# Dependencies for train.py and eval_trial.py
 #
-# Unsloth no va en este archivo: en Windows su instalador puede reemplazar
-# torch CUDA por la build de CPU. Se instala al final con --no-deps.
-# unbabel-comet fija transformers<5: también va con --no-deps.
-# El orden completo está en README.md.
+# Unsloth is not listed here: on Windows its installer can replace the CUDA
+# torch build with the CPU build. Install it last, with --no-deps.
+# unbabel-comet pins transformers<5: install that with --no-deps too.
+# The full order is in README.md.
 
 datasets>=3.4,<4.4
 evaluate>=0.4

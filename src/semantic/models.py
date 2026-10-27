@@ -1,4 +1,4 @@
-"""Catálogo de LLMs y rutas del módulo semántico."""
+"""LLM catalog and paths for the semantic module."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
 LOGS = ROOT / "logs"
-DATASET_GLOSAS = ROOT / "dataset_glosas.json"
+DATASET_GLOSSES = ROOT / "dataset_glosses.json"
 DATASET_TRIAL = ROOT / "dataset_trial.json"
 PROMPT = ROOT / "prompts" / "sys_prompt.txt"
 EVAL_TRIAL = OUTPUTS / "eval_trial"
@@ -15,12 +15,12 @@ MAX_SEQ_LENGTH = 2048
 MAX_NEW_TOKENS = 24
 GGUF_STOP = ["\n", "<|im_end|>", "<|end_of_text|>", "<|eot_id|>", "<|endoftext|>"]
 
-# chat_template e instruction/response los usa solo el entrenamiento (Unsloth).
-MODELOS = [
+# chat_template and instruction/response are used only by training (Unsloth).
+MODELS = [
     {
         "id": "qwen2.5-0.5b",
         "name": "unsloth/Qwen2.5-0.5B-Instruct",
-        "label": "Qwen2.5 0.5B (ultra liviano)",
+        "label": "Qwen2.5 0.5B (ultra light)",
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
@@ -36,7 +36,7 @@ MODELOS = [
     {
         "id": "qwen2.5-3b",
         "name": "unsloth/Qwen2.5-3B-Instruct",
-        "label": "Qwen2.5 3B (mayor capacidad)",
+        "label": "Qwen2.5 3B (higher capacity)",
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
@@ -60,15 +60,15 @@ MODELOS = [
 ]
 
 
-def carpeta_modelo(model_name: str) -> str:
+def model_folder(model_name: str) -> str:
     return model_name.replace("/", "_")
 
 
-def elegir_modelos(ids: list[str] | None) -> tuple[list[dict], list[str]]:
-    """Devuelve los modelos pedidos y los IDs que no existen en el catálogo."""
+def select_models(ids: list[str] | None) -> tuple[list[dict], list[str]]:
+    """Return the requested models and the ids missing from the catalog."""
     if not ids:
-        return list(MODELOS), []
-    pedidos = set(ids)
-    elegidos = [modelo for modelo in MODELOS if modelo["id"] in pedidos]
-    faltantes = sorted(pedidos - {modelo["id"] for modelo in elegidos})
-    return elegidos, faltantes
+        return list(MODELS), []
+    requested = set(ids)
+    chosen = [model for model in MODELS if model["id"] in requested]
+    missing = sorted(requested - {model["id"] for model in chosen})
+    return chosen, missing
