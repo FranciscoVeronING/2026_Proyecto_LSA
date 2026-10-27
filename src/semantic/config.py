@@ -1,4 +1,4 @@
-"""Rutas, hiperparámetros y lista de modelos."""
+"""Paths, hyperparameters, and the model list."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,12 +6,12 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_OUTPUT_BASE = SCRIPT_DIR / "outputs"
 DEFAULT_LOG_DIR = SCRIPT_DIR / "logs"
-DEFAULT_DATASET = SCRIPT_DIR / "dataset_glosas.json"
+DEFAULT_DATASET = SCRIPT_DIR / "dataset_glosses.json"
 DEFAULT_TRIAL_DATASET = SCRIPT_DIR / "dataset_trial.json"
 DEFAULT_PROMPT_FILE = SCRIPT_DIR / "prompts" / "sys_prompt.txt"
 
 MAX_SEQ_LENGTH = 2048
-# El system prompt ocupa ~1600 tokens. 512 recorta la glosa y no entrena la respuesta.
+# The system prompt is about 1600 tokens. 512 truncates the gloss and drops the answer.
 TRAIN_SEQ_LENGTH = 2048
 SPLIT_SEED = 3407
 TEST_SIZE = 0.15
@@ -32,7 +32,7 @@ MODELS = [
     {
         "id": "qwen2.5-0.5b",
         "name": "unsloth/Qwen2.5-0.5B-Instruct",
-        "label": "Qwen2.5 0.5B (ultra liviano)",
+        "label": "Qwen2.5 0.5B (ultra light)",
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
@@ -48,7 +48,7 @@ MODELS = [
     {
         "id": "qwen2.5-3b",
         "name": "unsloth/Qwen2.5-3B-Instruct",
-        "label": "Qwen2.5 3B (mayor capacidad)",
+        "label": "Qwen2.5 3B (higher capacity)",
         "chat_template": "qwen-2.5",
         "instruction_part": "<|im_start|>user\n",
         "response_part": "<|im_start|>assistant\n",
@@ -81,14 +81,14 @@ def gguf_dir_for(output_base: Path, model_name: str) -> Path:
 
 
 def select_models(ids: list[str] | None) -> list[dict]:
-    """Filtra MODELS. Sin ids devuelve todos, en el orden de la lista."""
+    """Filter MODELS. With no ids, return every model in list order."""
     if not ids:
         return list(MODELS)
     by_id = {model["id"]: model for model in MODELS}
     missing = [model_id for model_id in ids if model_id not in by_id]
     if missing:
         known = ", ".join(model["id"] for model in MODELS)
-        raise ValueError(f"IDs desconocidos: {', '.join(missing)}. Válidos: {known}")
+        raise ValueError(f"Unknown ids: {', '.join(missing)}. Valid ids: {known}")
     return [by_id[model_id] for model_id in ids]
 
 

@@ -1,38 +1,40 @@
-# Semántico oyente — español → glosas LSA
+# Hearing semantic model — Spanish to LSA glosses
 
-Esta rama entrena y evalúa modelos que convierten una oración en español rioplatense en una secuencia de glosas de Lengua de Señas Argentina.
+This branch trains and evaluates models that turn one Rioplatense Spanish sentence into an Argentine Sign Language (LSA) gloss sequence.
 
 ```
 Me llamo Maite.  →  YO NOMBRE Maite
 ```
 
-El entrenamiento es LoRA 4-bit con Unsloth. Al terminar se fusiona el adaptador, se exporta un GGUF `Q4_K_M` y ese binario es lo que se evalúa. Hace falta una GPU NVIDIA.
+Training is 4-bit LoRA with Unsloth. The adapter is then merged, exported as a `Q4_K_M` GGUF, and that binary is what gets scored. An NVIDIA GPU is required.
 
-## Archivos
+The source sentences in the datasets stay in Spanish. That is the language the model glosses. The system prompt and the user prefix (`Español:`) are also in Spanish. Code, docs, logs, and category ids are in English.
 
-Todo el código está en `src/semantic/`.
+## Files
 
-| Archivo | Rol |
-|---------|-----|
-| `train.py` | Entrena los modelos en serie |
-| `train_model.py` | Un modelo: LoRA, export GGUF y evaluación del split |
-| `eval_trial.py` | Compara los GGUF ya exportados sobre `dataset_trial.json` |
-| `config.py` | Rutas, hiperparámetros y la lista de modelos |
-| `dataset.py` | Carga el dataset de entrenamiento y el trial |
-| `prompts.py` | System prompt y mensajes user/assistant |
-| `prompts/sys_prompt.txt` | Instrucciones de glosado que ve el modelo |
-| `gloss.py` | Une tokens, limpia la salida y normaliza para comparar |
-| `gguf.py` | Exporta el GGUF, lo encuentra y genera una glosa |
-| `metrics.py` | Accuracy, BLEU, ROUGE-L y METEOR, y arma el informe |
-| `metrics_neural.py` | BERTScore, COMET y BLEURT |
-| `io_utils.py` | Log con timestamp y JSON de las corridas |
-| `dataset_glosas.json` | Pares de entrenamiento |
-| `dataset_trial.json` | Paráfrasis de evaluación, fuera del split |
-| `requirements_train.txt` | Dependencias. Unsloth no está incluido |
+All code lives in `src/semantic/`.
 
-`metrics.py` no se llama `evaluate` porque ese nombre lo usa la librería de Hugging Face.
+| File | Role |
+|------|------|
+| `train.py` | Trains the models one after another |
+| `train_model.py` | One model: LoRA, GGUF export, and split evaluation |
+| `eval_trial.py` | Compares exported GGUF files on `dataset_trial.json` |
+| `config.py` | Paths, hyperparameters, and the model list |
+| `dataset.py` | Loads the training set and the trial set |
+| `prompts.py` | System prompt and user/assistant messages |
+| `prompts/sys_prompt.txt` | Glossing instructions the model sees |
+| `gloss.py` | Joins tokens, cleans output, and normalizes for scoring |
+| `gguf.py` | Exports the GGUF, finds it, and generates one gloss |
+| `metrics.py` | Accuracy, BLEU, ROUGE-L, and METEOR, and builds the report |
+| `metrics_neural.py` | BERTScore, COMET, and BLEURT |
+| `io_utils.py` | Timestamped logs and JSON run files |
+| `dataset_glosses.json` | Training pairs |
+| `dataset_trial.json` | Held-out paraphrases, not part of the split |
+| `requirements_train.txt` | Dependencies. Unsloth is not included |
 
-## Entorno
+`metrics.py` is not named `evaluate` because Hugging Face already uses that name.
+
+## Environment
 
 ```powershell
 conda create -n lsa-train python=3.11 -y
@@ -46,17 +48,17 @@ pip install unbabel-comet==2.2.7 --no-deps
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-`pip install unsloth` sin `--no-deps` puede reemplazar el torch con CUDA por uno de CPU. `unbabel-comet` fija `transformers<5`; con `--no-deps` no pisa torch ni transformers.
+`pip install unsloth` without `--no-deps` can replace the CUDA torch build with a CPU build. `unbabel-comet` pins `transformers<5`; `--no-deps` keeps it from replacing torch or transformers.
 
-`llama-cpp-python` no está en el requirements: hace falta un wheel con CUDA de la máquina para evaluar el GGUF. Si Unsloth no ve la GPU, reinstalar `torch+cu126` y después `unsloth unsloth_zoo --no-deps`.
+`llama-cpp-python` is not in the requirements file. Evaluation needs a CUDA wheel built for this machine. If Unsloth does not see the GPU, reinstall `torch+cu126` and then `unsloth unsloth_zoo --no-deps`.
 
-Si el repo está en una ruta con espacios (`Mis Archivos`), Unsloth puede fallar al escribir el `.gguf`. El export usa `D:\temp_gguf`, o la carpeta de `LSA_GGUF_TEMP`:
+If the repo path contains spaces (`Mis Archivos`), Unsloth can fail while writing the `.gguf`. Export uses `D:\temp_gguf`, or the directory in `LSA_GGUF_TEMP`:
 
 ```powershell
 $env:LSA_GGUF_TEMP = "D:\temp_gguf"
 ```
 
-## Entrenar
+## Train
 
 ```powershell
 cd src\semantic
@@ -65,63 +67,63 @@ python train.py --models qwen2.5-0.5b llama-3.2-1b --continue-on-error
 python train.py --max-steps 20
 ```
 
-IDs: `qwen2.5-0.5b`, `qwen2.5-1.5b`, `qwen2.5-3b`, `llama-3.2-1b`, `smollm2-1.7b`. Sin `--models` entrena los cinco, en ese orden. `--continue-on-error` sigue con el próximo modelo si uno falla. `--max-steps` mayor que 0 reemplaza las épocas.
+Ids: `qwen2.5-0.5b`, `qwen2.5-1.5b`, `qwen2.5-3b`, `llama-3.2-1b`, `smollm2-1.7b`. With no `--models`, all five train in that order. `--continue-on-error` moves on to the next model after a failure. `--max-steps` greater than 0 replaces the epoch count.
 
-Cada ejemplo incluye el system prompt y queda en unos 1600 tokens. En una GPU de 16 GB o menos el batch es 1 con acumulación 16 (el lote efectivo sigue siendo 16). En el modelo de 3B el checkpointing descarga activaciones a RAM. Con más de 16 GB el batch es 4 (2 en el 3B).
+Each example includes the system prompt and is about 1600 tokens. On a GPU of 16 GB or less the batch size is 1 with 16 accumulation steps (the effective batch stays 16). The 3B model offloads activations to RAM. Above 16 GB the batch size is 4 (2 for the 3B).
 
-| Parámetro | Valor |
+| Parameter | Value |
 |-----------|-------|
-| Cuantización de carga | 4-bit |
+| Load quantization | 4-bit |
 | LoRA r / alpha / dropout | 16 / 32 / 0 |
-| Módulos | q, k, v, o, gate, up, down |
-| Épocas | 5 |
-| Learning rate | 5e-4; 3e-4 en el 3B |
-| Optimizador | adamw 8-bit |
-| Scheduler | cosine, 10 pasos de warmup |
-| Largo máximo | 2048. Con 512 el prompt se come la glosa |
-| Loss | solo la respuesta del asistente |
+| Modules | q, k, v, o, gate, up, down |
+| Epochs | 5 |
+| Learning rate | 5e-4; 3e-4 for the 3B |
+| Optimizer | adamw 8-bit |
+| Scheduler | cosine, 10 warmup steps |
+| Max length | 2048. At 512 the prompt cuts off the gloss |
+| Loss | assistant response only |
 | Split | 85/15, seed 3407 |
-| Generación | temperature 0, máximo 48 tokens nuevos |
+| Generation | temperature 0, at most 48 new tokens |
 
-Salida, que no se versiona:
+Output is not committed:
 
-- `outputs/<modelo>/` adaptador y `metrics.json` del split
-- `outputs/<modelo>_gguf/` binario `Q4_K_M`
-- `outputs/training_summary.json` acumulado de todas las corridas
-- `outputs/training_batch_<fecha>.json` una corrida
-- `logs/train_all_<fecha>.log`
+- `outputs/<model>/` adapter and split `metrics.json`
+- `outputs/<model>_gguf/` `Q4_K_M` binary
+- `outputs/training_summary.json` every run so far
+- `outputs/training_batch_<date>.json` one run
+- `logs/train_all_<date>.log`
 
-Esos registros de evaluaciones anteriores se conservan. Una corrida nueva agrega una entrada al summary y no borra los JSON ni los logs viejos.
+Older evaluation records stay in place. A new run appends to the summary and does not delete previous JSON files or logs.
 
-## Evaluar el trial
+## Evaluate the trial set
 
-`dataset_trial.json` no entra en el split. Cada ítem tiene una categoría, una lista de glosas y varias paráfrasis en español que comparten esa glosa.
+`dataset_trial.json` is not part of the split. Each item has a category, one gloss list, and several Spanish paraphrases that share those glosses.
 
 ```powershell
 python eval_trial.py
 python eval_trial.py --models qwen2.5-0.5b
 ```
 
-Lee el GGUF de `outputs/`. Si un modelo no tiene binario, lo saltea y lo anota en el reporte. Escribe en `outputs/eval_trial/`:
+It reads GGUF files from `outputs/`. A model with no binary is skipped and listed in the report. Files go to `outputs/eval_trial/`:
 
-- `comparativa_trial_<fecha>.json` y `.md`, más el `.log`
-- `comparativa_trial_latest.json` y `.md`, copia de la última corrida
+- `trial_compare_<date>.json`, `.md`, and `.log`
+- `trial_compare_latest.json` and `.md`, a copy of the latest run
 
-Las comparativas fechadas anteriores no se pisan.
+Dated reports from earlier runs are left as they are.
 
-## Métricas
+## Metrics
 
-Sobre el texto generado por el GGUF, no sobre el modelo en entrenamiento:
+Scores are computed on text generated by the GGUF, not on the model still in training:
 
-- Accuracy estricta: la predicción es idéntica a alguna referencia.
-- Accuracy normalizada: igual, pero en minúsculas y sin puntuación.
-- BLEU, ROUGE-L y METEOR. Con varias referencias se toma el máximo de ROUGE-L y METEOR.
-- BERTScore F1 (`lang=es`), COMET (`Unbabel/wmt22-comet-da`) y BLEURT-20. También usan el máximo por oración. COMET recibe la oración en español como fuente y las glosas como hipótesis y referencia. El promedio se informa en escala 0–100, igual que BLEU.
+- Strict accuracy: the prediction matches a reference exactly.
+- Normalized accuracy: the same match after lowercasing and stripping punctuation.
+- BLEU, ROUGE-L, and METEOR. With several references, ROUGE-L and METEOR keep the best one.
+- BERTScore F1 (`lang=es`), COMET (`Unbabel/wmt22-comet-da`), and BLEURT-20. These also keep the best reference. COMET gets the Spanish sentence as the source and the glosses as hypothesis and reference. The mean is reported on a 0–100 scale, like BLEU.
 
-La primera evaluación descarga BERTScore, COMET y BLEURT.
+The first evaluation downloads BERTScore, COMET, and BLEURT.
 
-## Datos y glosas
+## Data and glosses
 
-`dataset_glosas.json` es una lista `dataset` de `{ "spanish", "glosses" }`. `glosses` es una lista de tokens. El cargador los une con espacios y no compacta deletreos ni cifras: un nombre propio es una palabra (`Maite`) y un DNI es un solo token (`18333940`).
+`dataset_glosses.json` is a `dataset` list of `{ "spanish", "glosses" }`. `glosses` is a token list. The loader joins them with spaces and does not merge spelled-out letters or digits: a proper name is one word (`Maite`) and an ID number is one token (`18333940`).
 
-El criterio de glosado está en `prompts/sys_prompt.txt`. En resumen: glosas léxicas en mayúsculas, se conserva la Ñ, el orden es tiempo → lugar → sujeto → objeto → posesivo → número → verbo → pregunta o negación, el género explícito se marca con `O` o `A` después de la seña base, y no se traducen artículos ni preposiciones. La respuesta del modelo es solo la secuencia de glosas.
+The glossing rules are in `prompts/sys_prompt.txt`. In short: lexical glosses are uppercase, Ñ is kept, the order is time, place, subject, object, possessive, number, verb, then question or negation, explicit gender is `O` or `A` after the base sign, and articles and prepositions are not translated. The model answer is only the gloss sequence.

@@ -1,8 +1,8 @@
-"""BERTScore, COMET y BLEURT para español → glosas LSA.
+"""BERTScore, COMET, and BLEURT for Spanish to LSA glosses.
 
-Con varias referencias se usa el máximo por oración. COMET toma la oración
-en español como fuente. Los valores crudos se promedian y se pasan a escala 0–100
-con ``mean_percent``, igual que BLEU, ROUGE-L y METEOR.
+When an item has several references, the best score for that sentence is kept.
+COMET uses the Spanish sentence as the source. Raw scores are averaged and
+scaled to 0–100 with ``mean_percent``, the same scale as BLEU, ROUGE-L, and METEOR.
 """
 from __future__ import annotations
 
@@ -26,14 +26,14 @@ def score_neural_metrics(
     references: list[list[str]],
     sources: list[str],
 ) -> dict[str, list[float]]:
-    """Devuelve listas por oración: bertscore_f1, comet y bleurt."""
+    """Per-sentence lists: bertscore_f1, comet, and bleurt."""
     preds = [_blank(text) for text in predictions]
     refs = [[_blank(ref) for ref in group] or [" "] for group in references]
     srcs = [_blank(text) for text in sources]
     if not preds:
         return {"bertscore_f1": [], "comet": [], "bleurt": []}
 
-    print("Calculando BERTScore, COMET y BLEURT...", flush=True)
+    print("Scoring BERTScore, COMET, and BLEURT...", flush=True)
     bertscore = _bertscore(preds, refs)
     _empty_cache()
     comet = _max_over_refs(preds, refs, srcs, _comet_scores)
@@ -99,7 +99,7 @@ def _max_over_refs(predictions, references, sources, scorer) -> list[float]:
 
 
 def _patch_comet_encoder() -> None:
-    """transformers 5 ya no devuelve (hidden, pooler, layers) como tupla."""
+    """transformers 5 no longer returns (hidden, pooler, layers) as a tuple."""
     from comet.encoders.xlmr import XLMREncoder
 
     if getattr(XLMREncoder.forward, "_lsa_patched", False):
@@ -116,7 +116,7 @@ def _patch_comet_encoder() -> None:
         last_hidden_states = outputs.last_hidden_state
         all_layers = outputs.hidden_states
         if not all_layers:
-            raise RuntimeError("XLM-R no devolvió las capas ocultas que COMET necesita")
+            raise RuntimeError("XLM-R did not return the hidden layers COMET needs")
         return {
             "sentemb": last_hidden_states[:, 0, :],
             "wordemb": last_hidden_states,
@@ -160,7 +160,7 @@ def _comet_scores(predictions: list[str], references: list[str], sources: list[s
 
 
 def _patch_bleurt_import() -> None:
-    """transformers 5 movió APIs que bleurt-pytorch importa al cargar."""
+    """transformers 5 moved APIs that bleurt-pytorch imports at load time."""
     import sys
     import types
 
@@ -195,7 +195,7 @@ def _patch_bleurt_import() -> None:
         class BertTokenizerFast:
             @classmethod
             def from_pretrained(cls, *args, **kwargs):
-                raise OSError("Este BLEURT no usa el tokenizer WordPiece.")
+                raise OSError("This BLEURT build does not use the WordPiece tokenizer.")
 
         stub.BertTokenizerFast = BertTokenizerFast
         sys.modules[module_name] = stub
@@ -229,7 +229,7 @@ def _bleurt_bundle():
             for name, piece in (("cls", "[CLS]"), ("sep", "[SEP]"), ("pad", "[PAD]"))
         }
         if any(token_id < 0 for token_id in special.values()):
-            raise RuntimeError("El SentencePiece de BLEURT-20 no tiene [CLS], [SEP] o [PAD]")
+            raise RuntimeError("The BLEURT-20 SentencePiece model has no [CLS], [SEP], or [PAD]")
 
         model = BleurtForSequenceClassification.from_pretrained(BLEURT_MODEL)
         model.eval()

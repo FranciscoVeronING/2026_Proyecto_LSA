@@ -1,15 +1,15 @@
-"""Puntúa predicciones de glosas. No se llama evaluate: ese nombre lo usa Hugging Face.
+"""Score gloss predictions. This module is not named evaluate: Hugging Face owns that name.
 
-Léxicas: accuracy, BLEU, ROUGE-L, METEOR.
-Neuronales: BERTScore, COMET, BLEURT, en metrics_neural.py.
+Lexical: accuracy, BLEU, ROUGE-L, METEOR.
+Neural: BERTScore, COMET, and BLEURT, in metrics_neural.py.
 """
 from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import Any
 
-from gguf import predecir_glosas
-from gloss import normalizar_para_metricas
+from gguf import predict_glosses
+from gloss import normalize_for_metrics
 from metrics_neural import mean_percent, score_neural_metrics
 
 SCORE_KEYS = (
@@ -29,11 +29,11 @@ def _max_score(metric, pred: str, refs: Sequence[str], key: str) -> float:
     return max(metric.compute(predictions=[pred], references=[ref])[key] for ref in refs)
 
 
-def evaluar_pares(
+def evaluate_pairs(
     llm: Any,
     system_prompt: str,
     test_items: Sequence[dict[str, str]],
-    refs_por_espanol: dict[str, list[str]],
+    refs_by_spanish: dict[str, list[str]],
     model_name: str,
 ) -> dict[str, Any]:
     import evaluate as hf_evaluate
@@ -42,56 +42,56 @@ def evaluar_pares(
     rouge_metric = hf_evaluate.load("rouge")
     meteor_metric = hf_evaluate.load("meteor")
 
-    predicciones: list[str] = []
+    predictions: list[str] = []
     refs_multi: list[list[str]] = []
-    fuentes: list[str] = []
+    sources: list[str] = []
     latencies_ms: list[float] = []
-    ejemplos: list[dict[str, Any]] = []
+    examples: list[dict[str, Any]] = []
     exact_strict = 0
     exact_norm = 0
 
     for item in test_items:
         spanish = item["spanish"]
         gold = item["glosses"]
-        opciones = refs_por_espanol.get(spanish, [gold])
-        predicho, latency_ms = predecir_glosas(llm, system_prompt, spanish)
+        options = refs_by_spanish.get(spanish, [gold])
+        predicted, latency_ms = predict_glosses(llm, system_prompt, spanish)
         latencies_ms.append(latency_ms)
-        exact_ok = predicho in opciones
+        exact_ok = predicted in options
         norm_ok = any(
-            normalizar_para_metricas(predicho) == normalizar_para_metricas(ref) for ref in opciones
+            normalize_for_metrics(predicted) == normalize_for_metrics(ref) for ref in options
         )
         if exact_ok:
             exact_strict += 1
         if norm_ok:
             exact_norm += 1
-        predicciones.append(predicho)
-        refs_multi.append(opciones)
-        fuentes.append(spanish)
-        ejemplos.append(
+        predictions.append(predicted)
+        refs_multi.append(options)
+        sources.append(spanish)
+        examples.append(
             {
                 "category": item.get("category", ""),
-                "espanol": spanish,
-                "esperado": gold,
-                "predicho": predicho,
+                "spanish": spanish,
+                "expected": gold,
+                "predicted": predicted,
                 "exact_strict": exact_ok,
                 "exact_normalized": norm_ok,
             }
         )
 
     total = len(test_items)
-    bleu = bleu_metric.compute(predictions=predicciones, references=refs_multi)
+    bleu = bleu_metric.compute(predictions=predictions, references=refs_multi)
 
     rouge_scores = [
         _max_score(rouge_metric, pred, refs, "rougeL")
-        for pred, refs in zip(predicciones, refs_multi)
+        for pred, refs in zip(predictions, refs_multi)
     ]
     meteor_scores = [
         _max_score(meteor_metric, pred, refs, "meteor")
-        for pred, refs in zip(predicciones, refs_multi)
+        for pred, refs in zip(predictions, refs_multi)
     ]
-    neural = score_neural_metrics(predicciones, refs_multi, fuentes)
+    neural = score_neural_metrics(predictions, refs_multi, sources)
     for row, bert_f1, comet_value, bleurt_value in zip(
-        ejemplos,
+        examples,
         neural["bertscore_f1"],
         neural["comet"],
         neural["bleurt"],
@@ -114,9 +114,9 @@ def evaluar_pares(
         "comet_score": mean_percent(neural["comet"]),
         "bleurt_score": mean_percent(neural["bleurt"]),
         "avg_latency_ms": round(sum(latencies_ms) / len(latencies_ms), 2) if latencies_ms else 0.0,
-        "ejemplos_evaluados": ejemplos,
+        "evaluated_examples": examples,
     }
 
 
-def copiar_puntajes(metrics: dict[str, Any]) -> dict[str, Any]:
+def copy_scores(metrics: dict[str, Any]) -> dict[str, Any]:
     return {key: metrics[key] for key in SCORE_KEYS}

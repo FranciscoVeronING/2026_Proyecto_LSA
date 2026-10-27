@@ -1,4 +1,4 @@
-"""Evalúa los GGUF ya exportados sobre dataset_trial.json y escribe la comparativa."""
+"""Score exported GGUF models on dataset_trial.json and write the comparison."""
 from __future__ import annotations
 
 import argparse
@@ -13,13 +13,13 @@ from config import DEFAULT_OUTPUT_BASE, DEFAULT_TRIAL_DATASET, gguf_dir_for, sel
 from dataset import load_trial_groups, load_trial_samples
 from gguf import find_q4_gguf, load_gguf_engine
 from io_utils import log_line, save_json
-from metrics import copiar_puntajes, evaluar_pares
+from metrics import copy_scores, evaluate_pairs
 from prompts import load_system_prompt
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Evalúa GGUF entrenados sobre el trial set (español → glosas).",
+        description="Evaluate trained GGUF models on the trial set (Spanish to glosses).",
     )
     parser.add_argument("--output-base", default=str(DEFAULT_OUTPUT_BASE))
     parser.add_argument("--dataset", default=str(DEFAULT_TRIAL_DATASET))
@@ -40,10 +40,10 @@ def rank_key(metrics: dict) -> tuple:
     )
 
 
-def accuracy_por_categoria(ejemplos: list[dict[str, Any]]) -> dict[str, dict[str, float]]:
+def accuracy_by_category(examples: list[dict[str, Any]]) -> dict[str, dict[str, float]]:
     buckets: dict[str, list[bool]] = defaultdict(list)
-    for item in ejemplos:
-        category = item.get("category") or "(sin categoría)"
+    for item in examples:
+        category = item.get("category") or "(no category)"
         buckets[category].append(bool(item.get("exact_normalized")))
     out: dict[str, dict[str, float]] = {}
     for category, flags in buckets.items():
@@ -56,38 +56,38 @@ def accuracy_por_categoria(ejemplos: list[dict[str, Any]]) -> dict[str, dict[str
     return out
 
 
-def _pred_por_espanol(ejemplos: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    return {item["espanol"]: item for item in ejemplos}
+def _predictions_by_spanish(examples: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    return {item["spanish"]: item for item in examples}
 
 
 def build_per_example(groups: list[dict[str, Any]], results: list[dict]) -> list[dict]:
-    """Una categoría del trial, con la primera paráfrasis como fila de la tabla."""
+    """One trial category. The table row uses the first paraphrase."""
     rows = []
-    lookups = [(m["id"], m["label"], _pred_por_espanol(m["ejemplos_evaluados"])) for m in results]
+    lookups = [(m["id"], m["label"], _predictions_by_spanish(m["evaluated_examples"])) for m in results]
     for group in groups:
         representative = group["spanish"][0]
         predictions = []
         for model_id, label, by_spanish in lookups:
-            ejemplo = by_spanish.get(representative)
-            if ejemplo is None:
+            example = by_spanish.get(representative)
+            if example is None:
                 continue
             predictions.append(
                 {
                     "id": model_id,
                     "label": label,
-                    "predicho": ejemplo["predicho"],
-                    "exact_normalized": ejemplo["exact_normalized"],
+                    "predicted": example["predicted"],
+                    "exact_normalized": example["exact_normalized"],
                 }
             )
-        glosas_mostradas = (
+        shown_glosses = (
             " ".join(group["glosses"]) if isinstance(group["glosses"], list) else str(group["glosses"])
         )
         rows.append(
             {
                 "category": group["category"],
-                "espanol": representative,
-                "variantes": group["spanish"],
-                "glosas": glosas_mostradas,
+                "spanish": representative,
+                "variants": group["spanish"],
+                "glosses": shown_glosses,
                 "predictions": predictions,
             }
         )
@@ -105,10 +105,10 @@ def fmt(value, width: int = 8) -> str:
 def print_table(results: list[dict]) -> None:
     print()
     print("=" * 132)
-    print("COMPARATIVA dataset_trial  (español → glosas)")
+    print("TRIAL COMPARISON  (Spanish to glosses)")
     print("=" * 132)
     print(
-        f"{'#':>2}  {'modelo':<28} {'back':<10} {'acc_n':>7} {'acc_s':>7} "
+        f"{'#':>2}  {'model':<28} {'back':<10} {'acc_n':>7} {'acc_s':>7} "
         f"{'bleu':>7} {'rouge':>7} {'meteor':>7} {'bert':>7} {'comet':>7} {'bleurt':>7} {'lat_ms':>8}"
     )
     print("-" * 132)
@@ -130,16 +130,16 @@ def _cell(text: str) -> str:
 def build_markdown(report: dict) -> str:
     ranked = report["ranking"]
     lines = [
-        "# Comparativa de modelos — dataset_trial",
+        "# Model comparison — dataset_trial",
         "",
-        "- Tarea: español → glosas LSA",
+        "- Task: Spanish to LSA glosses",
         f"- Dataset: `{report['dataset']}`",
-        f"- Ejemplos: {report['n_samples']}",
-        f"- Fecha: {report['evaluated_at']}",
+        f"- Examples: {report['n_samples']}",
+        f"- Date: {report['evaluated_at']}",
         "",
         "## Ranking",
         "",
-        "| # | Modelo | Backend | Acc. norm. % | Acc. estricta % | BLEU | ROUGE-L | METEOR | BERTScore | COMET | BLEURT | Latencia ms |",
+        "| # | Model | Backend | Norm. acc. % | Strict acc. % | BLEU | ROUGE-L | METEOR | BERTScore | COMET | BLEURT | Latency ms |",
         "|---|--------|---------|--------------|-----------------|------|---------|--------|-----------|-------|--------|-------------|",
     ]
     for i, model in enumerate(ranked, start=1):
@@ -154,32 +154,32 @@ def build_markdown(report: dict) -> str:
         )
 
     if report.get("failures"):
-        lines += ["", "## Fallos", ""]
+        lines += ["", "## Failures", ""]
         for fail in report["failures"]:
             lines.append(f"- `{fail['id']}`: {fail['error']}")
 
-    lines += ["", "## Predicciones por ejemplo", ""]
+    lines += ["", "## Predictions by example", ""]
     for item in report.get("per_example", []):
         lines.append(f"### {item['category']}")
         lines.append("")
-        lines.append(f"- Español (variante mostrada): `{_cell(item['espanol'])}`")
-        if len(item.get("variantes", [])) > 1:
-            lines.append("- Otras variantes:")
-            for variante in item["variantes"][1:]:
-                lines.append(f"  - {_cell(variante)}")
-        lines.append(f"- Glosas esperadas: `{_cell(item['glosas'])}`")
+        lines.append(f"- Spanish (shown variant): `{_cell(item['spanish'])}`")
+        if len(item.get("variants", [])) > 1:
+            lines.append("- Other variants:")
+            for variant in item["variants"][1:]:
+                lines.append(f"  - {_cell(variant)}")
+        lines.append(f"- Expected glosses: `{_cell(item['glosses'])}`")
         lines.append("")
-        lines.append("| Modelo | Predicción | Exacta (norm.) |")
-        lines.append("|--------|------------|----------------|")
+        lines.append("| Model | Prediction | Exact (normalized) |")
+        lines.append("|-------|------------|--------------------|")
         for pred in item["predictions"]:
-            mark = "sí" if pred["exact_normalized"] else "no"
-            lines.append(f"| {pred['label']} | {_cell(pred['predicho'])} | {mark} |")
+            mark = "yes" if pred["exact_normalized"] else "no"
+            lines.append(f"| {pred['label']} | {_cell(pred['predicted'])} | {mark} |")
         lines.append("")
 
-    lines += ["", "## Métricas por categoría", ""]
+    lines += ["", "## Metrics by category", ""]
     categories = sorted({cat for model in ranked for cat in model.get("by_category", {})})
     if categories and ranked:
-        header = "| Categoría | " + " | ".join(model["id"] for model in ranked) + " |"
+        header = "| Category | " + " | ".join(model["id"] for model in ranked) + " |"
         sep = "|-----------|" + "|".join(["--------"] * len(ranked)) + "|"
         lines += [header, sep]
         for cat in categories:
@@ -197,7 +197,7 @@ def main() -> int:
     output_base = Path(args.output_base)
     dataset_path = Path(args.dataset)
     if not dataset_path.exists():
-        print(f"Error: no está el trial set en {dataset_path}", file=sys.stderr)
+        print(f"Error: trial set not found at {dataset_path}", file=sys.stderr)
         return 1
 
     try:
@@ -219,13 +219,13 @@ def main() -> int:
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = output_base / "eval_trial"
     out_dir.mkdir(parents=True, exist_ok=True)
-    log_path = out_dir / f"comparativa_trial_{stamp}.log"
+    log_path = out_dir / f"trial_compare_{stamp}.log"
 
     results: list[dict] = []
     failures: list[dict] = []
 
     with open(log_path, "w", encoding="utf-8") as log_fp:
-        log_line(log_fp, f"Trial eval: {len(samples)} oraciones, {len(selected)} modelos")
+        log_line(log_fp, f"Trial eval: {len(samples)} sentences, {len(selected)} models")
         for model_cfg in selected:
             gguf_dir = gguf_dir_for(output_base, model_cfg["name"])
             try:
@@ -235,14 +235,14 @@ def main() -> int:
                 log_line(log_fp, f"SKIP {model_cfg['id']}: {exc}")
                 continue
 
-            log_line(log_fp, f"Evaluando {model_cfg['id']} ({gguf_file.name})")
+            log_line(log_fp, f"Evaluating {model_cfg['id']} ({gguf_file.name})")
             try:
                 llm = load_gguf_engine(gguf_file)
-                metrics = evaluar_pares(
+                metrics = evaluate_pairs(
                     llm=llm,
                     system_prompt=system_prompt,
                     test_items=samples,
-                    refs_por_espanol=refs,
+                    refs_by_spanish=refs,
                     model_name=model_cfg["name"],
                 )
             except Exception as exc:
@@ -258,9 +258,9 @@ def main() -> int:
                 "label": model_cfg["label"],
                 "backend": "gguf",
                 "gguf": str(gguf_file),
-                **copiar_puntajes(metrics),
-                "by_category": accuracy_por_categoria(metrics["ejemplos_evaluados"]),
-                "ejemplos_evaluados": metrics["ejemplos_evaluados"],
+                **copy_scores(metrics),
+                "by_category": accuracy_by_category(metrics["evaluated_examples"]),
+                "evaluated_examples": metrics["evaluated_examples"],
             }
             results.append(row)
             log_line(
@@ -276,24 +276,24 @@ def main() -> int:
             "evaluated_at": datetime.now(timezone.utc).isoformat(),
             "dataset": str(dataset_path),
             "n_samples": len(samples),
-            "ranking": [{k: v for k, v in m.items() if k != "ejemplos_evaluados"} for m in results],
+            "ranking": [{k: v for k, v in m.items() if k != "evaluated_examples"} for m in results],
             "per_example": build_per_example(groups, results) if results else [],
             "failures": failures,
         }
 
-        json_path = out_dir / f"comparativa_trial_{stamp}.json"
-        md_path = out_dir / f"comparativa_trial_{stamp}.md"
+        json_path = out_dir / f"trial_compare_{stamp}.json"
+        md_path = out_dir / f"trial_compare_{stamp}.md"
         save_json(json_path, report)
         md_text = build_markdown(report)
         md_path.write_text(md_text, encoding="utf-8")
-        save_json(out_dir / "comparativa_trial_latest.json", report)
-        (out_dir / "comparativa_trial_latest.md").write_text(md_text, encoding="utf-8")
-        log_line(log_fp, f"Escrito {md_path}")
+        save_json(out_dir / "trial_compare_latest.json", report)
+        (out_dir / "trial_compare_latest.md").write_text(md_text, encoding="utf-8")
+        log_line(log_fp, f"Wrote {md_path}")
 
     if results:
         print_table(results)
-        print(f"Mejor modelo: {results[0]['label']} ({results[0]['id']})")
-    print(f"Reporte Markdown: {out_dir / f'comparativa_trial_{stamp}.md'}")
+        print(f"Best model: {results[0]['label']} ({results[0]['id']})")
+    print(f"Markdown report: {out_dir / f'trial_compare_{stamp}.md'}")
     return 1 if failures and not results else 0
 
 

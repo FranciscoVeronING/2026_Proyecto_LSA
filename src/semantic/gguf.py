@@ -1,7 +1,7 @@
-"""Exportar, encontrar y correr un GGUF Q4_K_M.
+"""Export, find, and run a Q4_K_M GGUF.
 
-En Windows, si la ruta del repo tiene espacios, Unsloth escribe el binario
-en D:/temp_gguf (o en LSA_GGUF_TEMP) y después se mueve a outputs/.
+On Windows, if the repo path contains spaces, Unsloth writes the binary
+under D:/temp_gguf (or LSA_GGUF_TEMP) and this module moves it into outputs/.
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, TextIO
 
 from config import GGUF_STOP, MAX_NEW_TOKENS, MAX_SEQ_LENGTH
-from gloss import limpiar_salida_modelo
+from gloss import clean_model_output
 from io_utils import log_line
 from prompts import build_messages
 
@@ -35,9 +35,9 @@ def export_merged_gguf(
     log_fp: TextIO | None = None,
     scratch_dir: Path | None = None,
 ) -> Path:
-    """Fusiona LoRA, cuantiza Q4_K_M y deja el binario en `{output_dir}_gguf/`."""
+    """Merge the LoRA, quantize to Q4_K_M, and place the file in `{output_dir}_gguf/`."""
     scratch_dir = scratch_dir or default_gguf_scratch_dir()
-    # Unsloth a veces tira el .gguf en scratch_gguf.
+    # Unsloth sometimes writes the .gguf next to the scratch dir, with a _gguf suffix.
     extra_out = Path(str(scratch_dir) + "_gguf")
 
     for path in (scratch_dir, extra_out):
@@ -45,7 +45,7 @@ def export_merged_gguf(
             shutil.rmtree(path, ignore_errors=True)
     scratch_dir.mkdir(parents=True, exist_ok=True)
 
-    log_line(log_fp, f"Fusionando pesos y exportando GGUF (Q4_K_M) en {scratch_dir}...")
+    log_line(log_fp, f"Merging weights and exporting GGUF (Q4_K_M) in {scratch_dir}...")
     model.save_pretrained_gguf(str(scratch_dir), tokenizer, quantization_method="q4_k_m")
 
     final_dir = output_dir.parent / f"{output_dir.name}_gguf"
@@ -53,7 +53,7 @@ def export_merged_gguf(
 
     found = list(scratch_dir.glob("*.gguf")) + list(extra_out.glob("*.gguf"))
     if not found:
-        raise FileNotFoundError(f"Unsloth no generó ningún .gguf en {scratch_dir} ni {extra_out}")
+        raise FileNotFoundError(f"Unsloth wrote no .gguf in {scratch_dir} or {extra_out}")
 
     for item in found:
         dest = final_dir / item.name
@@ -71,7 +71,7 @@ def export_merged_gguf(
 def find_q4_gguf(gguf_dir: Path) -> Path:
     candidates = list(gguf_dir.glob("*Q4_K_M.gguf")) or list(gguf_dir.glob("*.gguf"))
     if not candidates:
-        raise FileNotFoundError(f"No se encontró binario GGUF en {gguf_dir}")
+        raise FileNotFoundError(f"No GGUF binary found in {gguf_dir}")
     return candidates[0]
 
 
@@ -86,7 +86,7 @@ def load_gguf_engine(gguf_path: Path):
     )
 
 
-def predecir_glosas(llm: Any, system_prompt: str, spanish: str) -> tuple[str, float]:
+def predict_glosses(llm: Any, system_prompt: str, spanish: str) -> tuple[str, float]:
     messages = build_messages(system_prompt, spanish)
     started = time.perf_counter()
     response = llm.create_chat_completion(
@@ -98,4 +98,4 @@ def predecir_glosas(llm: Any, system_prompt: str, spanish: str) -> tuple[str, fl
     )
     latency_ms = (time.perf_counter() - started) * 1000
     raw = response["choices"][0]["message"]["content"].strip()
-    return limpiar_salida_modelo(raw), latency_ms
+    return clean_model_output(raw), latency_ms

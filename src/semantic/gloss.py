@@ -1,4 +1,4 @@
-"""Helpers para unir tokens de glosas y limpiar texto de salida."""
+"""Join gloss tokens, clean model output, and normalize text for scoring."""
 from __future__ import annotations
 
 import re
@@ -6,25 +6,25 @@ import re
 _PUNCT_RE = re.compile(r"[¿?¡!.,;\"']")
 
 
-def split_glosas(glosas: list[str] | str) -> list[str]:
-    if isinstance(glosas, str):
-        return [token for token in glosas.split() if token]
-    return [str(token) for token in glosas if str(token).strip()]
+def split_glosses(glosses: list[str] | str) -> list[str]:
+    if isinstance(glosses, str):
+        return [token for token in glosses.split() if token]
+    return [str(token) for token in glosses if str(token).strip()]
 
 
-def join_glosas(glosas: list[str] | str) -> str:
-    return " ".join(split_glosas(glosas))
+def join_glosses(glosses: list[str] | str) -> str:
+    return " ".join(split_glosses(glosses))
 
 
-def normalizar_para_metricas(texto: str) -> str:
-    texto = texto.lower().strip()
-    texto = _PUNCT_RE.sub("", texto)
-    return " ".join(texto.split())
+def normalize_for_metrics(text: str) -> str:
+    text = text.lower().strip()
+    text = _PUNCT_RE.sub("", text)
+    return " ".join(text.split())
 
 
-def limpiar_salida_modelo(texto: str) -> str:
-    texto = re.sub(r"<think>.*?</think>", "", texto, flags=re.DOTALL)
-    texto = texto.strip()
-    if "\n" in texto:
-        texto = texto.split("\n", 1)[0].strip()
-    return texto
+def clean_model_output(text: str) -> str:
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    text = text.strip()
+    if "\n" in text:
+        text = text.split("\n", 1)[0].strip()
+    return text

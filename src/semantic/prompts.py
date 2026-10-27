@@ -1,4 +1,4 @@
-"""System prompt y mensajes de entrenamiento o evaluación."""
+"""System prompt and the user/assistant messages used for training and eval."""
 from __future__ import annotations
 
 from pathlib import Path

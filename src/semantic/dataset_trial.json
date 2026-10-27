@@ -1,7 +1,7 @@
 {
   "test_dataset": [
     {
-      "category": "pronombre_objeto_segunda_persona_en_pasado",
+      "category": "second_person_object_pronoun_past",
       "glosses": ["PASADO", "YO", "VOS", "LLAMAR"],
       "spanish": [
         "Te llamé.",
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "category": "pronombre_objeto_segunda_persona_en_pasado_percepcion",
+      "category": "second_person_object_pronoun_past_perception",
       "glosses": ["PASADO", "YO", "VOS", "VER"],
       "spanish": [
         "Te vi.",
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "category": "pronombre_objeto_segunda_persona_futuro",
+      "category": "second_person_object_pronoun_future",
       "glosses": ["FUTURO", "YO", "VOS", "TENER"],
       "spanish": [
         "Te voy a tener.",
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_ubicacion_tiempo_pasado_con_locativo",
+      "category": "wh_location_past_with_place",
       "glosses": ["PASADO", "PLAZA", "ELLOS", "MUJER", "VIVIR", "DONDE"],
       "spanish": [
         "¿Dónde vivían ellas en la plaza?",
@@ -41,7 +41,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_ubicacion_tiempo_pasado_segunda_persona",
+      "category": "wh_location_past_second_person",
       "glosses": ["PASADO", "CALLE", "VOS", "VIVIR", "DONDE"],
       "spanish": [
         "¿Dónde vivías en la calle?",
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_objeto_tiempo_pasado_transitivo",
+      "category": "wh_object_past_transitive",
       "glosses": ["PASADO", "ELLOS", "TENER", "QUE"],
       "spanish": [
         "¿Qué tuvieron?",
@@ -59,7 +59,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_objeto_tiempo_pasado_voseo",
+      "category": "wh_object_past_informal_you",
       "glosses": ["PASADO", "VOS", "LLAMAR", "QUE"],
       "spanish": [
         "¿Qué llamaste?",
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "category": "pronombre_objeto_en_pasado_tercera_persona",
+      "category": "third_person_object_pronoun_past",
       "glosses": ["PASADO", "ELLOS", "HOMBRE", "YO", "VER"],
       "spanish": [
         "Ellos me vieron.",
@@ -75,7 +75,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_identidad_tiempo_pasado",
+      "category": "wh_identity_past",
       "glosses": ["PASADO", "HERMANO", "TUYO", "QUIEN"],
       "spanish": [
         "¿Quién era tu hermano?",
@@ -83,7 +83,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_identidad_tiempo_futuro",
+      "category": "wh_identity_future",
       "glosses": ["FUTURO", "ESPOSO", "MUJER", "TUYO", "QUIEN"],
       "spanish": [
         "¿Quién va a ser tu esposa?",
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "category": "pregunta_wh_ubicacion_futuro_transitivo",
+      "category": "wh_location_future_transitive",
       "glosses": ["FUTURO", "VOS", "DOCUMENTO", "LLEVAR", "DONDE"],
       "spanish": [
         "¿A dónde vas a llevar el documento?",
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "category": "tiempo_futuro_objeto_y_negacion",
+      "category": "future_object_and_negation",
       "glosses": ["FUTURO", "YO", "CUCHILLO", "LLEVAR", "NO"],
       "spanish": [
         "No voy a llevar el cuchillo.",
@@ -111,7 +111,7 @@
       ]
     },
     {
-      "category": "tiempo_pasado_objeto_y_negacion",
+      "category": "past_object_and_negation",
       "glosses": ["PASADO", "YO", "DOCUMENTO", "LLEVAR", "NO"],
       "spanish": [
         "No llevé el documento.",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "category": "flexion_genero_parentesco_transitivo_pasado",
+      "category": "kinship_gender_transitive_past",
       "glosses": ["PASADO", "YO", "HIJO", "MIO", "LLAMAR"],
       "spanish": [
         "Llamé a mi hijo.",
@@ -127,7 +127,7 @@
       ]
     },
     {
-      "category": "deletreo_nombre_femenino_no_visto",
+      "category": "unseen_feminine_name",
       "glosses": ["NOMBRE", "MIO", "Micaela"],
       "spanish": [
         "Me llamo Micaela.",
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "category": "deletreo_apellido_con_grafemas_complejos",
+      "category": "surname_with_complex_spelling",
       "glosses": ["APELLIDO", "MIO", "Guerra"],
       "spanish": [
         "Mi apellido es Guerra.",
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "category": "deletreo_calle_no_vista",
+      "category": "unseen_street_name",
       "glosses": ["CALLE", "Moreno", "YO", "VIVIR_EN"],
       "spanish": [
         "Vivo en la calle Moreno.",
@@ -155,7 +155,7 @@
       ]
     },
     {
-      "category": "secuencia_numerica_dni_arbitraria",
+      "category": "arbitrary_id_number",
       "glosses": ["DOCUMENTO", "MIO", "NUMERO", "18333940"],
       "spanish": [
         "Mi número de documento es 18333940.",

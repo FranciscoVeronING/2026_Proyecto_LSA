@@ -1,9 +1,9 @@
-"""Entrenamiento LoRA, export GGUF y evaluación de un modelo."""
+"""LoRA training, GGUF export, and evaluation for one model."""
 from __future__ import annotations
 
 import os
 
-# Antes de que Unsloth inicialice CUDA. Reduce los OOM por fragmentación.
+# Set before Unsloth initializes CUDA. Reduces out-of-memory errors from fragmentation.
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 # unsloth antes que trl/transformers/peft
@@ -23,9 +23,9 @@ from config import (
     TRAIN_SEQ_LENGTH,
     is_large_model,
 )
-from dataset import load_parallel_pairs, referencias_por_espanol, split_pairs
+from dataset import load_parallel_pairs, references_by_spanish, split_pairs
 from gguf import export_merged_gguf, find_q4_gguf, load_gguf_engine
-from metrics import evaluar_pares
+from metrics import evaluate_pairs
 from io_utils import log_line, save_json
 from prompts import build_messages
 
@@ -41,10 +41,10 @@ def _release_cuda(*objects: Any) -> None:
 
 
 def fit_budget(model_name: str) -> tuple[int, int, str | bool]:
-    """Batch, acumulación y checkpointing según la VRAM.
+    """Batch size, gradient accumulation, and checkpointing for the available VRAM.
 
-    El system prompt deja cada ejemplo en ~1600 tokens. En 12 GB, batch 4
-    de ese largo se queda sin memoria a mitad del entrenamiento.
+    The system prompt makes each example about 1600 tokens. On 12 GB, a batch of 4
+    at that length runs out of memory mid-training.
     """
     total_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
     large = is_large_model(model_name)
@@ -57,7 +57,7 @@ def fit_budget(model_name: str) -> tuple[int, int, str | bool]:
 
 
 def build_lora_model(model: Any, checkpointing: str | bool = "unsloth") -> Any:
-    """LoRA r=16. Si fallan los nombres de capa, usa all-linear."""
+    """LoRA r=16. If the layer names do not match, fall back to all-linear."""
     common = {
         "r": 16,
         "lora_alpha": 32,
@@ -68,7 +68,7 @@ def build_lora_model(model: Any, checkpointing: str | bool = "unsloth") -> Any:
     try:
         return FastLanguageModel.get_peft_model(model, target_modules=TARGET_MODULES, **common)
     except ValueError as exc:
-        print(f"target_modules estándar falló ({exc}). Reintentando con all-linear...")
+        print(f"Standard target_modules failed ({exc}). Retrying with all-linear...")
         return FastLanguageModel.get_peft_model(model, target_modules="all-linear", **common)
 
 
@@ -84,7 +84,7 @@ def train_and_eval_single_model(
     model_name = model_cfg["name"]
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    log_line(log_fp, f"Cargando {model_name} en 4-bit...")
+    log_line(log_fp, f"Loading {model_name} in 4-bit...")
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=model_name,
         max_seq_length=MAX_SEQ_LENGTH,
@@ -98,7 +98,7 @@ def train_and_eval_single_model(
     model = build_lora_model(model, checkpointing)
     log_line(
         log_fp,
-        f"Batch {batch_size} x acumulación {grad_accum} | checkpointing={checkpointing}",
+        f"Batch {batch_size} x accumulation {grad_accum} | checkpointing={checkpointing}",
     )
 
     pairs = load_parallel_pairs(dataset_path)
@@ -149,7 +149,7 @@ def train_and_eval_single_model(
         response_part=model_cfg.get("response_part", "<|im_start|>assistant\n"),
     )
 
-    log_line(log_fp, f"Entrenando {model_name} (español → glosas LSA)...")
+    log_line(log_fp, f"Training {model_name} (Spanish to LSA glosses)...")
     train_result = trainer.train()
     final_loss = getattr(train_result, "training_loss", None)
 
@@ -160,13 +160,13 @@ def train_and_eval_single_model(
     _release_cuda(model, tokenizer, trainer)
 
     gguf_file = find_q4_gguf(gguf_dir)
-    log_line(log_fp, f"Evaluando GGUF: {gguf_file.name}")
+    log_line(log_fp, f"Evaluating GGUF: {gguf_file.name}")
     llm = load_gguf_engine(gguf_file)
-    metrics = evaluar_pares(
+    metrics = evaluate_pairs(
         llm=llm,
         system_prompt=system_prompt,
         test_items=list(test_raw),
-        refs_por_espanol=referencias_por_espanol(pairs),
+        refs_by_spanish=references_by_spanish(pairs),
         model_name=model_name,
     )
     _release_cuda(llm)

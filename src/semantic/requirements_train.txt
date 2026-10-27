@@ -1,8 +1,8 @@
-# Dependencias de train.py y eval_trial.py
+# Dependencies for train.py and eval_trial.py.
 #
-# Unsloth no está acá: en Windows `pip install unsloth` baja torch CPU.
-# Orden: torch+cu126 → este archivo → unsloth --no-deps
-# llama-cpp-python: wheel con CUDA de la máquina, no el de PyPI.
+# Unsloth is not listed here: on Windows `pip install unsloth` pulls CPU torch.
+# Order: torch+cu126, then this file, then unsloth --no-deps.
+# llama-cpp-python: use a CUDA wheel for this machine, not the PyPI default.
 
 datasets>=3.4,<4.4
 evaluate>=0.4
@@ -17,8 +17,8 @@ sentencepiece>=0.2
 protobuf>=4.0
 peft>=0.18
 
-# Métricas neuronales (eval). unbabel-comet fija transformers<5: instalarlo
-# aparte con --no-deps para no pisar el torch CUDA de Unsloth.
+# Neural metrics (eval). unbabel-comet pins transformers<5: install it
+# separately with --no-deps so it does not replace Unsloth's CUDA torch.
 #   pip install unbabel-comet==2.2.7 --no-deps
 bert-score==0.3.13
 bleurt-pytorch

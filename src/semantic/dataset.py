@@ -1,4 +1,4 @@
-"""Carga dataset_glosas.json y el trial set."""
+"""Load the training pairs and the trial set."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from config import DEFAULT_DATASET, SPLIT_SEED, TEST_SIZE
-from gloss import join_glosas
+from gloss import join_glosses
 
 
 def load_json(path: Path) -> Any:
@@ -15,14 +15,14 @@ def load_json(path: Path) -> Any:
 
 
 def load_parallel_pairs(dataset_path: Path | None = None) -> list[dict[str, str]]:
-    """Pares de entrenamiento conservando los tokens del dataset."""
+    """Training pairs. Gloss tokens are kept as stored, then joined with spaces."""
     dataset_path = dataset_path or DEFAULT_DATASET
     raw = load_json(dataset_path)
     rows = raw.get("dataset", raw.get("examples", []))
     return [
         {
             "spanish": str(item["spanish"]).strip(),
-            "glosses": join_glosas(item["glosses"]),
+            "glosses": join_glosses(item["glosses"]),
         }
         for item in rows
     ]
@@ -40,7 +40,7 @@ def split_pairs(
     return split["train"], split["test"]
 
 
-def referencias_por_espanol(pairs: list[dict[str, str]]) -> dict[str, list[str]]:
+def references_by_spanish(pairs: list[dict[str, str]]) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = defaultdict(list)
     for item in pairs:
         gloss = item["glosses"]
@@ -60,14 +60,14 @@ def load_trial_groups(path: Path) -> list[dict[str, Any]]:
             {
                 "category": item.get("category", ""),
                 "spanish": [str(s).strip() for s in spanish_list],
-                "glosses": join_glosas(item["glosses"]),
+                "glosses": join_glosses(item["glosses"]),
             }
         )
     return groups
 
 
 def load_trial_samples(path: Path) -> list[dict[str, Any]]:
-    """Una fila por paráfrasis en español."""
+    """One row per Spanish paraphrase."""
     samples: list[dict[str, Any]] = []
     for group in load_trial_groups(path):
         for spanish in group["spanish"]:
