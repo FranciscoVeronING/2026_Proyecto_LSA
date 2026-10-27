@@ -9,7 +9,7 @@ from app.fingerspell import register as register_fingerspell
 
 def create_app() -> FastAPI:
     if not POSES_DIR.is_dir():
-        raise RuntimeError(f"No se encontró la carpeta de poses: {POSES_DIR}")
+        raise RuntimeError(f"Pose directory not found: {POSES_DIR}")
 
     app = FastAPI(title="Avatar pose files", docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(

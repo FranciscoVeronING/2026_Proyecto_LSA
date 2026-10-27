@@ -1,59 +1,59 @@
-# Poses del avatar
+# Avatar pose files
 
-Esta rama publica los archivos `.pose` del avatar. El nombre de cada archivo en `poses/`, sin extensión, es la glosa. El servicio escucha en `0.0.0.0`. El puerto sale de `PORT` y, si no está definida, es `8080`.
-
-```text
-app/config.py        rutas, límites y tipos de archivo
-app/fingerspell.py   deletreo
-app/main.py          aplicación y arranque
-poses/               glosas
-```
-
-Si falta `poses/` al arrancar, el proceso termina y no abre el puerto. Acepta `GET`, `HEAD` y `OPTIONS` desde cualquier origen. El navegador puede leer el encabezado `X-Count`.
-
-## Archivos
-
-`GET /health` responde `200` con `{"status": "ok"}`. No comprueba si una glosa existe.
-
-`GET /tposes/{GLOSA}.pose` devuelve ese archivo. Si existe, responde `200` con `Content-Type: application/octet-stream`. Si no existe, responde `404`. No deletrea el nombre que falta.
-
-La misma carpeta también publica `.json`, `.gltf`, `.bin` y `.fbx` cuando se agregan ahí. Sus tipos son `application/json`, `model/gltf+json` y `application/octet-stream`.
-
-## Glosas
-
-ILSA arma el nombre antes de pedir el archivo:
+This branch serves the avatar `.pose` files. Each filename in `poses/`, without the extension, is the gloss. The service listens on `0.0.0.0`. The port comes from `PORT` and defaults to `8080`.
 
 ```text
-/tposes/{GLOSA}.pose
+app/config.py        paths, limits, and media types
+app/fingerspell.py   fingerspelling
+app/main.py          application and startup
+poses/               gloss files
 ```
 
-1. Pasar la glosa a mayúsculas.
-2. Quitar el sufijo de género `_A`, `_a` o `_RA`. `ABOGADO_A` queda `ABOGADO`. `PROFESOR_RA` queda `PROFESOR`. `EL_ELLA` queda `EL`.
-3. Sacar las tildes de las vocales: `Á É Í Ó Ú Ü` pasan a `A E I O U U`. `CAFÉ` queda `CAFE`.
-4. Borrar espacios, `_`, guiones, paréntesis y cualquier carácter que no sea letra o número.
-5. Si una seña tiene más de un significado, concatenar las glosas sin separador.
+If `poses/` is missing at startup, the process exits and does not open the port. It accepts `GET`, `HEAD`, and `OPTIONS` from any origin. Browsers can read the `X-Count` header.
 
-| Significado | Archivo |
+## Files
+
+`GET /health` returns `200` with `{"status": "ok"}`. It does not check whether a gloss exists.
+
+`GET /tposes/{GLOSS}.pose` returns that file. A match returns `200` with `Content-Type: application/octet-stream`. A missing file returns `404`. The server does not fingerspell the missing name.
+
+The same directory also serves `.json`, `.gltf`, `.bin`, and `.fbx` when those files are added. Their types are `application/json`, `model/gltf+json`, and `application/octet-stream`.
+
+## Glosses
+
+The caller builds the name before requesting the file:
+
+```text
+/tposes/{GLOSS}.pose
+```
+
+1. Uppercase the gloss.
+2. Drop a gender suffix `_A`, `_a`, or `_RA`. `ABOGADO_A` becomes `ABOGADO`. `PROFESOR_RA` becomes `PROFESOR`. `EL_ELLA` becomes `EL`.
+3. Remove vowel accents: `Á É Í Ó Ú Ü` become `A E I O U U`. `CAFÉ` becomes `CAFE`.
+4. Remove spaces, `_`, hyphens, parentheses, and any character that is not a letter or digit.
+5. If one sign has more than one meaning, concatenate the glosses with no separator.
+
+| Meaning | File |
 | --- | --- |
-| Hoy / ahora | `HOYAHORA.pose` |
-| Anual / por período | `ANUALPORPERIODO.pose` |
+| Today / now | `HOYAHORA.pose` |
+| Annual / per period | `ANUALPORPERIODO.pose` |
 | Sprite / 7Up | `SPRITE7UP.pose` |
-| Camarero / mozo | `CAMAREROMOZO.pose` |
-| Países Bajos / Holanda | `PAISESBAJOSHOLANDA.pose` |
-| Época / período | `EPOCAPERIODO.pose` |
+| Waiter | `CAMAREROMOZO.pose` |
+| Netherlands / Holland | `PAISESBAJOSHOLANDA.pose` |
+| Era / period | `EPOCAPERIODO.pose` |
 
-`PERIODO.pose` es otra grabación y se pide aparte. Dentro de una palabra, `Ñ` pasa a `N`: `ESPAÑA` queda `ESPANA` y `MAÑANA` queda `MANANA`.
+`PERIODO.pose` is a separate recording. Inside a word, `Ñ` becomes `N`: `ESPAÑA` becomes `ESPANA` and `MAÑANA` becomes `MANANA`.
 
-Dos sustituciones valen solo cuando son la glosa completa:
+Two replacements apply only when they are the whole gloss:
 
-- La letra `Ñ` se pide como `ENIE.pose`. La letra `N` sigue en `N.pose`.
-- La glosa `PAPA`, como parentesco, se pide como `PADRE.pose`. `PAPA.pose` es la papa como alimento. `PAPEL` y `PAPASFRITAS` no cambian.
+- The letter `Ñ` is requested as `ENIE.pose`. The letter `N` stays `N.pose`.
+- The kinship gloss `PAPA` is requested as `PADRE.pose`. `PAPA.pose` is the food item. `PAPEL` and `PAPASFRITAS` stay unchanged.
 
-Los nombres de `poses/` son ASCII. Un archivo con `Ñ` o con tilde hace fallar la importación del contenedor en Cloud Run.
+Filenames in `poses/` are ASCII. A filename with `Ñ` or an accent makes Cloud Run fail while importing the container.
 
-## Deletreo
+## Fingerspelling
 
-`GET /fingerspell` pide solo letras, en el orden enviado. Las letras van en `letters`, separadas por comas o repetidas:
+`GET /fingerspell` requests letters only, in the order sent. Letters go in `letters`, separated by commas or repeated:
 
 ```text
 GET /fingerspell?letters=H,O,L,A
@@ -61,15 +61,15 @@ GET /fingerspell?letters=CH,I,L,E
 GET /fingerspell?letters=N&letters=ENIE
 ```
 
-Las letras válidas son `A`–`Z`, `CH` y `ENIE`. `Ñ` se resuelve como `ENIE`. Una palabra, un número u otra glosa responde `400`.
+Valid letters are `A`–`Z`, `CH`, and `ENIE`. `Ñ` resolves to `ENIE`. A word, a number, or any other gloss returns `400`.
 
-El máximo es 20 letras. El abecedario tiene 27 letras más `CH`, así que una solicitud no puede pedirlas todas. Si se pasa el límite, responde `400` con `received` y `limit`.
+The limit is 20 letters. The alphabet has 27 letters plus `CH`, so one call cannot request all of them. Over the limit, the response is `400` with `received` and `limit`.
 
-Si todas existen, responde `200` con `multipart/mixed`. Cada parte es el `.pose`, con `Content-Disposition` (`H.pose`), `X-Index` desde 0 y `X-Letter` (`H`, `CH` o `ENIE`). `X-Count` indica cuántas volvieron. Si falta una letra, responde `404` y no entrega un deletreo incompleto. Los errores JSON usan `detail` y, cuando corresponde, `letter`.
+When every letter exists, the response is `200` with `multipart/mixed`. Each part is the `.pose`, with `Content-Disposition` (`H.pose`), `X-Index` starting at 0, and `X-Letter` (`H`, `CH`, or `ENIE`). `X-Count` is how many parts came back. If one letter file is missing, the response is `404` and no partial spelling is returned. JSON errors use `detail` and, when relevant, `letter`.
 
-## Ejecución
+## Run
 
-Python 3.10 o superior, desde la raíz:
+Python 3.10 or newer, from the repository root:
 
 ```powershell
 python -m venv .venv
@@ -78,19 +78,19 @@ pip install -r requirements.txt
 python -m app.main
 ```
 
-Las dependencias son FastAPI `0.115.12` y Uvicorn `0.34.2`.
+Dependencies are FastAPI `0.115.12` and Uvicorn `0.34.2`.
 
-La imagen usa `python:3.10-slim`, instala las dependencias y copia `app/` y `poses/`. El arranque es `python -m app.main`.
+The image uses `python:3.10-slim`, installs the dependencies, and copies `app/` and `poses/`. Startup is `python -m app.main`.
 
 ```powershell
 docker build -t tpose-server .
 docker run --rm -p 8080:8080 tpose-server
 ```
 
-Cloud Run, desde la raíz, en `southamerica-east1` y el proyecto `ilsa-511622`:
+Cloud Run, from the repository root, region `southamerica-east1`, project `ilsa-511622`:
 
 ```powershell
 gcloud run deploy tpose-server --source . --region southamerica-east1 --port 8080 --allow-unauthenticated --project ilsa-511622
 ```
 
-Si `gcloud` tiene guardado el número de proyecto, hace falta `--project ilsa-511622` o `gcloud config set project ilsa-511622`.
+If `gcloud` has the project number stored, pass `--project ilsa-511622` or run `gcloud config set project ilsa-511622`.

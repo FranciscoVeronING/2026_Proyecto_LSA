@@ -49,15 +49,15 @@ def fingerspell(letters: list[str] = Query(..., min_length=1)):
     if not requested:
         return JSONResponse(
             status_code=400,
-            content={"detail": "La solicitud no incluye letras."},
+            content={"detail": "The request does not include any letters."},
         )
     if len(requested) > MAX_LETTERS_PER_REQUEST:
         return JSONResponse(
             status_code=400,
             content={
                 "detail": (
-                    f"Se pueden pedir hasta {MAX_LETTERS_PER_REQUEST} letras "
-                    "por solicitud."
+                    f"At most {MAX_LETTERS_PER_REQUEST} letters "
+                    "can be requested per call."
                 ),
                 "received": len(requested),
                 "limit": MAX_LETTERS_PER_REQUEST,
@@ -70,13 +70,13 @@ def fingerspell(letters: list[str] = Query(..., min_length=1)):
         if letter not in FINGERSPELL_LETTERS:
             return JSONResponse(
                 status_code=400,
-                content={"detail": f"{token} no es una letra del deletreo.", "letter": token},
+                content={"detail": f"{token} is not a fingerspelling letter.", "letter": token},
             )
         path = POSES_DIR / f"{letter}.pose"
         if not path.is_file():
             return JSONResponse(
                 status_code=404,
-                content={"detail": f"No existe el archivo de la letra {letter}.", "letter": letter},
+                content={"detail": f"No pose file exists for letter {letter}.", "letter": letter},
             )
         files.append((letter, path))
     return multipart_response(files)
