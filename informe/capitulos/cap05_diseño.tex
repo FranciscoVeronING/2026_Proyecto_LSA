@@ -8,13 +8,17 @@
 El diseño adopta una arquitectura híbrida desacoplada. La extracción de puntos articulares y la clasificación gestual se ejecutan en el equipo del usuario, mientras que el módulo de traducción semántica y servidor de poses operan como un servicio remoto distribuido.
 
 \subsection{Justificación de la partición y modelo de privacidad}
-La ejecución local de la extracción y clasificación gestual garantiza que la señal de video cruda y las coordenadas articulares no abandonen el equipo del usuario. La demanda de memoria RAM y capacidad de cómputo de los modelos de lenguaje exige situar el componente de traducción semántica en un servicio remoto en la nube. Hacia dicho servicio remoto se transmite únicamente la secuencia textual de glosas (en el canal directo) o la oración en español (en el canal inverso), sin transferir información biométrica o de video.
+La extracción de puntos clave y la clasificación de señas se ejecutan de manera local en el dispositivo del usuario. Por esta razón, el servicio de traducción y el servidor de poses nunca reciben la señal de video original ni las coordenadas articulares.
+
+La cámara transfiere la imagen directamente desde el equipo hacia Google Meet para cumplir con la exigencia RNF-02. Así, la videollamada procesa el video compuesto, el cual integra la toma original, los subtítulos y la superposición del esqueleto en el modo oyente.
+
+Debido al consumo de memoria y al costo computacional de los modelos de lenguaje, la traducción se aloja en un servicio remoto. Hacia este componente solo se transmiten cadenas de texto, representadas por la secuencia de glosas o la oración en español. Aunque este flujo no incluye material de video, el texto puede incluir datos personales como nombres o números de documento. Por su parte, el servidor de poses procesa la solicitud a partir del nombre de una glosa o las letras de un deletreo, para luego retornar el archivo correspondiente.
 
 \subsection{Flujo integral de datos entre componentes}
 La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación, mientras que la red transmite exclusivamente mensajes en formato JSON.
 
 \begin{figure}[!ht]
-\centering
+    \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
 \tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
@@ -59,13 +63,13 @@ La interacción entre el navegador, el motor local y los servicios remotos se or
 \end{circuitikz}%
 }
 \caption{Diagrama de la arquitectura general del sistema.}
-\label{fig:diagrama_arquitectura}
+    \label{fig:diagrama_arquitectura}
 \end{figure}
 
 Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diagrama_secuencia_directo} y \ref{fig:diagrama_secuencia_inverso} ilustran el comportamiento de los canales directo e inverso respectivamente.
 
 \begin{figure}[!ht]
-\centering
+    \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
 \tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
@@ -125,6 +129,20 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 \draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (-4.625,10.25) rectangle (4.625,9.75);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (0,10) {pausa física de inactividad};
 
+% Caja discontinua ampliada a lo ancho (de 1.50 a 4.20) y alto (de 8.20 a 9.10)
+\draw [dash pattern=on 6pt off 2pt] (1.50,8.20) rectangle (4.20,9.10);
+
+% Etiqueta superior alineada en la esquina superior izquierda interna
+\node[anchor=north west, align=left, inner sep=1pt, font=\fontsize{7.0pt}{8.4pt}\selectfont] 
+    at (1.55,9.05) {[en el equipo]};
+
+% Texto principal centrado vertical y horizontalmente en el espacio restante
+\node[anchor=center, align=center, inner sep=1pt, font=\fontsize{7.5pt}{9.0pt}\selectfont] 
+    at (2.85,8.55) {1 glosa, dígitos\\ o letras sin I, T};
+
+\draw [dash pattern=on 6pt off 2pt] (4.55,6.45) rectangle (8.7,8.55);
+\node[anchor=north east, align=right, inner xsep=0.050cm, inner ysep=0.040cm, rounded corners=0.020cm, font=\fontsize{7.0pt}{8.2pt}\selectfont] at (8.6,8.48) {[al traductor]};
+
 \draw [-{Stealth[scale=1.5]}] (4.25,8.25) -- (7.125,8.25) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /sign};
 
 \draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (5.75,8) rectangle (8.5,7.5);
@@ -183,132 +201,114 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 \label{fig:diagrama_secuencia_directo}
 \end{figure}
 
+En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también.
+
 \begin{figure}[!ht]
-\centering
+    \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
 \tikzstyle{every node}=[font=\fontsize{8.0pt}{10.4pt}\selectfont]
-
-% Google Meet (Cajas superior e inferior)
-\draw (-1.125,16.75) rectangle (0.5,15.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,16.3125) {Google \\ Meet};
-\draw [short] (-0.375,15.875) -- (-0.375,2.625);
-
-\draw (-1.125,2.625) rectangle (0.5,1.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,2.1875) {Google \\ Meet};
-
-% Extensión (Cajas superior e inferior)
-\draw (1.75,16.75) rectangle (3.375,15.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,16.3125) {Extensión};
-\draw [short] (2.5,15.875) -- (2.5,2.625);
-
-\draw (1.75,2.625) rectangle (3.375,1.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,2.1875) {Extensión};
-
-% ILSA (Cajas superior e inferior)
-\draw (4.625,16.75) rectangle (6.25,15.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,16.3125) {ILSA};
-\draw [short] (5.375,15.875) -- (5.375,2.625);
-
-\draw (4.625,2.625) rectangle (6.25,1.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,2.1875) {ILSA};
-
-% Servidor semántico (Cajas superior e inferior)
-\draw (7.5,16.75) rectangle (9.125,15.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,16.3125) {Servidor \\ semántico};
-\draw [short] (8.25,15.875) -- (8.25,2.625);
-
-\draw (7.5,2.625) rectangle (9.125,1.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,2.1875) {Servidor \\ semántico};
-
-% Servidor de poses (Cajas superior e inferior)
+\draw [dash pattern=on 6pt off 2pt] (5.125,6.875) rectangle (11.5,4.5);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.35,6.725) {[No existe archivo]};
 \draw (10.5,16.75) rectangle (12.125,15.875);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.3125,16.3125) {Servidor \\ de poses};
-\draw [short] (11.25,15.875) -- (11.25,2.625);
-
-\draw (10.5,2.625) rectangle (12.125,1.75);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.3125,2.1875) {Servidor \\ de poses};
-
-% Usuario oyente (Izquierda)
-\draw [short] (-3.25,15.875) -- (-3.25,3);
+\draw (-1.125,16.75) rectangle (0.5,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,16.3125) {Google \\ Meet};
+\draw (-0.25,16.75) rectangle (-0.25,16.75);
+\draw [short] (-1.125,16.75) -- (-1.125,16.75);
+\draw [short] (-0.375,15.75) -- (-0.375,1.5);
+\draw (1.75,16.75) rectangle (3.375,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,16.3125) {Extensión};
+\draw (2.625,16.75) rectangle (2.625,16.75);
+\draw [short] (1.75,16.75) -- (1.75,16.75);
+\draw [short] (2.5,15.75) -- (2.5,1.5);
+\draw (4.625,16.75) rectangle (6.25,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,16.3125) {ILSA};
+\draw (5.5,16.75) rectangle (5.5,16.75);
+\draw [short] (4.625,16.75) -- (4.625,16.75);
+\draw [short] (5.375,15.75) -- (5.375,1.5);
+\draw (7.5,16.75) rectangle (9.125,15.875);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,16.3125) {Servidor \\ semántico};
+\draw (8.375,16.75) rectangle (8.375,16.75);
+\draw [short] (7.5,16.75) -- (7.5,16.75);
+\draw [short] (8.25,15.75) -- (8.25,1.5);
+\draw [short] (10.375,16.75) -- (10.375,16.75);
+\draw [-{Stealth[scale=1.5]}] (-0.375,14.75) -- (2.5,14.75) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{audio/texto chat};
+\draw [short] (-3.25,15.625) -- (-3.25,1.875);
+\draw [color={rgb,255:red,215; green,215; blue,215}, draw opacity=1, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (6.75,10.25) rectangle (9.5,9.75);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.125,10) {interpretación};
+\draw [-{Stealth[scale=1.5]}] (-3.25,14.875) -- (-0.375,14.875) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{habla o escribe};
+\draw (7.5,1.5) rectangle (9.125,0.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.3125,1.0625) {Servidor \\ semántico};
+\draw (4.625,1.5) rectangle (6.25,0.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.4375,1.0625) {ILSA};
+\draw (1.75,1.5) rectangle (3.375,0.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (2.5625,1.0625) {Extensión};
+\draw (-1.125,1.5) rectangle (0.5,0.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (-0.3125,1.0625) {Google \\ Meet};
 \draw (-3.25,16.875) circle (0.125cm);
 \draw [short] (-3.25,16.75) -- (-3.25,16.5);
 \draw [short] (-3.25,16.5) -- (-3.375,16.375);
 \draw [short] (-3.25,16.5) -- (-3.125,16.375);
 \draw [short] (-3.375,16.625) -- (-3.125,16.625);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0] (-4.25,16.5) rectangle (-2.125,15.625);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (-3.1875,16.0625) {Usuario oyente};
-
-\draw (-3.25,2.75) circle (0.125cm);
-\draw [short] (-3.25,2.625) -- (-3.25,2.375);
-\draw [short] (-3.25,2.375) -- (-3.375,2.25);
-\draw [short] (-3.25,2.375) -- (-3.125,2.25);
-\draw [short] (-3.375,2.5) -- (-3.125,2.5);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (-3.1875,1.9375) {Usuario oyente};
-
-% Usuario señante (Derecha)
-\draw [short] (14.25,15.875) -- (14.25,2.875);
+\draw (-3.25,1.625) circle (0.125cm);
+\draw [short] (-3.25,1.5) -- (-3.25,1.25);
+\draw [short] (-3.25,1.25) -- (-3.375,1.125);
+\draw [short] (-3.25,1.25) -- (-3.125,1.125);
+\draw (10.5,1.5) rectangle (12.125,0.625);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.3125,1.0625) {Servidor \\ de poses};
+\draw [short] (-3.375,1.375) -- (-3.125,1.375);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0] (-4.25,1.25) rectangle (-2.125,0.375);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (-3.1875,0.8125) {Usuario oyente};
+\draw [short] (11.25,15.75) -- (11.25,1.5);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0] (-4.25,17.625) rectangle (3.875,11.5);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0, short] (5.375,15.875) -- (8,15.875);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0, short] (-6.625,12.375) -- (-6.625,12.375);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0, short] (-6.125,12.75) -- (-5.25,15.375);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0, short] (-5.5,15.5) -- (-5.75,12.75);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0, short] (-4.625,14.875) -- (-7,14.125);
+\draw [short] (14.25,15.75) -- (14.25,1.75);
 \draw (14.25,16.875) circle (0.125cm);
 \draw [short] (14.25,16.75) -- (14.25,16.5);
 \draw [short] (14.25,16.5) -- (14.125,16.375);
 \draw [short] (14.25,16.5) -- (14.375,16.375);
 \draw [short] (14.125,16.625) -- (14.375,16.625);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0] (13.25,16.5) rectangle (15.375,15.625);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (14.3125,16.0625) {Usuario señante};
-
-\draw (14.25,2.625) circle (0.125cm);
-\draw [short] (14.25,2.5) -- (14.25,2.25);
-\draw [short] (14.25,2.25) -- (14.125,2.125);
-\draw [short] (14.25,2.25) -- (14.375,2.125);
-\draw [short] (14.125,2.375) -- (14.375,2.375);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (14.3125,1.8125) {Usuario señante};
-
-% Marcos de agrupación condicionales y de bucles
-\draw [dash pattern=on 6pt off 2pt] (2.125,12.125) rectangle (5.75,14.5);
+\draw (14.25,1.5) circle (0.125cm);
+\draw [short] (14.25,1.375) -- (14.25,1.125);
+\draw [short] (14.25,1.125) -- (14.125,1);
+\draw [short] (14.25,1.125) -- (14.375,1);
+\draw [short] (14.125,1.25) -- (14.375,1.25);
+\draw [color={rgb,255:red,0; green,0; blue,0}, draw opacity=0] (13.25,1.125) rectangle (15.375,0.25);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{6.8pt}{8.9pt}\selectfont] at (14.3125,0.6875) {Usuario señante};
+\draw [-{Stealth[scale=1.5]}] (2.5,13.25) -- (5.375,13.25) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /stt};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,12.5) -- (2.5,12.5) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
+\draw [dash pattern=on 6pt off 2pt] (5.75,14.5) rectangle (2.125,12.125);
 \node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.6,14.35) {[Si viene de micrófono]};
-
-\draw [dash pattern=on 6pt off 2pt] (4.875,4.375) rectangle (11.875,9.25);
-\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.725,9.1) {[Por cada glosa]};
-
-\draw [dash pattern=on 6pt off 2pt] (5.125,5.625) rectangle (11.5,8);
-\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.35,7.85) {[No existe archivo]};
-
-% Cuadro de proceso de interpretación
-\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (6.75,10.375) rectangle (9.5,10.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (8.125,10.625) {interpretación};
-
-% Flujos de mensajes (Flechas)
-\draw [-{Stealth[scale=1.5]}] (-3.25,14.875) -- (-0.375,14.875) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{habla o escribe};
-
-\draw [-{Stealth[scale=1.5]}] (-0.375,14.75) -- (2.5,14.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{audio/texto chat};
-
-\draw [-{Stealth[scale=1.5]}] (2.5,13.25) -- (5.375,13.25) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /stt};
-
-\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,12.5) -- (2.5,12.5) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
-
-\draw [-{Stealth[scale=1.5]}] (2.5,11.375) -- (5.375,11.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
-
-\draw [-{Stealth[scale=1.5]}] (5.375,11.125) -- (8.25,11.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
-
-\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (8.25,9.5) -- (5.375,9.5) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200 OK, glosas};
-
-\draw [-{Stealth[scale=1.5]}] (5.375,8.375) -- (11.25,8.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /tposes/\{archivo\}};
-
-\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,6.75) -- (5.375,6.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{404 NOT FOUND};
-
-\draw [-{Stealth[scale=1.5]}] (5.375,6) -- (11.25,6) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /fingerspell?letters=...};
-
-\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,4.75) -- (5.375,4.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200, archivo/s de seña/s};
-
-\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,4) -- (2.5,4) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Glosas y animación};
-
-\draw [-{Stealth[scale=1.5]}] (2.5,3.75) -- (-0.375,3.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Subtítulo/esqueleto};
-
-\draw [-{Stealth[scale=1.5]}] (-0.375,3.375) -- (14.25,3.375) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Avatar señando / subtítulos};
-
-\end{circuitikz}%
-}
-\caption{Diagrama de secuencia del flujo de interpretación de voz/texto a señas para el usuario señante.}
-\label{fig:diagrama_secuencia_inverso}
+\draw [-{Stealth[scale=1.5]}] (2.5,11.375) -- (5.375,11.375) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+\draw [-{Stealth[scale=1.5]}] (5.375,10.5) -- (8.25,10.5) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (8.25,8.875) -- (5.375,8.875) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200 OK, glosas};
+\draw [-{Stealth[scale=1.5]}] (5.375,7.25) -- (11.25,7.25) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /tposes/\{archivo\}};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,5.625) -- (5.375,5.625) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{404 NOT FOUND};
+\draw [dash pattern=on 6pt off 2pt] (4.875,8.125) rectangle (11.875,3.25);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (11.725,7.975) {[Por cada glosa]};
+\draw [-{Stealth[scale=1.5]}] (5.375,4.875) -- (11.25,4.875) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /fingerspell?letters=...};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (11.25,3.625) -- (5.375,3.625) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{200, archivo/s de seña/s};
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (5.375,2.875) -- (2.5,2.875) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Glosas y animación};
+\draw [-{Stealth[scale=1.5]}] (2.5,2.625) -- (-0.375,2.625) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Subtítulo/esqueleto};
+\draw [-{Stealth[scale=1.5]}] (-0.375,2.25) -- (14.25,2.25) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Avatar señando / subtítulos};
+\draw [dashed] (4.875,11.25) rectangle (10.375,8.5);
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (10.225,11.1) {[Si 2+ glosas]};
+\end{circuitikz}
+}%
+\caption{Diagrama de secuencia del sistema}
+\label{fig:diagrama_secuencia}
 \end{figure}
+
+En ese diagrama, ILSA parte el texto por espacios antes de llamar al servidor semántico. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: el recuadro «1 palabra» no sale hacia el traductor. Si quedan dos o más palabras, la oración sigue por \texttt{POST /hearing}. La decisión no consulta el diccionario de poses. La pose de la glosa, venga de este atajo o del traductor, se pide después, en el recuadro de cada glosa.
 
 \section{Diseño de contratos de API REST}
 
@@ -475,7 +475,9 @@ Los clips cinemáticos registran la secuencia de puntos clave extraídos mediant
 El archivo binario \texttt{.pose} conserva las tres fases fonológicas estándar (preparación, núcleo, retracción). Para aislar el tramo con valor morfosintáctico distintivo sin alterar el archivo original, el sistema registra los marcadores temporales de inicio ($t_{\text{inicio}}$) y fin ($t_{\text{fin}}$) del núcleo en un índice de anotaciones externo. Durante la renderización, la lectura consulta este índice para aislar el segmento relevante.
 
 \subsection{Preparación, acondicionamiento y ensamblado cinemático}
-Los archivos .pose cargados en el servidor atraviesan una etapa de acondicionamiento estructurada:
+El servicio de poses entrega el archivo \texttt{.pose} que corresponde a la glosa pedida. Esa preparación corre en ILSA, después de la descarga. La extensión recibe la lista de fotogramas ya armada y la dibuja; no rehace el empalme.
+
+ILSA aplica entonces estas operaciones sobre cada archivo recibido:
 \begin{enumerate}
     \item \textbf{Normalización temporal:} Conversión de los clips a una cadencia común de 30 fotogramas por segundo.
     \item \textbf{Aislamiento del núcleo:} Recorte del tramo delimitado por $t_{\text{inicio}}$ y $t_{\text{fin}}$.
@@ -485,7 +487,7 @@ Los archivos .pose cargados en el servidor atraviesan una etapa de acondicionami
     \item \textbf{Ajuste de escala:} Normalización del tamaño corporal en función de una distancia inter-hombros fija.
 \end{enumerate}
 
-Antes de la reproducción de los clips, para evitar discontinuidades espaciales abruptas al empalmar el núcleo del gesto $k$ con el núcleo $k+1$, el sistema interpola un \textit{puente sintético} de fotogramas de transición:
+Antes de la reproducción de los clips, para evitar discontinuidades espaciales abruptas al empalmar el núcleo del gesto $k$ con el núcleo $k+1$, ILSA interpola un \textit{puente sintético} de fotogramas de transición:
 \begin{equation}
 S(x) = 3x^2 - 2x^3 \quad \text{para } x \in [0, 1]
 \label{eq:smoothstep}
@@ -494,7 +496,7 @@ Este puente ejecuta una traslación suave sobre las coordenadas planares. Se exp
 
 \begin{table}[H]
   \centering
-  \small
+\small
   \caption{Previsiones del diseño frente a fallos de estimación o léxico.}
   \label{tab:salvaguardas_pose}
   \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth} >{\raggedright\arraybackslash}X@{}}
@@ -649,7 +651,9 @@ Las computadoras cliente salen por HTTPS. El ingreso resuelve el nombre, present
 \end{itemize}
 
 \subsection{Traductor}
-El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Por la cuantización a 4 bits, cada réplica cabe en menos de 2\,GB de RAM y corre en procesador, sin placa de video.
+El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Cada réplica corre en procesador, sin placa de video. Carga el modelo principal de los dos canales, Qwen2.5 1,5B, con un contexto de 2048 tokens, y deja el respaldo Llama 3.2 1B en disco hasta que ese principal no carga. La estimación de menos de 2 GiB por réplica es la suma de esos dos archivos y de sus cachés de claves y valores, calculada en la Sección~\ref{sec:memoria_inferencia}. El buffer de activaciones, definido junto a la Ecuación~\ref{eq:ram_runtime}, queda fuera de esa suma. Los 8 GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada a la instancia de validación, no una medición de este consumo.
+
+% TODO: ARRIBA. Necesitariamos medir el tamaño del buffer. lo mas probable es que no entre en los 2gib per oigual lo medimos y lo reportamos. porque hacer la medicion sin buffer es una caca
 
 \subsection{Archivos de seña}
 Una petición de pose es una lectura, no una generación. El contrato es el de la Sección~\ref{sec:api-avatar}. Las réplicas no guardan estado y leen la misma carpeta. El escalador de este grupo mira la cantidad de lecturas, no la cola del traductor. La ruta de salud queda aparte de la ruta del archivo. La caché del cliente sigue como primer recurso.

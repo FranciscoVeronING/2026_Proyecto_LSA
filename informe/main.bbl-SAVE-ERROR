@@ -662,28 +662,6 @@
       \field{title}{\texttt{sandbox} ({Manifest V3})}
       \field{year}{2024}
     \endentry
-    \entry{inju2024diccionario}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=316ae78f7a9a303f26aa7045713b1f11}{%
-           family={{INJU}},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{fullhash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{fullhashraw}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{bibnamehash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{authorbibnamehash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{authornamehash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{authorfullhash}{316ae78f7a9a303f26aa7045713b1f11}
-      \strng{authorfullhashraw}{316ae78f7a9a303f26aa7045713b1f11}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://senas.inju.gob.ar/}}
-      \field{title}{Diccionario de Señas}
-      \field{year}{2024}
-    \endentry
     \entry{cas2024senario}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=ec644511137a5e0931dbdb09c783a13b}{%
@@ -744,8 +722,8 @@
       \strng{authornamehash}{2452563d59b5d4c341e47ff394af3a2c}
       \strng{authorfullhash}{2452563d59b5d4c341e47ff394af3a2c}
       \strng{authorfullhashraw}{2452563d59b5d4c341e47ff394af3a2c}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://www.blessit.net/interpretacion-lengua-de-senas}}
@@ -766,8 +744,8 @@
       \strng{authornamehash}{530ccae38da8ca96d634389c01c2faea}
       \strng{authorfullhash}{530ccae38da8ca96d634389c01c2faea}
       \strng{authorfullhashraw}{530ccae38da8ca96d634389c01c2faea}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://www.argentina.gob.ar/caracteristicas-de-la-comunicacion-por-videollamadas}}
@@ -810,8 +788,8 @@
       \strng{authornamehash}{27043cce03d9132ff5bd68d5db22bae7}
       \strng{authorfullhash}{416d15ae22fa0bb9a6dfc167be25845c}
       \strng{authorfullhashraw}{416d15ae22fa0bb9a6dfc167be25845c}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{XXII Congreso Argentino de Ciencias de la Computación ({CACIC})}
@@ -839,8 +817,8 @@
       \strng{authornamehash}{ac322d6a2637b2597d620851aad4be1e}
       \strng{authorfullhash}{ac322d6a2637b2597d620851aad4be1e}
       \strng{authorfullhashraw}{ac322d6a2637b2597d620851aad4be1e}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Reconocimiento de Lengua de Señas con redes neuronales recurrentes}
@@ -1038,26 +1016,27 @@
       \field{pages}{2623\bibrangedash 2631}
       \range{pages}{9}
     \endentry
-    \entry{qwen2024qwen25}{misc}{}{}
+    \entry{qwen2024qwen25}{article}{}{}
       \name{author}{1}{}{%
-        {{hash=da7e055abb5fc1aa8ed2d2a502b3a612}{%
-           family={{Alibaba Cloud}},
-           familyi={A\bibinitperiod}}}%
+        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
+           family={{Qwen Team}},
+           familyi={Q\bibinitperiod}}}%
       }
-      \strng{namehash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{fullhash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{fullhashraw}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{bibnamehash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{authorbibnamehash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{authornamehash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{authorfullhash}{da7e055abb5fc1aa8ed2d2a502b3a612}
-      \strng{authorfullhashraw}{da7e055abb5fc1aa8ed2d2a502b3a612}
+      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \field{extraname}{1}
       \field{sortinit}{4}
       \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://qwenlm.github.io/}}
-      \field{title}{{Qwen2.5}: A Family of Large Language Models}
+      \field{journaltitle}{arXiv preprint arXiv:2412.15115}
+      \field{title}{{Qwen2.5} Technical Report}
       \field{year}{2024}
     \endentry
     \entry{allal2024smollm2}{misc}{}{}
@@ -1106,50 +1085,27 @@
       \field{title}{{SmolLM2}: When Small Goes Big}
       \field{year}{2024}
     \endentry
-    \entry{dubey2024llama3}{article}{}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{5}{}{%
-        {{hash=517ae3236e034cf4fdea5b47025e3973}{%
-           family={Dubey},
-           familyi={D\bibinitperiod},
-           given={Abhimanyu},
-           giveni={A\bibinitperiod}}}%
-        {{hash=7cd1f80eda1bcdcfef29a10ede4dd146}{%
-           family={Jauhri},
-           familyi={J\bibinitperiod},
-           given={Abhinav},
-           giveni={A\bibinitperiod}}}%
-        {{hash=06842da7f77ff44040c8321fd64885f3}{%
-           family={Pandey},
-           familyi={P\bibinitperiod},
-           given={Abhinav},
-           giveni={A\bibinitperiod}}}%
-        {{hash=608d46a077e616c07f7f9f841f4de3ae}{%
-           family={Kadian},
-           familyi={K\bibinitperiod},
-           given={Abhishek},
-           giveni={A\bibinitperiod}}}%
-        {{hash=2e761a0ae1d9bbf5f560537144813f20}{%
-           family={Al-Dahle},
-           familyi={A\bibinithyphendelim D\bibinitperiod},
-           given={Ahmad},
-           giveni={A\bibinitperiod}}}%
+    \entry{meta2024llama321b}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=b6755d218d5f4e1cef9cce9cc39aeda9}{%
+           family={{Meta}},
+           familyi={M\bibinitperiod}}}%
       }
-      \strng{namehash}{cd704062f81a62eab86198dd3fba0e91}
-      \strng{fullhash}{418fe52e7ba505f590835a88532cdbd9}
-      \strng{fullhashraw}{418fe52e7ba505f590835a88532cdbd9}
-      \strng{bibnamehash}{418fe52e7ba505f590835a88532cdbd9}
-      \strng{authorbibnamehash}{418fe52e7ba505f590835a88532cdbd9}
-      \strng{authornamehash}{cd704062f81a62eab86198dd3fba0e91}
-      \strng{authorfullhash}{418fe52e7ba505f590835a88532cdbd9}
-      \strng{authorfullhashraw}{418fe52e7ba505f590835a88532cdbd9}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \strng{namehash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{fullhash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{fullhashraw}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{bibnamehash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{authorbibnamehash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{authornamehash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{authorfullhash}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \strng{authorfullhashraw}{b6755d218d5f4e1cef9cce9cc39aeda9}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2407.21783}
-      \field{title}{The {Llama 3} Herd of Models}
+      \field{howpublished}{\url{https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct}}
+      \field{note}{Ficha del modelo. Publicación: 25 de septiembre de 2024}
+      \field{title}{{Llama 3.2 1B Instruct}}
       \field{year}{2024}
     \endentry
     \entry{papineni2002bleu}{inproceedings}{}{}
@@ -1335,6 +1291,78 @@
       \field{year}{2020}
       \field{pages}{2685\bibrangedash 2702}
       \range{pages}{18}
+    \endentry
+    \entry{qwen2024qwen2505b}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
+           family={{Qwen Team}},
+           familyi={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \field{extraname}{2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct}}
+      \field{note}{Ficha del modelo. Declara 0,49 mil millones de parámetros, 24 capas y 14/2 cabezas}
+      \field{title}{{Qwen2.5-0.5B-Instruct}}
+      \field{year}{2024}
+    \endentry
+    \entry{qwen2024qwen2515b}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
+           family={{Qwen Team}},
+           familyi={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \field{extraname}{3}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}}
+      \field{note}{Ficha del modelo. Declara 1,54 mil millones de parámetros, 28 capas y 12/2 cabezas}
+      \field{title}{{Qwen2.5-1.5B-Instruct}}
+      \field{year}{2024}
+    \endentry
+    \entry{qwen2024qwen253b}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
+           family={{Qwen Team}},
+           familyi={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
+      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
+      \field{extraname}{4}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-3B-Instruct}}
+      \field{note}{Ficha del modelo. Declara 3,09 mil millones de parámetros, 36 capas y 16/2 cabezas}
+      \field{title}{{Qwen2.5-3B-Instruct}}
+      \field{year}{2024}
     \endentry
   \enddatalist
 \endrefsection

@@ -19,13 +19,6 @@
   howpublished = {Bolet{\'i}n Oficial}
 }
 
-@misc{inju2024diccionario,
-  author       = {{INJU}},
-  title        = {Diccionario de Se{\~n}as},
-  year         = {2024},
-  howpublished = {\url{https://senas.inju.gob.ar/}}
-}
-
 @article{wu2020lite,
   author  = {Wu, Ying and Lu, Shuang and Gan, Zhiqiang and Gan, Chuang and Shen, Yu and Chen, Yen-Chun and Smith, Lawrence and Ren, Shanghang and Carin, Lawrence and He, Xiaodong and others},
   title   = {Lite Transformer with Long-Short Range Attention},
@@ -251,11 +244,14 @@
 }
 
 % --- Modelos de Lenguaje Evaluados (Llama 3.2, SmolLM2, Qwen 2.5) ---
-@article{dubey2024llama3,
-  author  = {Dubey, Abhimanyu and Jauhri, Abhinav and Pandey, Abhinav and Kadian, Abhishek and Al-Dahle, Ahmad and others},
-  title   = {The {Llama 3} Herd of Models},
-  journal = {arXiv preprint arXiv:2407.21783},
-  year    = {2024}
+% El informe de Llama 3 (arXiv:2407.21783) no documenta Llama 3.2 1B.
+% La ficha de la variante usada es meta2024llama321b.
+@misc{meta2024llama321b,
+  author       = {{Meta}},
+  title        = {{Llama 3.2 1B Instruct}},
+  year         = {2024},
+  howpublished = {\url{https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct}},
+  note         = {Ficha del modelo. Publicaci{\'o}n: 25 de septiembre de 2024}
 }
 
 @misc{allal2024smollm2,
@@ -265,11 +261,35 @@
   howpublished = {\url{https://huggingface.co/blog/smollm2}}
 }
 
-@misc{qwen2024qwen25,
-  author       = {{Alibaba Cloud}},
-  title        = {{Qwen2.5}: A Family of Large Language Models},
+@article{qwen2024qwen25,
+  author  = {{Qwen Team}},
+  title   = {{Qwen2.5} Technical Report},
+  journal = {arXiv preprint arXiv:2412.15115},
+  year    = {2024}
+}
+
+@misc{qwen2024qwen2505b,
+  author       = {{Qwen Team}},
+  title        = {{Qwen2.5-0.5B-Instruct}},
   year         = {2024},
-  howpublished = {\url{https://qwenlm.github.io/}}
+  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct}},
+  note         = {Ficha del modelo. Declara 0,49 mil millones de par{\'a}metros, 24 capas y 14/2 cabezas}
+}
+
+@misc{qwen2024qwen2515b,
+  author       = {{Qwen Team}},
+  title        = {{Qwen2.5-1.5B-Instruct}},
+  year         = {2024},
+  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}},
+  note         = {Ficha del modelo. Declara 1,54 mil millones de par{\'a}metros, 28 capas y 12/2 cabezas}
+}
+
+@misc{qwen2024qwen253b,
+  author       = {{Qwen Team}},
+  title        = {{Qwen2.5-3B-Instruct}},
+  year         = {2024},
+  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-3B-Instruct}},
+  note         = {Ficha del modelo. Declara 3,09 mil millones de par{\'a}metros, 36 capas y 16/2 cabezas}
 }
 
 % --- Frameworks de Desarrollo e Inferencia Web ---

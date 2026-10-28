@@ -1,0 +1,345 @@
+% ====================================================================
+\chapter{Pruebas y validación}
+\label{cap:pruebas_validacion}
+% ====================================================================
+
+En el presente capítulo se expone la estrategia de verificación y validación del sistema de traducción en tiempo real de Lengua de Señas Argentina (LSA). Se detallan el plan de pruebas adoptado, la ejecución de los experimentos sobre los distintos componentes y el análisis cuantitativo y cualitativo de los resultados obtenidos frente a los requerimientos del proyecto.
+
+% ====================================================================
+\section{Plan de pruebas}
+\label{sec:plan_pruebas}
+% ====================================================================
+
+El plan de pruebas establece la estrategia sistemática para comprobar el correcto funcionamiento, el desempeño en tiempo real y la calidad del software desarrollado.
+
+\subsection{Alcance y tipos de pruebas}
+La evaluación del sistema abarca desde la recolección de datos y el entrenamiento de modelos de aprendizaje profundo hasta la integración completa de los componentes en una videollamada web. Se aplicaron los siguientes tipos de pruebas:
+\begin{itemize}
+    \item \textbf{Pruebas unitarias y de componentes:} Verificación del extractor de puntos clave (\textit{landmarks}), la lógica de filtrado gestual (\texttt{RepeatGate}), los clasificadores de señas y la cuantización de los modelos de lenguaje.
+    \item \textbf{Pruebas de integración:} Evaluación de las interfaces entre la extensión de navegador (Manifest V3), el motor de inferencia local, las llamadas a API en Google Cloud Run y el cliente de videoconferencia (Google Meet).
+    \item \textbf{Pruebas de rendimiento y latencia:} Medición de tiempos de respuesta por etapa del canal de procesamiento (\textit{pipeline}), consumo de memoria en cliente y servidor, y tasa de fotogramas por segundo.
+    \item \textbf{Pruebas de sistema de extremo a extremo (\textit{End-to-End}):} Validación del circuito completo de traducción (LSA a español y español a LSA) en entornos de llamada reales.
+    \item \textbf{Pruebas de robustez y casos límite:} Evaluación del clasificador frente a cambios de iluminación, distorsiones ópticas de cámara web, presencia de múltiples personas en el fondo y variabilidad en la velocidad de articulación gestual.
+\end{itemize}
+
+\subsection{Entornos de evaluación}
+Las pruebas se ejecutaron en dos entornos representativos:
+\begin{enumerate}
+    \item \textbf{Estación de desarrollo (GPU):} Utilizada para la evaluación estática fuera de línea, el entrenamiento de modelos y las pruebas de velocidad máxima de inferencia.
+    \item \textbf{Equipo objetivo de cliente (Laptop sin GPU):} Configuración de gama media estándar orientada a verificar el comportamiento en tiempo real, el consumo de CPU/RAM y la latencia perceptible por el usuario final.
+    \item \textbf{Infraestructura en la nube:} Instancia de Google Cloud Run (configuración de 4 vCPU y 8\,GiB de memoria RAM) conectada mediante HTTPS para los servicios remotos de traducción semántica y reproducción de avatar.
+\end{enumerate}
+
+\subsection{Criterios de aceptación y trazabilidad}
+Cada caso de prueba se vinculó de manera directa con los requerimientos funcionales y no funcionales del sistema. En la Tabla~\ref{tab:trazabilidad_pruebas} se sintetizan los criterios de aceptación principales definidos para la validación.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Matriz de trazabilidad entre requerimientos y criterios de aceptación para pruebas.}
+    \label{tab:trazabilidad_pruebas}
+    \begin{tabularx}{\textwidth}{l X X}
+        \toprule
+        \textbf{Módulo} & \textbf{Requerimiento asociado} & \textbf{Criterio de aceptación} \\
+        \midrule
+        Clasificador Gestual & Clasificación en tiempo real de vocabulario de 100 señas LSA. & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
+        Traductor Semántico & Conversión bidireccional entre glosas y español fluido. & Exactitud sintáctica/semántica $> 85\%$, BLEU $> 90$, BERTScore $> 98$. \\
+        Motor Local & Filtrado de repeticiones y control de estado de gestos. & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
+        Integración Meet & Captura e inyección de video/texto sin alterar la videollamada. & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ====================================================================
+\section{Resultados de la verificación}
+\label{sec:resultados_verificacion}
+% ====================================================================
+
+Esta sección presenta la evidencia empírica obtenida de la ejecución del plan de pruebas sobre cada componente del sistema.
+
+\subsection{Evaluación del clasificador gestual (TinySkeletonClassifier)}
+\label{sec:res_clasificador}
+
+El modelo de clasificación gestual se evaluó tanto en entornos estáticos fuera de línea como en pruebas en vivo frente a cámara web en la estación local.
+
+\subsubsection{Evolución del corpus y vocabulario}
+La incorporación de clases al modelo avanzó de manera paulatina conforme se consolidaron las muestras del dataset propio de LSA. La selección priorizó la identificación de personas, verbos de emergencia y asistencia al viajero. En la Tabla~\ref{tab:evolucion_corpus} se detalla la progresión del vocabulario y las muestras recopiladas.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Progresión cronológica del conjunto de datos y vocabulario de LSA.}
+    \label{tab:evolucion_corpus}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Nro} & \textbf{Clases} & \textbf{Muestras/Clase} & \textbf{Muestras Entrenamiento} & \textbf{Muestras Validación} \\
+        \midrule
+        1 & 91 & 50 & 3\,640 & 910 \\
+        2 & 94 & 60 & 4\,512 & 1\,128 \\
+        3 & 97 & 60 & 4\,656 & 1\,164 \\
+        4 & 100 & 100 & 4\,800 & 1\,200 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Comparativa entre evaluación fuera de línea y cámara en vivo}
+En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada entre la exactitud de validación sobre el dataset estático y el rendimiento real obtenido frente a la cámara web.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Exactitud de validación fuera de línea frente al acierto en cámara real (sin colapsar homógrafos).}
+    \label{tab:brecha_offline_camara}
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Checkpoint} & \textbf{Fecha} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \midrule
+        16 fotogramas, 91 clases & 29--30/07 & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        32 fotogramas, 128/4/2 & 31/07 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        32 fotogramas, 64/2/1 & 31/07 & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        Optuna v1, 32 fotogramas & 31/07 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
+        Baseline 16f, luz ambiental, 94 clases & 18/08 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
+        Baseline 16f, iluminación dirigida, 94 clases & 28/08 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
+        Baseline 16f, 97 clases & 15--17/09 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Los resultados evidencian que el control de la iluminación del entorno permitió un incremento del acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo.
+
+\subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
+La Tabla~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud optima de la ventana temporal de entrada.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Evaluación de la resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}
+    \label{tab:frames_julio}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Iteración} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \midrule
+        A, 16 fotogramas & 128 dim / 4 cabezas / 2 capas & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        B, 32 fotogramas & 128 dim / 4 cabezas / 2 capas & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        C, 32 fotogramas & 64 dim / 2 cabezas / 1 capa & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A pesar de las ganancias iniciales observadas con 32 fotogramas, la incorporación de aumentaciones avanzadas de datos en agosto confirmó que la ventana de 16 fotogramas ofreció mayor capacidad de generalización sobre señas estáticas y redujo la redundancia temporal.
+
+\subsubsection{Impacto de la corrección de relación de aspecto}
+La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ con bandas de relleno generó un impacto positivo directo en la clasificación, según se detalla en la Tabla~\ref{tab:aspect}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Efecto de la corrección de relación de aspecto sobre 36 tomas de letras y dígitos.}
+    \label{tab:aspect}
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Configuración de entrada} & \textbf{Exactitud Top-1} \\
+        \midrule
+        Captura original en relación 4:3 & 66{,}7\,\% \\
+        Corrección analítica en eje $y$ ($\times 1{,}333$) & 88{,}9\,\% \\
+        Corrección simulada en ejes $y$ y $z$ & 75{,}0\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales en exactitud. Corrigio confusiones sistemáticas como el caso de la letra \texttt{I} clasificada previamente como \texttt{ojo}.
+
+\subsection{Resultados de los módulos de traducción semántica}
+\label{sec:res_traduccion}
+
+La evaluación de los modelos de lenguaje reducidos (SLM) cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
+
+\subsubsection{Evaluación del canal directo (LSA a Español)}
+En la Tabla~\ref{tab:sem_directo} se presentan las métricas cualitativas y cuantitativas para el canal directo.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Canal directo (LSA $\rightarrow$ Español), resultados finales (119 oraciones de evaluación). Índices en escala 0--100.}
+\label{tab:sem_directo}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Modelo} & \textbf{Exacto} & \textbf{BLEU} & \textbf{ROUGE-L} & \textbf{METEOR} & \textbf{BERTScore} & \textbf{COMET} & \textbf{ms} \\
+\midrule
+Qwen2.5 0,5B & 92,44 & 95,58 & 95,78 & 95,51 & 99,16 & 97,47 & 141,05 \\
+Qwen2.5 1,5B & 94,96 & 96,32 & 98,02 & 97,35 & 99,20 & 97,36 & 256,30 \\
+Qwen2.5 3B   & 95,80 & 97,88 & 98,39 & 97,84 & 99,20 & 97,56 & 514,38 \\
+Llama 3.2 1B & 89,92 & 92,64 & 95,94 & 96,13 & 98,58 & 96,83 & 231,28 \\
+SmolLM2 1,7B & 90,76 & 93,53 & 96,48 & 95,97 & 98,85 & 97,12 & 438,31 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Evaluación del canal inverso (Español a LSA)}
+En la Tabla~\ref{tab:sem_inverso} se detallan las métricas correspondientes al módulo de estructuración en glosas para el canal inverso.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Canal inverso (Español $\rightarrow$ LSA), resultados finales (102 oraciones de evaluación). Índices en escala 0--100.}
+\label{tab:sem_inverso}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Modelo} & \textbf{Exacto} & \textbf{BLEU} & \textbf{ROUGE-L} & \textbf{METEOR} & \textbf{BERTScore} & \textbf{COMET} & \textbf{ms} \\
+\midrule
+Qwen2.5 0,5B & 87,25 & 91,29 & 96,20 & 91,25 & 98,86 & 94,28 & 155,97 \\
+Qwen2.5 1,5B & 91,18 & 94,14 & 97,17 & 92,75 & 99,22 & 95,98 & 290,82 \\
+Qwen2.5 3B   & 89,22 & 92,51 & 96,85 & 92,71 & 99,21 & 95,45 & 537,58 \\
+Llama 3.2 1B & 89,22 & 92,66 & 96,36 & 92,89 & 99,13 & 95,29 & 245,70 \\
+SmolLM2 1,7B & 77,45 & 82,90 & 91,54 & 86,31 & 97,68 & 92,37 & 458,39 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto de 94,96\,\% en canal directo y 91,18\,\% en canal inverso. Mantuvo tiempos de inferencia en CPU inferiores a 300\,ms.
+
+\subsection{Pruebas de la lógica de control del motor local}
+La batería de pruebas diseñada para validar la lógica del filtro \texttt{RepeatGate} y los tiempos de corte de enunciado produjo los resultados consignados en la Tabla~\ref{tab:bateria_logica}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Resultados de las pruebas funcionales sobre la lógica de control del motor local.}
+    \label{tab:bateria_logica}
+    \begin{tabularx}{\textwidth}{l l X}
+        \toprule
+        \textbf{Caso de prueba} & \textbf{Entrada ingresada} & \textbf{Resultado emitido} \\
+        \midrule
+        Dígitos repetidos & \texttt{1 1 1 2 2} & Aceptación total: \texttt{1 1 1 2 2} \\
+        Letra repetida tres veces & \texttt{A A A B} & Filtrado a máximo de dos: \texttt{A A B} \\
+        Rebote del clasificador & \texttt{HOLA HOLA} & Descarte de duplicado inmediato: \texttt{HOLA} \\
+        Repetición no consecutiva & \texttt{HOLA VER HOLA} & Conservación de la secuencia completa \\
+        Glosa repetida descartada a los 3\,s & Glosa repetida & El cierre se desplaza a los 7\,s \\
+        Movimiento continuo hasta 5\,s & Sin glosa nueva & Cierre de enunciado a los 9\,s \\
+        Deletreo dactilológico & \texttt{J U A N} & Conversión directa a «Juan.» sin consulta a nube \\
+        Deletreo con ambigüedad & \texttt{T I N A} & Derivación al traductor por coincidencia con \texttt{OJO} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Tratamiento de fallas de integración en Google Meet}
+Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que fueron solucionados mediante intervenciones específicas de arquitectura, como se detalla en la Tabla~\ref{tab:fallas_integracion}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Anomalías detectadas en la integración con Google Meet y soluciones aplicadas.}
+    \label{tab:fallas_integracion}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Falla detectada} & \textbf{Intervención de ingeniería aplicada} \\
+        \midrule
+        Bloqueo del inicio de video en Meet por intercepción permanente de cámara. & Activación del reemplazo de la pista únicamente con el motor ILSA encendido. \\
+        \addlinespace[2pt]
+        Pérdida de enlace al recargar la extensión con la pestaña de la reunión abierta. & Recarga automática de la pestaña de Meet ante el reinicio del contexto de la extensión. \\
+        \addlinespace[2pt]
+        Detección de falsas manos provocada por movimiento del torso. & Exigencia de un número mínimo de cuadros consecutivos con mano detectada antes de abrir el gesto. \\
+        \addlinespace[2pt]
+        Interferencia en la captura por movimiento de personas en el fondo. & Delimitación del área de actividad basada exclusivamente en los puntos articulares de las manos. \\
+        \addlinespace[2pt]
+        Sobrecarga de CPU en la transferencia de imágenes hacia la ventana \textit{offscreen}. & Reducción de la resolución de los cuadros transferidos a $240$ píxeles de ancho con compresión ajustada. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ====================================================================
+\section{Métricas de calidad}
+\label{sec:metricas_calidad}
+% ====================================================================
+
+La evaluación objetiva del sistema se consolidó mediante métricas cuantificables agrupadas en cuatro dimensiones principales: desempeño en tiempo real, eficiencia en el uso de recursos, calidad semántica y confiabilidad.
+
+\subsection{Desglose de latencias y tiempos de respuesta}
+En la Tabla~\ref{tab:latencias_etapas} se desglosan los componentes del retardo total en el canal directo LSA a español.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Desglose de los componentes del retardo de procesamiento en el canal directo.}
+    \label{tab:latencias_etapas}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.32\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Etapa del pipeline} & \textbf{Duración / Retardo} & \textbf{Naturaleza del parámetro} \\
+        \midrule
+        Detección de fin de seña & $\approx 0{,}4$\,s & Configurado (12 fotogramas sin manos). \\
+        Inferencia del clasificador & $0{,}78$\,ms (CPU) / $1{,}08$\,ms (GPU) & Medición en CPU/GPU sobre modelo de 16f. \\
+        Separación mínima entre señas & $1{,}0$\,s & Configurado (reposo inter-gestual). \\
+        Pausa de cierre de enunciado & $4{,}0$\,s & Configurado (inactividad para disparar traducción). \\
+        % TODO: Falta viaje al servidor (ida y vuelta)
+        Generación de oración (LLM) & $256{,}30$\,ms & Medido en CPU local sobre Qwen2.5 1,5B. \\
+        Reevaluación de prompt (CPU) & $\approx 8$\,s & Ocurre únicamente ante pérdida de caché $KV$. \\
+        Arranque en frío del servicio & $1$--$3$\,min & Ocurre si la instancia escala a cero en Cloud Run. \\
+        Permanencia de subtítulo & $8{,}0$\,s & Configurado (visibilidad en interfaz). \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+El factor principal de espera radica en la pausa de 4,0 segundos, parametrizada para garantizar que la persona sorda haya finalizado la oración antes de enviar la secuencia al modelo de lenguaje.
+
+\subsection{Consumo de memoria y huella del sistema}
+La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En la Tabla~\ref{tab:pesos_cuant} y la Tabla~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 tokens.
+
+% TODO: Chequear estos valores
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Dimensiones de los archivos cuantizados y compresión alcanzada.}
+\label{tab:pesos_cuant}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Modelo} & \textbf{16 bits (GiB)} & \textbf{GGUF (MiB)} & \textbf{GGUF (GiB)} & \textbf{bits/parámetro} \\
+\midrule
+Qwen2.5 0,5B & 0,913 & 379,4 & 0,370 & 6,5 \\
+Qwen2.5 1,5B & 2,869 & 940,4 & 0,918 & 5,1 \\
+Qwen2.5 3B   & 5,756 & 1\,840,5 & 1,797 & 5,0 \\
+Llama 3.2 1B & 2,291 & 770,3 & 0,752 & 5,3 \\
+SmolLM2 1,7B & 3,185 & 1\,006,7 & 0,983 & 4,9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Estimación del consumo de memoria RAM en inferencia (contexto de 2048 tokens).}
+\label{tab:ram_inferencia}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Modelo} & \textbf{Caché \(KV\) (GiB)} & \textbf{16 bits + caché (GiB)} & \textbf{GGUF + caché (GiB)} \\
+\midrule
+Qwen2.5 0,5B & 0,023 & 0,936 & 0,394 \\
+Qwen2.5 1,5B & 0,055 & 2,923 & 0,973 \\
+Qwen2.5 3B   & 0,070 & 5,826 & 1,867 \\
+Llama 3.2 1B & 0,062 & 2,354 & 0,815 \\
+SmolLM2 1,7B & 0,375 & 3,560 & 1,358 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En la réplica de producción desplegada en Cloud Run, ambos canales (directo e inverso) con el modelo Qwen2.5 1,5B consumen de manera conjunta $1{,}946$\,GiB de memoria RAM, situándose holgadamente dentro del límite asignado de $8$\,GiB.
+
+\subsection{Comparativa de rendimiento según arquitectura de hardware}
+En la Tabla~\ref{tab:hw_comparacion} se evalúa la viabilidad técnica del sistema según el hardware disponible para justificar la selección de una arquitectura híbrida cliente-servidor.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Comparación del comportamiento del sistema entre la estación de desarrollo y el equipo cliente.}
+    \label{tab:hw_comparacion}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Componente} & \textbf{Estación de desarrollo (GPU)} & \textbf{Equipo objetivo (Laptop sin GPU)} \\
+        \midrule
+        Extracción MediaPipe & Procesamiento fluido en tiempo real. & Tasa de fotogramas reducida; requirió reajuste de umbrales a milisegundos. \\
+        Clasificador local & Inferencia en $< 2$\,ms. & Inferencia en $< 5$\,ms sin impacto perceptible. \\
+        Traductor local & Respuesta fluida. & Alta latencia en CPU, incompatible con la fluidez de la conversación. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+La asignación de la clasificación al cliente de borde (modelo de $1{,}66$\,MB con 414\,309 parámetros) y la traducción al servidor en la nube garantizó el cumplimiento de los requerimientos de tiempo real en equipos sin aceleración por GPU.

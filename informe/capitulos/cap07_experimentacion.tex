@@ -291,6 +291,50 @@ La asimetría se constata empíricamente en la diferencia de acierto exacto entr
 \subsection{Compromiso entre latencia y capacidad lingüística}
 El tiempo de generación del binario cuantizado escala en relación directa con el número de parámetros de la arquitectura. Dentro de la familia Qwen2.5, la latencia media se incrementa aproximadamente en un 100\,\% al pasar del bloque de 1{,}5B (256{,}30,ms en canal directo) al bloque de 3B (514{,}38,ms en canal directo). Dado que la ganancia en exactitud sintáctica del modelo de 3B resulta marginal en el canal directo y desfavorable en el canal inverso, la variante Qwen2.5 1{,}5B se consolida como la arquitectura óptima para el despliegue en el servidor principal, con Llama 3.2 1B como alternativa de respaldo.El servicio desplegado sobre infraestructura Google Cloud Run (configuración de 4 vCPU y 8,GiB de RAM) incorporó un mecanismo de preservación de caché de claves y valores ($KV$ cache) para el prefijo de contexto del prompt. Esta estrategia evita el costo computacional de la reevaluación completa del prompt en CPU, proceso que demanda aproximadamente 8 segundos en instancias frías o ante discrepancias de prefijo.
 
+\subsection{Tamaño de los pesos y memoria de inferencia}
+\label{sec:memoria_inferencia}
+Los binarios de la corrida del 25 de octubre quedaron en las ramas \texttt{semantic-v2} (canal directo) y \texttt{semantic-reverse} (canal inverso). El entrenamiento fusiona el adaptador con la base y exporta el GGUF \texttt{Q4\_K\_M}; el modelo fusionado en 16 bits no se conserva en disco. Esa columna es 2 bytes por cada parámetro de la ficha: 0{,}49 mil millones para Qwen2.5 0{,}5B, 1{,}54 para el 1{,}5B y 3{,}09 para el 3B \parencite{qwen2024qwen2505b,qwen2024qwen2515b,qwen2024qwen253b}, 1{,}23 para Llama 3.2 1B Instruct \parencite{meta2024llama321b} y 1{,}71 para SmolLM2 1{,}7B \parencite{allal2024smollm2}. El archivo cuantizado sí se midió: las dos ramas escribieron, para cada arquitectura, un GGUF del mismo tamaño en bytes. Los pesos de un canal y del otro son distintos. El tamaño del archivo coincidió.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Pesos previos a la cuantización y archivos \texttt{Q4\_K\_M} del 25 de octubre. La columna de 16 bits es 2 bytes por parámetro de la ficha. La columna GGUF es el archivo medido en ambas ramas.}
+\label{tab:pesos_cuant}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Modelo} & \textbf{16 bits (GiB)} & \textbf{GGUF (MiB)} & \textbf{GGUF (GiB)} & \textbf{bits/param} \\
+\midrule
+Qwen2.5 0,5B & 0,913 & 379,4 & 0,370 & 6,5 \\
+Qwen2.5 1,5B & 2,869 & 940,4 & 0,918 & 5,1 \\
+Qwen2.5 3B   & 5,756 & 1\,840,5 & 1,797 & 5,0 \\
+Llama 3.2 1B & 2,291 & 770,3 & 0,752 & 5,3 \\
+SmolLM2 1,7B & 3,185 & 1\,006,7 & 0,983 & 4,9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La memoria de la Tabla~\ref{tab:ram_inferencia} suma el término de pesos y la caché \(KV\) en fp16 para 2048 tokens, con la misma fórmula de la Ecuación~\ref{eq:ram_runtime}. El buffer no entra. No es la memoria que ocupó el proceso durante la evaluación. Como el archivo tiene el mismo tamaño en los dos canales y la arquitectura es la misma, la caché y estas sumas valen para el canal directo y para el inverso. El servicio publicado carga el GGUF de 940,4 MiB en cada canal y conserva el de 770,3 MiB como respaldo.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Memoria de inferencia estimada, en GiB, para un contexto de 2048 tokens. Cada fila suma la caché al peso de 16 bits o al archivo GGUF medido. Las sumas se redondean al milésimo a partir del valor exacto.}
+\label{tab:ram_inferencia}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Modelo} & \textbf{Caché \(KV\)} & \textbf{16 bits + caché} & \textbf{GGUF + caché} \\
+\midrule
+Qwen2.5 0,5B & 0,023 & 0,936 & 0,394 \\
+Qwen2.5 1,5B & 0,055 & 2,923 & 0,973 \\
+Qwen2.5 3B   & 0,070 & 5,826 & 1,867 \\
+Llama 3.2 1B & 0,062 & 2,354 & 0,815 \\
+SmolLM2 1,7B & 0,375 & 3,560 & 1,358 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Una réplica del traductor, en el sentido de la Sección~\ref{sec:arq_escalable}, es un proceso con los dos canales. Al arrancar, cada canal carga el GGUF principal Qwen2.5 1,5B y deja el respaldo en disco. En Cloud Run el contexto es de 2048 tokens, el mismo de esta tabla. La columna GGUF + caché da 0,973 GiB para ese modelo, y los dos canales suman 1,946 GiB. Esa cifra reúne el archivo medido y la caché \(KV\) en fp16. El buffer de activaciones de la Ecuación~\ref{eq:ram_runtime} queda fuera, y la cifra no es la memoria que ocupó el proceso. El respaldo Llama 3.2 1B suma 0,815 GiB con su caché en cada canal, y solo entra en memoria si el principal no carga. Los 8 GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada al contenedor, no esta suma.
+
 \section{Evaluación del sistema integrado y rendimiento en tiempo real}
 
 \subsection{Validación funcional de extremo a extremo}

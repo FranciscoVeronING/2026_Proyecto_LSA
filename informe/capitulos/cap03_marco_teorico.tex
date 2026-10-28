@@ -46,10 +46,11 @@ El tiempo pseudo-real, en este prototipo, es una suma de esperas distintas. Cada
     \item \textbf{Pausa.} Empieza cuando las manos salen del cuadro y termina a los 4 segundos si no vuelven. Cierra la frase. No es tiempo del modelo.
     \item \textbf{Cola.} Empieza cuando la solicitud llega al servidor y termina cuando el modelo la toma. El servidor informa ese tiempo aparte de la inferencia.
     \item \textbf{Inferencia.} Empieza cuando el modelo toma la solicitud y termina cuando devuelve el texto. Es el único tramo al que el requerimiento RNF-01 exige un máximo de 2 segundos en banda ancha.
+    \item \textbf{Transporte.} Empieza cuando el cliente envía el pedido y termina cuando el texto vuelve. Cubre la ida y la vuelta por la red. El servidor no lo mezcla con la cola ni con la inferencia.
     \item \textbf{Entrega.} Empieza cuando el texto vuelve al cliente. En el canal directo incluye el subtítulo y la voz. En el canal inverso incluye la descarga de los movimientos, el dibujo y la salida del video ya compuesto hacia la llamada.
 \end{itemize}
 
-El ciclo que espera el interlocutor suma las cuatro. La meta de 2 segundos no cubre ese ciclo: la pausa, sola, ya dura 4 segundos. El procedimiento que mide cada tramo está en la Sección~\ref{sec:latencias_pipeline}.
+El ciclo que espera el interlocutor suma pausa, transporte, cola, inferencia y entrega. La meta de 2 segundos cubre solo la inferencia. Este capítulo define los tramos; el procedimiento que los mide está en la Sección~\ref{sec:latencias_pipeline}.
 
 \subsection{Visión computacional y reconocimiento basado en esqueletos}
 El reconocimiento de señas a partir de flujo de video crudo opera, en cada fotograma, sobre millones de valores cromáticos. Un cuadro de $1920 \times 1080$ píxeles en espacio RGB contiene:
@@ -64,26 +65,31 @@ Para la estimación postural se utiliza \textit{MediaPipe Holistic}, una arquite
 Asimismo, los datos cinemáticos de referencia gestual se archivan en un formato binario especializado con extensión \texttt{.pose} \parencite{moryossef2021poseformat}. La especificación del formato y su esquema de serialización provienen de la biblioteca \textit{pose-format}, desarrollada para el almacenamiento y manipulación de datos posturales en lenguas de señas, la cual organiza los puntos en un encabezado de metadatos globales y un tensor multidimensional de coordenadas espacializadas.
 
 \subsection{Modelado de secuencias temporales y atención}
-La clasificación gestual requiere procesar secuencias temporales de coordenadas articulares para asignar una clase o glosa. La aplicación de modelos recurrentes convencionales, tales como las redes LSTM, limita la compresión de la información histórica en un estado oculto secuencial, lo cual puede diluir los instantes iniciales del gesto al alcanzar la pose final. 
+La clasificación gestual requiere procesar secuencias temporales de coordenadas articulares para asignar una clase o glosa. Un modelo recurrente, por ejemplo una red LSTM, condensa la historia en un estado de tamaño fijo. Ese estado puede diluir los instantes iniciales del gesto al llegar a la pose final.
 
-El mecanismo de atención elimina esta restricción al permitir que cualquier instante temporal consulte de manera directa la totalidad de la secuencia en una única operación matricial \parencite{vaswani2017attention}. Para cada entrada, el modelo proyecta tres vectores: consulta ($Q$), clave ($K$) y valor ($V$). La respuesta atencional se calcula mediante la relación:
+El mecanismo de atención permite que cualquier instante consulte otros instantes de la secuencia en una operación matricial, sin pasar por un único estado acumulado \parencite{vaswani2017attention}. Eso no elimina todas las pérdidas: el \textit{softmax} concentra el peso y la dimensión de las claves es finita. Para cada entrada, el modelo proyecta tres vectores: consulta ($Q$), clave ($K$) y valor ($V$). La respuesta de atención se calcula mediante la relación:
 \begin{equation}
 \mathrm{Atenci\acute{o}n}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right) V
 \label{eq:atencion}
 \end{equation}
 Los símbolos de esa ecuación se leen así:
 \begin{itemize}
-    \item $Q$, $K$ y $V$ son las matrices de consulta, clave y valor. Cada fila es un instante de la secuencia.
-    \item $K^{\top}$ es la transpuesta de $K$. El producto $QK^{\top}$ compara la consulta de cada instante con la clave de todos los instantes.
-    \item $d_k$ es la cantidad de componentes de cada vector de clave, igual a la de cada vector de consulta. No es el largo de la secuencia ni la cantidad de clases.
-    \item $\sqrt{d_k}$ divide esos productos. Sin esa división, un $d_k$ grande empuja al softmax hacia un solo instante.
-    \item $\mathrm{softmax}$ convierte cada fila en pesos que suman 1.
-    \item El producto por $V$ suma los vectores de valor con esos pesos.
+    \item $k$ es la dimensión de la entrada de esa capa lineal.
+    \item $d$ es la dimensión de la salida.
+    \item $r$ es la dimensión intermedia del adaptador, con $r \ll \min(d, k)$.
+    \item $\alpha$ es un factor de escala constante. El cociente $\alpha/r$ regula la magnitud de la actualización.
+    \item $\mathbf{W}_0$ son los pesos preentrenados, que permanecen fijos.
+    \item $\mathbf{B}$ y $\mathbf{A}$ son las únicas matrices que se entrenan.
 \end{itemize}
-Este cálculo habilita al clasificador a ponderar la pose sostenida durante el núcleo por encima de las transiciones.
+La figura dibuja el caso cuadrado $k = d$: $\mathbf{B}$ mide $d \times r$ y $\mathbf{A}$ mide $r \times d$. El producto $BA$ recupera el tamaño de $\Delta W$.
 
 \subsection{Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
-Para la traducción semántica bidireccional se emplean modelos de lenguaje pequeños (SLM). La adaptación de estos modelos se ejecuta mediante la técnica de Adaptación de Bajo Rango (\textit{LoRA}) \parencite{hu2022lora}, la cual congela la matriz de pesos preentrenados $\mathbf{W}_0 \in \mathbb{R}^{d \times k}$ e introduce dos matrices entrenables de bajo rango $\mathbf{B} \in \mathbb{R}^{d \times r}$ y $\mathbf{A} \in \mathbb{R}^{r \times k}$, con rango $r \ll \min(d, k)$. La actualización lineal adopta la forma:
+Los modelos de lenguaje pequeños (SLM, por sus siglas en inglés) poseen un número reducido de parámetros en comparación con las arquitecturas de gran escala. Su función principal consiste en tomar una secuencia de texto de entrada para predecir la continuación lógica del mensaje. En este prototipo, los SLM asumen la traducción semántica bidireccional. Esta dimensión reducida facilita la etapa de ajuste fino, además de permitir la ejecución posterior del traductor, previamente cuantizado, directamente en la CPU.
+
+El procesamiento de información requiere la conversión del texto en tokens, los cuales constituyen los componentes básicos del vocabulario del tokenizador. Cabe destacar que un token no equivale necesariamente a una palabra completa, sino que puede abarcar caracteres individuales, subpalabras o palabras enteras. Estos segmentos representan la unidad fundamental mediante la cual la arquitectura divide la entrada y cuantifica la salida generada.
+\label{sec:token}
+
+La adaptación de estos modelos se ejecuta mediante la técnica de Adaptación de Bajo Rango (\textit{LoRA}) \parencite{hu2022lora}, la cual congela la matriz de pesos preentrenados $\mathbf{W}_0 \in \mathbb{R}^{d \times k}$ e introduce dos matrices entrenables de bajo rango $\mathbf{B} \in \mathbb{R}^{d \times r}$ y $\mathbf{A} \in \mathbb{R}^{r \times k}$, con rango $r \ll \min(d, k)$. La actualización lineal adopta la forma:
 
 \begin{equation}
 \mathbf{W} = \mathbf{W}_0 + \frac{\alpha}{r}(\mathbf{B}\mathbf{A})
@@ -119,7 +125,7 @@ donde $\alpha$ actúa como un factor de escala constante. La figura dibuja el ca
 
 % Matriz W (Congelada)
 \draw (4.375,12.125) -- (3.625,10.375) -- (6.625,10.375) -- (6,12.125) -- cycle;
-\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.125,11.25) {$W$\\Pesos\\preentrenados\\(congelados)};
+\node[inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, align=center, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (5.125,11.25) {$W$\\Pesos\\originales};
 
 % Matriz ΔW (Entrenable de dimensión completa)
 \draw (9,12.125) -- (8.25,10.375) -- (11.25,10.375) -- (10.625,12.125) -- cycle;
@@ -182,7 +188,7 @@ donde $\alpha$ actúa como un factor de escala constante. La figura dibuja el ca
 
 \end{circuitikz}%
 }
-\caption{Figura del ajuste. A la izquierda, $\Delta W$ conserva el tamaño $d \times d$. A la derecha, el caso cuadrado $k = d$: $B$ mide $d \times r$, $A$ mide $r \times d$ y el producto $BA$ vuelve al tamaño de $\Delta W$.}
+\caption{Comparación algebraica del ajuste. A la izquierda, un ajuste completo se escribe como $W+\Delta W$. En la práctica se actualizan los pesos originales; no se conserva una base congelada con una rama aparte. A la derecha, LoRA descompone $\Delta W$ en $B$ y $A$. El dibujo muestra el caso $k=d$ y escribe $BA$; la ecuación~\ref{eq:lora_formulation} incluye el factor $\alpha/r$.}
 \label{fig:comparacion_finetuning_lora}
 \end{figure}
 
@@ -193,12 +199,12 @@ El conversor parte cada tensor en superbloques de 256 pesos y, dentro, en bloque
 \hat{w} = m + s\, q
 \label{eq:reconstruccion_q4k}
 \end{equation}
-donde $q$ es el entero de ese peso. En la tabla del preset, el costo medio queda cerca de 5 bits por parámetro, frente a 16. Esa cuenta corresponde a \texttt{Q4\_K\_M}, no a una medición de calidad sobre las oraciones de este trabajo. La mayor parte de los tensores queda en \texttt{Q4\_K}. El preset reserva \texttt{Q6\_K} para \texttt{v\_proj} y para \texttt{down\_proj}. Las normalizaciones permanecen en 32 bits. Con ese tamaño de archivo, el traductor de las pruebas corre en CPU.
+donde $q$ es el entero de ese peso. En la tabla de cuantización de \texttt{llama.cpp}, medida sobre Llama 3.1 8B, \texttt{Q4\_K\_M} queda en $4{,}8944$ bits por peso, cerca de 5 frente a 16 \parencite{gerganov2023llamacpp}. Esa fila es el archivo completo dividido por los parámetros de ese modelo. No separa la cabecera, el vocabulario ni los tensores de otra precisión, y no se traslada tal cual a los modelos de este trabajo. No es una medición de calidad sobre las oraciones. La mayor parte de los tensores queda en \texttt{Q4\_K}. El preset reserva \texttt{Q6\_K} para \texttt{v\_proj} y para \texttt{down\_proj}. Las normalizaciones permanecen en 32 bits. Con ese tamaño de archivo, el traductor de las pruebas corre en CPU.
 
 \subsection{Estándares de captura web y arquitecturas de extensión web}
 La captura de video en el navegador se apoya en dos especificaciones. \textit{Media Capture and Streams} define \texttt{getUserMedia()} \parencite{w3c2024mediacapturestreams}. Esa llamada entrega pistas de un dispositivo, por ejemplo la cámara. La misma especificación permite varias pistas asociadas a una misma fuente.
 
-En el entorno de ejecución objetivo (Windows, Chrome y Google Meet), el acceso directo a la cámara mediante getUserMedia() falla con la excepción NotReadableError si el dispositivo físico ya está reservado por la videoconferencia. Esto ocurre porque el cliente de captura opera en modo de control exclusivo. Por este motivo, la arquitectura de ILSA omite la apertura independiente de la cámara y reutiliza el objeto MediaStream ya existente en la reunión. Asimismo, al desactivar la extensión, el sistema conserva los flujos activos y no invoca la función stop() sobre sus pistas.
+En las pruebas de captura de este trabajo, en Windows con Chrome y Google Meet, la apertura directa de la cámara mediante \texttt{getUserMedia()} devolvió la excepción \texttt{NotReadableError} cuando la videoconferencia ya tenía el dispositivo. Esa observación no se presenta como una propiedad de todo Windows con Meet. Por ese motivo, la arquitectura de ILSA omite una segunda apertura de la cámara y reutiliza el objeto \texttt{MediaStream} de la reunión. Al desactivar la extensión, el sistema conserva los flujos activos y no invoca \texttt{stop()} sobre sus pistas.
 
 El lienzo arma la imagen que sale a la llamada. Los fotogramas se leen de ese mismo flujo y el dibujo agrega el subtítulo o el esqueleto. \texttt{canvas.captureStream()}, de \textit{Media Capture from DOM Elements} \parencite{w3c2024mediacapture}, construye un \texttt{MediaStream} a partir del lienzo donde esos dibujos ya están.
 
@@ -224,8 +230,6 @@ La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducci
         \toprule
         \textbf{Sistema} & \textbf{Lengua y entrada} & \textbf{Sentido} & \textbf{Integración} \\
         \midrule
-        Diccionario INJU \parencite{inju2024diccionario} & LSA, consulta léxica & No traduce una frase en llamada. & Índice en línea. \\
-        \addlinespace[2pt]
         Señario de la CAS \parencite{cas2024senario} & LSA, material pedagógico & Consulta estática. & Fuera de la videollamada. \\
         \addlinespace[2pt]
         LSApp \parencite{lsapp2018} & LSA, ítem de diccionario o deletreo & Hacia la animación, en un solo sentido. & Aplicación móvil, sin reconocimiento. \\
@@ -238,7 +242,7 @@ La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducci
         \addlinespace[2pt]
         WLASL \parencite{li2020wlasl} & ASL, video & Reconocimiento léxico. & Corpus. No traduce oraciones ni trabaja en LSA. \\
         \addlinespace[2pt]
-        Hand Talk \parencite{handtalk2025} & Libras y ASL, texto & Hacia un avatar 3D. & Sin reconocimiento y sin LSA. \\
+        Hand Talk \parencite{handtalk2025} & Libras y ASL, texto & Hacia un avatar esquelético. & Sin reconocimiento y sin LSA. \\
         \addlinespace[2pt]
         HETAH \parencite{hetah2024avatar} & Español, oración escrita & Hacia síntesis gestual. & Sin reconocimiento de LSA dentro de una llamada. \\
         \bottomrule
@@ -251,8 +255,8 @@ Cada límite de la tabla está en la fuente citada: el diccionario no reconoce, 
 El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e incremental \parencite{pressman2014software}, compuesto por 6 fases principales:
 \begin{enumerate}
     \item \textbf{Curación de datos y formalización léxica:} Delimitación de 100 señas de LSA en colaboración con un informante calificado; diseño del entorno de grabación; captura de clips en resolución 1080p; y generación del dataset de coordenadas vectoriales normalizadas.
-    \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} Prueba de ventanas de 8, 12, 16 y 24 fotogramas; búsqueda de hiperparámetros con Optuna \parencite{akiba2019optuna}; diagnóstico de confusiones con el AUC de Mann-Whitney.
-    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} Diseño de prompts; ajuste con LoRA sobre Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 \parencite{dubey2024llama3}, en el orden manual de la Sección~\ref{sec:orden_prototipo}; cuantización GGUF \parencite{gerganov2023llamacpp}; y evaluación de fidelidad según la Sección~\ref{sec:fidelidad_semantica}.
+    \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} Prueba de ventanas de 8, 12, 16 y 32 fotogramas; búsqueda de hiperparámetros con Optuna \parencite{akiba2019optuna}; diagnóstico de confusiones con el AUC de Mann-Whitney.
+    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} Diseño de prompts; ajuste con LoRA sobre Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 1B Instruct \parencite{meta2024llama321b}, en el orden manual de la Sección~\ref{sec:orden_prototipo}; cuantización GGUF \parencite{gerganov2023llamacpp}; y evaluación de fidelidad según la Sección~\ref{sec:fidelidad_semantica}.
     \item \textbf{Integración y renderizado gestual:} Acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados; comunicación con el servidor semántico; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{chrome2024manifestv3}.
     \item \textbf{Avatar e integración visual inversa:} Desarrollo del controlador del avatar para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico; e integración en la extensión.
     \item \textbf{Fase de pruebas:} Medición de las etapas de la Sección~\ref{sec:tiempo_pseudo}, con el procedimiento de la Sección~\ref{sec:latencias_pipeline}.
@@ -270,7 +274,7 @@ La fidelidad semántica, en este trabajo, es la conservación de la proposición
     \item \textbf{\texttt{Comet Score}} \parencite{rei2020comet}. Un modelo entrenado para aproximar juicios humanos de traducción. Usa la entrada, la salida y la referencia. Estima si el sentido de la entrada llegó a la salida.
 \end{itemize}
 
-Un puntaje alto de solapamiento puede convivir con un cambio de significado, y una paráfrasis correcta puede puntuar bajo en BLEU o en ROUGE-L. \texttt{BERT Score} y \texttt{Comet Score} achican ese hueco. No lo cierran. El error de significado se revisa aparte, sobre esos mismos pares, y se informa en la Sección~\ref{sec:eval_semantica_cuant}.
+Un puntaje alto de solapamiento no equivale a comprensión de LSA ni a validación del avatar. La configuración de cada métrica ---modelo de \texttt{BERT Score}, versión de \texttt{Comet Score}, normalización, agregación y tratamiento de referencias múltiples--- se informa junto con los resultados, en la Sección~\ref{sec:eval_semantica_cuant}.%TODO: AGREGAR TABLA  EN EL CAP 7
 
 \subsection{Declaración sobre el uso de herramientas de inteligencia artificial}
 \paragraph{Herramientas empleadas.}

@@ -93,7 +93,7 @@
 \graphicspath{{figuras/}{figuras/clasificador/}{figuras/semantico/}{figuras/integracion/}}
 \hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black}
 
-\title{\textbf{Prototipo de sistema de traducción de Lengua de Señas Argentina con procesamiento en tiempo cuasi real}}
+\title{\textbf{Prototipo de sistema de traducción de Lengua de Señas Argentina con procesamiento en tiempo pseudo-real}}
 \author{
     Maite Nigro \quad Francisco Veron \\[0.5cm]
     \small Director: Esp.\ Ing.\ Gonzalo Avalos Ribas \\[0.2cm]
@@ -102,7 +102,7 @@
     \small Facultad de Ingeniería \\
     \small Departamento de Ingeniería en Informática
 }
-\date{Marzo 2026}
+\date{Octubre 2026}
 
 \begin{document}
 \pagenumbering{roman}
@@ -110,8 +110,8 @@
 
 \chapter*{Agradecimientos}
 De Maite: Para la Flaqui.\\
-De Francisco: Para el Diego y Baco.\\
-A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulario del conjunto de datos.
+De Francisco: Para la facultad de Ingeniería de Mar del Plata, y sus docentes que, con todo su cariño y pasión, nos enseñaron a lo largo de estos años. Para la familia, amigos, personas que pasaron por mi camino, sin todos ellos no estaría donde estoy hoy. Para Carmen Beatríz Loyola\\
+A Miriam Rolls, por su apoyo y ayuda en este proyecto.
 
 \tableofcontents
 
@@ -125,8 +125,10 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 \include{capitulos/cap04_requerimientos}
 \include{capitulos/cap05_diseño}
 \include{capitulos/cap06_implementacion}
-\include{capitulos/cap07_experimentacion}
-\include{capitulos/cap08_conclusiones}
+% \include{capitulos/cap07_experimentacion}
+\include{capitulos/cap07_gemini}
+\include{capitulos/cap08_evaluacion}
+\include{capitulos/cap09_conclusiones}
 
 % --- Bibliografía ---
 \printbibliography
@@ -134,7 +136,7 @@ A Miriam Rolls, por su orientación sobre la LSA y la validación del vocabulari
 % --- Apéndices ---
 \appendix
 \include{capitulos/apendice_a_vocabulario}
-\include{capitulos/apendice_b_configuraciones}
+\include{capitulos/apendice_b_codigo}
 \include{capitulos/apendice_c_arquitectura_nube}
 
 

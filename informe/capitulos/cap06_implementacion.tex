@@ -6,35 +6,71 @@
 \section{Estructura del código}
 \label{sec:estructura_codigo}
 
-El código del prototipo no vive en una única rama del repositorio. Cada pieza del sistema tiene su rama, con una responsabilidad acotada, de modo que el cliente de la videollamada, los entrenamientos, el servicio que ejecuta los traductores en la nube y el servicio de poses se pueden leer y ampliar por separado. Esta sección indica para qué existe cada rama. El detalle de directorios, módulos y convenciones de nombres queda en el \texttt{README} de cada uno.
+La arquitectura del sistema se organiza de forma modular para facilitar la escalabilidad, el mantenimiento y la separación de responsabilidades entre los componentes. El proyecto utiliza una arquitectura distribuida basada en microservicios y clientes livianos. La lógica se divide en dos bloques principales: un backend central encargado del procesamiento con inteligencia artificial, renderizado y comunicación en tiempo real, e interfaces de cliente compuestas por una extensión de navegador web y un empaquetador nativo.
 
-\subsection{Repositorio del clasificador}
-% TODO: Compelta fran
+\subsection{Organización del Repositorio}
 
-\subsection{Cliente de la videollamada}
-Este repositorio produce lo que la persona instala para usar el prototipo en una llamada. La extensión se obtendria desde la tienda del navegador y, al instalarse, abre una página desde la cual se descarga el motor local. 
+El repositorio fuente contiene la totalidad de los módulos del sistema, recursos gráficos, archivos de configuración de entorno e instrucciones de despliegue. A continuación, se presenta la distribución lógica de directorios dentro de la rama principal del proyecto:
 
-El código que arma esas dos piezas se reparte en tres zonas. \texttt{extension/} es la extensión: los scripts de la página de la llamada, el dibujo del avatar y la página de bienvenida que entrega el motor. \texttt{src/} es el motor local, con \texttt{backend/} para la ventana y la API, \texttt{classifier/} y \texttt{core/} para la seña y la frase, \texttt{semantic/} como cliente del traductor remoto, \texttt{avatar/} como cliente de las poses y \texttt{poseclip/} para componer el clip. \texttt{packaging/} empaqueta ese motor en el archivo que descarga la página de bienvenida.
+\begin{verbatim}
+.
+|-- assets/              # Gráficos de la aplicación
+|-- extension/           # Extensión web para Chrmium
+|   |-- content/         # Scripts inyectados en Google Meet
+|   |-- lib/             # Captura de video y MediaPipe
+|   |-- vendor/          # MediaPipe Wasm de terceros
+|   |-- background.js    # Service Worker de mensajería
+|   |-- manifest.json    # Permisos y manifiesto V3
+|   `-- offscreen.js     # Proceso fuera de la pestaña
+|-- packaging/           # Compilación del ejecutable
+|-- scripts/             # Evaluación y latencia
+|-- src/                 # Backend en Python
+|   |-- avatar/          # Animación del avatar
+|   |-- backend/         # API FastAPI y Uvicorn
+|   `-- classifier/      # Inferencia de señas
+|-- LSABackend.bat       # Arranque en Windows
+|-- requirements.txt     # Dependencias de Python
+`-- run_backend.py       # Entrada del servidor
+\end{verbatim}
 
-\subsection{Servicio semántico en la nube}
-Este repositorio es el servicio que el motor local consulta para traducir. Atiende las dos direcciones, de glosas hacia español y de español hacia glosas, con los binarios que entregan los repositorios de entrenamiento. Su tarea es responder un enunciado ya armado, y no forma parte de lo que se instala en la computadora de quien llama.
+\subsection{Descripción de Componentes y Responsabilidades}
 
-El arranque está en \texttt{run\_semantic\_server.py}. El servicio vive en \texttt{src/semantic/}: \texttt{api.py} expone las rutas, \texttt{service.py} separa los dos canales y \texttt{engine.py} ejecuta el binario. Los pesos no comparten carpeta. \texttt{models/sign/} guarda el canal de glosas hacia español y \texttt{models/hearing/} el canal inverso. En cada una hay un binario principal, un respaldo y el \texttt{sys\_prompt.txt} de esa dirección.
+Cada directorio y paquete del sistema cumple una función específica dentro del flujo de inferencia y visualización:
 
-\subsection{Entrenamiento del canal directo}
-Este repositorio ajusta y evalúa los modelos que pasan de glosas a una oración en español. El binario que resulta de ese entrenamiento es el que después carga el servicio en la nube para el canal directo.
+\begin{itemize}
+    \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes, coordinando el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
+    
+    \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en Lengua de Señas Argentina (LSA).
+    
+    \item \textbf{Motor de Avatar 3D (\texttt{src/avatar/})}: Administra la lógica de animación y comunicación remota con servicios de representación gráfica. Traduce texto o tokens interpretados en secuencias de animación tridimensionales para su renderizado.
 
-Todo el código está en \texttt{src/semantic/}. \texttt{train.py} ajusta un modelo y exporta el binario, \texttt{eval\_trial.py} lo compara sobre oraciones fuera del corte, y \texttt{models.py} es el catálogo: sumar una familia es agregar una entrada ahí. El corpus está en \texttt{dataset\_glosses.json}, las oraciones de prueba en \texttt{dataset\_trial.json} y las instrucciones del modelo en \texttt{prompts/sys\_prompt.txt}. Los pesos y los registros salen a \texttt{outputs/}. Cada familia se identifica con un id estable, como \texttt{qwen2.5-1.5b} o \texttt{llama-3.2-1b}, y ese mismo id nombra su carpeta de salida.
+    \item \textbf{Extensión de Navegador (\texttt{extension/})}: Actúa como la interfaz de usuario en tiempo real sobre Google Meet. Utiliza un \textit{Service Worker} (\texttt{background.js}) para la gestión del estado, un entorno \textit{offscreen} (\texttt{offscreen.js}) para procesar el flujo de video sin ralentizar la pestaña activa, y scripts de contenido (\texttt{content/meet.js}) para modificar la interfaz del usuario e integrar la ventana de interpretación.
 
-\subsection{Entrenamiento del canal inverso}
-Este repositorio ajusta y evalúa los modelos que pasan de una oración en español a una secuencia de glosas. El corpus y el binario son propios de esta dirección, y el servicio en la nube los usa para el canal inverso.
+    \item \textbf{Empaquetado y Distribución (\texttt{packaging/})}: Contiene las configuraciones para PyInstaller (\texttt{LSABackend.spec}) y scripts automatizados en sintaxis Batch y Python. Permite generar la versión ejecutable del servidor sin requerir la instalación previa de un entorno Python en la máquina del usuario final.
 
-La disposición repite la del canal directo, también bajo \texttt{src/semantic/} y también con los módulos en inglés: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El corpus, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
+    \item \textbf{Herramientas de Benchmarking (\texttt{scripts/})}: Proporciona utilidades como \texttt{bench\_latency.py} para medir la latencia punto a punto de la red neuronal y del canal de transmisión de datos.
+\end{itemize}
 
-\subsection{Servicio de poses del avatar}
-Este repositorio publica los archivos de pose que el motor local pide para dibujar el avatar. No entrena modelos ni traduce texto. El cliente de la videollamada solicita esas poses a este servicio.
+\subsection{Convenciones de Nomenclatura y Estándares}
 
-El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El nombre del archivo, sin extensión, es la glosa ya normalizada: mayúsculas, sin tildes y en ASCII. Dentro de una palabra la eñe pasa a ene, y la letra eñe, cuando es la glosa entera, se pide como \texttt{ENIE}.
+El desarrollo adopta convenciones estándares según el lenguaje y entorno de ejecución:
+
+\begin{itemize}
+    \item \textbf{Python}: Se aplican las directrices de estilo PEP 8. Los nombres de módulos, paquetes y funciones utilizan \texttt{snake\_case}, mientras que las clases se definen en \texttt{PascalCase}. Las constantes globales se expresan en \texttt{UPPER\_SNAKE\_CASE}.
+    \item \textbf{JavaScript/HTML/CSS}: Los scripts de la extensión siguen el estándar ECMAScript 6+ con sintaxis \texttt{camelCase} para variables y funciones. Los archivos de hoja de estilo e interfaces DOM emplean la convención \texttt{kebab-case}.
+\end{itemize}
+
+\subsection{Archivos de Configuración y Entorno de Pruebas}
+
+El proyecto integra múltiples mecanismos de configuración para asegurar su reproducibilidad:
+
+\begin{itemize}
+    \item \textbf{\texttt{manifest.json}}: Define los permisos del navegador, scripts de fondo y recursos accesibles desde la Extensión Web bajo la especificación Manifest V3.
+    \item \textbf{\texttt{requirements.txt}} y \textbf{\texttt{requirements\_exe.txt}}: Especifican las librerías necesarias con sus versiones fijadas tanto para el entorno de desarrollo como para la compilación final.
+    \item \textbf{\texttt{mapeo\_clases.json}}: Archivo de configuración alojado en \texttt{src/classifier/weights/} que vincula los índices numéricos de salida de la red neuronal con las etiquetas textuales del vocabulario LSA.
+\end{itemize}
+
+El entrenamiento del clasificador, el servicio semántico en la nube, el entrenamiento de cada canal y el servicio de poses del avatar viven en ramas propias. Su función y su disposición están en el Apéndice~\ref{ap:ramas}.
 
 \section{Implementación del subsistema de reconocimiento gestual}
 
@@ -76,10 +112,12 @@ Para adaptar el modelo a la lengua de señas sin modificar sus miles de millones
 Las matrices que reciben entrenamiento son las cuatro capas de proyección de atención y las tres capas de la red de avance. En cambio, la tabla de tokens de entrada y la capa de salida permanecen fijas. Esta elección se debe a que el vocabulario base del modelo no cambia; la tarea solo necesita reorganizar y conectar palabras que la red ya conoce.
 
 El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, el paso matemático del optimizador es idéntico entre todas las opciones y los resultados son comparables.
+El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, se mantiene el mismo lote efectivo entre modelos.
 
 El \textit{learning rate} es de $3 \times 10^{-4}$ para el modelo de 3B y de $5 \times 10^{-4}$ para las versiones más pequeñas. Se asignó un valor menor al modelo grande porque un ajuste brusco en una red con más capas provoca inestabilidad en el aprendizaje. El optimizador elegido es AdamW cuantizado a 8 bits. Esta elección reduce el uso de memoria RAM en la GPU, ya que el estado del optimizador se guarda en $8$ bits y convive sin problemas junto al modelo base de $4$ bits. El decaimiento de pesos de $0{,}01$ evita que los adaptadores crezcan demasiado y memoricen los datos. Se incluyen $10$ pasos de calentamiento para que la tasa de aprendizaje suba de forma gradual desde cero, lo que evita desajustes iniciales bruscos en las matrices de LoRA que arrancan con valores al azar. Luego, un planificador de tipo coseno reduce de forma suave la tasa de aprendizaje hacia el cierre del entrenamiento para afinar los ajustes finales.
 
 Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara calcula el error únicamente sobre la respuesta deseada, mientras que el \textit{prompt} del sistema y la entrada del usuario quedan fuera de la actualización de pesos. De este modo, la red concentra todo su aprendizaje en la fluidez de la traducción.
+Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara excluye del cálculo directo de la pérdida las posiciones del \textit{prompt} y de la entrada, y deja el error sobre la respuesta deseada. La respuesta sigue condicionada por esos tokens durante el entrenamiento. De este modo, la red concentra su aprendizaje en la traducción.
 
 Por último, antes de ingresar al entrenamiento, los datos reciben una limpieza específica. Las letras sueltas y consecutivas del dataset se unen en un solo token con mayúscula inicial, y los dígitos sueltos forman un número consolidado. Tres letras idénticas seguidas se reducen a dos para corregir errores de tipeo o captura. Las secuencias de palabras sin separación previa, como \textit{Mar del Plata}, se agrupan en un único token \textit{Mardelplata} para que la falta de espacios no confunda al modelo durante el aprendizaje.
 
@@ -103,20 +141,20 @@ La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la en
     \item \texttt{PASADO} o \texttt{AYER} exigen pretérito. \texttt{FUTURO} exige tiempo futuro. Sin marca temporal, el verbo queda en presente.
     \item \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} y \texttt{CUANTOS} producen una pregunta directa, con signos de apertura y de cierre.
     \item \texttt{NO} junto al concepto o al verbo produce una negación.
-    \item Un token en capitalización de nombre, o una cifra, se copia tal cual. La consigna prohíbe sustituirlo o alterarlo.
+    \item Una palabra de la secuencia en capitalización de nombre, o una cifra, se copia tal cual en la oración. La consigna prohíbe sustituirla o alterarla.
     \item La entrada sigue el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
 \end{itemize}
-Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens para la salida. Esta restricción responde a que las oraciones traducidas del vocabulario base son breves, y frena la generación de texto infinito en caso de un fallo en la red.
+Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens del modelo para la salida (Sección~\ref{sec:token}). Esta restricción responde a que las oraciones traducidas del vocabulario base son breves, y frena la generación de texto infinito en caso de un fallo en la red.
 
 \subsection{Canal inverso (Español $\rightarrow$ LSA)}
 El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas.Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español:
 \begin{itemize}
-    \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y nunca letra por letra. Una cifra, como un documento o una cantidad, va en un solo token numérico.
+    \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y es una sola palabra de la secuencia, nunca letra por letra. Una cifra, como un documento o una cantidad, también es una sola palabra, no un dígito por espacio.
     \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación.
-    \item Los pronombres se explicitan aunque el español los omita. Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. Me llamo X'' o Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega token temporal.
+    \item Los pronombres se explicitan aunque el español los omita. Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. Me llamo X'' o Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega una glosa temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
 \end{itemize}
-Mediante estas reglas, el modelo aprende a emitir nombres propios y cifras ya empaquetados para la rutina de dactilología del avatar, en lugar de generar cadenas incoherentes de letras.En la evaluación post-entrenamiento de este canal, el límite de generación se fija en $48$ tokens. Este margen es más amplio que el del canal directo porque las oraciones en español que contienen nombres propios o cifras largas producen secuencias extensas de caracteres dactilológicos en la salida.
+Mediante estas reglas, el modelo aprende a emitir un nombre propio o una cifra como una sola palabra de la secuencia, y no como una cadena de letras. En la evaluación, el límite de generación de este canal es de $48$ tokens del modelo, frente a $24$ en el canal directo (Sección~\ref{sec:token}). Ese número cuenta piezas del tokenizador. Un nombre o una cifra larga sigue siendo una palabra de la secuencia y, aun así, el tokenizador puede partirla en varias de esas piezas. El deletreo letra por letra ocurre después: si el avatar no encuentra el archivo de esa palabra, pide un clip por letra, con otro tope, de 24 clips.
 
 \subsection{Cuantización GGUF Q4\_K\_M y estimación de memoria}
 Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantización \texttt{Q4\_K\_M}. La memoria RAM requerida durante la inferencia se calcula mediante la relación:
@@ -124,75 +162,7 @@ Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantizac
 \text{RAM} \approx \mathbf{W} + KV_{\text{fp16}}(ctx=2048) + \text{Buffer}
 \label{eq:ram_runtime}
 \end{equation}
-donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados ($\sim 0{,}5$ bytes por parámetro), $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto, y el buffer reserva espacio para las activaciones intermedias.
-
-Las Figuras~\ref{fig:ram_teorica} y~\ref{fig:pesos_cuantizacion} aplican esa cuenta a los cinco modelos. El término de pesos usa los totales publicados: 0{,}49 mil millones para Qwen2.5 0{,}5B, 1{,}54 para el 1{,}5B, 3{,}09 para el 3B \parencite{qwen2024qwen25}, 1{,}23 para Llama 3.2 1B \parencite{dubey2024llama3} y 1{,}71 para SmolLM2 1{,}7B \parencite{allal2024smollm2}. Antes de cuantizar, el modelo fusionado queda en 16 bits, es decir 2 bytes por parámetro. Después, la aproximación de la ecuación usa 0{,}5 bytes por parámetro. La caché no cambia con la cuantización, porque la ecuación la deja en fp16:
-
-\[
-KV_{\text{fp16}} = 2 \cdot L \cdot n_{\mathrm{kv}} \cdot d \cdot 2048 \cdot 2
-\]
-
-en bytes. El primer 2 son las matrices de claves y de valores. El último 2 es el tamaño de un valor fp16. $L$ es el número de capas, $n_{\mathrm{kv}}$ el de cabezas de clave y valor, y $d$ el ancho de cada cabeza. Esos anchos salen de la configuración publicada: 64, 128 y 128 para los tres Qwen, 64 para Llama y 64 para SmolLM2. Las cabezas de clave y valor son 2, 2, 2, 8 y 32, en el mismo orden. El buffer de la ecuación no tiene un valor fijo en este capítulo, así que las barras no lo suman. La cifra es teórica. No es la memoria que midió el proceso en la máquina de las pruebas.
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            ybar,
-            bar width=7pt,
-            width=0.92\textwidth,
-            height=6.6cm,
-            ylabel={GiB},
-            symbolic x coords={{0,5B},{1,5B},{3B},{Llama},{Smol}},
-            xtick=data,
-            x tick label style={font=\small},
-            ymin=0,
-            ymax=7.2,
-            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=2, font=\small},
-            enlarge x limits=0.18,
-            ylabel style={font=\small},
-            tick label style={font=\small},
-            nodes near coords,
-            every node near coord/.append style={font=\scriptsize, rotate=90, anchor=west},
-        ]
-            \addplot coordinates {({0,5B},0.936) ({1,5B},2.923) ({3B},5.826) ({Llama},2.354) ({Smol},3.560)};
-            \addplot coordinates {({0,5B},0.252) ({1,5B},0.772) ({3B},1.509) ({Llama},0.635) ({Smol},1.171)};
-            \legend{{16 bits + caché}, {Q4\_K\_M + caché}}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{RAM teórica de inferencia, $W + KV_{\text{fp16}}(2048)$, en GiB. El orden del eje es Qwen2.5 0{,}5B, 1{,}5B y 3B, Llama 3.2 1B y SmolLM2 1{,}7B. El buffer no entra.}
-    \label{fig:ram_teorica}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            ybar,
-            bar width=7pt,
-            width=0.92\textwidth,
-            height=6.6cm,
-            ylabel={GiB},
-            symbolic x coords={{0,5B},{1,5B},{3B},{Llama},{Smol}},
-            xtick=data,
-            x tick label style={font=\small},
-            ymin=0,
-            ymax=7.2,
-            legend style={at={(0.5,-0.22)}, anchor=north, legend columns=2, font=\small},
-            enlarge x limits=0.18,
-            ylabel style={font=\small},
-            tick label style={font=\small},
-            nodes near coords,
-            every node near coord/.append style={font=\scriptsize, rotate=90, anchor=west},
-        ]
-            \addplot coordinates {({0,5B},0.913) ({1,5B},2.868) ({3B},5.756) ({Llama},2.291) ({Smol},3.185)};
-            \addplot coordinates {({0,5B},0.228) ({1,5B},0.717) ({3B},1.439) ({Llama},0.573) ({Smol},0.796)};
-            \legend{{Antes, 16 bits}, {Después, 0{,}5 bytes/param}}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Tamaño teórico de los pesos, antes y después de la cuantización, en GiB. Mismo orden de modelos que la Figura~\ref{fig:ram_teorica}. La barra comprimida usa los 0{,}5 bytes por parámetro de la ecuación~\ref{eq:ram_runtime}. El promedio cercano a 5 bits del preset, en el marco teórico, queda un poco por encima de esa barra.}
-    \label{fig:pesos_cuantizacion}
-\end{figure}
+donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados y $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto. El buffer de activaciones es la memoria temporal de un paso de generación. Ahí entran el estado oculto de cada capa, las puntuaciones de atención de ese paso y el resultado intermedio de la red de avance. El paso siguiente reutiliza ese mismo espacio. La caché $KV$ conserva, para el contexto, las claves y los valores ya calculados. La ecuación deja $\mathbf{W}$ en 4 bits por parámetro, esto es $\sim 0{,}5$ bytes, y cuenta solo el entero de cada peso. En la práctica el archivo GGUF pesa más: cada bloque guarda también la escala y el mínimo, \texttt{v\_proj} y \texttt{down\_proj} quedan en \texttt{Q6\_K}, las normalizaciones siguen en 32 bits, y el archivo incluye la cabecera y el vocabulario. La tabla de \texttt{llama.cpp} no separa esas partes. Publica un solo promedio, el tamaño del GGUF dividido por la cantidad de parámetros, medido sobre Llama 3.1 8B: para \texttt{Q4\_K\_M} da $4{,}8944$ bits por peso y un archivo de $4{,}58$ GiB \parencite{gerganov2023llamacpp}. En un modelo de ese tamaño la cabecera y el vocabulario casi no mueven el promedio. En los cinco modelos de este trabajo el cociente es otro: los archivos y la memoria que resulta de sumarles la caché están en las Tablas~\ref{tab:pesos_cuant} y~\ref{tab:ram_inferencia}.
 
 \section{Integración en Google Meet y arquitectura de la extensión}
 
@@ -229,7 +199,7 @@ El algoritmo de recorte opera dentro de la extensión en modo automático, sin e
 Cada seña segmentada se envía mediante un paquete de datos que contiene únicamente el vector de coordenadas. El clasificador procesa la información dentro del motor local. Si el nivel de confianza es inferior al umbral mínimo del 75\,\%, la predicción se descarta y la interfaz la presenta en color coral con la etiqueta «Poca confianza». Si alcanza el umbral pero la compuerta de validación frena la entrada, la interfaz la despliega en tono gris como «No se agregó». Si la seña aprueba las validaciones, ingresa a la frase, el panel la destaca en cian con la indicación «En el mensaje» y el listado de la frase se actualiza.
 
 \item \textbf{Finalización de enunciado y traducción semántica:} 
-Tras un intervalo de 4 segundos sin actividad manual en la cámara, el sistema transmite la orden de cierre de frase. El motor local no envía la totalidad de los datos a servicios en la nube: las secuencias de deletreo, las series numéricas o las señas aisladas se resuelven de forma local. Las cadenas complejas se envían como texto de señas hacia el servidor semántico remoto. Si el módulo de traducción no emite respuesta, el motor conserva las señas aceptadas en formato de texto original sin reestructurar la oración.
+Tras un intervalo de 4 segundos sin actividad manual en la cámara, el sistema transmite la orden de cierre de frase. ILSA arma el español en el equipo si el enunciado es una sola glosa léxica, solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y el resto de las frases van al servidor semántico. Si el módulo de traducción no emite respuesta, el motor conserva las señas aceptadas en formato de texto original sin reestructurar la oración.
 
 \item \textbf{Emisión de salidas en el Canal Directo (Modo Sordo):} 
 El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En las configuraciones con Audio o Salida Doble, la página solicita una locución en español a la interfaz de voz nativa del navegador. Si una frase traducida es idéntica a la inmediata anterior, el sistema no la vuelve a reproducir.
@@ -241,14 +211,18 @@ En la modalidad para personas oyentes el sistema captura el audio a través de u
 El sistema captura el contenido escrito sin pasar por el módulo de voz. La entrada de voz y la de texto pueden permanecer activas de forma concurrente; ambas representan distintas vías de ingreso para el mismo caso de uso y no constituyen un modo separado.
 
 \item \textbf{Generación de glosas y renderización de animación sintética:} 
-La cadena de texto en español ingresa al motor local. Las palabras aisladas se procesan como señas directas sin consultar al traductor remoto, mientras que las oraciones compuestas se envían al servicio en la nube y retornan estructuradas como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descartando el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
+La cadena de texto en español ingresa al motor local. ILSA la parte por espacios. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: no consulta al traductor ni a un diccionario para tomar esa decisión. Si quedan dos o más palabras, la oración se envía al servicio en la nube y retorna estructurada como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descartando el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
 \end{enumerate}
 
 \subsection{Motor local ILSA (FastAPI)}
 
-El servidor local se implementó en Python mediante el framework asíncrono FastAPI y se ejecuta sobre un servidor Uvicorn. El servicio se enlaza exclusivamente a la interfaz de bucle local (\texttt{127.0.0.1:8765}) para denegar conexiones externas no autorizadas.
+El servidor local se implementó en Python mediante el framework asíncrono FastAPI y se ejecuta sobre un servidor Uvicorn. El servicio escucha en \texttt{127.0.0.1:8765}, únicamente en la interfaz de bucle local. Esa escucha impide las conexiones directas que llegan por las demás interfaces de red. Los procesos de la misma máquina pueden abrir el puerto, y el enlace no comprueba su identidad ni opera como autorización.
 
-Para cumplir con las políticas de seguridad del navegador, el middleware del servidor implementa reglas CORS que restringen los orígenes admitidos a \texttt{https://meet.google.com} y al identificador de la extensión (\texttt{chrome-extension://*}). Asimismo, responde con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}) requerida cuando una página HTTPS realiza peticiones hacia el dominio local.
+Para cumplir con las políticas de seguridad del navegador, el middleware CORS compara el encabezado \texttt{Origin} con tres valores literales y con una expresión regular. Los literales son \texttt{https://meet.google.com}, \texttt{http://127.0.0.1:8765} y \texttt{http://localhost:8765}. El script de contenido corre dentro de la página de Meet, de modo que sus peticiones presentan el primer origen. Los documentos propios de la extensión, cuyo origen comienza por \texttt{chrome-extension://}, se aceptan con la expresión regular \texttt{\textasciicircum chrome-extension://[a-p]\{32\}\$}. Esa expresión describe el formato de un identificador de extensión de Chrome: 32 letras minúsculas de la \texttt{a} a la \texttt{p}. El navegador permite entonces leer la respuesta a cualquier extensión cuyo identificador tenga esa forma. La configuración no reserva el identificador de este prototipo.
+
+La expresión regular se usa porque la extensión todavía no está publicada en la tienda del navegador y, por lo tanto, no tiene un identificador fijo. Al publicarla, la tienda asigna un identificador de ese mismo formato y lo conserva en las actualizaciones. En ese momento la expresión regular puede retirarse y el servidor puede admitir solo el origen literal \texttt{chrome-extension://} seguido de ese identificador.
+
+Ese control no autentica al llamador. La API local no exige credencial, y un programa de la misma computadora puede consultar el puerto sin presentar el origen de una extensión. El servidor responde además con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}), requerida cuando una página HTTPS realiza peticiones hacia el dominio local.
 
 La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, evitando bloqueos en la atención de las solicitudes HTTP de la API. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) utilizando PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
 
@@ -264,7 +238,7 @@ El diccionario de \texttt{.pose} evita ese paso: dibuja los puntos medidos y no 
 \subsection{Decisiones técnicas de la reproducción}
 \label{sec:impl_esqueleto}
 
-La Sección~\ref{sec:repr_inversa} fija qué se muestra y por qué. Aquí quedan los valores con los que esas reglas se programaron, y cuál de los dos programas hace cada paso. La preparación del clip y el empalme entre glosas corren en ILSA, una vez que los archivos ya llegaron del servicio de poses. La extensión de la videollamada no rehace ese empalme. Recibe la lista de fotogramas ya armada y la dibuja en la mitad derecha del lienzo. El navegador, entonces, no vuelve a calcular el puente: elige, según el tiempo transcurrido, cuál de esos fotogramas le toca mostrar.
+La Sección~\ref{sec:repr_inversa} fija qué se muestra y por qué. Aquí quedan los valores con los que esas reglas se programaron. El servicio de poses entrega el archivo \texttt{.pose} pedido, sin recortarlo, sin llevarlo a una cadencia común y sin armar el puente. La preparación del clip y el empalme entre glosas corren en ILSA, una vez que los archivos ya llegaron. La extensión recibe la lista de fotogramas ya armada y la dibuja en la mitad derecha del lienzo. Elige, según el tiempo transcurrido, cuál de esos fotogramas le toca mostrar.
 
 \paragraph{Valores del compositor.}
 Antes del recorte, todos los clips se llevan a 30 fotogramas por segundo. Con esa tasa común, una espera de seis fotogramas dura lo mismo en cualquier seña. Si se dejara cada video a la cadencia con la que fue filmado, seis fotogramas de un clip a 24 por segundo durarían más que seis fotogramas de un clip a 30, y el empalme perdería la medida del tiempo.
@@ -299,7 +273,7 @@ La arquitectura se dividió en dos microservicios independientes, empaquetados e
     Este microservicio gestiona los modelos cuantizados a 4 bits (GGUF \texttt{Q4\_K\_M}) para la traducción directa e inversa. Se desplegó en la región \textit{us-central1} con una asignación de $8\text{~GiB}$ de memoria RAM y $4\text{~vCPU}$.
     
     \item \textbf{Servidor de Poses y Activos del Avatar:} 
-    Este microservicio empaqueta y entrega los archivos de configuración, coordenadas de pose (\textit{T-Poses}) y recursos de animación ($600\text{~MB}$ de archivos estáticos en formatos \texttt{.json}, \texttt{.gltf} y \texttt{.bin}). Se desplegó en la región \textit{southamerica-east1} con una asignación de $512\text{~MiB}$ de memoria RAM y $1\text{~vCPU}$.
+    Este microservicio entrega el diccionario de glosas como archivos \texttt{.pose}. La carpeta que viaja en la imagen reúne 551 archivos y ocupa cerca de 637\,MiB. El proceso no los carga todos en memoria: responde el archivo que pide cada solicitud. Se desplegó en la región \textit{southamerica-east1} con una asignación de $512\text{~MiB}$ de memoria RAM y $1\text{~vCPU}$.
 \end{itemize}
 
 El proceso de despliegue e integración en la nube se llevó a cabo bajo los siguientes criterios técnicos:

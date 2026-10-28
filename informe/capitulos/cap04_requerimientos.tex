@@ -5,7 +5,7 @@
 \section{Requerimientos funcionales}
 \begin{itemize}
     \item \textbf{RF-01 --- Captura y extracción local de landmarks:} Capturar el video del usuario señante en el cliente y extraer los 33 puntos de pose y los 21 de cada mano, en tres coordenadas. Cada punto resta el centro de los hombros y queda dividido por la distancia entre hombros.
-    \item \textbf{RF-02 --- Clasificación gestual temporal local:} Clasificar localmente secuencias fijas de coordenadas en una de las 100 clases de LSA soportadas y utilizar  arquitecturas de aprendizaje profundo para reportar la glosa asignada y su confianza.
+    \item \textbf{RF-02 --- Clasificación gestual temporal local:} Clasificar localmente secuencias fijas de coordenadas en una de las 100 clases de LSA soportadas y utilizar arquitecturas de aprendizaje profundo para reportar la glosa asignada y su confianza.
     \item \textbf{RF-03 --- Traducción semántica directa remota (LSA $\rightarrow$ Español):} Enviar a la nube el texto de glosas de un enunciado y recibir una oración en español rioplatense. Una glosa léxica sola, un deletreo de letras o una seguidilla de dígitos se resuelven en ILSA y no salen a la nube.
     \item \textbf{RF-04 --- Emisión hacia el oyente:} Con Subtítulo, mostrar la oración en el video. Con Audio o Ambos, reproducir la voz para quien seña y para el resto de los participantes de la llamada. En Ambos, el subtítulo y la voz salen juntos.
     \item \textbf{RF-05 --- Captura del turno del interlocutor oyente:} Capturar la voz o texto del oyente en la videollamada durante su turno de intervención con el fin de ser procesada para su uso en el canal de retorno bidireccional.
@@ -17,7 +17,7 @@
 
 \section{Requerimientos no funcionales}
 \begin{itemize}
-    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La pausa, la cola, la inferencia y la entrega se cuentan por separado, como fija la Sección~\ref{sec:tiempo_pseudo}. La pausa de cierre es de 4 segundos sin manos y no entra en la meta del modelo. La cola y la inferencia salen en campos distintos de la respuesta del servidor. La inferencia no debe superar los 2 segundos en banda ancha. El ciclo completo no tiene ese tope. Su medición está en la Sección~\ref{sec:latencias_pipeline}.
+    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La pausa, la cola, la inferencia, el transporte y la entrega se cuentan por separado, como fija la Sección~\ref{sec:tiempo_pseudo}. La meta de 2 segundos rige solo para la inferencia, con el servicio ya activo. No cubre la cola, el transporte, el arranque en frío ni la pausa de 4 segundos. El cumplimiento de esa meta se informa en la Sección~\ref{sec:latencias_pipeline}, con inferencia, cola y red en campos distintos.
     \item \textbf{RNF-02 --- Datos que recibe cada componente:} Meet recibe el video ya compuesto (cámara, subtítulo y, en modo oyente, el esqueleto) y el audio de la llamada, incluida la voz sintética cuando la salida es Audio o Ambos. ILSA, en la misma computadora, recibe los puntos articulares y el audio local para transcribir. El traductor en la nube recibe solo texto: glosas u oración. El servidor de movimientos recibe el nombre de una glosa o las letras de un deletreo, y devuelve archivos. La prohibición de enviar imagen o video crudo rige para el traductor y para el servidor de movimientos. El tratamiento dentro de este alcance es ese reparto: la imagen de la cámara sale hacia Meet porque es la llamada, y no sale hacia los dos servicios de la nube.
     \item \textbf{RNF-03 --- Robustez en reconocimiento en vivo:} El clasificador debe superar el 75\,\% de acierto en luz doméstica. Ese valor es una meta de reconocimiento.
     \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad de los servicios en la nube:} La arquitectura del backend semántico y del servidor de archivos .pose deben estar concebidas para operar de forma desacoplada y elástica, lo que permita sus despliegues en infraestructuras con auto-escalado horizontal a través de interfaces REST tipadas.
@@ -28,8 +28,8 @@
 \begin{itemize}
     \item \textbf{RC-01 --- Alcance léxico:} El vocabulario reconocido por el clasificador está acotado a 100 señas validadas por profesionales de LSA, enmarcadas en las pautas pedagógicas y lingüísticas vigentes.
     \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Las pruebas no despliegan la arquitectura elástica del servicio semántico o del servicio de archivos .pose. La validación usa Cloud Run, de Google Cloud.
-    \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y la extension estan diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes.
-    \item \textbf{RC-04 --- Dependencia de visión:} El clasificador depende del correcto funcionamiento de MediaPipe Holistic para la extraccion de landmarks.
+    \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y la extensión estan diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes.
+    \item \textbf{RC-04 --- Dependencia de visión:} El clasificador depende del correcto funcionamiento de MediaPipe Holistic para la extracción de landmarks.
     \item \textbf{RC-05 --- Recursos del cliente objetivo:} El componente local del prototipo debe ser capaz de operar en laptops estándar (procesadores de 4 núcleos y 8 GB de memoria RAM, sin placa gráfica dedicada).
 \end{itemize}
 
@@ -39,7 +39,9 @@ El cuadro siguiente propone un equipo mínimo y uno con más margen. No informa 
 
 El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Chrome 115 o posterior es la versión en la que se comprobó Manifest V3. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA.
 
-La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. % TODO: Chequear si mi laptop es de minimas condiciones para probar ahi
+La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado; no informa porcentajes de CPU ni de memoria. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador. % TODO: Chequear si mi laptop es de minimas condiciones para probar ahi
+
+
 
 \begin{table}[H]
 \centering
@@ -69,12 +71,71 @@ La CPU debe sostener a la vez la videollamada, MediaPipe en WebAssembly y el cla
 
 \subsection{Casos de uso esenciales en formato breve}
 \begin{itemize}
-    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Según el enunciado, arma el texto en ILSA o consulta el servicio semántico. Con Subtítulo, la oración queda en el video. Con Audio o Ambos, la voz suena para todos los participantes de la llamada.
+    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Una glosa léxica sola, solo dígitos, o un deletreo de dos o más letras sin I ni T se arman en ILSA. El resto consulta el servicio semántico. Con Subtítulo, la oración queda en el video. Con Audio o Ambos, la voz suena para todos los participantes de la llamada.
     \item \textbf{CU-02 --- Mano hábil:} ILSA muestra diestro y zurdo, con diestro ya seleccionado. La persona confirma diestro o pasa a zurdo. Con zurdo, el vector se espeja en horizontal y se cruzan las dos manos durante esa sesión.
     \item \textbf{CU-03 --- Configurar canal de salida:} En el panel de la extensión, el usuario señante elige la salida en Meet: Subtítulo, Audio o Ambos. Si no toca el control, queda Subtítulo.
-    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} En el flujo básico, el usuario oyente habla e ILSA transcribe esa voz. El texto del chat es un flujo alternativo del mismo caso: ILSA toma ese texto y no lo transcribe. El sistema pide las glosas al servicio semántico. El avatar encola la animación, hasta 20 oraciones en espera, dibuja cada clip que existe, hasta 24 archivos, y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión del significado.
+    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla e ILSA transcribe esa voz. El chat es el flujo alternativo: ILSA toma ese texto y no lo transcribe. Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. El avatar encola hasta 20 animaciones, dibuja hasta 24 clips y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión.
     \item \textbf{CU-05 --- Entrar al panel:} Encender, Reiniciar o Apagar vuelven a la pantalla de carga. El panel se abre si responden el traductor semántico y el servidor de poses. Si alguno falla, queda Reintentar.
 \end{itemize}
+
+\subsection{Diagrama de casos de uso}
+\label{sec:diagrama_casos_uso}
+
+La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funciones del prototipo. El usuario señante opera el canal directo y la configuración de la sesión. El usuario oyente opera el canal inverso. Ambos pueden abrir el panel. El recuadro punteado delimita el sistema: ILSA, la extensión y los servicios remotos que esas funciones consultan. El detalle de precondiciones, pasos y alternativas está en las tablas de la subsección siguiente.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    caso/.style={
+        ellipse, draw, thick, align=center,
+        inner sep=2.5pt, minimum width=3.7cm, minimum height=1.05cm
+    },
+    actorlabel/.style={align=center, font=\small\bfseries}
+]
+% Actor izquierdo: señante
+\begin{scope}[shift={(-0.2,0)}]
+    \draw (0,2.55) circle (0.20);
+    \draw (0,2.35) -- (0,1.70);
+    \draw (-0.32,2.12) -- (0.32,2.12);
+    \draw (0,1.70) -- (-0.26,1.20);
+    \draw (0,1.70) -- (0.26,1.20);
+    \node[actorlabel] (senante) at (0,0.80) {Usuario\\señante};
+\end{scope}
+
+% Actor derecho: oyente
+\begin{scope}[shift={(11.4,0)}]
+    \draw (0,2.55) circle (0.20);
+    \draw (0,2.35) -- (0,1.70);
+    \draw (-0.32,2.12) -- (0.32,2.12);
+    \draw (0,1.70) -- (-0.26,1.20);
+    \draw (0,1.70) -- (0.26,1.20);
+    \node[actorlabel] (oyente) at (0,0.80) {Usuario\\oyente};
+\end{scope}
+
+% Casos de uso
+\node[caso] (cu01) at (5.6,4.15) {CU-01 Conversar\\(modo sordo)};
+\node[caso] (cu02) at (5.6,2.85) {CU-02 Mano hábil};
+\node[caso] (cu03) at (5.6,1.55) {CU-03 Canal de salida};
+\node[caso] (cu05) at (5.6,0.25) {CU-05 Entrar al panel};
+\node[caso] (cu04) at (5.6,-1.10) {CU-04 Avatar\\(modo oyente)};
+
+% Frontera del sistema
+\node[draw, dashed, thick, rounded corners=2pt, inner sep=10pt,
+      fit=(cu01) (cu02) (cu03) (cu04) (cu05),
+      label={[font=\small\bfseries]above:ILSA en Google Meet}] {};
+
+% Asociaciones
+\draw (0.55,1.55) -- (cu01);
+\draw (0.55,1.40) -- (cu02);
+\draw (0.55,1.25) -- (cu03);
+\draw (0.55,1.10) -- (cu05);
+\draw (10.65,1.10) -- (cu05);
+\draw (10.65,0.90) -- (cu04);
+\end{tikzpicture}
+\caption{Diagrama de casos de uso del prototipo. El señante opera el canal directo y la configuración. El oyente opera el canal inverso. Ambos pueden abrir el panel.}
+\label{fig:casos_uso}
+\end{figure}
 
 \subsection{Casos de uso expandidos}
 \begin{table}[h!]
@@ -84,16 +145,16 @@ La CPU debe sostener a la vez la videollamada, MediaPipe en WebAssembly y el cla
 \hline
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
-Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video. Con Audio o Ambos, la voz suena para quien seña y para el resto de los participantes.} \\ \hline
-\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
- & \textbf{1} & Realiza las señas correspondientes a lo que quiere comunicar & \\ \cline{2-4} 
- & \textbf{2} & & El sistema clasifica la seña. Si la confianza es de al menos 0,75 y el filtro de repetición la admite, el HUD la muestra en cian («En el mensaje: HOLA») y esa glosa queda en la frase. \\ \hline
+Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. ILSA está encendido y el panel principal está abierto.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet. Con Audio o Ambos, la voz suena en el equipo de quien seña, mediante la síntesis del navegador; esa locución no se mezcla en el \texttt{MediaStream} de la llamada.} \\ \hline
+\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
+ & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
+ & \textbf{1} & Realiza las señas correspondientes a lo que quiere comunicar. & \\ \cline{2-4}
+ & \textbf{2} & & Clasifica la seña. Si la confianza es de al menos 0,75 y el filtro de repetición la admite, el HUD la muestra en cian («En el mensaje: HOLA») y esa glosa queda en la frase. \\ \hline
  & \textbf{3} & Si necesita otra seña, vuelve al paso 1. Si no, espera 4 segundos sin manos en el cuadro. &  \\ \hline
- & \textbf{4} & & Si el enunciado es una glosa léxica sola, un deletreo o dígitos, ILSA arma el texto en el equipo. En los demás casos envía las glosas al servicio semántico. Con Subtítulo, deja la oración en el video. Con Audio o Ambos, la voz suena para quien seña y para el resto de los participantes. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Las manos no entran al cuadro: no empieza ninguna seña y no hay plazo que contar.\newline\textbf{2a.} Confianza bajo 0,75: el HUD muestra la predicción en coral, «Poca confianza: HOLA». Esa predicción no entra en la frase y no se envía. Quien seña puede repetirla antes de los 4 segundos sin manos. \newline\textbf{2b.} Confianza de al menos 0,75 y repetición no admitida: el HUD muestra gris, «No se agregó: HOLA». La predicción no entra en la frase. \newline\textbf{2c.} Seña ajena al vocabulario con confianza de al menos 0,75: el HUD la muestra en cian y la glosa incorrecta entra. No hay rechazo automático. \newline\textbf{4a.} El traductor no responde: se conservan las glosas aceptadas, en texto, y no se rearma la oración. La recuperación es volver a señar cuando el servicio responde.} \\ \hline
-Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+ & \textbf{4} & & Arma el texto en el equipo si hay una sola glosa léxica, solo dígitos, o solo letras desde dos y sin I ni T. Van al traductor una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y las demás frases. Con Subtítulo, deja la oración en el video. Con Audio o Ambos, reproduce la voz en el equipo de quien seña. \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Las manos no entran al cuadro: no empieza ninguna seña y no hay plazo que contar.\newline\textbf{2a.} Confianza bajo 0,75: el HUD muestra la predicción en coral, «Poca confianza: HOLA». Esa predicción no entra en la frase y no se envía. Quien seña puede repetirla antes de los 4 segundos sin manos.\newline\textbf{2b.} Confianza de al menos 0,75 y repetición no admitida: el HUD muestra gris, «No se agregó: HOLA». La predicción no entra en la frase.\newline\textbf{2c.} Seña ajena al vocabulario con confianza de al menos 0,75: el HUD la muestra en cian y la glosa incorrecta entra. No hay rechazo automático.\newline\textbf{4a.} El traductor no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run). Se conservan las glosas aceptadas, en texto, y no se rearma la oración. Una respuesta tardía, posterior a ese corte, no se aplica. La recuperación es volver a señar.\newline\textbf{4b.} ILSA deja de responder: la extensión no clasifica ni traduce. La recuperación es Encender o Reintentar, y volver a señar.} \\ \hline
+Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-01, RF-02, RF-03, RF-04, RF-08, RNF-01, RNF-03.} \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -106,12 +167,12 @@ Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está en el panel principal. El control de mano muestra diestro seleccionado.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La sesión queda con la mano elegida. Con zurdo, el vector se espeja y se cruzan las manos.} \\ \hline
-\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
- & \textbf{1} & Ve diestro ya seleccionado y lo confirma. & \\ \cline{2-4} 
+\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
+ & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
+ & \textbf{1} & Ve diestro ya seleccionado y lo confirma. & \\ \cline{2-4}
  & \textbf{2} & & Conserva la mano derecha. El vector no se espeja. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Selecciona zurdo: ILSA espeja el eje horizontal y cruza las dos manos, porque el modelo se entrenó con mano derecha. Conserva esa mano durante la sesión.} \\ \hline
-Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-01, RF-02.} \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -122,16 +183,16 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \hline
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida del oyente}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
-Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario debe estar unido a una llamada.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en subtítulo, en voz para todos los participantes, o en ambas. Si no hay elección, queda Subtítulo.} \\ \hline
-\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4} 
+Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. El panel de la extensión está disponible.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en Subtítulo, en voz local, o en ambas. El subtítulo es la vía que llega a Meet. Si no hay elección, queda Subtítulo.} \\ \hline
+\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
+ & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Abre el panel de la extensión. & \\ \cline{2-4}
- & \textbf{2} & & Muestra tres opciones bajo «Salida en Meet»: Subtítulo, Audio y Ambos. \\ \cline{2-4} 
- & \textbf{3} & Elige una opción. & \\ \cline{2-4} 
- & \textbf{4} &  & Aplica esa salida. Subtítulo deja el texto en el video y no emite voz. Audio o Ambos hacen sonar la voz para quien seña y para el resto de los participantes. \\ \hline
+ & \textbf{2} & & Muestra tres opciones bajo «Salida en Meet»: Subtítulo, Audio y Ambos. \\ \cline{2-4}
+ & \textbf{3} & Elige una opción. & \\ \cline{2-4}
+ & \textbf{4} &  & Aplica esa salida. Subtítulo deja el texto en el video y no emite voz. Audio o Ambos reproducen la voz en el equipo de quien seña; el resto de los participantes no la oye en la llamada. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{3a.} No hay elección: se conserva Subtítulo. No hay voz. La recuperación es abrir el panel y elegir Audio o Ambos.} \\ \hline
-Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-04, RF-08.} \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -143,17 +204,18 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-04: Traducir español a LSA mediante Avatar (Modo Oyente)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario oyente} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada y la extensión está en modo oyente.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El video muestra el esqueleto de los clips que existen, hasta 24 archivos por oración. La animación entra en una cola de hasta 20 oraciones y no corta la que está en curso. El deletreo no asegura la comprensión del significado. El resto queda en texto.} \\ \hline
-\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario oyente} & \textbf{Sistema} \\ \cline{2-4} 
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor ve el esqueleto de las glosas que tienen archivo. Lo que no se dibuja queda en texto.} \\ \hline
+\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
+ & & \textbf{Usuario oyente} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Habla durante la llamada. & \\ \cline{2-4}
- & \textbf{2} & & Transcribe esa voz en la misma computadora. \\  \cline{2-4} 
- & \textbf{3} & & Envía la oración al servicio semántico y recibe las glosas. \\  \cline{2-4} 
- & \textbf{4} & & Encola la animación. Si hay otra en curso, la nueva espera: la cola admite hasta 20. Dibuja el clip de cada glosa que tiene archivo, hasta 24. Si una glosa no tiene archivo, dibuja sus letras una por una. Ese deletreo no asegura la comprensión del significado. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y el flujo sigue en el paso 3. \newline\textbf{3a.} Si el servicio semántico no responde: no hay glosas nuevas, la cámara sigue y el indicador informa que la secuencia no se obtuvo. Se conserva el video anterior. La recuperación es repetir el turno cuando el servicio responde. No hay un plazo distinto del de la llamada. \newline\textbf{4a.} Falta el archivo de una glosa: se deletrea y el significado no queda garantizado. \newline\textbf{4b.} El enunciado supera 24 archivos: se dibujan los primeros 24 y el resto queda en texto. \newline\textbf{4c.} El servidor de movimientos no responde: las glosas quedan en texto, el clip queda vacío y la recuperación es repetir el turno.} \\ \hline
-Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+ & \textbf{2} & & Transcribe esa voz en la misma computadora. \\  \cline{2-4}
+ & \textbf{3} & & Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor ni diccionario. Dos o más palabras van al servicio semántico. \\  \cline{2-4}
+ & \textbf{4} & & Encola la animación, hasta 20, sin cortar la que está en curso. Dibuja hasta 24 clips. Si falta un archivo, deletrea; eso no asegura la comprensión. \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y sigue en el paso 3. La palabra aislada también llega al paso 4.\newline\textbf{3a.} Dos o más palabras y el traductor no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run). No hay glosas nuevas y se conserva el video. Una respuesta tardía no se aplica. La recuperación es repetir el turno.\newline\textbf{4a.} Más de 24 archivos: se dibujan los primeros 24 y el resto queda en texto.\newline\textbf{4b.} El servidor de poses no responde: misma espera que en 3a. Las glosas quedan en texto y el clip queda vacío. La recuperación es repetir el turno.\newline\textbf{4c.} ILSA deja de responder: no hay transcripción ni dibujo nuevo. La recuperación es Encender o Reintentar.} \\ \hline
+Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-05, RF-06, RF-07, RF-08.} \\ \hline
 \end{tabularx}
 \end{table}
+
 
 \begin{table}[h!]
 \centering
@@ -164,12 +226,12 @@ Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está instalado en la computadora.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Si responden el traductor semántico y el servidor de poses, se abre el panel principal.} \\ \hline
-\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)} 
- & & \textbf{Usuario} & \textbf{Sistema} \\ \cline{2-4} 
+\multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
+ & & \textbf{Usuario} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Pulsa Encender, Reiniciar o Apagar. & \\ \cline{2-4}
  & \textbf{2} & & Vuelve a la pantalla de carga y consulta el traductor semántico y el servidor de poses. \\ \cline{2-4}
  & \textbf{3} & & Ambos responden. Abre el panel principal. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{2a.} El traductor o el servidor de poses no responde: queda el botón Reintentar y el panel principal no se abre. La recuperación es pulsar Reintentar, que repite la consulta de los dos servicios.} \\ \hline
-Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{-} \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{2a.} El traductor o el servidor de poses no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run, plazo que cubre también un arranque en frío). Queda el botón Reintentar y el panel principal no se abre. La recuperación es pulsar Reintentar, que repite la consulta de los dos servicios.\newline\textbf{2b.} ILSA no está en ejecución: la consulta no llega a los servicios. La recuperación es Encender.} \\ \hline
+Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-09.} \\ \hline
 \end{tabularx}
 \end{table}
