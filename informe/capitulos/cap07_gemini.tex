@@ -77,7 +77,8 @@ La incorporación de clases al modelo avanzó de manera paulatina conforme se co
         1 & 91 & 50 & 3\,640 & 910 \\
         2 & 94 & 60 & 4\,512 & 1\,128 \\
         3 & 97 & 60 & 4\,656 & 1\,164 \\
-        4 & 100 & 100 & 4\,800 & 1\,200 \\
+        4 & 100 & 60 & 4\,800 & 1\,200 \\
+        5 & 100 & 100 & 8\,000 & 2\,000 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -88,7 +89,7 @@ En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada en
 \begin{table}[H]
     \centering
     \small
-    \caption{Exactitud de validación fuera de línea frente al acierto en cámara real (sin colapsar homógrafos).}
+    \caption{Exactitud de validación fuera de línea frente al acierto en cámara. Las filas de 91 a 97 clases corresponden a una toma por seña. Las de 100 clases corresponden a diez tomas por seña.}
     \label{tab:brecha_offline_camara}
     \begin{tabular}{llccc}
         \toprule
@@ -101,11 +102,13 @@ En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada en
         Baseline 16f, luz ambiental, 94 clases & 18/08 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
         Baseline 16f, iluminación dirigida, 94 clases & 28/08 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
         Baseline 16f, 97 clases & 15--17/09 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
+        100 clases, 10 tomas, luz adecuada & 28/10 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
+        100 clases, 10 tomas, luz reducida & 28--29/10 & 99{,}00\,\% & 94{,}6\,\% & 98{,}7\,\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Los resultados evidencian que el control de la iluminación del entorno permitió un incremento del acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo.
+En las iteraciones de 94 clases, el control de la iluminación del entorno subió el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo. Esa comparación no fija encuadre ni persona. La evaluación del checkpoint de 100 clases, descrita más adelante, sí conserva ambos y aísla la luz.
 
 \subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
 La Tabla~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud optima de la ventana temporal de entrada.
@@ -148,6 +151,43 @@ La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ c
 \end{table}
 
 La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales en exactitud. Corrigio confusiones sistemáticas como el caso de la letra \texttt{I} clasificada previamente como \texttt{ojo}.
+
+\subsubsection{Evaluación en cámara del modelo de 100 clases}
+\label{sec:eval_100_camara}
+
+El prototipo integrado carga el checkpoint \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida $0{,}028$.
+
+La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos. Cambió la iluminación de la habitación. La etiqueta de luz adecuada o reducida la anota quien ejecuta el script; el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha. No hubo tomas omitidas.
+
+La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El script rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor es MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias hay un segundo de espera.
+
+La Tabla~\ref{tab:eval_100_luz} resume el resultado. El criterio de aceptación del plan (Top-1 mayor que 75\,\% y Top-3 mayor que 90\,\%) se cumple en las dos condiciones de iluminación.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Evaluación en cámara del checkpoint de 100 clases (\texttt{model\_new\_2026\_10\_20}). Diez tomas por seña, misma persona y mismo encuadre.}
+    \label{tab:eval_100_luz}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Métrica} & \textbf{Luz adecuada} & \textbf{Luz reducida} \\
+        \midrule
+        Top-1 & 99{,}6\,\% (996/1000) & 94{,}6\,\% (946/1000) \\
+        Top-3 & 100{,}0\,\% (1000/1000) & 98{,}7\,\% (987/1000) \\
+        Señas con 10 aciertos sobre 10 & 97 & 77 \\
+        Errores que restan & 4 & 54 \\
+        Confianza media en aciertos & $0{,}979$ & $0{,}967$ \\
+        Confianza media en errores & $0{,}632$ & $0{,}771$ \\
+        \texttt{gracias} / \texttt{ayudar} / \texttt{policia} & 10 / 10 / 10 & 9 / 9 / 10 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores, y en los cuatro la seña pedida ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. Las tres señas incorporadas al vocabulario de 100 clases (\texttt{gracias}, \texttt{ayudar} y \texttt{policia}) aciertan las diez tomas. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
+
+Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar el diez sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas, de señas que en luz adecuada estaban en diez sobre diez o en nueve sobre diez, son \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos distintos). \texttt{policia} conserva diez aciertos. \texttt{gracias} y \texttt{ayudar} descienden a 9/10. En trece tomas la seña pedida no entra al Top-3. En luz reducida la confianza media de los errores sube a $0{,}771$: la red se equivoca con más certeza que en luz adecuada.
+
+Esta sesión es la evidencia del modelo integrado. El 77{,}3\,\% del 17/09 describe un checkpoint anterior, con una toma por seña y otro extractor. El criterio de selección del producto es el acierto en cámara; con el checkpoint empaquetado en ILSA, ese acierto queda por encima del umbral de RNF-03 en las dos condiciones de iluminación.
 
 \subsection{Resultados de los módulos de traducción semántica}
 \label{sec:res_traduccion}

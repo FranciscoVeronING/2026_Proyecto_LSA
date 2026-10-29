@@ -40,7 +40,7 @@ Cada directorio y paquete del sistema cumple una función específica dentro del
 \begin{itemize}
     \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes, coordinando el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
     
-    \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en Lengua de Señas Argentina (LSA).
+    \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Esos pesos corresponden al checkpoint \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas de atención y 2 capas Transformer, entrenado con 100 clips por clase. Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en Lengua de Señas Argentina (LSA).
     
     \item \textbf{Motor de Avatar 3D (\texttt{src/avatar/})}: Administra la lógica de animación y comunicación remota con servicios de representación gráfica. Traduce texto o tokens interpretados en secuencias de animación tridimensionales para su renderizado.
 
@@ -90,6 +90,8 @@ La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante 
     \end{equation}
     \item Una capa densa lineal final hacia las 100 clases del vocabulario gestual.
 \end{enumerate}
+
+Los pesos que carga ILSA son los de \texttt{model\_new\_2026\_10\_20}. El entrenamiento usó 8\,000 secuencias de entrenamiento y 2\,000 de validación. La exactitud de validación fuera de línea de ese checkpoint es del 99{,}0\,\%. La evaluación en cámara de ese mismo archivo se informa en la Sección~\ref{sec:res_clasificador}.
 
 % TODO: GRAFCO DE TINY SKELETON
 
