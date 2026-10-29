@@ -91,6 +91,11 @@ const LsaApi = {
       method: "POST",
       body: JSON.stringify({ wav_b64: wavB64, lang: lang || "es-ES" }),
     }),
+  tts: (text) =>
+    api("/tts", {
+      method: "POST",
+      body: JSON.stringify({ text: text || "" }),
+    }),
   activity: () => api("/activity", { method: "POST", body: "{}" }),
   endUtterance: (payload) =>
     api("/utterance/end", {

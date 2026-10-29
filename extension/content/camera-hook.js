@@ -64,6 +64,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
   let lastCaptionLine = "";
   let pipeline = null;
   let extraAudio = null;
+  let callMix = null;
 
   window.addEventListener("message", (event) => {
     if (event.source !== window) return;
@@ -95,6 +96,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         syncCanvasToMeet();
       } else if (!want && enabled) {
         enabled = false;
+        stopCallVoice();
         document.querySelectorAll("video").forEach((v) => clearPreviewFix(v));
         restoreNativeCamera();
       } else {
@@ -121,6 +123,14 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       landmarks = data.landmarks || null;
     }
     if (data.type === "LSA_SPEECH_STOP") stopHearingTap();
+    if (data.type === "LSA_MIC_QUERY") {
+      window.postMessage(
+        { source: "lsa-page", type: "LSA_MIC_STATE", id: data.id, open: callMicOpen() },
+        "*"
+      );
+    }
+    if (data.type === "LSA_TTS_STOP") stopCallVoice();
+    if (data.type === "LSA_TTS_WAV" && data.wavB64) playCallVoice(data.wavB64);
     if (data.type === "LSA_AVATAR" && data.clip && data.clip.ok && window.LsaAvatar) {
       enqueueAvatarClip(data.clip, lastCaptionLine || caption.spanish);
     }
@@ -157,6 +167,140 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     if (pipeline) add(pipeline.real);
     add(extraAudio);
     return tracks;
+  }
+
+  /**
+   * Mic de Meet mezclado con la voz en off. La locución también sale por
+   * los parlantes de esta PC. El micrófono no, para no hacer eco.
+   * @param {MediaStream|null} micStream
+   * @returns {MediaStream|null}
+   */
+  function ensureCallMix(micStream) {
+    if (!callMix || callMix.ctx.state === "closed") {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const dest = ctx.createMediaStreamDestination();
+      const ttsGain = ctx.createGain();
+      ttsGain.gain.value = 1;
+      ttsGain.connect(dest);
+      ttsGain.connect(ctx.destination);
+      callMix = { ctx, dest, ttsGain, source: null, mics: new Set() };
+      const kick = () => ctx.resume().catch(() => {});
+      if (ctx.state === "suspended") {
+        kick();
+        window.addEventListener("pointerdown", kick, { once: true, capture: true });
+      }
+      ctx.onstatechange = () => {
+        if (ctx.state === "running") attachMixToPipeline();
+      };
+    }
+    if (micStream) {
+      micStream.getAudioTracks().forEach((track) => {
+        if (!track || callMix.mics.has(track.id)) return;
+        callMix.mics.add(track.id);
+        try {
+          const src = callMix.ctx.createMediaStreamSource(new MediaStream([track]));
+          src.connect(callMix.dest);
+        } catch (_) {}
+      });
+    }
+    return callMix.dest.stream;
+  }
+
+  function attachMixToPipeline() {
+    if (hearingMode || !pipeline || !pipeline.out || !callMix || callMix.ctx.state !== "running") return;
+    const mixedTrack = callMix.dest.stream.getAudioTracks()[0];
+    if (!mixedTrack) return;
+    const current = pipeline.out.getAudioTracks();
+    if (!current.some((t) => t.id === mixedTrack.id)) {
+      current.forEach((t) => {
+        try {
+          pipeline.out.removeTrack(t);
+        } catch (_) {}
+      });
+      try {
+        pipeline.out.addTrack(mixedTrack);
+      } catch (_) {}
+    }
+    syncCanvasToMeet();
+  }
+
+  function stopCallVoice() {
+    if (!callMix || !callMix.source) return;
+    try {
+      callMix.source.stop();
+    } catch (_) {}
+    callMix.source = null;
+  }
+
+  /** true si Meet está mandando el micrófono a la llamada. */
+  function callMicOpen() {
+    if (meetUiMicMuted() === true) return false;
+    const rtc = outboundKindLive("audio");
+    if (rtc === false) return false;
+    const tracks = liveAudioTracks();
+    if (tracks.some((t) => t.muted === true)) return false;
+    if (tracks.length && tracks.every((t) => t.enabled === false)) return false;
+    if (meetUiMicMuted() === false) return true;
+    if (rtc === true) return true;
+    return tracks.some((t) => t.enabled !== false && t.readyState === "live");
+  }
+
+  function wavBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i) & 0xff;
+    return bytes.buffer;
+  }
+
+  function playCallVoice(b64) {
+    if (!b64 || !callMicOpen()) {
+      window.postMessage({ source: "lsa-page", type: "LSA_VOICE_BLOCKED" }, "*");
+      return;
+    }
+    if (!callMix) {
+      window.postMessage(
+        { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "la llamada todavía no tiene audio" },
+        "*"
+      );
+      return;
+    }
+    const mix = callMix;
+    const start = () => {
+      attachMixToPipeline();
+      mix.ctx.decodeAudioData(
+        wavBytes(b64),
+        (buffer) => {
+          if (!callMicOpen()) {
+            window.postMessage({ source: "lsa-page", type: "LSA_VOICE_BLOCKED" }, "*");
+            return;
+          }
+          stopCallVoice();
+          const source = mix.ctx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(mix.ttsGain);
+          mix.source = source;
+          source.onended = () => {
+            if (mix.source === source) mix.source = null;
+          };
+          try {
+            source.start();
+          } catch (_) {
+            window.postMessage(
+              { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "no se pudo reproducir la voz en off" },
+              "*"
+            );
+          }
+        },
+        () => {
+          window.postMessage(
+            { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "el audio de la voz en off no se pudo leer" },
+            "*"
+          );
+        }
+      );
+    };
+    if (mix.ctx.state === "suspended") mix.ctx.resume().then(start).catch(start);
+    else start();
   }
 
   /**
@@ -804,7 +948,13 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     current.running = false;
     pipeline = null;
     try {
-      if (current.out) current.out.getTracks().forEach((t) => t.stop());
+      if (current.out) {
+        current.out.getTracks().forEach((t) => {
+          const mixTrack =
+            callMix && callMix.dest.stream.getTracks().some((m) => m.id === t.id);
+          if (!mixTrack) t.stop();
+        });
+      }
     } catch (_) {}
     if (releaseCamera) {
       try {
@@ -961,7 +1111,15 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       requestAnimationFrame(draw);
     };
     draw();
-    realStream.getAudioTracks().forEach((audioTrack) => out.addTrack(audioTrack));
+    if (hearingMode) {
+      realStream.getAudioTracks().forEach((audioTrack) => out.addTrack(audioTrack));
+    } else {
+      const mixed = ensureCallMix(realStream);
+      const mixedTrack = mixed && mixed.getAudioTracks()[0];
+      const ctxRunning = callMix && callMix.ctx.state === "running";
+      if (ctxRunning && mixedTrack) out.addTrack(mixedTrack);
+      else realStream.getAudioTracks().forEach((audioTrack) => out.addTrack(audioTrack));
+    }
     handle.out = out;
     window.postMessage({ source: "lsa-page", type: "LSA_PIPELINE", live: true }, "*");
     syncCanvasToMeet();
@@ -993,6 +1151,17 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         pc.getSenders().forEach((sender) => {
           if (sender.track && sender.track.kind === "video" && sender.track !== canvasTrack) {
             sender.replaceTrack(canvasTrack).catch(() => {});
+          }
+          const mixedAudio = pipeline.out.getAudioTracks()[0];
+          const rawIds = pipeline.real ? pipeline.real.getAudioTracks().map((t) => t.id) : [];
+          if (
+            mixedAudio &&
+            sender.track &&
+            sender.track.kind === "audio" &&
+            sender.track !== mixedAudio &&
+            rawIds.indexOf(sender.track.id) !== -1
+          ) {
+            sender.replaceTrack(mixedAudio).catch(() => {});
           }
         });
       } catch (_) {}
@@ -1054,8 +1223,11 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     if (!wantsVideo(constraints)) {
       return origGetUserMedia.call(this, constraints).then((stream) => {
         extraAudio = stream;
+        if (!hearingMode) ensureCallMix(stream);
         if (hearingMode) syncHearingCapture();
-        return stream;
+        const mixed = callMix && callMix.dest.stream;
+        const running = callMix && callMix.ctx.state === "running";
+        return !hearingMode && running && mixed ? mixed : stream;
       });
     }
     if (!enabled) {

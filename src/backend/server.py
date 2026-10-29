@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import ClientMetricsIn, HearingIn, SessionIn, SignIn, SttIn, UtteranceEndIn
+from backend.http_schemas import ClientMetricsIn, HearingIn, SessionIn, SignIn, SttIn, TtsIn, UtteranceEndIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -168,6 +168,24 @@ def stt_wav(body: SttIn):
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     print(f"[backend] /stt → {text!r}")
     return {"spanish": text, "ok": True}
+
+
+@app.post("/tts")
+def tts_spanish(body: TtsIn):
+    """WAV de la traducción, para mezclarlo en el audio que Meet envía."""
+    if _mode == "hearing":
+        raise HTTPException(status_code=400, detail="La voz en off es del modo sordo.")
+    import base64
+
+    from backend.tts import synthesize_wav
+
+    try:
+        wav = synthesize_wav(body.text)
+    except Exception as exc:
+        print(f"[backend] /tts error: {exc}")
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    print(f"[backend] /tts {len(wav)} bytes")
+    return {"ok": True, "wav_b64": base64.b64encode(wav).decode("ascii")}
 
 
 @app.post("/hearing")

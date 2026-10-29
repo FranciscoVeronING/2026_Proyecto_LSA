@@ -36,6 +36,10 @@ class SttIn(BaseModel):
     lang: str = "es-ES"
 
 
+class TtsIn(BaseModel):
+    text: str = Field(default="", max_length=500)
+
+
 class SignIn(BaseModel):
 
     frames: list[dict] = Field(default_factory=list, max_length=MAX_SIGN_FRAMES)

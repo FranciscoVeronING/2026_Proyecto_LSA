@@ -89,10 +89,10 @@ function paintOutput(outputMode) {
   });
   if (outputMode === "audio") {
     outputHint.textContent =
-      "Lee la traducción en voz alta en esta PC. Los demás no ven texto en tu cámara.";
+      "Lee la traducción en la llamada, para vos y para los demás. Si el micrófono de Meet está silenciado, esa voz no sale.";
   } else if (outputMode === "both") {
     outputHint.textContent =
-      "Subtítulos en tu video y voz en esta PC.";
+      "Subtítulos en tu video y la misma voz en la llamada. Con el micrófono silenciado, la voz no sale.";
   } else {
     outputHint.textContent = "El español se pinta en tu cámara; los demás lo leen en tu video.";
   }

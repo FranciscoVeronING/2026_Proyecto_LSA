@@ -17,6 +17,8 @@ let rafId = 0;
 const grab = document.createElement("canvas");
 const grabCtx = grab.getContext("2d", { alpha: false, willReadFrequently: true });
 let lastSpoken = "";
+let voiceReq = 0;
+let lastVoiceNotice = "";
 let lastHearingSent = { text: "", at: 0 };
 let prefs = { showLandmarks: false, outputMode: "subtitles", hearingInput: "both" };
 const hudState = {
@@ -63,18 +65,69 @@ function speakSpanish(text) {
   if (!text || prefs.outputMode === "subtitles") return;
   const clipped = String(text).trim();
   if (!clipped || clipped === lastSpoken) return;
-  lastSpoken = clipped;
-  try {
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(clipped);
-    utter.lang = "es-AR";
-    utter.rate = 1;
-    window.speechSynthesis.speak(utter);
-  } catch (_) {}
+  const id = ++voiceReq;
+  let settled = false;
+  postToPage({ type: "LSA_MIC_QUERY", id });
+  const timer = setTimeout(() => finish(null), 800);
+  function finish(open) {
+    if (settled || id !== voiceReq) return;
+    settled = true;
+    clearTimeout(timer);
+    window.removeEventListener("message", onReply);
+    if (open === null) {
+      setHud({ debug: "Voz: no se pudo confirmar el micrófono de Meet", capturing: false });
+      return;
+    }
+    if (!open) {
+      if (lastVoiceNotice !== clipped) {
+        lastVoiceNotice = clipped;
+        showVoiceMutedPopup();
+      }
+      return;
+    }
+    lastSpoken = clipped;
+    LsaApi.tts(clipped)
+      .then((res) => {
+        const wav = res && res.wav_b64;
+        if (!wav) throw new Error("sin audio");
+        if (id !== voiceReq) return;
+        postToPage({ type: "LSA_TTS_WAV", wavB64: wav, id });
+      })
+      .catch((err) => {
+        if (lastSpoken === clipped) lastSpoken = "";
+        setHud({ debug: "Voz: " + ((err && err.message) || "no se pudo leer"), capturing: false });
+      });
+  }
+  function onReply(event) {
+    const data = event.data;
+    if (!data || data.source !== "lsa-page" || data.type !== "LSA_MIC_STATE" || data.id !== id) return;
+    finish(Boolean(data.open));
+  }
+  window.addEventListener("message", onReply);
+}
+
+function showVoiceMutedPopup() {
+  let pop = document.getElementById("lsa-voice-pop");
+  if (!pop) {
+    pop = document.createElement("div");
+    pop.id = "lsa-voice-pop";
+    pop.innerHTML =
+      '<div class="lsa-voice-card" role="dialog" aria-modal="true" aria-labelledby="lsa-voice-title">' +
+      '<p id="lsa-voice-title">El micrófono de Meet está silenciado. Con el micrófono en silencio no se puede reproducir la voz en off para el resto de la llamada.</p>' +
+      '<button type="button" id="lsa-voice-ok">Entendido</button>' +
+      "</div>";
+    document.documentElement.appendChild(pop);
+    pop.querySelector("#lsa-voice-ok").addEventListener("click", () => {
+      pop.hidden = true;
+    });
+  }
+  pop.hidden = false;
 }
 
 function stopVoice() {
   lastSpoken = "";
+  voiceReq += 1;
+  postToPage({ type: "LSA_TTS_STOP" });
   try {
     window.speechSynthesis.cancel();
   } catch (_) {}
@@ -594,6 +647,10 @@ window.addEventListener("message", (event) => {
   }
   if (data.type === "LSA_SPEECH_UI" && meetMode === "hearing" && wantsHearingVoice() && data.debug) {
     setHud({ debug: data.debug, capturing: false });
+  }
+  if (data.type === "LSA_VOICE_BLOCKED") {
+    showVoiceMutedPopup();
+    return;
   }
   if (data.type === "LSA_SPEECH_ERROR") {
     if (meetMode === "hearing" && !wantsHearingVoice()) return;

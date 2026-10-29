@@ -5,6 +5,8 @@ __pycache__/
 unsloth_compiled_cache/
 tests/_perf_out/
 
+extraction/out/
+
 # Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip
 extension/bin/*.exe
