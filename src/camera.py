@@ -17,6 +17,7 @@ from landmarks import draw_holistic, extract_frame_vector, hands_present as web_
 from models import (
     build_classifier,
     default_model_index,
+    discover_eval_catalog,
     discover_models,
     resolve_model_root,
 )
@@ -440,14 +441,27 @@ class EvalSession:
         "capture_mode",
         "frame_size",
         "mediapipe",
+        "rep",
+        "light",
     ]
 
-    def __init__(self, sign_list: list[str], csv_path: str, handedness: str, model_ids: list[str]):
+    def __init__(
+        self,
+        sign_list: list[str],
+        csv_path: str,
+        handedness: str,
+        model_ids: list[str],
+        repeats: int = 10,
+        light: str = "",
+    ):
         self.sign_list = sign_list
         self.csv_path = csv_path
         self.handedness = handedness
         self.model_ids = model_ids
-        self.index = 0
+        self.repeats = max(1, int(repeats))
+        self.light = light or ""
+        self.sign_index = 0
+        self.rep = 0
         self.takes_dir = os.path.splitext(csv_path)[0] + "_takes"
         # Se registran en el CSV: sin esto no se puede comparar dos evals
         # corridas con distinta resolucion o distinta version de MediaPipe.
@@ -463,14 +477,47 @@ class EvalSession:
                 writer.writeheader()
 
     @property
+    def index(self):
+        """Tomas ya cerradas. Sirve para rehacer y para el conteo final."""
+        return self.sign_index * self.repeats + self.rep
+
+    @property
+    def total_takes(self):
+        return len(self.sign_list) * self.repeats
+
+    @property
     def finished(self):
-        return self.index >= len(self.sign_list)
+        return self.sign_index >= len(self.sign_list)
 
     @property
     def expected_sign(self):
         if self.finished:
             return None
-        return self.sign_list[self.index]
+        return self.sign_list[self.sign_index]
+
+    def progress_label(self):
+        if self.finished:
+            return "EVAL COMPLETA"
+        return (
+            f"EVAL {self.sign_index + 1}/{len(self.sign_list)}  "
+            f"toma {self.rep + 1}/{self.repeats}  {self.expected_sign.upper()}"
+        )
+
+    def _advance(self):
+        self.rep += 1
+        if self.rep >= self.repeats:
+            self.rep = 0
+            self.sign_index += 1
+
+    def _rewind(self):
+        if self.index <= 0:
+            return False
+        if self.rep == 0:
+            self.sign_index -= 1
+            self.rep = self.repeats - 1
+        else:
+            self.rep -= 1
+        return True
 
     def _write_row(self, model_id, top3, capture_mode, skipped=False):
         expected = self.expected_sign
@@ -492,6 +539,8 @@ class EvalSession:
                 "capture_mode": capture_mode,
                 "frame_size": self.frame_size,
                 "mediapipe": self.mediapipe_version,
+                "rep": self.rep + 1,
+                "light": self.light,
             }
         else:
             top_names = [t[0] for t in top3]
@@ -512,6 +561,8 @@ class EvalSession:
                 "capture_mode": capture_mode,
                 "frame_size": self.frame_size,
                 "mediapipe": self.mediapipe_version,
+                "rep": self.rep + 1,
+                "light": self.light,
             }
         with open(self.csv_path, "a", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=self.FIELDNAMES)
@@ -528,7 +579,19 @@ class EvalSession:
         if input_matrix is not None:
             take_path = self._save_take(expected, input_matrix)
         self._take_files.append(take_path)
-        self.index += 1
+        pred = ""
+        conf = 0.0
+        if self.model_ids:
+            top3 = results_by_model.get(self.model_ids[0], [])
+            if top3:
+                pred, conf = top3[0]
+        hit = pred == expected
+        print(
+            f"[*] {self.sign_index + 1}/{len(self.sign_list)} {expected} "
+            f"toma {self.rep + 1}/{self.repeats} -> {pred or '?'} ({conf:.0%}) "
+            f"{'OK' if hit else 'FALLO'}"
+        )
+        self._advance()
 
     def _save_take(self, expected: str, matrix):
         """
@@ -541,7 +604,7 @@ class EvalSession:
         folder = os.path.join(self.takes_dir, safe)
         try:
             os.makedirs(folder, exist_ok=True)
-            path = os.path.join(folder, f"take_{self.index + 1:03d}.npy")
+            path = os.path.join(folder, f"take_{self.rep + 1:02d}.npy")
             np.save(path, np.asarray(matrix, dtype=np.float32))
             return path
         except OSError as exc:
@@ -554,13 +617,16 @@ class EvalSession:
         for model_id in self.model_ids:
             self._write_row(model_id, [], capture_mode, skipped=True)
         self._take_files.append(None)
-        self.index += 1
+        self._advance()
+        if self.finished:
+            print("[*] Toma saltada. Evaluacion completa.")
+        else:
+            print(f"[*] Toma saltada. Siguiente: {self.progress_label()}")
 
     def redo_last(self):
-        """Vuelve a la seña anterior y borra su fila del CSV (y el .npy)."""
-        if self.index <= 0:
+        """Vuelve a la toma anterior y borra su fila del CSV (y el .npy)."""
+        if not self._rewind():
             return None
-        self.index -= 1
         take_path = self._take_files.pop() if self._take_files else None
         if take_path:
             try:
@@ -579,7 +645,65 @@ class EvalSession:
                 writer.writerows(keep)
         except OSError as exc:
             print(f"[!] No se pudo reescribir el CSV: {exc}")
-        return self.sign_list[self.index]
+        return self.expected_sign
+
+    def print_summary(self):
+        """Top-1, top-3 y fallos por seña, a partir del CSV de esta sesion."""
+        try:
+            with open(self.csv_path, "r", newline="", encoding="utf-8") as f:
+                rows = [
+                    r for r in csv.DictReader(f)
+                    if r.get("top1") and r.get("top1") != "SKIP"
+                ]
+        except OSError as exc:
+            print(f"[!] No se pudo leer el resumen: {exc}")
+            return
+        if not rows:
+            print("[*] Evaluacion sin tomas registradas.")
+            return
+        by_model = {}
+        for row in rows:
+            by_model.setdefault(row.get("model") or "modelo", []).append(row)
+        focus = ("gracias", "ayudar", "policia")
+        for model_id, group in by_model.items():
+            n = len(group)
+            top1 = sum(int(r["hit_top1"]) for r in group)
+            top3 = sum(int(r["hit_top3"]) for r in group)
+            conf_hit, conf_miss = [], []
+            per = {}
+            for r in group:
+                sign = r["expected_sign"]
+                hit = int(r["hit_top1"])
+                per.setdefault(sign, [0, 0])
+                per[sign][0] += hit
+                per[sign][1] += 1
+                try:
+                    conf = float(r["conf1"])
+                except (TypeError, ValueError):
+                    continue
+                (conf_hit if hit else conf_miss).append(conf)
+            print(f"\n[*] Resumen {model_id}  luz={self.light or '-'}")
+            print(f"    Top-1: {top1}/{n} ({100.0 * top1 / n:.1f}%)")
+            print(f"    Top-3: {top3}/{n} ({100.0 * top3 / n:.1f}%)")
+            if conf_hit:
+                print(f"    Confianza media en aciertos: {sum(conf_hit) / len(conf_hit):.3f}")
+            if conf_miss:
+                print(f"    Confianza media en errores: {sum(conf_miss) / len(conf_miss):.3f}")
+            misses = [(s, h, t) for s, (h, t) in per.items() if h < t]
+            misses.sort(key=lambda item: (item[1] / item[2], item[0]))
+            if misses:
+                print("    Senias con algun fallo top-1:")
+                for sign, h, t in misses:
+                    print(f"      {sign}: {h}/{t} aciertos")
+            else:
+                print("    Ninguna senia fallo el top-1.")
+            print("    Senias nuevas:")
+            for sign in focus:
+                if sign in per:
+                    h, t = per[sign]
+                    print(f"      {sign}: {h}/{t} aciertos top-1")
+                else:
+                    print(f"      {sign}: sin tomas")
 
 
 # =============================================================================
@@ -923,6 +1047,17 @@ def main():
             "Presets: 'letras', 'numeros', 'abc' (letras+numeros, el set de 36)."
         ),
     )
+    parser.add_argument(
+        "--takes",
+        type=int,
+        default=10,
+        help="En --eval, tomas seguidas de cada senia. Default 10.",
+    )
+    parser.add_argument(
+        "--light",
+        default="",
+        help="Condicion de luz de esta corrida (ej. buena, baja). Queda en el CSV y en el nombre.",
+    )
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -943,7 +1078,11 @@ def main():
 
     eval_session = None
     if args.eval:
-        selected = select_models_modal(catalog, multi=True)
+        eval_catalog = discover_eval_catalog(os.path.dirname(__file__))
+        if not eval_catalog:
+            eval_catalog = catalog
+        preferred = os.path.basename(os.path.normpath(cfg.MODEL_SAVE_DIR))
+        selected = select_models_modal(eval_catalog, multi=True, prechecked=[preferred])
         if not selected:
             print("[!] Eval cancelada: no hay modelos seleccionados.")
             return
@@ -979,17 +1118,31 @@ def main():
                 print("[!] Eval cancelada: ninguna senia de --signs existe en los modelos.")
                 return
             sign_list = filtered
+        takes = max(1, args.takes)
+        light = re.sub(r"[^0-9A-Za-z_-]+", "", args.light or "")
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        takes_tag = f"_x{takes}" if takes != 1 else ""
+        light_tag = f"_{light}" if light else ""
         csv_path = args.eval_output or os.path.join(
             os.path.dirname(__file__),
-            f"eval_{len(sign_list)}senias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            f"eval_{len(sign_list)}senias{takes_tag}{light_tag}_{stamp}.csv",
         )
-        eval_session = EvalSession(sign_list, csv_path, handedness, [s.id for s in active_specs])
+        eval_session = EvalSession(
+            sign_list,
+            csv_path,
+            handedness,
+            [s.id for s in active_specs],
+            repeats=takes,
+            light=light,
+        )
         print(f"[*] Modo eval activo. CSV: {csv_path}")
         print(f"[*] Modelos en paralelo: {', '.join(s.short for s in active_specs)}")
         print(
-            f"[*] Senias a probar: {len(sign_list)}. "
-            "Tecla 'n' = saltar, 'r' o boton REHACER = volver a la anterior."
+            f"[*] Senias: {len(sign_list)}. Tomas por senia: {takes}. "
+            f"Total: {eval_session.total_takes}."
+            + (f" Luz: {light}." if light else "")
         )
+        print("[*] 'n' salta la toma actual. 'r' o REHACER vuelve a la toma anterior.")
         print(f"[*] Orden: {', '.join(sign_list)}")
 
     n_models = len(active_specs)
@@ -1253,10 +1406,10 @@ def main():
                     expected = eval_session.expected_sign
                     cv2.putText(
                         canvas,
-                        f"EVAL {eval_session.index + 1}/{len(eval_session.sign_list)} -> {expected.upper()}",
-                        (20, 20),
+                        fit_text(eval_session.progress_label(), VID_W - 16, 0.55),
+                        (16, 24),
                         UI_FONT,
-                        0.65,
+                        0.55,
                         (0, 200, 255),
                         2,
                     )
@@ -1392,7 +1545,7 @@ def main():
                 print("[*] PAUSA" if paused else "[*] Captura reanudada")
             if key == ord("n") and eval_session and not eval_session.finished:
                 eval_session.skip_current(capture_mode)
-                print(f"[*] Saltada senia. Siguiente: {eval_session.expected_sign}")
+                pending_eval_after[0] = 0.0
             if key == ord("r") and eval_session:
                 sign = eval_session.redo_last()
                 pending_eval_after[0] = 0.0
@@ -1408,9 +1561,10 @@ def main():
 
     if eval_session:
         print(
-            f"[*] Evaluacion: {eval_session.index}/{len(eval_session.sign_list)} "
-            f"registros en {eval_session.csv_path}"
+            f"[*] Evaluacion: {eval_session.index}/{eval_session.total_takes} "
+            f"tomas en {eval_session.csv_path}"
         )
+        eval_session.print_summary()
 
 
 if __name__ == "__main__":

@@ -169,6 +169,31 @@ def default_model_index(catalog: list[ModelSpec]) -> int:
     return 0 if catalog else -1
 
 
+def discover_eval_catalog(src_dir: str) -> list[ModelSpec]:
+    """Checkpoints de src/model y de las carpetas model_new_*, uno por carpeta."""
+    folders = []
+    current = os.path.join(src_dir, "model")
+    if os.path.isdir(current):
+        folders.append(current)
+    for name in sorted(os.listdir(src_dir)):
+        path = os.path.join(src_dir, name)
+        if name.startswith("model_new_") and os.path.isdir(path):
+            folders.append(path)
+    specs = []
+    for folder in folders:
+        found = discover_models(folder)
+        if not found:
+            continue
+        spec = found[0]
+        folder_name = os.path.basename(folder)
+        spec.id = folder_name
+        spec.short = folder_name
+        detail = spec.label.split(" | ", 1)[-1]
+        spec.label = f"{folder_name} | {detail}"
+        specs.append(spec)
+    return specs
+
+
 def build_classifier(spec: ModelSpec, device):
     model = TinySkeletonClassifier(
         cfg.FRAME_FEATURES_DIM,

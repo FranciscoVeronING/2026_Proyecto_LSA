@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="980" viewBox="0 0 1480 980">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F7F9FC"/>
+    <stop offset="1" stop-color="#E7EEF6"/>
+  </linearGradient>
+  <filter id="sh" x="-20%" y="-20%" width="150%" height="160%">
+    <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#1C2C44" flood-opacity="0.13"/>
+  </filter>
+</defs>
+<rect width="1480" height="980" fill="url(#bg)"/>
+<text x="48" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" fill="#1A2433">Transformer  × 2</text><text x="48" y="82" font-family="Segoe UI, Arial, sans-serif" font-size="16" fill="#5C6D80">Las dos capas son iguales. Cada frame mira a los otros 15 y después pasa por una red chica.</text>
+<text x="64.0" y="128.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#6D54D6">Una capa</text>
+<rect x="140.0" y="146.0" width="220.0" height="40.0" rx="20" fill="#EFEAFF" stroke="#6D54D6" stroke-width="1.6"/>
+<text x="250.0" y="172.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#4A369E">16 × 128</text>
+<path d="M140,166 H68 V422 H228" fill="none" stroke="#C4B6F0" stroke-width="2.2"/>
+<path d="M100,477 H68 V700 H228" fill="none" stroke="#C4B6F0" stroke-width="2.2"/>
+<rect x="100.0" y="206.0" width="300.0" height="118.0" rx="12" fill="#6D54D6" filter="url(#sh)"/>
+<text x="250.0" y="234.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">Atención multi-cabeza</text>
+<text x="250.0" y="256.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#F3EEFF">4 cabezas, 32 valores cada una</text>
+<rect x="118.0" y="286.0" width="58.0" height="26.0" rx="8" fill="#B7A4F4"/>
+<text x="147.0" y="304.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">32</text>
+<rect x="188.0" y="286.0" width="58.0" height="26.0" rx="8" fill="#8B74E4"/>
+<text x="217.0" y="304.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">32</text>
+<rect x="258.0" y="286.0" width="58.0" height="26.0" rx="8" fill="#563EB8"/>
+<text x="287.0" y="304.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">32</text>
+<rect x="328.0" y="286.0" width="58.0" height="26.0" rx="8" fill="#3E2C96"/>
+<text x="357.0" y="304.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">32</text>
+<rect x="100.0" y="344.0" width="300.0" height="42.0" rx="12" fill="#8A78C8" filter="url(#sh)"/>
+<text x="250.0" y="371.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">Dropout  0,4</text>
+<circle cx="250" cy="422" r="18" fill="#ffffff" stroke="#6D54D6" stroke-width="2.4"/>
+<text x="250.0" y="428.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#6D54D6">+</text>
+<text x="286.0" y="428.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#6A5A96">suma</text>
+<rect x="100.0" y="456.0" width="300.0" height="42.0" rx="12" fill="#4A369E" filter="url(#sh)"/>
+<text x="250.0" y="483.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">LayerNorm</text>
+<rect x="100.0" y="518.0" width="300.0" height="86.0" rx="12" fill="#6D54D6" filter="url(#sh)"/>
+<text x="250.0" y="546.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">Red por frame</text>
+<text x="250.0" y="568.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#F3EEFF">128 → 256 · ReLU · 256 → 128</text>
+<rect x="100.0" y="622.0" width="300.0" height="42.0" rx="12" fill="#8A78C8" filter="url(#sh)"/>
+<text x="250.0" y="649.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">Dropout  0,4</text>
+<circle cx="250" cy="700" r="18" fill="#ffffff" stroke="#6D54D6" stroke-width="2.4"/>
+<text x="250.0" y="706.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#6D54D6">+</text>
+<text x="286.0" y="706.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#6A5A96">suma</text>
+<rect x="100.0" y="734.0" width="300.0" height="42.0" rx="12" fill="#4A369E" filter="url(#sh)"/>
+<text x="250.0" y="761.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">LayerNorm</text>
+<rect x="140.0" y="800.0" width="220.0" height="40.0" rx="20" fill="#6D54D6" filter="url(#sh)"/>
+<text x="250.0" y="826.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">16 × 128</text>
+<path d="M250,186 V206 M250,324 V344 M250,386 V404 M250,440 V456 M250,498 V518 M250,604 V622 M250,664 V682 M250,718 V734 M250,776 V800" fill="none" stroke="#C4B6F0" stroke-width="2"/>
+<text x="760.0" y="150.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#6D54D6">Dentro de una cabeza</text>
+<text x="760.0" y="176.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="400" fill="#5C6D80">De los 128 valores se arman tres vectores de 32: Q, K y V.</text>
+<rect x="780.0" y="210.0" width="130.0" height="78.0" rx="12" fill="#6D54D6" filter="url(#sh)"/>
+<text x="845.0" y="248.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Q</text>
+<text x="845.0" y="270.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#F3EEFF">consulta</text>
+<rect x="930.0" y="210.0" width="130.0" height="78.0" rx="12" fill="#8B74E4" filter="url(#sh)"/>
+<text x="995.0" y="248.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">K</text>
+<text x="995.0" y="270.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#F3EEFF">clave</text>
+<rect x="1080.0" y="210.0" width="130.0" height="78.0" rx="12" fill="#4A369E" filter="url(#sh)"/>
+<text x="1145.0" y="248.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">V</text>
+<text x="1145.0" y="270.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#F3EEFF">valor</text>
+<text x="760.0" y="330.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="400" fill="#3A4654">El puntaje de este frame contra otro es  Q · K  /  √32. Después un softmax.</text>
+<text x="760.0" y="378.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#4A369E">Esquema de una consulta</text>
+<text x="1000.0" y="378.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#8090A0">El grosor es el peso. No es una medición del modelo.</text>
+<path d="M790,560 Q930.0,523.8525355419926 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.62" stroke-linecap="round"/>
+<path d="M830,560 Q950.0,522.5730474839347 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.76" stroke-linecap="round"/>
+<path d="M870,560 Q970.0,518.3296925117196 1070,560" fill="none" stroke="#D5CBEF" stroke-width="1.23" stroke-linecap="round"/>
+<path d="M910,560 Q990.0,514.3659460689973 1070,560" fill="none" stroke="#6D54D6" stroke-width="1.67" stroke-linecap="round"/>
+<path d="M950,560 Q1010.0,515.1007393720618 1070,560" fill="none" stroke="#6D54D6" stroke-width="1.59" stroke-linecap="round"/>
+<path d="M990,560 Q1030.0,514.6270599486874 1070,560" fill="none" stroke="#6D54D6" stroke-width="1.64" stroke-linecap="round"/>
+<path d="M1030,560 Q1050.0,510.6926765362175 1070,560" fill="none" stroke="#6D54D6" stroke-width="2.08" stroke-linecap="round"/>
+<path d="M1110,560 Q1090.0,510.8356255654394 1070,560" fill="none" stroke="#6D54D6" stroke-width="2.06" stroke-linecap="round"/>
+<path d="M1150,560 Q1110.0,516.0154628527908 1070,560" fill="none" stroke="#6D54D6" stroke-width="1.49" stroke-linecap="round"/>
+<path d="M1190,560 Q1130.0,520.5299347490474 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.99" stroke-linecap="round"/>
+<path d="M1230,560 Q1150.0,522.919410494223 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.72" stroke-linecap="round"/>
+<path d="M1270,560 Q1170.0,523.7588878905217 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M1310,560 Q1190.0,523.9614510571598 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.60" stroke-linecap="round"/>
+<path d="M1350,560 Q1210.0,523.9955838776712 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.60" stroke-linecap="round"/>
+<path d="M1390,560 Q1230.0,523.9996375026047 1070,560" fill="none" stroke="#D5CBEF" stroke-width="0.60" stroke-linecap="round"/>
+<circle cx="790" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="790.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">1</text>
+<circle cx="830" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="830.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">2</text>
+<circle cx="870" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="870.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">3</text>
+<circle cx="910" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="910.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">4</text>
+<circle cx="950" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="950.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">5</text>
+<circle cx="990" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="990.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">6</text>
+<circle cx="1030" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1030.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">7</text>
+<circle cx="1070" cy="560" r="15" fill="#6D54D6" stroke="#4A369E" stroke-width="1.6"/>
+<text x="1070.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" fill="#ffffff">8</text>
+<circle cx="1110" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1110.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">9</text>
+<circle cx="1150" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1150.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">10</text>
+<circle cx="1190" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1190.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">11</text>
+<circle cx="1230" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1230.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">12</text>
+<circle cx="1270" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1270.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">13</text>
+<circle cx="1310" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1310.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">14</text>
+<circle cx="1350" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1350.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">15</text>
+<circle cx="1390" cy="560" r="11" fill="#E4DCFB" stroke="#C4B6F0" stroke-width="1.6"/>
+<text x="1390.0" y="564.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" fill="#4A369E">16</text>
+<text x="1070.0" y="602.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#4A369E">frame que consulta</text>
+<text x="760.0" y="660.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="400" fill="#3A4654">Las 4 cabezas hacen esto en paralelo, cada una con sus propios pesos.</text>
+<text x="760.0" y="686.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="400" fill="#3A4654">Se concatenan (4 × 32 = 128) y una capa lineal mezcla las cuatro miradas.</text>
+<rect x="760.0" y="740.0" width="660.0" height="150.0" rx="16" fill="#FFF8EC" stroke="#F0D7A2" stroke-width="1.4"/>
+<text x="784.0" y="774.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#B67812">Antes de la primera capa: posición</text>
+<text x="784.0" y="798.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#8A6A32">A cada frame se le suma una onda fija, seno en las pares y coseno en las impares.</text>
+<path d="M784,848.0 L784.0,848.0 L802.0,853.1 L820.0,857.6 L838.0,861.2 L856.0,863.4 L874.0,864.0 L892.0,862.9 L910.0,860.4 L928.0,856.5 L946.0,851.8 L964.0,846.7 L982.0,841.7 L1000.0,837.3 L1018.0,834.1 L1036.0,832.3 L1054.0,832.1 L1072.0,833.6 L1090.0,836.5 L1108.0,840.7 L1126.0,845.5 L1144.0,850.7 L1162.0,855.5 L1180.0,859.6 L1198.0,862.5 L1216.0,863.9 L1234.0,863.6 L1252.0,861.8 L1270.0,858.5 L1288.0,854.1 L1306.0,849.1 L1324.0,844.0 L1342.0,839.3 L1360.0,835.5" fill="none" stroke="#E39722" stroke-width="2.4" stroke-linecap="round"/>
+<path d="M784,848.0 L784.0,864.0 L802.0,863.2 L820.0,860.8 L838.0,857.1 L856.0,852.4 L874.0,847.3 L892.0,842.3 L910.0,837.8 L928.0,834.5 L946.0,832.5 L964.0,832.1 L982.0,833.3 L1000.0,836.1 L1018.0,840.1 L1036.0,844.9 L1054.0,850.0 L1072.0,854.9 L1090.0,859.2 L1108.0,862.2 L1126.0,863.8 L1144.0,863.8 L1162.0,862.1 L1180.0,859.0 L1198.0,854.7 L1216.0,849.8 L1234.0,844.7 L1252.0,839.9 L1270.0,835.9 L1288.0,833.2 L1306.0,832.0 L1324.0,832.5 L1342.0,834.6 L1360.0,838.0" fill="none" stroke="#F0C36A" stroke-width="2.4" stroke-linecap="round"/>
+<text x="1320.0" y="844.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#E39722">seno</text>
+<text x="1320.0" y="864.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#C4922A">coseno</text>
+<text x="64.0" y="940.0" text-anchor="start" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#627386">Hay dropout dentro de la atención, sobre los pesos, y otro a la salida de cada bloque.</text>
+</svg>
