@@ -268,7 +268,7 @@ La fidelidad semántica, en este trabajo, es la conservación de la proposición
 
 \begin{itemize}
     \item \textbf{BLEU} \parencite{papineni2002bleu}. Precisión de n-gramas: qué porción de las secuencias de la salida ya está en la referencia. Una salida corta recibe una penalización. No premia, con el mismo peso, las palabras de la referencia que la salida omitió.
-    \item \textbf{ROUGE-L} \parencite{lin2004rouge}. La subsecuencia común más larga, respetando el orden. Dos textos pueden compartir palabras y aun así bajar si esas palabras no aparecen en el mismo orden.
+    \item \textbf{ROUGE-L} \parencite{lin2004rouge}. La subsecuencia común más larga que respeta el orden. Dos textos pueden compartir palabras y aun así bajar si esas palabras no aparecen en el mismo orden.
     \item \textbf{METEOR} \parencite{banerjee2005meteor}. Alinea palabras sueltas. Cuenta la coincidencia exacta, la raíz y, si hay un léxico de sinónimos, el sinónimo. Junta precisión y recall, y baja si el texto queda partido en muchos fragmentos.
     \item \textbf{\texttt{BERT Score}} \parencite{zhang2020bertscore}. Compara el vector de cada token de la salida con los de la referencia, mediante un modelo de lenguaje preentrenado. El F1 de esa alineación sube cuando el sentido está cerca aunque las palabras no coincidan.
     \item \textbf{\texttt{Comet Score}} \parencite{rei2020comet}. Un modelo entrenado para aproximar juicios humanos de traducción. Usa la entrada, la salida y la referencia. Estima si el sentido de la entrada llegó a la salida.

@@ -470,7 +470,7 @@ El subsistema de representación gestual de salida consulta un repositorio de ar
 El canal inverso procesa la lista de glosas devuelta por el traductor e infiere la secuencia cinemática correspondiente. Cada glosa se asocia a un clip de referencias cinemáticas previamente parametrizado.
 
 \subsection{Procesamiento geométrico de coordenadas y segmentación temporal}
-Los clips cinemáticos registran la secuencia de puntos clave extraídos mediante la ejecución previa e independiente de \textit{MediaPipe Holistic} sobre el video de un informante calificado. Las coordenadas planares $(x, y)$ se representan en el espacio discreto de píxeles de la cámara de captura ($x \in [0, W]$, $y \in [0, H]$), preservando las proporciones nativas. La componente de profundidad $z$ posee carácter relativo con origen en la muñeca, actuando como métrica para resolver oclusiones mutuas. Por consiguiente, la proyección gráfica reproyecta $x$ e $y$ directamente sobre el plano bidimensional.
+Los clips cinemáticos registran la secuencia de puntos clave extraídos mediante la ejecución previa e independiente de \textit{MediaPipe Holistic} sobre el video de un informante calificado. Las coordenadas planares $(x, y)$ se representan en el espacio discreto de píxeles de la cámara de captura ($x \in [0, W]$, $y \in [0, H]$) y preservan las proporciones nativas. La componente de profundidad $z$ posee carácter relativo con origen en la muñeca y actúa como métrica para resolver oclusiones mutuas. Por consiguiente, la proyección gráfica reproyecta $x$ e $y$ directamente sobre el plano bidimensional.
 
 El archivo binario \texttt{.pose} conserva las tres fases fonológicas estándar (preparación, núcleo, retracción). Para aislar el tramo con valor morfosintáctico distintivo sin alterar el archivo original, el sistema registra los marcadores temporales de inicio ($t_{\text{inicio}}$) y fin ($t_{\text{fin}}$) del núcleo en un índice de anotaciones externo. Durante la renderización, la lectura consulta este índice para aislar el segmento relevante.
 
@@ -513,7 +513,7 @@ Este puente ejecuta una traslación suave sobre las coordenadas planares. Se exp
 \end{table}
 
 \subsection{Estrategia de contingencia léxica}
-Ante palabras ausentes en el vocabulario grabado (nombres propios o términos técnicos), el sistema aplica un mecanismo de descomposición dactilológica. La palabra se segmenta en sus letras constituyentes y se sintetiza mediante la secuencia correspondiente de caracteres del alfabeto dactilológico, consultando el endpoint específico \texttt{/fingerspell}.
+Ante palabras ausentes en el vocabulario grabado (nombres propios o términos técnicos), el sistema aplica un mecanismo de descomposición dactilológica. La palabra se segmenta en sus letras constituyentes y se sintetiza mediante la secuencia correspondiente de caracteres del alfabeto dactilológico al consultar el endpoint específico \texttt{/fingerspell}.
 
 \section{Diseño de la extensión de videollamada}
 \label{sec:diseno_extension}
@@ -631,7 +631,7 @@ El diseño incorpora patrones de software consolidados para organizar las respon
     \item \textbf{Estrategia (\textit{Strategy}):} Aplicado en el módulo de filtrado de repeticiones (\texttt{RepeatGate}). Define políticas diferenciadas según la clase léxica (dígitos admiten repetición continua, letras aceptan hasta dos instancias consecutivas y vocabulario general descarta duplicados inmediatos).
     \item \textbf{Fachada (\textit{Facade}):} Aplicado en la API HTTP del motor ILSA local. Expone una interfaz unificada que oculta la complejidad interna de extracción, clasificación y comunicación con la nube.
     \item \textbf{Adaptador (\textit{Adapter}):} Implementado en la extensión web y en los conectores de red para transformar los formatos nativos del navegador a los contratos JSON requeridos por los servicios REST.
-    \item \textbf{Estado (\textit{State}):} Gestiona la modalidad operativa de la sesión (Señante u Oyente), alterando dinámicamente el comportamiento de los endpoints sin requerir instancias de servicio separadas.
+    \item \textbf{Estado (\textit{State}):} Gestiona la modalidad operativa de la sesión (Señante u Oyente) y altera dinámicamente el comportamiento de los endpoints sin requerir instancias de servicio separadas.
 \end{itemize}
 
 \section{Diseño conceptual de la arquitectura escalable de producción en la nube}

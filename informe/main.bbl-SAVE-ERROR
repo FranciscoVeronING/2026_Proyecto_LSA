@@ -1030,7 +1030,6 @@
       \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
       \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
       \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \field{extraname}{1}
       \field{sortinit}{4}
       \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
@@ -1291,78 +1290,6 @@
       \field{year}{2020}
       \field{pages}{2685\bibrangedash 2702}
       \range{pages}{18}
-    \endentry
-    \entry{qwen2024qwen2505b}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
-           family={{Qwen Team}},
-           familyi={Q\bibinitperiod}}}%
-      }
-      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \field{extraname}{2}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct}}
-      \field{note}{Ficha del modelo. Declara 0,49 mil millones de parámetros, 24 capas y 14/2 cabezas}
-      \field{title}{{Qwen2.5-0.5B-Instruct}}
-      \field{year}{2024}
-    \endentry
-    \entry{qwen2024qwen2515b}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
-           family={{Qwen Team}},
-           familyi={Q\bibinitperiod}}}%
-      }
-      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \field{extraname}{3}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}}
-      \field{note}{Ficha del modelo. Declara 1,54 mil millones de parámetros, 28 capas y 12/2 cabezas}
-      \field{title}{{Qwen2.5-1.5B-Instruct}}
-      \field{year}{2024}
-    \endentry
-    \entry{qwen2024qwen253b}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=4622c4bb7444dadba22813c2addff5e7}{%
-           family={{Qwen Team}},
-           familyi={Q\bibinitperiod}}}%
-      }
-      \strng{namehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{fullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{bibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorbibnamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authornamehash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhash}{4622c4bb7444dadba22813c2addff5e7}
-      \strng{authorfullhashraw}{4622c4bb7444dadba22813c2addff5e7}
-      \field{extraname}{4}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://huggingface.co/Qwen/Qwen2.5-3B-Instruct}}
-      \field{note}{Ficha del modelo. Declara 3,09 mil millones de parámetros, 36 capas y 16/2 cabezas}
-      \field{title}{{Qwen2.5-3B-Instruct}}
-      \field{year}{2024}
     \endentry
   \enddatalist
 \endrefsection

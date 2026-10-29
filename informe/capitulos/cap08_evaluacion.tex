@@ -1,0 +1,142 @@
+% ====================================================================
+\chapter{Evaluación}
+\label{cap:evaluacion}
+% ====================================================================
+
+El presente capítulo expone la evaluación técnica, crítica e integradora del sistema desarrollado. Se analiza el nivel de cumplimiento de los objetivos planteados al inicio del proyecto sobre la base de las evidencias obtenidas en las etapas de experimentación, prueba y validación. Asimismo, se detallan las limitaciones metodológicas y tecnológicas observadas durante el desarrollo, y se examinan los riesgos técnicos y operativos inherentes a la solución con sus respectivas estrategias de mitigación.
+
+% ====================================================================
+\section{Cumplimiento de objetivos}
+\label{sec:eval_cumplimiento_objetivos}
+% ====================================================================
+
+La valoración de los resultados se realiza a través de la trazabilidad directa entre los objetivos definidos en el Capítulo~2, los requerimientos especificados en el Capítulo~4 y las evidencias empíricas recolectadas en los ensayos de validación.
+
+\subsection{Evaluación del objetivo general}
+El objetivo general consistió en desarrollar un prototipo funcional de traducción bidireccional entre la LSA y el español rioplatense en tiempo pseudo-real, integrado en una plataforma de videoconferencia mediante una arquitectura híbrida cliente-nube.
+
+El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos: en el canal directo transforma la captura de cámara en subtítulos y voz sintética, mientras que en el canal inverso traduce voz o texto a la animación de un avatar esquelético. La arquitectura híbrida mantiene el procesamiento de visión en el cliente y la inferencia de lenguaje en la nube, con lo que se mitiga la asimetría comunicacional sin transferir la señal de video fuera del dispositivo.
+
+\subsection{Evaluación de los objetivos específicos}
+
+A continuación se analiza el grado de logro de cada uno de los objetivos específicos:
+
+\begin{enumerate}
+    \item \textbf{Implementación del módulo local de visión y clasificación gestual:}
+    \textit{Estado: Alcanzado.}
+    Se desarrolló el pipeline basado en MediaPipe Holistic para la extracción de 225 coordenadas articulares normalizadas y la red neuronal \textit{TinySkeletonClassifier}. Las pruebas experimentales demostraron una exactitud del 99{,}0\,\% en la validación fuera de línea (sobre 2\,000 secuencias de prueba) y un 99{,}6\,\% de acierto en pruebas con cámara real bajo iluminación adecuada, lo que superó la meta del 75\,\% definida en el requerimiento RNF-03.
+
+    \item \textbf{Diseño e integración del servicio semántico para el canal directo (LSA $\rightarrow$ Español):}
+    \textit{Estado: Alcanzado.}
+    Se ajustó y desplegó el modelo Qwen2.5 1,5B mediante la técnica LoRA y cuantización GGUF \texttt{Q4\_K\_M}. En las evaluaciones sobre oraciones fuera del conjunto de entrenamiento, el modelo logró un acierto exacto del 94,96\,\%, con métricas de fidelidad semántica elevadas (98{,}85 de BERTScore F1 y 97{,}12 de COMET score). La inferencia remota respondió en un tiempo medio de 1444,4\,ms en la sesión integrada, en cumplimiento con el requerimiento RF-03.
+
+    \item \textbf{Diseño e integración del servicio semántico para el canal inverso (Español $\rightarrow$ LSA):}
+    \textit{Estado: Alcanzado.}
+    Se estructuró el canal de retorno para reorganizar oraciones en español hacia el orden manual simplificado del prototipo (\textit{Topic-Comment}). El modelo ajustado alcanzó un acierto exacto del 91,18\,\% en las pruebas del laboratorio semántico y una latencia media de inferencia remota de 1368,2\,ms, lo que satisface el requerimiento RF-06.
+
+    \item \textbf{Implementación del módulo de visualización gestual mediante avatar:}
+    \textit{Estado: Alcanzado.}
+    Se diseñó el motor de animación cinemática basado en archivos binarios \texttt{.pose}. El sistema reproduce hasta 24 clips por oración con suavizado exponencial y puentes de transición interpolados. Ante la ausencia de un archivo de seña, se activa automáticamente el subsistema de deletreo dactilológico. Se incorporó una cola de reproducción con capacidad para 20 animaciones, en cumplimiento con las especificaciones del requerimiento RF-07.
+
+    \item \textbf{Diseño de una arquitectura escalable en la nube:}
+    \textit{Estado: Parcialmente alcanzado.}
+    Se diseñó la arquitectura elástica teórica con balanceo de carga, contenedores sin estado y escalado horizontal automático (Sección~\ref{sec:arq_escalable} y Apéndice~\ref{ap:nube}). Sin embargo, en concordancia con la restricción RC-02, la validación experimental no desplegó el clúster elástico multinodo, sino una instancia única por servicio en Google Cloud Run (\texttt{--max-instances 1}). El alcance efectivo alcanzado comprobó el desacoplamiento funcional de los microservicios, pero dejó la prueba de carga concurrente masiva como una línea futura.
+
+    \item \textbf{Resguardo de la privacidad de los datos biométricos:}
+    \textit{Estado: Alcanzado.}
+    Se garantizó la ejecución local de la extracción de \textit{landmarks} y de la clasificación de señas en el equipo cliente. La comunicación saliente hacia la nube se restringe a cadenas de texto (glosas u oraciones) o solicitudes de nombres de archivos, lo que evita de forma estricta la transmisión de flujo de video o coordenadas crudas fuera del dispositivo, en cumplimiento estricto del requerimiento RNF-02.
+
+    \item \textbf{Desarrollo de la extensión web e integración con Google Meet:}
+    \textit{Estado: Alcanzado.}
+    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. Se implementó la intercepción transparente del dispositivo mediante la inyección de un canvas sintético sobre la llamada de Google Meet (\texttt{captureStream()}), en cumplimiento con los requerimientos RF-08, RF-09 y RNF-05.
+
+    \item \textbf{Evaluación integral del sistema y medición de desempeños:}
+    \textit{Estado: Alcanzado.}
+    Se ejecutó el protocolo de pruebas completo: medición de acierto por seña en cámara real, evaluación cuantitativa de fidelidad semántica en ambos canales con cinco métricas estandarizadas, caracterización de tiempos de respuesta desagregados por etapas (pausa, transporte, cola, inferencia y entrega) y verificación del consumo de recursos en hardware cliente estándar.
+\end{enumerate}
+
+La Tabla~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los objetivos, los requerimientos asociados y los resultados obtenidos.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Matriz de trazabilidad entre objetivos, requerimientos y resultados.}
+    \label{tab:trazabilidad_objetivos}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}X c}
+        \toprule
+        \textbf{Objetivo específico} & \textbf{Requerimientos} & \textbf{Evidencia / Resultado obtenido} & \textbf{Estado} \\
+        \midrule
+        1. Clasificador gestual & RF-01, RF-02, RNF-03 & Exactitud fuera de línea de 99{,}0\,\%; acierto en cámara de 99{,}6\,\%. & Alcanzado \\
+        \addlinespace[2pt]
+        2. Canal directo & RF-03 & Exactitud exacta de 94,96\,\%; BERTScore F1 de 98{,}85. Latencia media de 1444,4\,ms. & Alcanzado \\
+        \addlinespace[2pt]
+        3. Canal inverso & RF-06 & Exactitud exacta de 91,18\,\%. Latencia media de 1368,2\,ms. & Alcanzado \\
+        \addlinespace[2pt]
+        4. Avatar e integración & RF-07 & Renderización cinemática a 30\,FPS, suavizado EMA y contingencia por dactilología. & Alcanzado \\
+        \addlinespace[2pt]
+        5. Arquitectura nube & RNF-04, RC-02 & Diseño elástico documentado; validación en Cloud Run con réplica única. & Parcial \\
+        \addlinespace[2pt]
+        6. Privacidad biométrica & RNF-02 & Extracción local; solo se transmiten cadenas de texto en los payloads HTTP. & Alcanzado \\
+        \addlinespace[2pt]
+        7. Extensión web & RF-08, RF-09, RNF-05 & Inyección en Google Meet mediante Canvas sintético bajo Manifest V3. & Alcanzado \\
+        \addlinespace[2pt]
+        8. Evaluación integral & RNF-01, RC-05 & Trazabilidad de latencia por etapas y perfilado de hardware cliente. & Alcanzado \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% ====================================================================
+\section{Limitaciones}
+\label{sec:eval_limitaciones}
+% ====================================================================
+
+El desarrollo y el desempeño del prototipo se encuentran condicionados por delimitaciones técnicas, metodológicas y tecnológicas acordadas para acotar el alcance del proyecto de grado. La explicitación de estos factores establece los bordes reales del sistema:
+
+\begin{itemize}
+    \item \textbf{Recorte léxico y ausencia de gramática no manual:}
+    El vocabulario soportado por el clasificador se acota estrictamente a 100 señas aisladas (Apéndice~\ref{anexo:vocabulario}). Asimismo, el pipeline excluye la gesticulación facial, los movimientos de cejas y la postura del torso como rasgos gramaticales. Por lo tanto, el sistema no recupera la modulación afectiva o interrogativa que reside exclusivamente en los canales no manuales de la LSA.
+
+    \item \textbf{Requisito de separación de gestos en encuadre:}
+    El algoritmo de detección de pausas exige retirar la mano del encuadre de la cámara entre la ejecución de cada seña. Esta condición operativa resulta indispensable para segmentar correctamente los gestos aislados, aunque impone una mecánica de señado discontinua que difiere de la fluidez natural de la LSA.
+
+    \item \textbf{Condiciones de captura y dependencia de MediaPipe:}
+    La calidad del reconocimiento gestual depende de la correcta extracción de \textit{landmarks} por parte de MediaPipe Holistic. Situaciones de oclusión severa entre las manos, desenfoque por movimiento rápido, iluminación deficiente o encuadres fuera del plano del torso incrementan la tasa de falsos positivos o la degradación de las coordenadas articulares.
+
+    \item \textbf{Delimitación estricta de límites temporales:}
+    El prototipo exige una pausa fija de inactividad manual de 4 segundos para determinar la finalización de una frase en el canal directo. Esta restricción introduce un tiempo de espera estructural previo al envío de la solicitud hacia la nube, lo que impide un flujo conversacional verdaderamente fluido o ininterrumpido.
+
+    \item \textbf{Representación cinemática simplificada del avatar:}
+    El ensamblado del avatar opera mediante la interpolación geométrica entre núcleos de gestos previamente grabados. Esta aproximación atenúa la discontinuidad espacial entre señas, pero no replica los fenómenos biomecánicos complejos de la coarticulación gestual presentes en el movimiento humano natural.
+
+    \item \textbf{Dependencia de conectividad de red y penalización de arranque en el prototipo:}
+    A pesar de ejecutar la clasificación gestual de forma local, el servicio semántico y la descarga de animaciones dependen de la conectividad hacia la nube. En el escenario de pruebas sobre infraestructura \textit{serverless} (Cloud Run) configurada con escalado a cero (\texttt{min-instances 0}) para optimización de costos, la inicialización del sistema enfrenta una demora por el arranque en frío (\textit{cold start}) de las instancias. Dado que el motor local exige la disponibilidad previa de los servidores para iniciar su operación, este retraso afecta exclusivamente al proceso de arranque del prototipo. En un entorno de producción, esta penalización inicial se elimina mediante el mantenimiento de instancias reservadas continuas.
+
+    \item \textbf{Entorno cliente y compatibilidad de plataforma:}
+    El empaquetado del motor local ILSA se optimizó específicamente para el sistema operativo Windows y navegadores Chromium. La ejecución concurrente de la videollamada, la extracción de puntos mediante WebAssembly y la clasificación en CPU exige el cumplimiento estricto de los requisitos mínimos de hardware (4 núcleos con instrucciones AVX2 y 8\,GB de RAM), lo que limita su despliegue en dispositivos de menor capacidad computacional.
+\end{itemize}
+
+% ====================================================================
+\section{Riesgos detectados y estrategias de mitigación}
+\label{sec:eval_riesgos}
+% ====================================================================
+
+El análisis del prototipo en un escenario proyectado hacia la producción evidencia la presencia de riesgos técnicos, operativos y evolutivos. En la Tabla~\ref{tab:eval_matriz_riesgos} se sistematizan los principales factores identificados junto con sus correspondientes líneas de mitigación y propuestas de mejora ingenieril.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Análisis de riesgos técnicos, operativos y evolutivos con estrategias de mitigación.}
+    \label{tab:eval_matriz_riesgos}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.5cm}}
+        \toprule
+        \textbf{Categoría} & \textbf{Riesgo identificado} & \textbf{Descripción e impacto} & \textbf{Estrategia de mitigación / Línea de mejora} \\
+        \midrule
+        \textbf{Seguridad y Privacidad} & Vulnerabilidad en la API local no autenticada & La escucha del servidor FastAPI en la red local sin tokens de autenticación expone endpoints a otros procesos del mismo sistema cliente. & Implementación de autenticación mediante \textit{tokens} efímeros (JWT) intercambiados de forma segura durante el arranque de la extensión. \\
+        \addlinespace[3pt]
+        \textbf{Evolución y Obsolescencia} & Cambios en el DOM de Google Meet y APIs web & Actualizaciones en la plataforma de videollamada o restricciones adicionales en Manifest V3 pueden romper la inyección de scripts. & Abstracción de los selectores DOM en capas de desacoplamiento y mantenimiento periódico de la extensión en el repositorio. \\
+        \addlinespace[3pt]
+        \textbf{Mantenibilidad} & Dificultad para incorporar nuevas señas & El reentrenamiento del clasificador y la captura de nuevos archivos \texttt{.pose} requiere trabajo manual intensivo. & Construcción de herramientas de captura automatizadas y canalizaciones de integración continua (\textit{MLOps}) para modelos de visión. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+

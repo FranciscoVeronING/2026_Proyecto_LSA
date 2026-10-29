@@ -10,17 +10,8 @@ la saturación de memoria y cómputo que provocaría ejecutar modelos de lenguaj
 transforma la secuencia en oraciones fluidas en español rioplatense, las cuales retornan al cliente para su proyección en subtítulos o síntesis de voz. En sentido inverso (oyente-señante), el sistema procesa 
 la voz y/o texto del interlocutor oyente mediante un módulo semántico inverso en la nube que estructura las glosas, enviándolas a un avatar en el cliente que ejecuta las animaciones correspondientes o 
 recurre al deletreo dactilológico para términos fuera del léxico.
-El módulo clasificador gestual local alcanza un 99{,}0\,\% de exactitud en validación fuera de línea y un 99{,}6\,\% de acierto en cámara real, con iluminación adecuada. Por su parte, los modelos de 
-lenguaje evaluados (Qwen2.5, Llama 3.2 y SmolLM adaptados mediante LoRA y cuantizados a GGUF Q4\_K\_M) superan el 94\,\% de exactitud. %TODO: Comienza con «En banco local, la inferencia del SLM» y termina con «techo de 2,0 s de RNF-01.»
-En banco local, la inferencia del SLM queda entre 200 y 450\,ms. En la sesión integrada con Cloud Run, la mediana de inferencia es de 1{,}35\,s en el canal directo y de 1{,}48\,s en el inverso; el 87\,\% de las 24 emisiones que invocaron el modelo respetó el techo de 2{,}0\,s de RNF-01.
-Como mecanismo % TODO: revisar valores de semantico, acordar con maite tema latencias
-de integración para videollamadas, el sistema se acopla a Google Meet mediante una extensión de navegador conectada al motor local ILSA, y asegura la privacidad del usuario al no transmitir video crudo fuera 
+El módulo clasificador gestual local alcanza un 99{,}0\,\% de exactitud en validación fuera de línea y un 99{,}6\,\% de acierto en cámara real, con iluminación adecuada. Por su parte, el modelo elegido para el servicio, Qwen2.5 1,5B, adaptado mediante LoRA y cuantizado a GGUF \texttt{Q4\_K\_M}, alcanza un acierto exacto del 94,96\,\% en el canal directo y del 91,18\,\% en el inverso. La generación local en CPU de ese modelo es de 256,30\,ms y de 290,82\,ms. En la sesión integrada, el tiempo medio de inferencia remota es de 1444,4\,ms en el canal directo y de 1368,2\,ms en el inverso.
+Como mecanismo de integración para videollamadas, el sistema se acopla a Google Meet mediante una extensión de navegador conectada al motor local ILSA, y asegura la privacidad del usuario al no transmitir video crudo fuera 
 del dispositivo cliente. Finalmente, se deja documentada la propuesta de diseño de una arquitectura en la nube escalable para soportar la demanda concurrente en entornos de producción.
 
 \chapter*{Palabras clave:} Lengua de Señas Argentina, reconocimiento de gestos, arquitectura híbrida cliente-nube, traducción semántica bidireccional, avatar esquelético, accesibilidad.
-
-% TODO: Chequear donde se usan por primera vez, si conviene agregarlas al resumen
-% LSA
-% LLM
-% ASL
-% SML

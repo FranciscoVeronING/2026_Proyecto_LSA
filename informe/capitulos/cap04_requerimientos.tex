@@ -39,7 +39,7 @@ El cuadro siguiente propone un equipo mínimo y uno con más margen. No informa 
 
 El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Chrome 115 o posterior es la versión en la que se comprobó Manifest V3. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA.
 
-La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado; no informa porcentajes de CPU ni de memoria. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador. % TODO: Chequear si mi laptop es de minimas condiciones para probar ahi
+La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado; no informa porcentajes de CPU ni de memoria. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador.
 
 
 
@@ -47,16 +47,16 @@ La fila recomendada es una propuesta de holgura: más núcleos, más memoria y c
 \centering
 \small
 \renewcommand{\arraystretch}{1.3}
-\caption{Requisitos de hardware y software del dispositivo cliente}
+\caption{Requisitos de hardware y software del dispositivo cliente.}
 \label{tab:requisitos_hardware}
 \begin{tabularx}{\textwidth}{@{}l p{5.5cm} X @{}}
 \toprule
 \textbf{Componente} & \textbf{Requisitos mínimos (Dispositivo base)} & \textbf{Requisitos recomendados} \\
 \midrule
-\textbf{Procesador (CPU)} & Intel Core i3 (10ª gen.) / AMD Ryzen 3 (serie 3000) (4 núcleos / 4 hilos, base $\ge 2{,}0$\,GHz, soporte AVX2). & Intel Core i5 (11ª gen.+) / AMD Ryzen 5 (serie 4000+) (6 núcleos / 12 hilos). \\
-\textbf{Memoria RAM} & 8\,GB DDR4 ($\ge 3{,}0$\,GB libres para el entorno de ejecución). & 16\,GB DDR4 / DDR5. \\
-\textbf{Gráficos (GPU)} & Gráficos integrados (Intel UHD Graphics 620 / AMD Radeon Vega 3) con soporte WebGL. & Intel Iris Xe / AMD Radeon 600M+ o GPU dedicada básica. \\
-\textbf{Almacenamiento} & Disco de estado sólido (SSD) con 2\,GB de espacio libre. & SSD NVMe con $\ge 5$\,GB libres. \\
+\textbf{Procesador (CPU)} & Intel Core i7-10510U / i5 (10ª gen.) o AMD Ryzen 3 (serie 3000) (4 núcleos / 8 hilos, base $\ge 1{,}8$\,GHz, AVX2). & Intel Core i5 (11ª gen.+) / AMD Ryzen 5 (serie 4000+) (6 núcleos / 12 hilos). \\
+\textbf{Memoria RAM} & 8\,GB DDR4 ($\ge 2{,}5$\,GB libres para el navegador y entorno de ejecución). & 16\,GB DDR4 / DDR5. \\
+\textbf{Gráficos (GPU)} & Gráficos integrados Intel UHD Graphics 620 / 630 o AMD Radeon Vega 3 con soporte WebGL 2.0. & Intel Iris Xe / AMD Radeon 600M+ o GPU dedicada básica. \\
+\textbf{Almacenamiento} & Disco de estado sólido (SSD) con 2\,GB de espacio libre disponible. & SSD NVMe con $\ge 5$\,GB libres. \\
 \textbf{Cámara web} & Resolución 720p (1280$\times$720) a 24/30 FPS. & Resolución 1080p a 30 FPS. \\
 \textbf{Conectividad} & Conexión de banda ancha ($\ge 10$\,Mbps bajada / $\ge 3$\,Mbps subida, latencia $< 80$\,ms). & Conexión por fibra óptica ($\ge 50$\,Mbps). \\
 \textbf{Entorno de software} & Windows 10/11 (64 bits), Google Chrome 115+ (soporte Manifest V3). & Windows 11 (64 bits), Google Chrome última versión estable. \\

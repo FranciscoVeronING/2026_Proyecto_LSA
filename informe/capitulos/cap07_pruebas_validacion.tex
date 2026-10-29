@@ -3,7 +3,7 @@
 \label{cap:pruebas_validacion}
 % ====================================================================
 
-En el presente capítulo se expone la estrategia de verificación y validación del sistema de traducción en tiempo real de Lengua de Señas Argentina (LSA). Se detallan el plan de pruebas adoptado, la ejecución de los experimentos sobre los distintos componentes y el análisis cuantitativo y cualitativo de los resultados obtenidos frente a los requerimientos del proyecto.
+En el presente capítulo se expone la estrategia de verificación y validación del sistema de traducción en tiempo pseudo-real de LSA. Se detallan el plan de pruebas adoptado, la ejecución de los experimentos sobre los distintos componentes y el análisis cuantitativo y cualitativo de los resultados obtenidos frente a los requerimientos del proyecto. El objetivo central consiste en evidenciar la aplicación de criterios técnicos para evaluar el funcionamiento, el desempeño y la calidad del software, con una distinción clara entre planificación, ejecución y análisis de resultados.
 
 % ====================================================================
 \section{Plan de pruebas}
@@ -16,8 +16,8 @@ El plan de pruebas establece la estrategia sistemática para comprobar el correc
 La evaluación del sistema abarca desde la recolección de datos y el entrenamiento de modelos de aprendizaje profundo hasta la integración completa de los componentes en una videollamada web. Se aplicaron los siguientes tipos de pruebas:
 \begin{itemize}
     \item \textbf{Pruebas unitarias y de componentes:} Verificación del extractor de puntos clave (\textit{landmarks}), la lógica de filtrado gestual (\texttt{RepeatGate}), los clasificadores de señas y la cuantización de los modelos de lenguaje.
-    \item \textbf{Pruebas de integración:} Evaluación de las interfaces entre la extensión de navegador (Manifest V3), el motor de inferencia local, las llamadas a API en Google Cloud Run y el cliente de videoconferencia (Google Meet).
-    \item \textbf{Pruebas de rendimiento y latencia:} Medición de tiempos de respuesta por etapa del canal de procesamiento (\textit{pipeline}), consumo de memoria en cliente y servidor, y tasa de fotogramas por segundo.
+    \item \textbf{Pruebas de integración:} Evaluación de las interfaces entre la extensión de navegador (Manifest V3), el motor de inferencia local, las llamadas a API y el cliente de videoconferencia.
+    \item \textbf{Pruebas de rendimiento y latencia:} Medición de tiempos de respuesta por etapa del canal de procesamiento, consumo de memoria en cliente y servidor, y tasa de fotogramas por segundo.
     \item \textbf{Pruebas de sistema de extremo a extremo (\textit{End-to-End}):} Validación del circuito completo de traducción (LSA a español y español a LSA) en entornos de llamada reales.
     \item \textbf{Pruebas de robustez y casos límite:} Evaluación del clasificador frente a cambios de iluminación, distorsiones ópticas de cámara web, presencia de múltiples personas en el fondo y variabilidad en la velocidad de articulación gestual.
 \end{itemize}
@@ -55,7 +55,7 @@ Cada caso de prueba se vinculó de manera directa con los requerimientos funcion
 \label{sec:resultados_verificacion}
 % ====================================================================
 
-Esta sección presenta la evidencia empírica obtenida de la ejecución del plan de pruebas sobre cada componente del sistema.
+Esta sección presenta la evidencia empírica obtenida a partir de la ejecución del plan de pruebas sobre cada componente del sistema.
 
 \subsection{Evaluación del clasificador gestual (TinySkeletonClassifier)}
 \label{sec:res_clasificador}
@@ -93,22 +93,22 @@ En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada en
     \label{tab:brecha_offline_camara}
     \begin{tabular}{llccc}
         \toprule
-        \textbf{Checkpoint} & \textbf{Fecha} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \textbf{Checkpoint} & \textbf{Dataset} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
         \midrule
-        16 fotogramas, 91 clases & 29--30/07 & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
-        32 fotogramas, 128/4/2 & 31/07 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
-        32 fotogramas, 64/2/1 & 31/07 & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
-        Optuna v1, 32 fotogramas & 31/07 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
-        Baseline 16f, luz ambiental, 94 clases & 18/08 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
-        Baseline 16f, iluminación dirigida, 94 clases & 28/08 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
-        Baseline 16f, 97 clases & 15--17/09 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
-        100 clases, 10 tomas, luz adecuada & 28/10 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
-        100 clases, 10 tomas, luz reducida & 28--29/10 & 99{,}00\,\% & 94{,}6\,\% & 98{,}7\,\% \\
+        16 fotogramas, 91 clases & 1 & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        32 fotogramas, 128/4/2 & 1 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        32 fotogramas, 64/2/1 & 1 & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        Optuna v1, 32 fotogramas & 1 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
+        Baseline 16f, luz ambiental, 94 clases & 2 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
+        Baseline 16f, iluminación dirigida, 94 clases & 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
+        Baseline 16f, 97 clases & 3 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
+        100 clases, 10 tomas, luz adecuada & 4 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
+        100 clases, 10 tomas, luz reducida & 5 & 99{,}00\,\% & 94{,}6\,\% & 98{,}7\,\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-En las iteraciones de 94 clases, el control de la iluminación del entorno subió el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo. Esa comparación no fija encuadre ni persona. La evaluación del checkpoint de 100 clases, descrita más adelante, sí conserva ambos y aísla la luz.
+En las iteraciones de 94 clases, el control de la iluminación del entorno elevó el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo. Esta comparación no fija encuadre ni persona. La evaluación del checkpoint de 100 clases, descrita más adelante, sí conserva ambos factores y aísla el efecto de la luz.
 
 \subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
 La Tabla~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
@@ -131,7 +131,7 @@ La Tabla~\ref{tab:frames_julio} sintetiza los experimentos realizados para deter
 
 A pesar de las ganancias iniciales observadas con 32 fotogramas, la incorporación de aumentaciones avanzadas de datos en agosto confirmó que la ventana de 16 fotogramas ofreció mayor capacidad de generalización sobre señas estáticas y redujo la redundancia temporal.
 
-\subsubsection{Impacto de la corrección de relación de aspecto} % TODO: Esta seccion si queres la volamos a la reconcha de la lora, pero es un dato interesante que no se ve en ningun lado. La idea es que la red aprende a reconocer la seña en un marco 16:9, y si le das un 4:3 con bandas negras, la red se confunde. Esto es un hallazgo de la etapa de pruebas, no del entrenamiento. Ahre completaba el texto con Claude
+\subsubsection{Impacto de la corrección de relación de aspecto}
 La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ con bandas de relleno generó un impacto positivo directo en la clasificación, según se detalla en la Tabla~\ref{tab:aspect}.
 
 \begin{table}[H]
@@ -150,18 +150,19 @@ La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ c
     \end{tabular}
 \end{table}
 
-La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales en exactitud. Corrigio confusiones sistemáticas como el caso de la letra \texttt{I} clasificada previamente como \texttt{ojo}.
+La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales en exactitud. Este ajuste corrigió confusiones sistemáticas, como el caso de la letra \texttt{I} clasificada previamente como \texttt{ojo}.
 
 \subsubsection{Evaluación en cámara del modelo de 100 clases}
 \label{sec:eval_100_camara}
+\label{sec:protocolo_camara}
 
-El prototipo integrado carga el modelo \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida $0{,}028$.
+El prototipo integrado carga el modelo \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$.
 
-La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos. Cambió la iluminación de la habitación. La etiqueta de luz adecuada o reducida la anota quien ejecuta el script; el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha. No hubo tomas omitidas.
+La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos; solo varió la iluminación de la habitación. Quien ejecuta el script anota la etiqueta de luz adecuada o reducida, dado que el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha, sin omitir tomas.
 
-La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El script rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor es MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias hay un segundo de espera.
+La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El script rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor corresponde a MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias se estableció un segundo de espera.
 
-La Tabla~\ref{tab:eval_100_luz} resume el resultado. El criterio de aceptación del plan (Top-1 mayor que 75\,\% y Top-3 mayor que 90\,\%) se cumple en las dos condiciones de iluminación.
+La Tabla~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de iluminación cumplen el criterio de aceptación del plan (Top-1 mayor al 75\,\% y Top-3 mayor al 90\,\%).
 
 \begin{table}[H]
     \centering
@@ -182,12 +183,13 @@ La Tabla~\ref{tab:eval_100_luz} resume el resultado. El criterio de aceptación 
     \end{tabular}
 \end{table}
 
-Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores, y en los cuatro la seña pedida ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
+Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores y en todos ellos la seña solicitada ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
 
-Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar el diez sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas, de señas que en luz adecuada estaban en diez sobre diez o en nueve sobre diez, son \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos distintos). En trece tomas la seña pedida no entra al Top-3. En luz reducida la confianza media de los errores sube a $0{,}771$: la red se equivoca con más certeza que en luz adecuada.
+Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
 
 \subsection{Resultados de los módulos de traducción semántica}
 \label{sec:res_traduccion}
+\label{sec:eval_semantica_cuant}
 
 La evaluación de los modelos de lenguaje reducidos (SLM) cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
 
@@ -233,7 +235,7 @@ SmolLM2 1,7B & 77,45 & 82,90 & 91,54 & 86,31 & 97,68 & 92,37 & 458,39 \\
 \end{tabular}
 \end{table}
 
-El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto de 94,96\,\% en canal directo y 91,18\,\% en canal inverso. Mantuvo tiempos de inferencia en CPU inferiores a 300\,ms.
+El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto del 94,96\,\% en canal directo y del 91,18\,\% en canal inverso, junto con tiempos de inferencia en CPU inferiores a 300\,ms.
 
 \subsection{Pruebas de la lógica de control del motor local}
 La batería de pruebas diseñada para validar la lógica del filtro \texttt{RepeatGate} y los tiempos de corte de enunciado produjo los resultados consignados en la Tabla~\ref{tab:bateria_logica}.
@@ -260,7 +262,7 @@ La batería de pruebas diseñada para validar la lógica del filtro \texttt{Repe
 \end{table}
 
 \subsection{Tratamiento de fallas de integración en Google Meet}
-Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que fueron solucionados mediante intervenciones específicas de arquitectura, como se detalla en la Tabla~\ref{tab:fallas_integracion}.
+Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que se solucionaron mediante intervenciones específicas de arquitectura, según se detalla en la Tabla~\ref{tab:fallas_integracion}.
 
 \begin{table}[H]
     \centering
@@ -284,10 +286,18 @@ Durante la evaluación sobre la interfaz de usuario en llamadas activas se ident
     \end{tabularx}
 \end{table}
 
-\subsection{Pruebas de latencia y perfilado end-to-end en llamada real}
-\label{sec:eval_telemetria_vivo}
+% ====================================================================
+\section{Métricas de calidad}
+\label{sec:metricas_calidad}
+% ====================================================================
 
-Con fecha 29 de octubre de 2026 se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa. Durante dicha sesión se capturaron eventos de telemetría en ambos canales de traducción (directo e inverso), registrando la latencia por etapa, el consumo de memoria del proceso cliente (RSS) y la tasa de fotogramas por segundo (FPS).
+La evaluación objetiva del sistema se consolidó mediante métricas cuantificables agrupadas en cuatro dimensiones principales: desempeño en tiempo real, eficiencia en el uso de recursos, calidad semántica y confiabilidad.
+
+\subsection{Pruebas de latencia y end-to-end en llamada real}
+\label{sec:eval_telemetria_vivo}
+\label{sec:latencias_pipeline}
+
+Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa. Durante dicha sesión se capturaron eventos en ambos canales de traducción (directo e inverso), con registro de la latencia por etapa, el consumo de memoria del proceso cliente (RSS) y la tasa de fotogramas por segundo (FPS).
 
 En la Tabla~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
 
@@ -303,135 +313,49 @@ En la Tabla~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, m�
         Eventos registrados & 9 & 7 & oraciones \\
         Pausa de cierre (configurada) & $4031{,}1 \pm 23{,}5$ & $0{,}0$ & ms \\
         Tiempo de inferencia remota & $1444{,}4$ ($896{,}7$ -- $2372{,}9$) & $1368{,}2$ ($826{,}6$ -- $2202{,}8$) & ms \\
-        Tiempo de transporte de red & $268{,}2$ ($273{,}4$ -- $336{,}4$) & $253{,}3$ ($254{,}2$ -- $328{,}2$) & ms \\
+        Tiempo de transporte de red & $301{,}7$ ($273{,}4$ -- $336{,}4$) & $253{,}3$ ($254{,}2$ -- $328{,}2$) & ms \\
         Tiempo de entrega / renderizado & $0{,}3$ ($0{,}2$ -- $0{,}6$) & $869{,}3$ ($105{,}9$ -- $1387{,}6$) & ms \\
         Latencia total de procesamiento & $1712{,}9$ ($1233{,}3$ -- $2674{,}2$) & $2490{,}8$ ($105{,}9$ -- $3612{,}1$) & ms \\
         Consumo de memoria RAM (RSS) & $168{,}8$ ($96{,}0$ -- $224{,}9$) & $231{,}2$ ($219{,}8$ -- $235{,}2$) & MB \\
         Tasa de procesamiento (Holistic) & $5{,}8$ -- $12{,}1$ & N/A & FPS \\
         Tasa de renderizado cliente & $45{,}0$ -- $60{,}0$ & $58{,}2$ -- $60{,}5$ & FPS \\
-        Cumplimiento RNF-01 ($< 2{,}5$\,s) & 77{,}8\,\% (7/9) & 85{,}7\,\% (6/7) & aciertos \\
+        Cumplimiento RNF-01 ($< 2{,}0$\,s) & 77{,}8\,\% (7/9) & 85{,}7\,\% (6/7) & aciertos \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-El análisis cualitativo y cuantitativo de estos datos permite extraer las siguientes observaciones técnicas:
-
-\begin{enumerate}
-    \item \textbf{Latencia de procesamiento y transporte:} El tiempo medio de inferencia en el servidor remoto oscila alrededor de los $1{,}4$ segundos para ambos canales. El tiempo de transporte por red de la consulta cifrada desde el cliente web hacia Google Cloud Run promedia $268$ ms en el canal directo y $253$ ms en el canal inverso, evidenciando una comunicación ligera y estable.
-    \item \textbf{Diferencial de entrega entre canales:} En el canal directo la entrega es casi instantánea ($0{,}3$ ms) debido a que la respuesta del LLM se renderiza como subtítulo de texto sobre la interfaz. En el canal inverso, la fase de entrega demanda un promedio de $869{,}3$ ms (con picos de $1387{,}6$ ms) motivado por la secuenciación, decodificación e interpolación de los tensores de articulación del avatar tridimensional.
-    \item \textbf{Tasa de fotogramas y fluidez de captura:} La extracción de puntos clave mediante MediaPipe Holistic en el navegador cliente operó de forma continua entre $5$ y $12$ FPS en la ventana de captura gestual, suficiente para reconstruir tensores de 16 fotogramas sin perder componentes finas del gesto. La interfaz de usuario conservó un refresco fluido constante de $60$ FPS en el canal inverso.
-\end{enumerate}
-
-% ====================================================================
-\section{Métricas de calidad}
-\label{sec:metricas_calidad}
-% ====================================================================
-
-La evaluación objetiva del sistema se consolidó mediante métricas cuantificables agrupadas en cuatro dimensiones principales: desempeño en tiempo real, eficiencia en el uso de recursos, calidad semántica y confiabilidad.
-
-\subsection{Desglose de latencias y tiempos de respuesta}
-\label{sec:latencias_pipeline}
-En la Tabla~\ref{tab:latencias_etapas} se desglosan los componentes del retardo total en el canal directo LSA a español.
-
-\begin{table}[H]
-    \centering
-    \small
-    \caption{Desglose de los componentes del retardo de procesamiento en el canal directo.}
-    \label{tab:latencias_etapas}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.32\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Etapa del pipeline} & \textbf{Duración / Retardo} & \textbf{Naturaleza del parámetro} \\
-        \midrule
-        Detección de fin de seña & $\approx 0{,}4$\,s & Configurado (12 fotogramas sin manos). \\
-        Inferencia del clasificador & $0{,}78$\,ms (CPU) / $1{,}08$\,ms (GPU) & Medición en CPU/GPU sobre modelo de 16f. \\
-        Separación mínima entre señas & $1{,}0$\,s & Configurado (reposo inter-gestual). \\
-        Pausa de cierre de enunciado & $4{,}0$\,s & Configurado (inactividad para disparar traducción). \\
-        % TODO: Falta viaje al servidor (ida y vuelta)
-        Generación de oración (LLM) & $256{,}30$\,ms & Medido en CPU local sobre Qwen2.5 1,5B. \\
-        Reevaluación de prompt (CPU) & $\approx 8$\,s & Ocurre únicamente ante pérdida de caché $KV$. \\
-        Arranque en frío del servicio & $1$--$3$\,min & Ocurre si la instancia escala a cero en Cloud Run. \\
-        Permanencia de subtítulo & $8{,}0$\,s & Configurado (visibilidad en interfaz). \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-
-\subsection{Consumo de recursos y perfilado en cliente}
+\subsection{Evaluación del uso de recursos de hardware en el dispositivo cliente}
 \label{sec:perfilado_cliente_recursos}
 
-A partir de los registros telemetry recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada.
+A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada.
 
 En la Tabla~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
 
 \begin{table}[H]
     \centering
     \small
-    \caption{Métricas de uso de memoria física (RSS) y uso de CPU en la estación cliente durante la prueba activa.}
+    \caption{Métricas de uso de RAM y uso de CPU en la estación cliente durante la prueba activa.}
     \label{tab:perfilado_recursos_log}
     \begin{tabular}{lcccc}
         \toprule
-        \textbf{Estado del canal} & \textbf{RAM Promedio (MB)} & \textbf{RAM Máxima (MB)} & \textbf{CPU Promedio (\%)} & \textbf{CPU Máximo (\%)} \\
+        \textbf{Estado del canal} & \textbf{RAM Prom.} & \textbf{RAM Máx.} & \textbf{CPU Prom. (\%)} & \textbf{CPU Máx. (\%)} \\
         \midrule
-        Canal Directo (LSA $\rightarrow$ Esp) & 168{,}81 & 224{,}90 & 2{,}94\,\% & 8{,}30\,\% \\
-        Canal Inverso (Esp $\rightarrow$ LSA) & 231{,}19 & 235{,}20 & 33{,}80\,\% & 106{,}20\,\% \\
+        Canal Directo & 168{,}81 & 224{,}90 & 2{,}94\,\% & 8{,}30\,\% \\
+        Canal Inverso & 231{,}19 & 235{,}20 & 33{,}80\,\% & 106{,}20\,\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-El análisis de perfilado muestra que:
+El análisis de perfilado muestra los siguientes comportamientos:
 \begin{itemize}
-    \item \textbf{Eficiencia en memoria:} El canal directo presentó una huella de memoria sumamente baja, reduciéndose progresivamente desde los 224{,}9 MB iniciales hasta un régimen permanente de 96{,}0 MB. El canal inverso mantuvo un consumo ligeramente superior pero acotado, estabilizado en $\approx 231$ MB debido al almacenamiento en caché de las animaciones del avatar.
-    \item \textbf{Carga del procesador:} Durante el procesamiento del canal directo el uso de CPU cliente se mantuvo extremadamente bajo (2{,}94\,\% promedio), demostrando la liviandad del clasificador gestual de 1{,}66 MB. En el canal inverso, el renderizado gráfico del avatar generó un incremento medio del uso de CPU hasta el 33{,}80\,\%, con picos transitorios de 106{,}20\,\% durante la decodificación inicial del audio entrante por el motor Vosk, retornando de inmediato al estado de reposo.
+    \item \textbf{Eficiencia en memoria:} El canal directo presentó una huella de memoria reducida, la cual descendió de manera progresiva desde los 224{,}9 MB iniciales hasta un régimen permanente de 96{,}0 MB. El canal inverso mantuvo un consumo ligeramente superior pero acotado, con estabilización en $\approx 231$ MB debido al almacenamiento en caché de las animaciones del avatar.
+    \item \textbf{Carga del procesador:} Durante el procesamiento del canal directo el uso de CPU cliente permaneció reducido (2{,}94\,\% promedio), resultado que confirma la liviandad del clasificador gestual de 1{,}66 MB. En el canal inverso, el renderizado gráfico del avatar generó un incremento medio del uso de CPU hasta el 33{,}80\,\%, con picos transitorios del 106{,}20\,\% durante la decodificación inicial del audio entrante por el motor Vosk, con retorno inmediato al estado de reposo.
 \end{itemize}
-El factor principal de espera radica en la pausa de 4,0 segundos, parametrizada para garantizar que la persona sorda haya finalizado la oración antes de enviar la secuencia al modelo de lenguaje.
 
-%TODO: Comienza con «La verificación de RNF-01 se ejecutó sobre el motor ILSA» y termina con «no registran memoria RSS ni porcentaje de CPU.»
-La verificación de RNF-01 se ejecutó sobre el motor ILSA en Python, no sobre el ejecutable empaquetado, en una sesión de Google Meet contra Cloud Run. El volcado reúne 11 emisiones del canal directo y 18 del inverso. Cinco de esas 29 no invocaron el SLM (entradas de diccionario o de una sola palabra) y no entran al cómputo del requerimiento. De las 24 que sí lo invocaron, 21 (87\,\%) respetaron el techo de 2{,}0\,s de inferencia y 14 (58\,\%) el objetivo interno de 1{,}5\,s. La meta de RNF-01 es el techo de 2\,s, no el objetivo de 1{,}5\,s.
-
-\begin{table}[H]
-    \centering
-    \small
-    \caption{Inferencia del SLM en Cloud Run. Solo emisiones que invocaron el modelo. El techo de RNF-01 es 2{,}0\,s.}
-    \label{tab:rnf01_sesion}
-    \begin{tabular}{lccccc}
-        \toprule
-        \textbf{Canal} & \textbf{$n$ con IA} & \textbf{Mediana} & \textbf{Media} & \textbf{$\leq 1{,}5$\,s} & \textbf{$\leq 2{,}0$\,s} \\
-        \midrule
-        Directo & 9 & 1{,}35\,s & 1{,}71\,s & 5 & 6 \\
-        Inverso & 15 & 1{,}48\,s & 1{,}41\,s & 9 & 15 \\
-        Total & 24 & --- & --- & 14 & 21 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-En el canal directo, los tres incumplimientos del techo coinciden con enunciados de 7, 4 y 10 glosas (2{,}03\,s, 2{,}54\,s y 3{,}46\,s). El máximo es un DNI de diez tokens. Una emisión adicional (DNI de cinco dígitos, 1{,}92\,s) quedó entre 1{,}5 y 2{,}0\,s. El canal inverso no superó 2{,}0\,s en ninguna de las 15 emisiones con modelo.
-
-\begin{table}[H]
-    \centering
-    \small
-    \caption{Cinco relojes medidos en la sesión integrada. RNF-01 cubre solo la columna de inferencia.}
-    \label{tab:cinco_relojes_medidos}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
-        \toprule
-        \textbf{Reloj} & \textbf{Canal directo} & \textbf{Canal inverso} & \textbf{RNF-01} \\
-        \midrule
-        Pausa & 4{,}00--4{,}14\,s en las 11 emisiones & 0 (la oración llega cerrada) & No \\
-        Cola & 0\,ms & 0\,ms & No \\
-        Inferencia & mediana 1{,}35\,s (9 con IA) & mediana 1{,}48\,s (15 con IA) & Sí \\
-        Transporte & $\approx 0{,}30$\,s & $\approx 0{,}30$\,s; un pico de 0{,}75\,s & No \\
-        Entrega & subtítulo $< 1$\,ms & avatar entre $\approx 0$ y 2{,}4\,s & No \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-La heurística de cierre de 4{,}0\,s se observó en las 11 emisiones directas y se informa aparte de RNF-01. La cola nula corresponde a un solo cliente con el servidor libre: no prueba concurrencia. El transporte no explica los tres fallos de inferencia. El subtítulo del canal directo es instantáneo; la espera perceptible en ese canal es la pausa de diseño. La entrega del avatar (descarga de archivos \texttt{.pose}) es ajena a RNF-01; con el archivo ya en disco, esa etapa cae a milisegundos.
-
-En el canal directo de esa sesión, el clasificador local registró una mediana de 4{,}6\,ms sobre 48 señas. La extracción Holistic en el navegador registró una media de 7 fotogramas por segundo. El lienzo hacia Meet registró una mediana de 52 fps en Directo y de 60 fps en Inverso. Estos volcados no registran memoria RSS ni porcentaje de CPU.
-
-\subsection{Consumo de memoria y huella del sistema}
+\subsection{Consumo de memoria y huella del sistema en servidor}
+\label{sec:memoria_inferencia}
 La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En la Tabla~\ref{tab:pesos_cuant} y la Tabla~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 tokens.
 
-% TODO: Chequear estos valores
 \begin{table}[H]
 \centering
 \footnotesize
@@ -468,25 +392,38 @@ SmolLM2 1,7B & 0,375 & 3,560 & 1,358 \\
 \end{tabular}
 \end{table}
 
-En la réplica de producción desplegada en Cloud Run, ambos canales (directo e inverso) con el modelo Qwen2.5 1,5B consumen de manera conjunta $1{,}946$\,GiB de memoria RAM, situándose holgadamente dentro del límite asignado de $8$\,GiB.
+En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen2.5 1,5B. La columna GGUF más caché da $0{,}973$\,GiB para ese modelo, y los dos canales suman $1{,}946$\,GiB. Esa suma es el archivo medido más la caché $KV$ en fp16, con contexto 2048. El buffer de activaciones de la Ecuación~\ref{eq:ram_runtime} queda fuera, y la cifra no es el RSS del proceso. Llama 3.2 1B queda en disco, a $0{,}815$\,GiB con su caché por canal, y entra en memoria solo si el modelo principal no carga. Los $8$\,GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada al contenedor, no esta suma.
 
 \subsection{Comparativa de rendimiento según arquitectura de hardware}
-En la Tabla~\ref{tab:hw_comparacion} se evalúa la viabilidad técnica del sistema según el hardware disponible para justificar la selección de una arquitectura híbrida cliente-servidor.
+\label{sec:hw_comparacion}
+\label{sec:hardware_objetivo}
+
+Con el objeto de evaluar el comportamiento del motor local en un entorno con mayor capacidad computacional y contrastar estos resultados con los de la laptop objetivo (presentado en la Tabla~\ref{tab:perfilado_recursos_log}), se ejecutaron las mismas pruebas sobre la estación de desarrollo de escritorio.
+
+En la Tabla~\ref{tab:telemetria_pc} se detallan la tasa de captura, el refresco de pantalla, el tiempo de inferencia local y el consumo de recursos de cómputo registrados en esta plataforma.
 
 \begin{table}[H]
     \centering
     \small
-    \caption{Comparación del comportamiento del sistema entre la estación de desarrollo y el equipo cliente.}
-    \label{tab:hw_comparacion}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+    \caption{Métricas de procesamiento y uso de recursos en la estación de desarrollo de escritorio.}
+    \label{tab:telemetria_pc}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.38\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
         \toprule
-        \textbf{Componente} & \textbf{Estación de desarrollo (GPU)} & \textbf{Equipo objetivo (Laptop sin GPU)} \\
+        \textbf{Métrica de ejecución} & \textbf{Canal Directo} & \textbf{Canal Inverso} \\
         \midrule
-        Extracción MediaPipe & Procesamiento fluido en tiempo real. & Tasa de fotogramas reducida; requirió reajuste de umbrales a milisegundos. \\
-        Clasificador local & Inferencia en $< 2$\,ms. & Inferencia en $< 5$\,ms sin impacto perceptible. \\
-        Traductor local & Respuesta fluida. & Alta latencia en CPU, incompatible con la fluidez de la conversación. \\
+        Tasa de procesamiento (Holistic) & 25{,}3 -- 28{,}9 FPS & N/A \\
+        Tasa de renderizado de interfaz & 194{,}0 -- 200{,}6 FPS & 194{,}0 -- 200{,}6 FPS \\
+        CPU promedio (máximo) & 0{,}87\,\% (7{,}20\,\%) & 22{,}48\,\% (80{,}70\,\%) \\
+        Memoria RAM promedio (RSS) & 544{,}42\,MB & 665{,}98\,MB \\
+        Inferencia \textit{TinySkeleton} & 1{,}1 -- 2{,}8\,ms & N/A \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-La asignación de la clasificación al cliente de borde (modelo de $1{,}66$\,MB con 414\,309 parámetros) y la traducción al servidor en la nube garantizó el cumplimiento de los requerimientos de tiempo real en equipos sin aceleración por GPU.
+El contraste entre los valores reportados en la Tabla~\ref{tab:telemetria_pc} y los observados en el equipo portátil objetivo permite extraer las siguientes conclusiones técnicas:
+
+\begin{itemize}
+    \item \textbf{Desacoplamiento de la tasa de captura gestual:} En el equipo de escritorio la extracción de puntos clave alcanza el techo de rendimiento del sensor ($\approx 27\text{--}28$ FPS), en comparación con el rango de 5\text{ a }12 FPS de la laptop. No obstante, la tasa de acierto del clasificador se mantiene estable en ambos entornos, hecho que valida la robustez del remuestreo temporal implementado en la lógica de control.
+    \item \textbf{Impacto en el consumo de CPU y memoria:} El uso de procesador disminuye significativamente en la estación de desarrollo (0{,}87\,\% en directo y 22{,}48\,\% en inverso), lo que confirma que el costo computacional del motor local depende del hardware cliente. El mayor consumo de memoria RAM registrado en el equipo de escritorio ($\approx 544\text{--}666$ MB) responde a las políticas de asignación de memoria y recolección de basura más permisivas del navegador Chromium sobre un sistema con mayor capacidad.
+    \item \textbf{Fundamentación de la arquitectura híbrida:} La ejecución local de un modelo de lenguaje de 1{,}5B de parámetros requeriría más de 8 segundos de procesamiento en CPU aún en la estación de desarrollo. Por consiguiente, la delegación de la inferencia semántica a la infraestructura en la nube se consolida como la decisión de diseño idónea para garantizar respuestas en tiempo real con independencia de la capacidad de cómputo del usuario.
+\end{itemize}

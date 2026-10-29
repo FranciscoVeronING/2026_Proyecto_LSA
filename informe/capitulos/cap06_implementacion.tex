@@ -38,7 +38,7 @@ El repositorio fuente contiene la totalidad de los módulos del sistema, recurso
 Cada directorio y paquete del sistema cumple una función específica dentro del flujo de inferencia y visualización:
 
 \begin{itemize}
-    \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes, coordinando el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
+    \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes y coordina el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
     
     \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Esos pesos corresponden a 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas de atención y 2 capas Transformer, entrenado con 100 clips por clase. Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en LSA.
     % TODO: no se si hace falta tanta especificidad, dime vos
@@ -49,7 +49,6 @@ Cada directorio y paquete del sistema cumple una función específica dentro del
     \item \textbf{Empaquetado y Distribución (\texttt{packaging/})}: Contiene las configuraciones para PyInstaller (\texttt{LSABackend.spec}) y scripts automatizados en sintaxis Batch y Python. Permite generar la versión ejecutable del servidor sin requerir la instalación previa de un entorno Python en la máquina del usuario final.
 
     \item \textbf{Herramientas de Benchmarking (\texttt{scripts/})}: Proporciona utilidades como \texttt{bench\_latency.py} para medir la latencia punto a punto de la red neuronal y del canal de transmisión de datos.
-    %TODO: Comienza con «Instrumentación de latencia» y termina con «Sección latencias_pipeline.»
     \item \textbf{Instrumentación de latencia:} El motor ILSA registra, por emisión, los cinco relojes de la Sección~\ref{sec:tiempo_pseudo} (pausa, cola, inferencia, transporte y entrega) en CSV y en JSONL. Esa traza alimenta la verificación de RNF-01 en la Sección~\ref{sec:latencias_pipeline}.
 \end{itemize}
 
@@ -85,7 +84,7 @@ La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante 
     \item Dos capas de convolución unidimensional temporal (núcleo de tamaño 3, 128 canales, normalización por lotes, activación ReLU y regularización Dropout de 0,2).
     \item Un módulo de codificación posicional sinusoidal sumado a la representación de 128 dimensiones.
     \item Un codificador Transformer de 2 capas con 4 cabezas de atención.
-    \item Una capa de agregación por atención (\textit{Attention Pooling}) que asigna un escalar de relevancia $a_t$ a cada fotograma $t$, reduciendo la secuencia temporal a un vector único de 128 dimensiones:
+    \item Una capa de agregación por atención (\textit{Attention Pooling}) que asigna un escalar de relevancia $a_t$ a cada fotograma $t$ y reduce la secuencia temporal a un vector único de 128 dimensiones:
     \begin{equation}
     \mathbf{v} = \sum_{t=1}^{T} a_t \mathbf{h}_t
     \label{eq:attention_pooling}
@@ -93,9 +92,16 @@ La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante 
     \item Una capa densa lineal final hacia las 100 clases del vocabulario gestual.
 \end{enumerate}
 
-Los pesos que carga ILSA son los de \texttt{model\_new\_2026\_10\_20}. El entrenamiento usó 8\,000 secuencias de entrenamiento y 2\,000 de validación. La exactitud de validación fuera de línea de ese checkpoint es del 99{,}0\,\%. La evaluación en cámara de ese mismo archivo se informa en la Sección~\ref{sec:res_clasificador}.
+La Figura~\ref{fig:tinyskeleton_arquitectura} resume esa sucesión y la forma del tensor en cada etapa.
 
-% TODO: GRAFCO DE TINY SKELETON
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{tinyskeleton_tensores.jpg}
+    \caption{Forma de los tensores en \textit{TinySkeletonClassifier}. La entrada reúne 16 fotogramas de 225 coordenadas de pose y manos. Dos convoluciones de núcleo 3, con normalización por lotes y ReLU, la llevan a 128 canales. La codificación posicional y el Transformer de dos capas conservan $16 \times 128$. El \textit{attention pooling} resume la secuencia en un vector de 128 dimensiones y la capa final distingue 100 señas.}
+    \label{fig:tinyskeleton_arquitectura}
+\end{figure}
+
+Los pesos que carga ILSA son los de \texttt{model\_new\_2026\_10\_20}. El entrenamiento usó 8\,000 secuencias de entrenamiento y 2\,000 de validación. La exactitud de validación fuera de línea de ese checkpoint es del 99{,}0\,\%. La evaluación en cámara de ese mismo archivo se informa en la Sección~\ref{sec:res_clasificador}.
 
 \section{Implementación del subsistema de traducción semántico bidireccional}
 
@@ -156,7 +162,7 @@ El par invierte al canal directo: la entrada es la oración y la respuesta son l
     \item Los pronombres se explicitan aunque el español los omita. Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. Me llamo X'' o Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega una glosa temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
 \end{itemize}
-Mediante estas reglas, el modelo aprende a emitir un nombre propio o una cifra como una sola palabra de la secuencia, y no como una cadena de letras. En la evaluación, el límite de generación de este canal es de $48$ tokens del modelo, frente a $24$ en el canal directo (Sección~\ref{sec:token}). Ese número cuenta piezas del tokenizador. Un nombre o una cifra larga sigue siendo una palabra de la secuencia y, aun así, el tokenizador puede partirla en varias de esas piezas. El deletreo letra por letra ocurre después: si el avatar no encuentra el archivo de esa palabra, pide un clip por letra, con otro tope, de 24 clips.
+Mediante estas reglas, el modelo aprende a emitir un nombre propio o una cifra como una sola palabra de la secuencia, y no como una cadena de letras. En la evaluación, el límite de generación de este canal es de $48$ tokens del modelo, frente a $24$ en el canal directo (Sección~\ref{sec:token}). Ese número cuenta piezas del tokenizador. Un nombre o una cifra larga es una palabra de la secuencia y, aun así, el tokenizador puede partirla en varias de esas piezas. El deletreo letra por letra ocurre después: si el avatar no encuentra el archivo de esa palabra, pide un clip por letra, con otro tope, de 24 clips.
 
 \subsection{Cuantización GGUF Q4\_K\_M y estimación de memoria}
 Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantización \texttt{Q4\_K\_M}. La memoria RAM requerida durante la inferencia se calcula mediante la relación:
@@ -213,7 +219,7 @@ En la modalidad para personas oyentes el sistema captura el audio a través de u
 El sistema captura el contenido escrito sin pasar por el módulo de voz. La entrada de voz y la de texto pueden permanecer activas de forma concurrente; ambas representan distintas vías de ingreso para el mismo caso de uso y no constituyen un modo separado.
 
 \item \textbf{Generación de glosas y renderización de animación sintética:} 
-La cadena de texto en español ingresa al motor local. ILSA la parte por espacios. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: no consulta al traductor ni a un diccionario para tomar esa decisión. Si quedan dos o más palabras, la oración se envía al servicio en la nube y retorna estructurada como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descartando el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
+La cadena de texto en español ingresa al motor local. ILSA la parte por espacios. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: no consulta al traductor ni a un diccionario para tomar esa decisión. Si quedan dos o más palabras, la oración se envía al servicio en la nube y retorna estructurada como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descarta el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
 \end{enumerate}
 
 \subsection{Motor local ILSA (FastAPI)}
@@ -226,7 +232,7 @@ La expresión regular se usa porque la extensión todavía no está publicada en
 
 Ese control no autentica al llamador. La API local no exige credencial, y un programa de la misma computadora puede consultar el puerto sin presentar el origen de una extensión. El servidor responde además con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}), requerida cuando una página HTTPS realiza peticiones hacia el dominio local.
 
-La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, evitando bloqueos en la atención de las solicitudes HTTP de la API. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) utilizando PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
+La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, lo que evita bloqueos en la atención de las solicitudes HTTP de la API. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) mediante PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
 
 \section{Implementación del avatar}
 
@@ -283,9 +289,9 @@ El proceso de despliegue e integración en la nube se llevó a cabo bajo los sig
 \begin{enumerate}
     \item \textbf{Empaquetamiento e integración continua (CI/CD):} Mediante la herramienta \texttt{gcloud builds}, el código fuente y las dependencias de cada rama se enviaron a Google Cloud Build para construir las imágenes de contenedor, las cuales quedaron almacenadas en Google Artifact Registry (\texttt{ilsa-repo}).
     
-    \item \textbf{Gestión dinámica de puertos y comprobación de estado:} A fin de evitar fallos de inicialización (\textit{health-check timeouts}), cada contenedor se configuró para adaptar su punto de entrada a la variable de entorno \texttt{\$PORT} inyectada de forma dinámica por la plataforma Cloud Run, habilitando la escucha en la interfaz \texttt{0.0.0.0} con un tiempo de espera de hasta $300\text{~segundos}$ para absorber la latencia de arranque inicial (\textit{cold start}).
+    \item \textbf{Gestión dinámica de puertos y comprobación de estado:} A fin de evitar fallos de inicialización (\textit{health-check timeouts}), cada contenedor se configuró para adaptar su punto de entrada a la variable de entorno \texttt{\$PORT} inyectada de forma dinámica por la plataforma Cloud Run, que habilita la escucha en la interfaz \texttt{0.0.0.0} con un tiempo de espera de hasta $300\text{~segundos}$ para absorber la latencia de arranque inicial (\textit{cold start}).
     
     \item \textbf{Política de asignación de instancias y control presupuestario:} Con el propósito de optimizar el consumo de créditos y acotar los costos operativos dentro del marco del Trabajo Final de Grado, se configuró una política de instancias delimitada entre cero y una réplica (\texttt{--min-instances 0}, \texttt{--max-instances 1}). El escalado a cero libera los recursos cuando no existen llamadas activas.
 \end{enumerate}
 
-El motor local ILSA y la extensión de navegador se enlazaron con las URLs públicas HTTPS de ambas instancias en Cloud Run. Esta integración confirmó la correcta transmisión de cargas textuales y la recuperación de activos para la sintaxis del avatar en tiempo pseudo-real, manteniendo liberados los núcleos de cómputo y la memoria del dispositivo cliente.
+El motor local ILSA y la extensión de navegador se enlazaron con las URLs públicas HTTPS de ambas instancias en Cloud Run. Esta integración confirmó la correcta transmisión de cargas textuales y la recuperación de activos para la sintaxis del avatar en tiempo pseudo-real y mantiene liberados los núcleos de cómputo y la memoria del dispositivo cliente.
