@@ -7,7 +7,13 @@ __pycache__/
 .venv/
 venv/
 .env
+dataset/
+state/
+unsloth_compiled_cache/
 src/semantic/outputs/
 src/semantic/bin/
+src/semantic/unsloth_compiled_cache/
+src/semantic/_unsloth_sentencepiece_temp/
+src/semantic/logs/
 *.md
 !README.md

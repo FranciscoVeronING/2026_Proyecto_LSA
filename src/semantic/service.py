@@ -142,15 +142,18 @@ HEARING = Channel("hearing", HEARING_DIR, "Español:", collapse_literals=False)
 
 @contextmanager
 def infer_slot() -> Iterator[float]:
-    t0 = time.perf_counter()
+    """Serialize llama.cpp. Yielded seconds are queue wait (t_inicio_inferencia − t_llegada)."""
+    t_llegada = time.perf_counter()
     got = _INFER_LOCK.acquire(blocking=False)
     if not got:
-        print("[semantic] Queue: model busy, waiting…", flush=True)
+        print("[semantic] Queue (server): model busy, waiting…", flush=True)
         _INFER_LOCK.acquire()
-        waited = time.perf_counter() - t0
-        print(f"[semantic] Queue: starting inference after {waited:.1f}s", flush=True)
-    else:
-        waited = 0.0
+    waited = time.perf_counter() - t_llegada
+    print(
+        f"[semantic] Queue (server): t_cola={waited * 1000:.1f} ms "
+        f"(t_llegada_servidor → t_inicio_inferencia)",
+        flush=True,
+    )
     try:
         yield waited
     finally:
@@ -178,7 +181,23 @@ def health_snapshot() -> dict:
         "hearing_gguf": str(hearing.path) if hearing else None,
         "model_used_sign": sign.path.name if sign else None,
         "model_used_hearing": hearing.path.name if hearing else None,
+        **_process_stats(),
     }
+
+
+def _process_stats() -> dict:
+    try:
+        import os
+
+        import psutil
+
+        proc = psutil.Process(os.getpid())
+        return {
+            "rss_mb": round(proc.memory_info().rss / (1024 * 1024), 1),
+            "cpu_percent": proc.cpu_percent(interval=None),
+        }
+    except Exception:
+        return {}
 
 
 def unload_models() -> None:

@@ -58,43 +58,58 @@ def health():
     return health_snapshot()
 
 
-def _run_sign(body: SignIn, authorization, x_lsa_token):
-    _check_token(authorization, x_lsa_token)
+def _timed_infer(channel: str, run):
+    """Queue wait + GGUF inference. `ms` stays as inference (RNF-01)."""
     with infer_slot() as queued_s:
-        t0 = time.perf_counter()
+        t_inicio = time.perf_counter()
         try:
-            spanish, model_used = translate_sign(body.glosses)
+            text, model_used = run()
         except (RuntimeError, FileNotFoundError, OSError) as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
-        ms = (time.perf_counter() - t0) * 1000
+        inference_ms = (time.perf_counter() - t_inicio) * 1000
+    queue_ms = queued_s * 1000
+    print(
+        f"[semantic] Inference (SLM) [RNF-01]: t_inferencia={inference_ms:.1f} ms "
+        f"channel={channel} (t_inicio_inferencia → t_fin_inferencia)",
+        flush=True,
+    )
+    return text, model_used, round(queue_ms, 1), round(inference_ms, 1)
+
+
+def _run_sign(body: SignIn, authorization, x_lsa_token):
+    _check_token(authorization, x_lsa_token)
+    spanish, model_used, queue_ms, inference_ms = _timed_infer(
+        "sign", lambda: translate_sign(body.glosses)
+    )
     return {
         "spanish": spanish or "",
         "glosses": body.glosses.strip(),
         "model_used": model_used,
-        "ms": round(ms, 1),
-        "queued_ms": round(queued_s * 1000, 1),
+        "ms": inference_ms,
+        "inference_ms": inference_ms,
+        "queued_ms": queue_ms,
+        "queue_ms": queue_ms,
     }
 
 
 def _run_hearing(body: HearingIn, authorization, x_lsa_token):
     _check_token(authorization, x_lsa_token)
-    with infer_slot() as queued_s:
-        t0 = time.perf_counter()
-        try:
-            glosses, model_used = translate_hearing(body.spanish)
-        except (RuntimeError, FileNotFoundError, OSError) as exc:
-            raise HTTPException(status_code=503, detail=str(exc)) from exc
-        ms = (time.perf_counter() - t0) * 1000
+    glosses, model_used, queue_ms, inference_ms = _timed_infer(
+        "hearing", lambda: translate_hearing(body.spanish)
+    )
     return {
         "glosses": glosses or "",
         "spanish": body.spanish.strip(),
         "model_used": model_used,
-        "ms": round(ms, 1),
-        "queued_ms": round(queued_s * 1000, 1),
+        "ms": inference_ms,
+        "inference_ms": inference_ms,
+        "queued_ms": queue_ms,
+        "queue_ms": queue_ms,
     }
 
 
 @app.post("/sign")
+@app.post("/translate")
 def sign(
     body: SignIn,
     authorization: Optional[str] = Header(None),
