@@ -15,7 +15,7 @@ El repositorio fuente contiene la totalidad de los módulos del sistema, recurso
 \begin{verbatim}
 .
 |-- assets/              # Gráficos de la aplicación
-|-- extension/           # Extensión web para Chrmium
+|-- extension/           # Extensión web para Chromium
 |   |-- content/         # Scripts inyectados en Google Meet
 |   |-- lib/             # Captura de video y MediaPipe
 |   |-- vendor/          # MediaPipe Wasm de terceros
@@ -40,15 +40,17 @@ Cada directorio y paquete del sistema cumple una función específica dentro del
 \begin{itemize}
     \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes, coordinando el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
     
-    \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Esos pesos corresponden al checkpoint \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas de atención y 2 capas Transformer, entrenado con 100 clips por clase. Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en Lengua de Señas Argentina (LSA).
-    
-    \item \textbf{Motor de Avatar 3D (\texttt{src/avatar/})}: Administra la lógica de animación y comunicación remota con servicios de representación gráfica. Traduce texto o tokens interpretados en secuencias de animación tridimensionales para su renderizado.
+    \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}). Esos pesos corresponden a 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas de atención y 2 capas Transformer, entrenado con 100 clips por clase. Su función principal consiste en recibir secuencias temporales de puntos de referencia corporales y clasificar el gesto correspondiente en LSA.
+    % TODO: no se si hace falta tanta especificidad, dime vos
+    \item \textbf{Motor de Avatar esquelético (\texttt{src/avatar/})}: Administra la lógica de animación y comunicación remota con servicios de representación gráfica. Traduce texto o tokens interpretados en secuencias de animación esquelética para su renderizado.
 
     \item \textbf{Extensión de Navegador (\texttt{extension/})}: Actúa como la interfaz de usuario en tiempo real sobre Google Meet. Utiliza un \textit{Service Worker} (\texttt{background.js}) para la gestión del estado, un entorno \textit{offscreen} (\texttt{offscreen.js}) para procesar el flujo de video sin ralentizar la pestaña activa, y scripts de contenido (\texttt{content/meet.js}) para modificar la interfaz del usuario e integrar la ventana de interpretación.
 
     \item \textbf{Empaquetado y Distribución (\texttt{packaging/})}: Contiene las configuraciones para PyInstaller (\texttt{LSABackend.spec}) y scripts automatizados en sintaxis Batch y Python. Permite generar la versión ejecutable del servidor sin requerir la instalación previa de un entorno Python en la máquina del usuario final.
 
     \item \textbf{Herramientas de Benchmarking (\texttt{scripts/})}: Proporciona utilidades como \texttt{bench\_latency.py} para medir la latencia punto a punto de la red neuronal y del canal de transmisión de datos.
+    %TODO: Comienza con «Instrumentación de latencia» y termina con «Sección latencias_pipeline.»
+    \item \textbf{Instrumentación de latencia:} El motor ILSA registra, por emisión, los cinco relojes de la Sección~\ref{sec:tiempo_pseudo} (pausa, cola, inferencia, transporte y entrega) en CSV y en JSONL. Esa traza alimenta la verificación de RNF-01 en la Sección~\ref{sec:latencias_pipeline}.
 \end{itemize}
 
 \subsection{Convenciones de Nomenclatura y Estándares}
@@ -76,7 +78,7 @@ El entrenamiento del clasificador, el servicio semántico en la nube, el entrena
 
 \subsection{Preprocesamiento de datos y pipeline de extracción}
 El pipeline procesa fotogramas de entrada mediante \textit{MediaPipe Holistic} para estructurar un vector instantáneo de 225 coordenadas ($33 \times 3$ de pose, $21 \times 3$ de mano izquierda y $21 \times 3$ de mano derecha). Para corregir discrepancias en la relación de aspecto de las cámaras ($4:3$ versus $16:9$), se aplica un reencuadre con bandas de relleno a una resolución uniforme de $853 \times 480$ píxeles previa extracción. Cada vector se centra en el punto medio de los hombros y se normaliza dividiendo por la distancia inter-hombros.
-
+% TODO: el ancla se explica en alguna otra parte? sino, hay que explicarlo mejor
 \subsection{Arquitectura neuronal TinySkeletonClassifier}
 La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante el modelo \textit{TinySkeletonClassifier}, cuya implementación comprende:
 \begin{enumerate}
@@ -114,17 +116,15 @@ Para adaptar el modelo a la lengua de señas sin modificar sus miles de millones
 Las matrices que reciben entrenamiento son las cuatro capas de proyección de atención y las tres capas de la red de avance. En cambio, la tabla de tokens de entrada y la capa de salida permanecen fijas. Esta elección se debe a que el vocabulario base del modelo no cambia; la tarea solo necesita reorganizar y conectar palabras que la red ya conoce.
 
 El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, el paso matemático del optimizador es idéntico entre todas las opciones y los resultados son comparables.
-El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, se mantiene el mismo lote efectivo entre modelos.
 
 El \textit{learning rate} es de $3 \times 10^{-4}$ para el modelo de 3B y de $5 \times 10^{-4}$ para las versiones más pequeñas. Se asignó un valor menor al modelo grande porque un ajuste brusco en una red con más capas provoca inestabilidad en el aprendizaje. El optimizador elegido es AdamW cuantizado a 8 bits. Esta elección reduce el uso de memoria RAM en la GPU, ya que el estado del optimizador se guarda en $8$ bits y convive sin problemas junto al modelo base de $4$ bits. El decaimiento de pesos de $0{,}01$ evita que los adaptadores crezcan demasiado y memoricen los datos. Se incluyen $10$ pasos de calentamiento para que la tasa de aprendizaje suba de forma gradual desde cero, lo que evita desajustes iniciales bruscos en las matrices de LoRA que arrancan con valores al azar. Luego, un planificador de tipo coseno reduce de forma suave la tasa de aprendizaje hacia el cierre del entrenamiento para afinar los ajustes finales.
 
-Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara calcula el error únicamente sobre la respuesta deseada, mientras que el \textit{prompt} del sistema y la entrada del usuario quedan fuera de la actualización de pesos. De este modo, la red concentra todo su aprendizaje en la fluidez de la traducción.
 Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara excluye del cálculo directo de la pérdida las posiciones del \textit{prompt} y de la entrada, y deja el error sobre la respuesta deseada. La respuesta sigue condicionada por esos tokens durante el entrenamiento. De este modo, la red concentra su aprendizaje en la traducción.
 
 Por último, antes de ingresar al entrenamiento, los datos reciben una limpieza específica. Las letras sueltas y consecutivas del dataset se unen en un solo token con mayúscula inicial, y los dígitos sueltos forman un número consolidado. Tres letras idénticas seguidas se reducen a dos para corregir errores de tipeo o captura. Las secuencias de palabras sin separación previa, como \textit{Mar del Plata}, se agrupan en un único token \textit{Mardelplata} para que la falta de espacios no confunda al modelo durante el aprendizaje.
 
 \subsubsection{Procedimiento de evaluación y post-entrenamiento}
-Al cierre del entrenamiento, el 15\,\% del conjunto de datos reservado se evalúa sobre el binario en formato GGUF cuantizado a 4 bits. Esta prueba mide el rendimiento real sobre el servidor de inferencia en producción, y no el del modelo en precisión flotante original.La evaluación configura los siguientes parámetros generales de generación y medición:
+Al cierre del entrenamiento, el 15\,\% del conjunto de datos reservado se evalúa sobre el binario en formato GGUF cuantizado a 4 bits. Esta prueba mide el rendimiento real sobre el servidor de inferencia en producción, y no el del modelo en precisión flotante original. La evaluación configura los siguientes parámetros generales de generación y medición:
 \begin{itemize}
     \item \textbf{Determinismo:} Una temperatura de valor $0$ anula la aleatoriedad en la generación de texto y fuerza al modelo a elegir siempre el token de mayor probabilidad matemática. De esta forma, las respuestas resultan estrictamente reproducibles.
     \item \textbf{Control de repetición y parada:} Se aplica una penalización de repetición de $1{,}05$ para desincentivar que el modelo entre en bucles de palabras o glosas idénticas durante la inferencia. El proceso se detiene ante la aparición de un salto de línea o de la marca de fin de turno, lo que evita el consumo innecesario de cómputo.
@@ -149,7 +149,7 @@ La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la en
 Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens del modelo para la salida (Sección~\ref{sec:token}). Esta restricción responde a que las oraciones traducidas del vocabulario base son breves, y frena la generación de texto infinito en caso de un fallo en la red.
 
 \subsection{Canal inverso (Español $\rightarrow$ LSA)}
-El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas.Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español:
+El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas. Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español:
 \begin{itemize}
     \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y es una sola palabra de la secuencia, nunca letra por letra. Una cifra, como un documento o una cantidad, también es una sola palabra, no un dígito por espacio.
     \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación.
@@ -164,7 +164,7 @@ Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantizac
 \text{RAM} \approx \mathbf{W} + KV_{\text{fp16}}(ctx=2048) + \text{Buffer}
 \label{eq:ram_runtime}
 \end{equation}
-donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados y $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto. El buffer de activaciones es la memoria temporal de un paso de generación. Ahí entran el estado oculto de cada capa, las puntuaciones de atención de ese paso y el resultado intermedio de la red de avance. El paso siguiente reutiliza ese mismo espacio. La caché $KV$ conserva, para el contexto, las claves y los valores ya calculados. La ecuación deja $\mathbf{W}$ en 4 bits por parámetro, esto es $\sim 0{,}5$ bytes, y cuenta solo el entero de cada peso. En la práctica el archivo GGUF pesa más: cada bloque guarda también la escala y el mínimo, \texttt{v\_proj} y \texttt{down\_proj} quedan en \texttt{Q6\_K}, las normalizaciones siguen en 32 bits, y el archivo incluye la cabecera y el vocabulario. La tabla de \texttt{llama.cpp} no separa esas partes. Publica un solo promedio, el tamaño del GGUF dividido por la cantidad de parámetros, medido sobre Llama 3.1 8B: para \texttt{Q4\_K\_M} da $4{,}8944$ bits por peso y un archivo de $4{,}58$ GiB \parencite{gerganov2023llamacpp}. En un modelo de ese tamaño la cabecera y el vocabulario casi no mueven el promedio. En los cinco modelos de este trabajo el cociente es otro: los archivos y la memoria que resulta de sumarles la caché están en las Tablas~\ref{tab:pesos_cuant} y~\ref{tab:ram_inferencia}.
+donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados y $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto. El buffer de activaciones es la memoria temporal de un paso de generación. Ahí entran el estado oculto de cada capa, las puntuaciones de atención de ese paso y el resultado intermedio de la red de avance. El paso siguiente reutiliza ese mismo espacio. La caché $KV$ conserva, para el contexto, las claves y los valores ya calculados. La ecuación deja $\mathbf{W}$ en 4 bits por parámetro, esto es $\sim 0{,}5$ bytes, y cuenta solo el entero de cada peso. En la práctica el archivo GGUF pesa más: cada bloque guarda también la escala y el mínimo, \texttt{v\_proj} y \texttt{down\_proj} quedan en \texttt{Q6\_K}, las normalizaciones siguen en 32 bits, y el archivo incluye la cabecera y el vocabulario. La tabla de \texttt{llama.cpp} no separa esas partes. Publica un solo promedio, el tamaño del GGUF dividido por la cantidad de parámetros, medido sobre Llama 3.1 8B: para \texttt{Q4\_K\_M} da $4{,}8944$ bits por peso y un archivo de $4{,}58$ GiB. En un modelo de ese tamaño la cabecera y el vocabulario casi no mueven el promedio. En los cinco modelos de este trabajo el cociente es otro: los archivos y la memoria que resulta de sumarles la caché están en las Tablas~\ref{tab:pesos_cuant} y~\ref{tab:ram_inferencia}.
 
 \section{Integración en Google Meet y arquitectura de la extensión}
 

@@ -7,6 +7,9 @@
 \subsection{Cumplimiento de objetivos del proyecto}
 
 El prototipo cubre un vocabulario de 100 señas de LSA y opera los dos canales dentro de Google Meet. El clasificador integrado (\texttt{model\_new\_2026\_10\_20}) alcanza un 99{,}0\,\% de exactitud en validación fuera de línea. En cámara, con diez tomas por seña, el acierto Top-1 es de 99{,}6\,\% con iluminación adecuada y de 94{,}6\,\% con iluminación reducida. En ambas condiciones el Top-3 supera el 98\,\% y se cumple el criterio de más del 75\,\% en Top-1 y más del 90\,\% en Top-3. La traducción semántica y el resto de los objetivos se discuten con las métricas del Capítulo~\ref{cap:pruebas_validacion}.
+%TODO: Comienza con «La meta de RNF-01» y termina con «muestras de RAM ni de CPU.»
+La meta de RNF-01 (2{,}0\,s de inferencia del SLM, con el servicio ya activo) se verificó en una sesión de Google Meet contra Cloud Run: 21 de 24 emisiones con modelo (87\,\%) quedaron bajo el techo. El canal inverso lo cumplió en las 15. Los tres incumplimientos ocurrieron en el canal directo, en enunciados de 4, 7 y 10 glosas. La pausa de 4\,s y el transporte se informan aparte. Estos volcados no incluyen muestras de RAM ni de CPU.
+
 \subsection{Aportes técnicos y de accesibilidad}
 \subsection{Impacto social en el marco de la Ley 27.710}
 
