@@ -1,5 +1,7 @@
+import time
+
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -17,8 +19,18 @@ def create_app() -> FastAPI:
         allow_origins=["*"],
         allow_methods=["GET", "HEAD", "OPTIONS"],
         allow_headers=["*"],
-        expose_headers=["X-Count"],
+        expose_headers=["X-Count", "X-ILSA-Ms"],
     )
+
+    @app.middleware("http")
+    async def time_gets(request: Request, call_next):
+        t0 = time.perf_counter()
+        response = await call_next(request)
+        ms = (time.perf_counter() - t0) * 1000
+        response.headers["X-ILSA-Ms"] = f"{ms:.1f}"
+        if request.url.path.startswith("/tposes/"):
+            print(f"[tpose] GET {request.url.path} {ms:.1f} ms", flush=True)
+        return response
 
     @app.get("/health")
     def health():
