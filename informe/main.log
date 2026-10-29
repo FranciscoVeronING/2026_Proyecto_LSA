@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.19)  29 OCT 2026 17:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.19)  29 OCT 2026 17:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1996,12 +1996,12 @@ as been already used, duplicate ignored
                                                   \__shipout_drop_firstpage_...
 l.183 \end{table}
                  ]
-Overfull \hbox (6.60011pt too wide) in paragraph at lines 204--215
+Overfull \hbox (6.60011pt too wide) in paragraph at lines 202--213
  [][] 
  []
 
 
-Overfull \hbox (6.60011pt too wide) in paragraph at lines 225--236
+Overfull \hbox (6.60011pt too wide) in paragraph at lines 223--234
  [][] 
  []
 
@@ -2010,15 +2010,15 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.7.6}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.236 \end{table}
+l.234 \end{table}
                  
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.7}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.236 \end{table}
+l.234 \end{table}
                  ]
-Underfull \hbox (badness 1210) in paragraph at lines 261--261
+Underfull \hbox (badness 1210) in paragraph at lines 259--259
 []|\T1/lmr/m/n/10.95 (+20) Conservación de la se-cuen-cia
  []
 
@@ -2027,57 +2027,57 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.7.8}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.288 
+l.286 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.9}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.288 
+l.286 
       ]
-Underfull \hbox (badness 1184) in paragraph at lines 316--316
+Underfull \hbox (badness 1184) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 1444[]4$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 896[]7$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 1184) in paragraph at lines 316--316
+Underfull \hbox (badness 1184) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 1368[]2$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 826[]6$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 316--316
+Underfull \hbox (badness 5533) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 268[]2$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 273[]4$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 316--316
+Underfull \hbox (badness 5533) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 253[]3$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 254[]2$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 316--316
+Underfull \hbox (badness 5533) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 869[]3$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 105[]9$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 1184) in paragraph at lines 316--316
+Underfull \hbox (badness 1184) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 2490[]8$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 105[]9$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 316--316
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 168[]8$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 96[]0$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 316--316
+Underfull \hbox (badness 5533) in paragraph at lines 314--314
 []|$\OT1/lmr/m/n/10.95 (+20) 231[]2$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 219[]8$ \T1/lmr/m/n/10.95 (+20) --
  []
@@ -2087,21 +2087,21 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.7.10})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.320 
+l.318 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.11}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.320 
+l.318 
       ] [55
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.12}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.365 
+l.363 
       ]
-Overfull \hbox (192.92682pt too wide) in paragraph at lines 373--381
+Overfull \hbox (192.92682pt too wide) in paragraph at lines 371--379
  [][] 
  []
 
@@ -2110,25 +2110,25 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.7.13})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.410 
+l.408 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.14}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.410 
+l.408 
       ] [57
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.15}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.472 
+l.470 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.16}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.472 
+l.470 
       ]) [58
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.17}) 
 has been already used, duplicate ignored
@@ -2270,7 +2270,7 @@ rs/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt8.pfb><C:/User
 s/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtti10.pfb><C:/Use
 rs/franc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm
 10.pfb>
-Output written on main.pdf (74 pages, 909382 bytes).
+Output written on main.pdf (74 pages, 909093 bytes).
 PDF statistics:
  1380 PDF objects out of 1440 (max. 8388607)
  320 named destinations out of 1000 (max. 500000)
