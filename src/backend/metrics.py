@@ -59,9 +59,16 @@ def record_pipeline_turn(
 
 
 def log_event(kind: str, **fields: Any) -> dict[str, Any]:
+    from utils.process_stats import snapshot as proc_snap
+
+    proc = proc_snap()
     record = {
         "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
         "kind": kind,
+        "rss_mb": proc.get("rss_mb"),
+        "cpu_percent": proc.get("cpu_percent"),
+        "RAM_mb": proc.get("RAM_mb", proc.get("rss_mb")),
+        "CPU_percent": proc.get("CPU_percent", proc.get("cpu_percent")),
         **{k: v for k, v in fields.items() if v is not None},
     }
     line = json.dumps(record, ensure_ascii=False)
@@ -175,4 +182,6 @@ def health_line() -> str:
     proc = s.get("process") or {}
     if proc.get("rss_mb") is not None:
         bits.append(f"ram {proc['rss_mb']:.0f} MB")
+    if proc.get("cpu_percent") is not None:
+        bits.append(f"cpu {proc['cpu_percent']:.0f}%")
     return " · ".join(bits)

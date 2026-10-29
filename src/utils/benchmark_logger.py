@@ -38,6 +38,8 @@ CSV_FIELDS = [
     "Entrega_ms",
     "Latencia_Total_ms",
     "Cumple_RNF01",
+    "RAM_mb",
+    "CPU_percent",
 ]
 
 _lock = threading.Lock()
@@ -113,11 +115,14 @@ def record_turn(
     total = round(queue + infer + transport + delivery, 1)
     ok = meets_rnf01(infer)
     canal = normalize_channel(channel)
-    proc: dict[str, Any] = {}
+    ram = None
+    cpu = None
     try:
         from utils.process_stats import snapshot as proc_snap
 
         proc = proc_snap()
+        ram = proc.get("RAM_mb", proc.get("rss_mb"))
+        cpu = proc.get("CPU_percent", proc.get("cpu_percent"))
     except Exception:
         proc = {}
     row = {
@@ -130,11 +135,17 @@ def record_turn(
         "Entrega_ms": delivery,
         "Latencia_Total_ms": total,
         "Cumple_RNF01": ok,
+        "RAM_mb": ram,
+        "CPU_percent": cpu,
+        "rss_mb": ram,
+        "cpu_percent": cpu,
     }
     if extra:
         row.update(extra)
-    if proc:
-        row.update(proc)
+        if extra.get("RAM_mb") is None and extra.get("rss_mb") is not None:
+            row["RAM_mb"] = extra.get("rss_mb")
+        if extra.get("CPU_percent") is None and extra.get("cpu_percent") is not None:
+            row["CPU_percent"] = extra.get("cpu_percent")
     with _lock:
         _rows.append(row)
         _write_locked()
@@ -142,15 +153,10 @@ def record_turn(
         f"[metrics] {canal} Tiempo de Pausa (Heurística de Cierre)={pause:.1f} ms "
         f"(NOT model time) queue={queue:.1f} inference={infer:.1f} "
         f"transport={transport:.1f} delivery={delivery:.1f} total={total:.1f} "
-        f"RNF-01={'ok' if ok else 'fail'}",
+        f"RNF-01={'ok' if ok else 'fail'} RAM_mb={row.get('RAM_mb')} "
+        f"CPU_percent={row.get('CPU_percent')}",
         flush=True,
     )
-    if proc:
-        print(
-            f"[metrics] process rss_mb={proc.get('rss_mb')} "
-            f"cpu_percent={proc.get('cpu_percent')}",
-            flush=True,
-        )
     return row
 
 

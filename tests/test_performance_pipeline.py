@@ -153,9 +153,12 @@ def test_export_json_csv_both_channels(tmp_path: Path) -> None:
     with csv_path().open(encoding="utf-8", newline="") as fh:
         rows = list(csv.DictReader(fh))
     assert list(rows[0].keys()) == CSV_FIELDS
+    assert "RAM_mb" in rows[0]
+    assert "CPU_percent" in rows[0]
     assert rows[1]["Canal"] == CHANNEL_INVERSE
     total_inv = float(rows[1]["Latencia_Total_ms"])
     assert total_inv == 40 + 1100 + 90 + 310
+    assert data[0].get("RAM_mb") is not None or data[0].get("rss_mb") is not None
 
 
 def test_simulated_direct_and_inverse_pipeline(tmp_path: Path) -> None:

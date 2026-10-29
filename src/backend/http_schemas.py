@@ -29,6 +29,7 @@ class ClientMetricsIn(BaseModel):
     fps: float | None = None
     holistic_fps: float | None = None
     rss_mb: float | None = None
+    js_heap_mb: float | None = None
 
 
 class SttIn(BaseModel):

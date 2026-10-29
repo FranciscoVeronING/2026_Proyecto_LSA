@@ -220,6 +220,7 @@ def metrics_client(body: ClientMetricsIn):
 
     if body.delivery_ms is not None:
         add_delivery(body.channel, body.delivery_ms)
+    snap = proc_snap()
     log_event(
         "client",
         channel=body.channel,
@@ -227,14 +228,23 @@ def metrics_client(body: ClientMetricsIn):
         pause_ms=body.pause_ms,
         fps=body.fps,
         holistic_fps=body.holistic_fps,
-        rss_mb=body.rss_mb,
-        **proc_snap(),
+        js_heap_mb=body.js_heap_mb,
+        rss_mb=snap.get("rss_mb"),
+        cpu_percent=snap.get("cpu_percent"),
+        RAM_mb=snap.get("RAM_mb", snap.get("rss_mb")),
+        CPU_percent=snap.get("CPU_percent", snap.get("cpu_percent")),
     )
     if body.fps is not None:
-        print(f"[metrics] FPS captureStream={body.fps:.1f}", flush=True)
+        print(
+            f"[metrics] FPS captureStream={body.fps:.1f} "
+            f"RAM_mb={snap.get('rss_mb')} CPU_percent={snap.get('cpu_percent')}",
+            flush=True,
+        )
     if body.holistic_fps is not None:
         print(f"[metrics] FPS Holistic sandbox={body.holistic_fps:.1f}", flush=True)
-    return {"ok": True, "process": proc_snap()}
+    if body.js_heap_mb is not None:
+        print(f"[metrics] Chrome JS heap={body.js_heap_mb:.1f} MB", flush=True)
+    return {"ok": True, "process": snap}
 
 
 @app.get("/mediapipe/{name}")
@@ -348,6 +358,9 @@ def main(argv=None):
         )
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ.setdefault("LSA_BACKEND", "1")
+    from utils.process_stats import start_sampler
+
+    start_sampler()
     if args.headless:
         init_session(enable_semantic=not args.no_semantic, mode=args.mode)
         import uvicorn

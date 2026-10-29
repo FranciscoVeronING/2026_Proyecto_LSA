@@ -66,6 +66,17 @@ async function api(path, options = {}) {
   return apiViaWorker(path, options);
 }
 
+function chromeProcessProbe() {
+  const out = {};
+  try {
+    const mem = performance.memory;
+    if (mem && typeof mem.usedJSHeapSize === "number") {
+      out.js_heap_mb = Math.round((mem.usedJSHeapSize / 1048576) * 10) / 10;
+    }
+  } catch (_) {}
+  return out;
+}
+
 const LsaApi = {
   base: API_BASE,
   health: () => api("/health"),
@@ -105,7 +116,7 @@ const LsaApi = {
   clientMetrics: (payload) =>
     api("/metrics/client", {
       method: "POST",
-      body: JSON.stringify(payload || {}),
+      body: JSON.stringify({ ...chromeProcessProbe(), ...(payload || {}) }),
     }),
   exeUrl: `${API_BASE}/download/exe`,
 };
