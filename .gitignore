@@ -3,6 +3,7 @@ __pycache__/
 .venv/
 .env
 unsloth_compiled_cache/
+tests/_perf_out/
 
 # Paquete ILSA que descarga la extensión (lo genera packaging/build_exe.bat)
 extension/bin/*.zip

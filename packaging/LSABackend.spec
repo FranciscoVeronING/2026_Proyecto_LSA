@@ -27,10 +27,13 @@ hidden = (
     collect_submodules("classifier")
     + collect_submodules("core")
     + collect_submodules("backend")
+    + collect_submodules("utils")
     + collect_submodules("poseclip")
     + _pose_h
     + [
         "core.utterance",
+        "utils.benchmark_logger",
+        "utils.process_stats",
         "semantic.remote",
         "semantic.config",
         "avatar.remote",

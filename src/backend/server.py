@@ -19,7 +19,7 @@ _SRC_DIR = Path(__file__).resolve().parents[1]
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from backend.http_schemas import HearingIn, SessionIn, SignIn, SttIn
+from backend.http_schemas import ClientMetricsIn, HearingIn, SessionIn, SignIn, SttIn, UtteranceEndIn
 
 if getattr(sys, "frozen", False):
     REPO_ROOT = Path(sys.executable).resolve().parent
@@ -72,7 +72,7 @@ def _health_metrics() -> str:
 def get_session():
     global _session
     if _session is None:
-        raise HTTPException(status_code=503, detail="Backend has not initialized the pipeline yet.")
+        raise HTTPException(status_code=503, detail="El backend todavía no inicializó el pipeline.")
     return _session
 
 
@@ -138,10 +138,10 @@ def open_session(body: SessionIn):
 def ingest_sign(body: SignIn):
     # Landmarks, not JPEG. Holistic runs in the extension.
     if _mode == "hearing":
-        raise HTTPException(status_code=400, detail="Hearing mode: signs are not classified.")
+        raise HTTPException(status_code=400, detail="Modo oyente: no se clasifican señas.")
     if not body.frames:
         print("[backend] POST /sign: empty body")
-        raise HTTPException(status_code=400, detail="Missing sign frames.")
+        raise HTTPException(status_code=400, detail="Faltan frames de la seña.")
     print(f"[backend] POST /sign: {len(body.frames)} frames")
     return get_session().ingest_sign(body.frames, client=body.client)
 
@@ -149,16 +149,16 @@ def ingest_sign(body: SignIn):
 @app.post("/stt")
 def stt_wav(body: SttIn):
     if _mode != "hearing":
-        raise HTTPException(status_code=400, detail="Hearing mode only.")
+        raise HTTPException(status_code=400, detail="Solo modo oyente.")
     import base64
 
     raw = (body.wav_b64 or "").strip()
     if not raw:
-        raise HTTPException(status_code=400, detail="Missing audio.")
+        raise HTTPException(status_code=400, detail="Falta el audio.")
     try:
         wav = base64.b64decode(raw)
     except Exception as exc:
-        raise HTTPException(status_code=400, detail="Invalid WAV") from exc
+        raise HTTPException(status_code=400, detail="WAV inválido") from exc
     from backend.stt import transcribe_wav
 
     try:
@@ -173,11 +173,11 @@ def stt_wav(body: SttIn):
 @app.post("/hearing")
 def hearing_speech(body: HearingIn):
     if _mode != "hearing":
-        raise HTTPException(status_code=400, detail="Hearing mode only.")
+        raise HTTPException(status_code=400, detail="Solo modo oyente.")
     session = get_session()
     ingest = getattr(session, "ingest_speech", None)
     if ingest is None:
-        raise HTTPException(status_code=400, detail="This session does not accept speech.")
+        raise HTTPException(status_code=400, detail="Esta sesión no acepta voz.")
     return ingest(body.spanish, final=body.final)
 
 
@@ -188,24 +188,51 @@ def activity():
 
 
 @app.post("/utterance/end")
-def utterance_end():
-    return get_session().close_utterance()
+def utterance_end(body: UtteranceEndIn | None = None):
+    session = get_session()
+    pause_ms = body.pause_ms if body is not None else None
+    return session.close_utterance(pause_ms=pause_ms)
+
+
+@app.post("/metrics/client")
+def metrics_client(body: ClientMetricsIn):
+    from backend.metrics import log_event
+    from utils.benchmark_logger import add_delivery
+    from utils.process_stats import snapshot as proc_snap
+
+    if body.delivery_ms is not None:
+        add_delivery(body.channel, body.delivery_ms)
+    log_event(
+        "client",
+        channel=body.channel,
+        delivery_ms=body.delivery_ms,
+        pause_ms=body.pause_ms,
+        fps=body.fps,
+        holistic_fps=body.holistic_fps,
+        rss_mb=body.rss_mb,
+        **proc_snap(),
+    )
+    if body.fps is not None:
+        print(f"[metrics] FPS captureStream={body.fps:.1f}", flush=True)
+    if body.holistic_fps is not None:
+        print(f"[metrics] FPS Holistic sandbox={body.holistic_fps:.1f}", flush=True)
+    return {"ok": True, "process": proc_snap()}
 
 
 @app.get("/mediapipe/{name}")
 def mediapipe_asset(name: str):
     safe = Path(name).name
     if safe != name or ".." in name or not safe:
-        raise HTTPException(status_code=400, detail="Invalid name")
+        raise HTTPException(status_code=400, detail="Nombre inválido")
     allowed = {".wasm", ".js", ".data", ".tflite", ".binarypb"}
     if Path(safe).suffix.lower() not in allowed:
-        raise HTTPException(status_code=400, detail="File type not allowed")
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido")
     path = (REPO_ROOT / "extension" / "vendor" / "mediapipe" / safe).resolve()
     root = (REPO_ROOT / "extension" / "vendor" / "mediapipe").resolve()
     if root not in path.parents and path.parent != root:
-        raise HTTPException(status_code=400, detail="Invalid name")
+        raise HTTPException(status_code=400, detail="Nombre inválido")
     if not path.is_file():
-        raise HTTPException(status_code=404, detail=f"Missing {safe}")
+        raise HTTPException(status_code=404, detail=f"Falta {safe}")
     suffix = path.suffix.lower()
     media = {
         ".wasm": "application/wasm",
@@ -243,7 +270,7 @@ def download_exe():
         )
     raise HTTPException(
         status_code=404,
-        detail="No .exe. In development use: python run_backend.py",
+        detail="No hay .exe. En desarrollo usá: python run_backend.py",
     )
 
 

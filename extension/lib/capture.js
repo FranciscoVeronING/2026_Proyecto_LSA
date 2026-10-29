@@ -102,6 +102,7 @@ function createCaptureEngine(getCfg, callbacks) {
   let lastActivity = 0;
   let pendingGlosses = false;
   let closing = false;
+  let pauseStartLogged = false;
   let handsSince = 0;
   let stillSince = 0;
   let captureStartedAt = 0;
@@ -119,6 +120,7 @@ function createCaptureEngine(getCfg, callbacks) {
   function bumpActivity(fromHands) {
     const now = Date.now() / 1000;
     lastActivity = now;
+    pauseStartLogged = false;
     if (fromHands && pendingGlosses) callbacks.onSigningActivity();
   }
 
@@ -190,6 +192,12 @@ function createCaptureEngine(getCfg, callbacks) {
       } else {
         consecutiveHands = 0;
         handsSince = 0;
+        if (pendingGlosses && lastActivity > 0 && !pauseStartLogged) {
+          pauseStartLogged = true;
+          console.log(
+            "[metrics] Tiempo de Pausa (Heurística de Cierre): t_pausa_inicio — NOT model time"
+          );
+        }
       }
 
       const isMoving = landmarkMotion > c.landmark_motion_threshold;
@@ -232,7 +240,13 @@ function createCaptureEngine(getCfg, callbacks) {
         now - lastActivity >= c.utterance_pause_sec
       ) {
         closing = true;
-        Promise.resolve(callbacks.onUtterancePause())
+        const pause_ms = Math.round((now - lastActivity) * 1000);
+        console.log(
+          "[metrics] Tiempo de Pausa (Heurística de Cierre): t_pausa_fin pause_ms=" +
+            pause_ms +
+            " — NOT model time"
+        );
+        Promise.resolve(callbacks.onUtterancePause({ pause_ms }))
           .catch(() => {})
           .finally(() => {
             closing = false;
@@ -260,6 +274,7 @@ function createCaptureEngine(getCfg, callbacks) {
       lastActivity = 0;
       pendingGlosses = false;
       closing = false;
+      pauseStartLogged = false;
       handsSince = 0;
       stillSince = 0;
       captureStartedAt = 0;

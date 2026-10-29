@@ -408,7 +408,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_ERROR",
-          error: "Meet is not sending your mic. Unmute the call microphone.",
+          error: "Meet no está enviando tu mic. Prendé el micrófono de la llamada.",
         },
         "*"
       );
@@ -430,7 +430,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_ERROR",
-          error: "Could not open the audio tap (AudioWorklet).",
+          error: "No se pudo abrir el tap de audio (AudioWorklet).",
         },
         "*"
       );
@@ -463,7 +463,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
         {
           source: "lsa-page",
           type: "LSA_SPEECH_UI",
-          debug: open ? "Listening to the Meet mic" : "Meet microphone muted",
+          debug: open ? "Escuchando el mic de Meet" : "Micrófono de Meet silenciado",
         },
         "*"
       );
@@ -904,9 +904,26 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       });
     }
     let previewTick = 0;
+    let fpsFrames = 0;
+    let fpsT0 = performance.now();
 
     const draw = () => {
       if (!handle.running) return;
+      fpsFrames += 1;
+      const fpsSpan = performance.now() - fpsT0;
+      if (fpsSpan >= 1000) {
+        window.postMessage(
+          {
+            source: "lsa-page",
+            type: "LSA_FPS",
+            fps: (fpsFrames * 1000) / fpsSpan,
+            captureStream: 24,
+          },
+          "*"
+        );
+        fpsFrames = 0;
+        fpsT0 = performance.now();
+      }
       const camOn = publishCamOpen();
       if (!camOn) {
         if (!video.paused) video.pause();

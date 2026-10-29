@@ -92,7 +92,7 @@ class IlsaWindow:
         self._spin_canvas.pack()
         self._spin_angle = 0
         self._spin_job = None
-        self._splash_status = tk.StringVar(value="Connecting to the server…")
+        self._splash_status = tk.StringVar(value="Conectando con el servidor…")
         tk.Label(
             splash_inner,
             textvariable=self._splash_status,
@@ -103,7 +103,7 @@ class IlsaWindow:
         ).pack(pady=(16, 0))
         self._retry_btn = tk.Button(
             splash_inner,
-            text="Retry",
+            text="Reintentar",
             font=body_f,
             padx=16,
             pady=8,
@@ -209,7 +209,7 @@ class IlsaWindow:
         except tk.TclError:
             return False
 
-    def _show_splash(self, msg: str = "Checking servers…") -> None:
+    def _show_splash(self, msg: str = "Comprobando servidores…") -> None:
         self._splash_status.set(msg)
         try:
             self._retry_btn.pack_forget()
@@ -227,7 +227,7 @@ class IlsaWindow:
             return
         self._booting = True
         self._retry_btn.pack_forget()
-        self._splash_status.set("Checking translator (this can take a few minutes)…")
+        self._splash_status.set("Comprobando el traductor (puede tardar unos minutos)…")
         if self._spin_job is None:
             self._tick_spin()
         threading.Thread(target=self._bootstrap_worker, daemon=True, name="ilsa-semantic").start()
@@ -240,13 +240,13 @@ class IlsaWindow:
 
             if not self.args.no_semantic:
                 if not configured():
-                    raise RuntimeError("Semantic translator URL is missing")
-                self._boot_q.put(("status", "Checking translator (this can take a few minutes)…"))
+                    raise RuntimeError("Falta la URL del traductor semántico")
+                self._boot_q.put(("status", "Comprobando el traductor (puede tardar unos minutos)…"))
                 if not ping_semantic():
-                    raise RuntimeError("Semantic translator is not responding")
-            self._boot_q.put(("status", "Checking avatar…"))
+                    raise RuntimeError("El traductor semántico no responde")
+            self._boot_q.put(("status", "Comprobando el avatar…"))
             if not ping_avatar(timeout=20.0):
-                raise RuntimeError("T-pose server is not responding")
+                raise RuntimeError("El servidor de T-pose no responde")
             self._boot_q.put(("ok",))
         except Exception as exc:
             self._boot_q.put(("err", str(exc)))
@@ -265,7 +265,7 @@ class IlsaWindow:
                 elif kind == "err":
                     self._booting = False
                     self._stop_spin()
-                    self._splash_status.set(item[1] if len(item) > 1 else "Could not connect")
+                    self._splash_status.set(item[1] if len(item) > 1 else "No se pudo conectar")
                     self._retry_btn.pack(pady=(16, 0))
                     return
         except queue.Empty:
@@ -330,7 +330,7 @@ class IlsaWindow:
         info_btn.pack(side="right")
         tk.Label(
             pad,
-            text="Argentine Sign Language interpreter",
+            text="Intérprete de Lengua de Señas Argentina",
             font=small_f,
             fg=MUTED,
             bg=BG,
@@ -341,7 +341,7 @@ class IlsaWindow:
 
         tk.Label(
             pad,
-            text="Pick a mode, then start the engine.",
+            text="Elegí el modo y después encendé el motor.",
             font=body_f,
             fg=TEXT,
             bg=BG,
@@ -350,16 +350,16 @@ class IlsaWindow:
 
         self.mode_var = tk.StringVar(value="")
         self.mode_hint_var = tk.StringVar(
-            value="Signer: LSA signs → Spanish. Hearing: your voice → captions in Meet."
+            value="Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet."
         )
         modes = tk.Frame(pad, bg=BG)
         modes.pack(fill="x", pady=(14, 0))
-        tk.Label(modes, text="Mode", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
+        tk.Label(modes, text="Modo", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
         row_modes = tk.Frame(modes, bg=BG)
         row_modes.pack(fill="x", pady=(6, 0))
         self.signer_btn = tk.Button(
             row_modes,
-            text="Signer",
+            text="Sordo",
             font=body_f,
             padx=16,
             pady=10,
@@ -368,7 +368,7 @@ class IlsaWindow:
         self.signer_btn.pack(side="left", fill="x", expand=True)
         self.hearing_btn = tk.Button(
             row_modes,
-            text="Hearing",
+            text="Oyente",
             font=body_f,
             padx=16,
             pady=10,
@@ -390,12 +390,12 @@ class IlsaWindow:
 
         self.handed_var = tk.StringVar(value="right")
         self.handed_frame = tk.Frame(modes, bg=BG)
-        tk.Label(self.handed_frame, text="Hand", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
+        tk.Label(self.handed_frame, text="Mano", font=tiny_f, fg=MUTED, bg=BG).pack(anchor="w")
         row_hand = tk.Frame(self.handed_frame, bg=BG)
         row_hand.pack(fill="x", pady=(6, 0))
         self.left_btn = tk.Button(
             row_hand,
-            text="Left-handed",
+            text="Zurdo",
             font=body_f,
             padx=16,
             pady=10,
@@ -404,7 +404,7 @@ class IlsaWindow:
         self.left_btn.pack(side="left", fill="x", expand=True)
         self.right_btn = tk.Button(
             row_hand,
-            text="Right-handed",
+            text="Diestro",
             font=body_f,
             padx=16,
             pady=10,
@@ -422,7 +422,7 @@ class IlsaWindow:
         self.dot.pack(side="left", padx=(0, 8))
         self._set_dot(BAD)
 
-        self.status_var = tk.StringVar(value="Pick a mode")
+        self.status_var = tk.StringVar(value="Elegí un modo")
         tk.Label(row, textvariable=self.status_var, font=body_f, fg=TEXT, bg=BG2).pack(side="left")
 
         btns = tk.Frame(card, bg=BG2)
@@ -430,7 +430,7 @@ class IlsaWindow:
 
         self.toggle_btn = tk.Button(
             btns,
-            text="Start",
+            text="Encender",
             font=body_f,
             relief="flat",
             bd=0,
@@ -443,7 +443,7 @@ class IlsaWindow:
 
         self.reset_btn = tk.Button(
             btns,
-            text="Restart",
+            text="Reiniciar",
             font=body_f,
             relief="flat",
             bd=0,
@@ -462,7 +462,7 @@ class IlsaWindow:
 
         link = tk.Label(
             pad,
-            text="GitHub repository",
+            text="Repositorio en GitHub",
             font=small_f,
             fg=ACCENT,
             bg=BG,
@@ -473,7 +473,7 @@ class IlsaWindow:
 
         logs = tk.Label(
             pad,
-            text="Logs",
+            text="Registros",
             font=tiny_f,
             fg=MUTED,
             bg=BG,
@@ -503,7 +503,7 @@ class IlsaWindow:
 
     def _open_sources(self) -> None:
         win = tk.Toplevel(self.root)
-        win.title("Sign sources")
+        win.title("Fuentes de las señas")
         win.configure(bg=BG)
         win.resizable(False, False)
         win.transient(self.root)
@@ -512,13 +512,13 @@ class IlsaWindow:
         title_f = tkfont.Font(family="Segoe UI", size=12, weight="bold")
         body_f = tkfont.Font(family="Segoe UI", size=10)
         small_f = tkfont.Font(family="Segoe UI", size=9)
-        tk.Label(body, text="Sign sources", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
+        tk.Label(body, text="Fuentes de las señas", font=title_f, fg=TEXT, bg=BG).pack(anchor="w")
         tk.Label(
             body,
             text=(
-                "Signs used by ILSA follow the CAS Sign Dictionary "
-                "(volumes 1 and 2). If a sign is missing there, we fall back to "
-                "the LSA en familia app."
+                "Las señas que toma ILSA siguen la implementación del Señario CAS "
+                "(tomos 1 y 2). Si alguna seña no está ahí, recurrimos a la aplicación "
+                "LSA en familia."
             ),
             font=body_f,
             fg=TEXT,
@@ -526,10 +526,10 @@ class IlsaWindow:
             wraplength=340,
             justify="left",
         ).pack(anchor="w", pady=(10, 8))
-        self._link_label(body, "CAS Sign Dictionary · vol. 1", SENARIO_1_URL, small_f)
-        self._link_label(body, "CAS Sign Dictionary · vol. 2", SENARIO_2_URL, small_f)
+        self._link_label(body, "Señario CAS · tomo 1", SENARIO_1_URL, small_f)
+        self._link_label(body, "Señario CAS · tomo 2", SENARIO_2_URL, small_f)
         self._link_label(body, "LSA en familia (Play Store)", LSA_FAMILIA_URL, small_f)
-        close = tk.Button(body, text="Close", font=body_f, padx=16, pady=6, command=win.destroy, **BTN_LIVE["secondary"])
+        close = tk.Button(body, text="Cerrar", font=body_f, padx=16, pady=6, command=win.destroy, **BTN_LIVE["secondary"])
         close.pack(anchor="e", pady=(18, 0))
         win.update_idletasks()
         w, h = win.winfo_reqwidth(), win.winfo_reqheight()
@@ -541,10 +541,10 @@ class IlsaWindow:
 
     def _mode_choice(self, mode: str) -> tuple[str, str]:
         if mode == "signer":
-            return "Signer", "The camera reads the signs and translates them to Spanish."
+            return "Sordo", "La cámara lee las señas y las traduce a español."
         if mode == "hearing":
-            return "Hearing", "Transcribes what you say and paints it on your Meet video."
-        return "Pick a mode", "Signer: LSA signs → Spanish. Hearing: your voice → captions in Meet."
+            return "Oyente", "Transcribe lo que decís y lo pinta en tu video de Meet."
+        return "Elegí un modo", "Sordo: señas LSA → español. Oyente: tu voz → subtítulos en Meet."
 
     def _mode_pending(self) -> bool:
         live = self.backend.mode
@@ -581,7 +581,7 @@ class IlsaWindow:
         mode = self.mode_var.get()
         _, hint = self._mode_choice(mode)
         if self._mode_pending():
-            hint = "Pending change: Restart mode to apply it."
+            hint = "Cambio pendiente: dale a Reiniciar modo para aplicarlo."
         self.mode_hint_var.set(hint)
         self._paint_btn(self.signer_btn, live=True, role="start" if mode == "signer" else "secondary")
         self._paint_btn(self.hearing_btn, live=True, role="start" if mode == "hearing" else "secondary")
@@ -602,12 +602,12 @@ class IlsaWindow:
     def _on_mode_change(self) -> None:
         mode = self.mode_var.get()
         if self._mode_pending():
-            self.status_var.set("Mode changed · Restart to apply")
+            self.status_var.set("Modo cambiado · Reiniciá para aplicar")
         elif not self.backend.running:
             if mode == "signer":
-                self.status_var.set("Ready · signer mode")
+                self.status_var.set("Listo · modo sordo")
             elif mode == "hearing":
-                self.status_var.set("Ready · hearing mode")
+                self.status_var.set("Listo · modo oyente")
         self._sync_actions()
 
     def _paint_btn(self, btn: tk.Button, *, live: bool, role: str) -> None:
@@ -619,8 +619,8 @@ class IlsaWindow:
         self._toggle_armed = (not busy) and (running or has_mode)
         self._reset_armed = (not busy) and running
         pending = self._mode_pending()
-        self.toggle_btn.configure(text="Stop" if running else "Start")
-        self.reset_btn.configure(text="Restart mode" if pending else "Restart")
+        self.toggle_btn.configure(text="Apagar" if running else "Encender")
+        self.reset_btn.configure(text="Reiniciar modo" if pending else "Reiniciar")
         self._paint_btn(self.toggle_btn, live=self._toggle_armed, role="stop" if running else "start")
         self._paint_btn(
             self.reset_btn,
@@ -636,7 +636,7 @@ class IlsaWindow:
     def _bind_opts(self) -> str | None:
         mode = self.mode_var.get()
         if mode not in ("signer", "hearing"):
-            self._idle("Pick a mode", error=True)
+            self._idle("Elegí un modo", error=True)
             return None
         self.backend.mode = mode
         self.backend.semantic_model_id = DEFAULT_MODEL_ID
@@ -648,21 +648,21 @@ class IlsaWindow:
             return
         try:
             self.backend.start()
-            self._idle("Loading models…")
+            self._idle("Cargando modelos…")
         except Exception as exc:
-            self._idle(f"Did not start: {exc}", error=True)
+            self._idle(f"No arrancó: {exc}", error=True)
 
     def _on_toggle(self) -> None:
         if not self._toggle_armed:
             return
         if self.backend.running:
-            self._busy("Stopping…")
+            self._busy("Apagando…")
             self.root.update_idletasks()
             try:
                 self.backend.stop()
             except Exception:
                 pass
-            self._idle("Stopped")
+            self._idle("Apagado")
             self._on_mode_change()
             self._cloud_check()
             return
@@ -671,13 +671,13 @@ class IlsaWindow:
     def _restart_on_main(self) -> None:
         if not self._bind_opts():
             return
-        self._busy("Restarting…")
+        self._busy("Reiniciando…")
         self.root.update_idletasks()
         try:
             self.backend.restart()
-            self._idle("Loading models…")
+            self._idle("Cargando modelos…")
         except Exception as exc:
-            self._idle(f"Did not restart: {exc}", error=True)
+            self._idle(f"No se reinició: {exc}", error=True)
 
     def _on_reset(self) -> None:
         if not self._reset_armed or not self._bind_opts():
@@ -713,24 +713,24 @@ class IlsaWindow:
                     mode = data.get("mode") or self.backend.mode
                     semantic_ok = bool(data.get("semantic_ready")) or self.args.no_semantic
                     if not semantic_ok:
-                        self.status_var.set("Translator down · Restart ILSA")
+                        self.status_var.set("Traductor caído · Reiniciá ILSA")
                         self._set_dot(BAD)
-                        self.detail_var.set(data.get("semantic_error") or "Semantic service is not responding")
+                        self.detail_var.set(data.get("semantic_error") or "El servicio semántico no responde")
                         self._sync_actions()
                     else:
                         if mode == "hearing":
-                            bits = ["Running", "hearing", "voice → captions"]
+                            bits = ["En marcha", "oyente", "voz → subtítulos"]
                             self._set_dot(OK)
                         else:
-                            bits = ["Running", "signer"]
+                            bits = ["En marcha", "sordo"]
                             if data.get("classifier_ready"):
-                                bits.append("classifier")
-                            bits.append("translator")
+                                bits.append("clasificador")
+                            bits.append("traductor")
                             self._set_dot(OK)
                         if self._mode_pending():
-                            bits.append("Restart mode")
+                            bits.append("Reiniciar modo")
                         elif mode == "signer" and data.get("semantic_busy"):
-                            bits.append("translating…")
+                            bits.append("traduciendo…")
                         self.status_var.set(" · ".join(bits))
                         extra = f"{self.args.host}:{self.args.port}  ·  CPU"
                         line = data.get("metrics") or ""
@@ -743,11 +743,11 @@ class IlsaWindow:
                     self._set_dot(WARN)
         else:
             cur = self.status_var.get()
-            if cur.startswith("Running") or cur == "Starting…":
+            if cur.startswith("En marcha") or cur == "Arrancando…":
                 if self.mode_var.get():
                     self._on_mode_change()
                 else:
-                    self.status_var.set("Pick a mode")
+                    self.status_var.set("Elegí un modo")
                     self._set_dot(BAD)
                     self.detail_var.set("")
                     self._sync_actions()
@@ -775,7 +775,7 @@ class IlsaWindow:
             self.log_text = None
             return
         win = tk.Toplevel(self.root)
-        win.title("ILSA · logs")
+        win.title("ILSA · registros")
         win.configure(bg=BG)
         win.geometry("520x320")
         win.protocol("WM_DELETE_WINDOW", lambda: self._toggle_logs())
@@ -791,7 +791,7 @@ class IlsaWindow:
             pady=10,
         )
         text.pack(fill="both", expand=True)
-        text.insert("1.0", "".join(self.log_lines) or "(no logs yet)\n")
+        text.insert("1.0", "".join(self.log_lines) or "(todavía no hay registros)\n")
         text.see("end")
         self.log_win = win
         self.log_text = text

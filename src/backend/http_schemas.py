@@ -18,6 +18,19 @@ class HearingIn(BaseModel):
     final: bool = True
 
 
+class UtteranceEndIn(BaseModel):
+    pause_ms: float | None = None
+
+
+class ClientMetricsIn(BaseModel):
+    channel: str = "direct"
+    delivery_ms: float | None = None
+    pause_ms: float | None = None
+    fps: float | None = None
+    holistic_fps: float | None = None
+    rss_mb: float | None = None
+
+
 class SttIn(BaseModel):
     wav_b64: str = ""
     lang: str = "es-ES"

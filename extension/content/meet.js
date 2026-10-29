@@ -25,7 +25,7 @@ const hudState = {
   glossKind: "",
   pendingText: "",
   spanish: "",
-  statusText: "Looking for ILSA…",
+  statusText: "Buscando ILSA…",
   alert: false,
 };
 
@@ -44,9 +44,9 @@ function wantsHearingText() {
 
 function hearingHint() {
   const mode = hearingInputMode();
-  if (mode === "voice") return "Speak into the Meet mic";
-  if (mode === "text") return "Type in the Meet chat";
-  return "Speak (Meet mic) or type in chat";
+  if (mode === "voice") return "Hablá con el mic de Meet";
+  if (mode === "text") return "Escribí en el chat de Meet";
+  return "Hablá (mic de Meet) o escribí en el chat";
 }
 
 function applyPrefsToPage() {
@@ -82,15 +82,15 @@ function stopVoice() {
 
 function transcribeMeetAudio(wavB64) {
   if (!running || meetMode !== "hearing" || !wantsHearingVoice() || !wavB64) return;
-  setHud({ debug: "Transcribing your voice…", capturing: true, lastGloss: "voice" });
+  setHud({ debug: "Transcribiendo tu voz…", capturing: true, lastGloss: "voice" });
   LsaApi.stt(wavB64, "es-ES")
     .then((s) => {
       const spanish = String((s && s.spanish) || "").trim();
       if (!spanish) {
         setHud({
           debug: wantsHearingText()
-            ? "Audio was not understood; repeat or use chat"
-            : "Audio was not understood; repeat",
+            ? "No se entendió el audio; repetí o usá el chat"
+            : "No se entendió el audio; repetí",
           capturing: false,
         });
         return;
@@ -107,13 +107,13 @@ function transcribeMeetAudio(wavB64) {
 
 function applyAvatarClip(clip) {
   if (!clip || clip.ok === false || !(clip.frames && clip.frames.length)) {
-    setHud({ debug: "Skeleton idle: " + ((clip && clip.error) || "no clips") });
+    setHud({ debug: "Esqueleto en espera: " + ((clip && clip.error) || "sin clips") });
     return;
   }
   postToPage({ type: "LSA_AVATAR", clip });
   const miss = (clip.missing || []).filter(Boolean);
   setHud({
-    debug: miss.length ? "No clip: " + miss.join(", ") : "Skeleton on the video",
+    debug: miss.length ? "Sin clip: " + miss.join(", ") : "Esqueleto en el video",
   });
 }
 
@@ -124,12 +124,12 @@ function sendToHearing(spanish, source) {
   const now = Date.now();
   if (text === lastHearingSent.text && now - lastHearingSent.at < 2500) return;
   lastHearingSent = { text, at: now };
-  setHud({ debug: "Translating to glosses…", capturing: true, lastGloss: source });
+  setHud({ debug: "Traduciendo a glosas…", capturing: true, lastGloss: source });
   LsaApi.hearing(text, true)
     .then((s) => {
       if (s && s.semantic_ready === false) {
         setHud({
-          debug: "Translator is not responding. Restart ILSA.",
+          debug: "El traductor no responde. Reiniciá ILSA.",
           capturing: false,
           alert: true,
         });
@@ -137,12 +137,13 @@ function sendToHearing(spanish, source) {
       }
       const glosses = String((s && (s.caption || s.glosses)) || "").trim();
       if (!glosses) {
-        setHud({ debug: "Translator returned no glosses", capturing: false });
+        setHud({ debug: "El traductor no devolvió glosas", capturing: false });
         return;
       }
+      const tPresent = performance.now();
       setHud({
         spanish: glosses,
-        debug: "Glosses on your video",
+        debug: "Glosas en tu video",
         capturing: false,
         lastGloss: source,
       });
@@ -153,10 +154,12 @@ function sendToHearing(spanish, source) {
         glosses,
       });
       applyAvatarClip(s.avatar);
+      const meet_ms = performance.now() - tPresent;
+      LsaApi.clientMetrics({ channel: "inverse", delivery_ms: meet_ms }).catch(() => {});
     })
     .catch((err) => {
       setHud({
-        debug: "Translator is not responding. Restart ILSA.",
+        debug: "El traductor no responde. Reiniciá ILSA.",
         capturing: false,
         alert: true,
       });
@@ -279,15 +282,15 @@ try {
 } catch (_) {}
 
 /**
- * Mensaje al mundo MAIN (camera-hook).
- * @param {object} payload Campos extra (`type`, `enabled`, `spanish`, …).
+ * Message to the MAIN world (camera-hook).
+ * @param {object} payload Extra fields (`type`, `enabled`, `spanish`, …).
  */
 function postToPage(payload) {
   window.postMessage({ source: "lsa-ext", ...payload }, "*");
 }
 
 /**
- * Crea el chip LSA arriba a la derecha si no existe.
+ * Create the LSA chip at the top-right if it does not exist.
  * @returns {HTMLElement}
  */
 function ensureHud() {
@@ -301,15 +304,15 @@ function ensureHud() {
       <div class="lsa-row">
         <span class="lsa-badge">LSA</span>
         <span class="lsa-cap off" id="lsa-cap">OFF</span>
-        <span class="lsa-status" id="lsa-status">Ready</span>
+        <span class="lsa-status" id="lsa-status">Listo</span>
       </div>
-      <div class="lsa-gloss" id="lsa-gloss">Last gloss: —</div>
+      <div class="lsa-gloss" id="lsa-gloss">Última glosa: —</div>
       <div class="lsa-pending" id="lsa-pending" hidden></div>
       <div class="lsa-hear" id="lsa-hear" hidden>
-        <span class="lsa-hear-label">Capture</span>
-        <button type="button" class="lsa-hear-btn" data-hear="voice">Voice</button>
-        <button type="button" class="lsa-hear-btn" data-hear="text">Text</button>
-        <button type="button" class="lsa-hear-btn" data-hear="both">Both</button>
+        <span class="lsa-hear-label">Captura</span>
+        <button type="button" class="lsa-hear-btn" data-hear="voice">Voz</button>
+        <button type="button" class="lsa-hear-btn" data-hear="text">Texto</button>
+        <button type="button" class="lsa-hear-btn" data-hear="both">Ambos</button>
       </div>
       <div class="lsa-spanish" id="lsa-spanish"></div>
     </div>
@@ -389,7 +392,7 @@ function bindHudDrag(root) {
   });
 }
 
-/** Pinta `hudState` en el DOM. Siempre visible en Meet. */
+/** Paint `hudState` into the DOM. Always visible in Meet. */
 function paintHud() {
   const root = ensureHud();
   root.classList.remove("lsa-hidden");
@@ -400,14 +403,16 @@ function paintHud() {
   cap.className = "lsa-cap " + (hudState.capturing ? "on" : "off");
   root.querySelector("#lsa-status").textContent = hudState.statusText;
   const glossEl = root.querySelector("#lsa-gloss");
-  const token = hudState.lastGloss || "—";
-  let glossLine = "Last gloss: " + token;
+  let token = hudState.lastGloss || "—";
+  if (token === "voice") token = "voz";
+  else if (token === "chat" || token === "text") token = "chat";
+  let glossLine = "Última glosa: " + token;
   if (token && token !== "—" && hudState.glossKind === "added") {
-    glossLine = "In the message: " + token;
+    glossLine = "En el mensaje: " + token;
   } else if (token && token !== "—" && hudState.glossKind === "confidence") {
-    glossLine = "Low confidence: " + token;
+    glossLine = "Poca confianza: " + token;
   } else if (token && token !== "—" && hudState.glossKind === "repeat") {
-    glossLine = "Not added: " + token;
+    glossLine = "No se agregó: " + token;
   }
   glossEl.textContent = glossLine;
   glossEl.className = "lsa-gloss" + (hudState.glossKind ? " lsa-gloss-" + hudState.glossKind : "");
@@ -415,7 +420,7 @@ function paintHud() {
   if (pendingEl) {
     const pending = String(hudState.pendingText || "").trim();
     pendingEl.hidden = !pending;
-    pendingEl.textContent = pending ? "Phrase: " + pending : "";
+    pendingEl.textContent = pending ? "Enunciado: " + pending : "";
   }
   const sp = root.querySelector("#lsa-spanish");
   if (sp) sp.textContent = hudState.spanish || "";
@@ -427,7 +432,7 @@ function paintHud() {
 }
 
 /**
- * Fusiona un parche de estado (captions / debug) y refresca el HUD.
+ * Merge a state patch (captions / debug) and refresh the HUD.
  * Spanish clears on its own after {@link SUBTITLE_HOLD_MS} ms.
  * @param {object} partial
  */
@@ -459,17 +464,17 @@ function setHud(partial) {
     hudState.statusText = partial.debug;
   } else if (partial.status || partial.error) {
     const map = {
-      escuchando: "Show your hands to capture",
-      grabando: "Recording sign",
-      enviando: "Classifying sign…",
-      traduciendo: "Translating…",
-      listo: "Caption on your video",
+      escuchando: "Mostrá las manos para capturar",
+      grabando: "Grabando seña",
+      enviando: "Clasificando seña…",
+      traduciendo: "Traduciendo…",
+      listo: "Subtítulo en tu video",
       error: partial.error || "Error",
     };
     hudState.statusText = map[partial.status] || partial.error || partial.status;
   }
   if (hudState.alert) {
-    hudState.statusText = "Translator is not responding. Restart ILSA.";
+    hudState.statusText = "El traductor no responde. Reiniciá ILSA.";
   }
   paintHud();
 }
@@ -547,7 +552,7 @@ function startBridge(mode) {
   loop();
   setTimeout(() => {
     if (running && meetMode === "signer" && !framesSeen) {
-      setHud({ debug: "No video. Turn Meet camera off and on." });
+      setHud({ debug: "Sin video. Apagá y prendé la cámara de Meet." });
     }
   }, 5000);
 }
@@ -560,7 +565,7 @@ function stopBridge() {
   stopVoice();
   postToPage({ type: "LSA_SPEECH_STOP" });
   postToPage({ type: "LSA_SET_ENABLED", enabled: false });
-  setHud({ debug: "Start ILSA to translate", capturing: false, lastGloss: "—", alert: false });
+  setHud({ debug: "Encendé ILSA para traducir", capturing: false, lastGloss: "—", alert: false });
 }
 
 window.addEventListener("message", (event) => {
@@ -574,7 +579,7 @@ window.addEventListener("message", (event) => {
       if (!open) {
         sendExt({ type: "lsa-capture-reset" });
         if (running && meetMode === "signer") {
-          setHud({ debug: "Meet camera off", capturing: false });
+          setHud({ debug: "Cámara de Meet apagada", capturing: false });
         }
       } else if (running && meetMode === "signer") {
         setHud({ status: "escuchando", capturing: false });
@@ -582,7 +587,7 @@ window.addEventListener("message", (event) => {
     }
   }
   if (data.type === "LSA_PIPELINE" && running && meetMode !== "hearing" && !framesSeen) {
-    setHud({ debug: "Show your hands to capture", capturing: false });
+    setHud({ debug: "Mostrá las manos para capturar", capturing: false });
   }
   if (data.type === "LSA_AUDIO_WAV" && running && meetMode === "hearing" && wantsHearingVoice()) {
     transcribeMeetAudio(data.wavB64);
@@ -592,7 +597,17 @@ window.addEventListener("message", (event) => {
   }
   if (data.type === "LSA_SPEECH_ERROR") {
     if (meetMode === "hearing" && !wantsHearingVoice()) return;
-    setHud({ debug: "Voice: " + (data.error || "error"), capturing: false });
+    setHud({ debug: "Voz: " + (data.error || "error"), capturing: false });
+  }
+  if (data.type === "LSA_FPS" && typeof data.fps === "number") {
+    const now = Date.now();
+    if (!globalThis.__lsaLastFpsPost || now - globalThis.__lsaLastFpsPost >= 5000) {
+      globalThis.__lsaLastFpsPost = now;
+      LsaApi.clientMetrics({
+        channel: meetMode === "hearing" ? "inverse" : "direct",
+        fps: data.fps,
+      }).catch(() => {});
+    }
   }
 });
 
@@ -613,14 +628,14 @@ async function tickLocal() {
     startBridge(h.mode === "hearing" ? "hearing" : "signer");
     if (h.semantic_ready === false) {
       setHud({
-        debug: "Translator is not responding. Restart ILSA.",
+        debug: "El traductor no responde. Reiniciá ILSA.",
         capturing: false,
         alert: true,
       });
     } else if (hudState.alert) {
       setHud({
         alert: false,
-        debug: meetMode === "hearing" ? hearingHint() : "Show your hands to capture",
+        debug: meetMode === "hearing" ? hearingHint() : "Mostrá las manos para capturar",
       });
     }
     return;
@@ -629,7 +644,7 @@ async function tickLocal() {
     stopBridge();
     return;
   }
-  if (!running) setHud({ debug: "Start ILSA to translate", capturing: false });
+  if (!running) setHud({ debug: "Encendé ILSA para traducir", capturing: false });
 }
 
 requestMeetSync();
@@ -667,18 +682,21 @@ try {
     if (msg.type === "lsa-meet-content-error") {
       running = true;
       ensureHud();
-      setHud({ debug: msg.error || "Could not connect to ILSA", capturing: false });
+      setHud({ debug: msg.error || "No se pudo conectar con ILSA", capturing: false });
     }
     if (msg.type === "lsa-landmarks") {
       postToPage({ type: "LSA_LANDMARKS", landmarks: msg.landmarks || null });
     }
     if (msg.type === "lsa-caption") {
       if (meetMode === "hearing") return;
+      const t0 = performance.now();
       setHud(msg);
       const spanish = typeof msg.spanish === "string" ? msg.spanish.trim() : "";
       if (spanish) {
         postToPage({ type: "LSA_CAPTION", line: spanish });
         speakSpanish(spanish);
+        const delivery_ms = performance.now() - t0;
+        LsaApi.clientMetrics({ channel: "direct", delivery_ms }).catch(() => {});
       }
     }
   });

@@ -72,11 +72,11 @@ function paintInput(hearingInput) {
     btn.classList.toggle("on", btn.getAttribute("data-input") === mode);
   });
   if (mode === "voice") {
-    inputHint.textContent = "Meet microphone only. Chat text is not translated.";
+    inputHint.textContent = "Solo el micrófono de Meet. El texto del chat no se traduce.";
   } else if (mode === "text") {
-    inputHint.textContent = "Meet chat only. The microphone is not transcribed.";
+    inputHint.textContent = "Solo el chat de Meet. El micrófono no se transcribe.";
   } else {
-    inputHint.textContent = "Meet microphone and chat are translated into signs.";
+    inputHint.textContent = "El micrófono y el chat de Meet se traducen a señas.";
   }
 }
 
@@ -89,12 +89,12 @@ function paintOutput(outputMode) {
   });
   if (outputMode === "audio") {
     outputHint.textContent =
-      "Reads the translation aloud on this PC. Others do not see text on your camera.";
+      "Lee la traducción en voz alta en esta PC. Los demás no ven texto en tu cámara.";
   } else if (outputMode === "both") {
     outputHint.textContent =
-      "Captions on your video and voice on this PC.";
+      "Subtítulos en tu video y voz en esta PC.";
   } else {
-    outputHint.textContent = "Spanish is painted on your camera; others read it on your video.";
+    outputHint.textContent = "El español se pinta en tu cámara; los demás lo leen en tu video.";
   }
 }
 
@@ -107,43 +107,43 @@ async function inspectTab(engineOk) {
   inMeet = Boolean(tab && tab.url && tab.url.startsWith("https://meet.google.com/"));
   if (!engineOk) {
     pageHint.textContent =
-      "To translate, Start ILSA. If you do not want it, leave it off: Meet works as usual.";
+      "Para traducir, encendé ILSA. Si no lo querés, dejalo apagado: Meet funciona igual.";
     return;
   }
   if (inMeet) {
     chrome.runtime.sendMessage({ type: "lsa-meet-sync", tabId: tab.id }).catch(() => {});
     pageHint.textContent =
-      "You are in Meet: translation is already on. To stop it, Stop ILSA in the exe.";
+      "Estás en Meet: la traducción ya está encendida. Para cortarla, apagá ILSA en el exe.";
   } else {
     pageHint.textContent =
-      "Open Google Meet: with ILSA on, translation starts by itself. To stop, Stop the exe.";
+      "Abrí Google Meet: con ILSA encendido, la traducción arranca sola. Para cortar, apagá el exe.";
   }
 }
 
 function openReport() {
   const user = (reportText.value || "").trim();
   if (!user) {
-    reportHint.textContent = "Write what happened, even if it is one line.";
+    reportHint.textContent = "Escribí qué pasó, aunque sea una línea.";
     return;
   }
   const manifest = chrome.runtime.getManifest();
   const h = lastHealth;
   const mode =
-    h && h.mode === "hearing" ? "Hearing" : h && h.ok ? "Signer" : "Engine off";
+    h && h.mode === "hearing" ? "Oyente" : h && h.ok ? "Sordo" : "Motor apagado";
   const body = [
-    "## What happened",
+    "## Qué pasó",
     user,
     "",
-    "## Context",
-    `- Extension: ${manifest.version}`,
-    `- Engine: ${h && h.ok ? "on" : "off"}`,
-    `- Mode: ${mode}`,
-    `- In Meet: ${inMeet ? "yes" : "no"}`,
+    "## Contexto",
+    `- Extensión: ${manifest.version}`,
+    `- Motor: ${h && h.ok ? "encendido" : "apagado"}`,
+    `- Modo: ${mode}`,
+    `- En Meet: ${inMeet ? "sí" : "no"}`,
   ].join("\n");
   const url =
     REPO_ISSUES +
     "?title=" +
-    encodeURIComponent("ILSA / Meet failure") +
+    encodeURIComponent("Falla ILSA / Meet") +
     "&body=" +
     encodeURIComponent(body);
   chrome.tabs.create({ url });
@@ -162,14 +162,14 @@ LsaApi.health()
     lastHealth = h;
     dot.classList.add("on");
     const signer = h.mode !== "hearing";
-    metaMode.textContent = signer ? "Signer (LSA → Spanish)" : "Hearing (voice/chat → glosses)";
-    healthText.textContent = "Engine connected";
+    metaMode.textContent = signer ? "Sordo (LSA → español)" : "Oyente (voz/chat → glosas)";
+    healthText.textContent = "Motor conectado";
     if (signer) {
       debugBlock.hidden = false;
       outputField.hidden = false;
       pauseField.hidden = false;
       inputField.hidden = false;
-      inputHint.textContent = "Voice or chat capture is used with ILSA in hearing mode.";
+      inputHint.textContent = "La captura de voz o chat se usa con ILSA en modo oyente.";
     } else {
       debugBlock.hidden = true;
       outputField.hidden = true;
@@ -180,7 +180,7 @@ LsaApi.health()
   })
   .catch(() => {
     lastHealth = null;
-    healthText.textContent = "Engine off — download ILSA in Install engine";
+    healthText.textContent = "Motor apagado — descargá ILSA en Instalar motor";
     metaMode.textContent = "—";
     outputField.hidden = true;
     pauseField.hidden = true;

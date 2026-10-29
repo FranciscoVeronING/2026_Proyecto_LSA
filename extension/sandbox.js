@@ -73,7 +73,7 @@ async function resolveAssetBase() {
     }
   }
   throw new Error(
-    "Missing holistic_solution_packed_assets.data. In the repo folder run: py -3 packaging/fetch_extension_assets.py and reload the extension. " +
+    "Falta holistic_solution_packed_assets.data. En la carpeta del repo corré: py -3 packaging/fetch_extension_assets.py y recargá la extensión. " +
       last
   );
 }
@@ -124,7 +124,7 @@ function ensureCtx() {
  */
 async function init() {
   if (typeof Holistic !== "function") {
-    throw new Error("holistic.js did not load in the sandbox");
+    throw new Error("No cargó holistic.js en el sandbox");
   }
   await resolveAssetBase();
   holistic = new Holistic({ locateFile });
@@ -156,7 +156,7 @@ async function init() {
 }
 
 /**
- * Pinta el frame en `#input` y corre `holistic.send`.
+ * Draw the frame on `#input` and run `holistic.send`.
  * @param {{ buffer?: ArrayBuffer, width?: number, height?: number, bitmap?: ImageBitmap }} data
  */
 async function sendFrame(data) {
@@ -218,7 +218,7 @@ window.addEventListener("error", (event) => {
 });
 
 window.addEventListener("unhandledrejection", (event) => {
-  post({ type: "error", message: String(event.reason || "MediaPipe rejected a promise") });
+  post({ type: "error", message: String(event.reason || "MediaPipe rechazó una promesa") });
 });
 
 init().catch((err) => {

@@ -19,9 +19,9 @@ class HearingSession:
         self.gloss_text = ""
         try:
             if not configured():
-                raise RuntimeError("Semantic translator URL is missing")
+                raise RuntimeError("Falta la URL del traductor semántico")
             if not ping():
-                raise RuntimeError("Cloud Run translator is not responding")
+                raise RuntimeError("El traductor Cloud Run no responde")
             self.semantic_ready = True
             print("[backend] Hearing mode: voice → glosses (remote semantic).")
         except Exception as exc:
@@ -49,7 +49,7 @@ class HearingSession:
         return None
 
     def ingest_sign(self, frames: list) -> dict[str, Any]:
-        raise RuntimeError("Hearing mode: signs are not classified.")
+        raise RuntimeError("Modo oyente: no se clasifican señas.")
 
     def ingest_speech(self, spanish: str, final: bool = True) -> dict[str, Any]:
         text = (spanish or "").strip()
@@ -95,6 +95,15 @@ class HearingSession:
             except Exception as exc:
                 print(f"[backend] Remote T-pose failed: {exc}")
                 clip = {"ok": False, "error": str(exc), "frames": [], "missing": []}
+        queue_ms = timing.get("queue_ms") if timing.get("queue_ms") is not None else timing.get("queued_ms")
+        infer_ms = timing.get("inference_ms") if timing.get("inference_ms") is not None else (
+            timing.get("infer_ms") if timing.get("infer_ms") is not None else timing.get("server_ms")
+        )
+        transport = timing.get("transport_ms")
+        if transport is None and remote_ms:
+            from utils.benchmark_logger import transport_ms as net_ms
+
+            transport = net_ms(timing.get("roundtrip_ms") or remote_ms, queue_ms, infer_ms)
         snap = self.snapshot()
         snap.update({
             "closed": True,
@@ -102,23 +111,41 @@ class HearingSession:
             "glosses": glosses,
             "caption": glosses,
             "avatar": clip,
+            "pause_ms": 0.0,
+            "queue_ms": queue_ms,
+            "inference_ms": infer_ms,
+            "transport_ms": transport,
+            "delivery_ms": round(delivery_ms, 1),
         })
-        from backend.metrics import log_event
+        from backend.metrics import log_event, record_pipeline_turn
 
         log_event(
             "hearing",
             spanish=text,
             glosses=glosses,
-            queued_ms=timing.get("queued_ms"),
-            infer_ms=timing.get("infer_ms") if timing.get("infer_ms") is not None else timing.get("server_ms"),
+            pause_ms=0.0,
+            queued_ms=queue_ms,
+            queue_ms=queue_ms,
+            infer_ms=infer_ms,
+            inference_ms=infer_ms,
+            transport_ms=transport,
             remote_ms=round(remote_ms, 1),
             server_ms=timing.get("server_ms"),
             delivery_ms=round(delivery_ms, 1),
         )
+        if glosses:
+            record_pipeline_turn(
+                "inverse",
+                pause_ms=0,
+                queue_ms=queue_ms,
+                inference_ms=infer_ms,
+                transport_ms=transport,
+                delivery_ms=delivery_ms,
+            )
         return snap
 
     def note_activity(self) -> None:
         return None
 
-    def close_utterance(self) -> dict[str, Any]:
+    def close_utterance(self, pause_ms: float | None = None) -> dict[str, Any]:
         return self.snapshot()

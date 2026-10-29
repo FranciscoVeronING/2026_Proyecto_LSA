@@ -37,6 +37,27 @@ def _pct(values: list[float], p: float) -> float | None:
     return round(ordered[idx], 1)
 
 
+def record_pipeline_turn(
+    channel: str,
+    *,
+    pause_ms: Any = 0,
+    queue_ms: Any = 0,
+    inference_ms: Any = 0,
+    transport_ms: Any = 0,
+    delivery_ms: Any = 0,
+) -> dict[str, Any]:
+    from utils.benchmark_logger import record_turn
+
+    return record_turn(
+        channel=channel,
+        pause_ms=pause_ms,
+        queue_ms=queue_ms,
+        inference_ms=inference_ms,
+        transport_ms=transport_ms,
+        delivery_ms=delivery_ms,
+    )
+
+
 def log_event(kind: str, **fields: Any) -> dict[str, Any]:
     record = {
         "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
@@ -93,8 +114,17 @@ def summary() -> dict[str, Any]:
     inf = _nums("utterance", "infer_ms") + _nums("hearing", "infer_ms")
     if not inf:
         inf = _nums("utterance", "server_ms") + _nums("hearing", "server_ms")
-    cola = _nums("utterance", "queued_ms") + _nums("hearing", "queued_ms")
-    entrega = _nums("hearing", "delivery_ms")
+    cola = _nums("utterance", "queue_ms") + _nums("hearing", "queue_ms")
+    if not cola:
+        cola = _nums("utterance", "queued_ms") + _nums("hearing", "queued_ms")
+    infer_named = _nums("utterance", "inference_ms") + _nums("hearing", "inference_ms")
+    if infer_named:
+        inf = infer_named
+    net = _nums("utterance", "transport_ms") + _nums("hearing", "transport_ms")
+    entrega = _nums("utterance", "delivery_ms") + _nums("hearing", "delivery_ms")
+    pause = _nums("utterance", "pause_ms")
+    from utils.process_stats import snapshot as proc_snap
+
     return {
         "file": str(log_path()),
         "n_sign": len(signs),
@@ -113,13 +143,19 @@ def summary() -> dict[str, Any]:
             "classifier_p95": _pct(clf, 95),
             "remote_p50": _pct(rem, 50),
             "remote_p95": _pct(rem, 95),
+            "pause_p50": _pct(pause, 50),
+            "queue_p50": _pct(cola, 50),
+            "queue_p95": _pct(cola, 95),
             "cola_p50": _pct(cola, 50),
             "cola_p95": _pct(cola, 95),
             "llm_server_p50": _pct(inf, 50),
+            "inference_p50": _pct(inf, 50),
             "infer_p95": _pct(inf, 95),
+            "transport_p50": _pct(net, 50),
             "entrega_p50": _pct(entrega, 50),
             "entrega_p95": _pct(entrega, 95),
         },
+        "process": proc_snap(),
         "last": events[-8:],
     }
 
@@ -132,6 +168,11 @@ def health_line() -> str:
         bits.append(f"conf {s['mean_conf1']:.0%}")
     if ms.get("classifier_p50") is not None:
         bits.append(f"clf {ms['classifier_p50']:.0f} ms")
-    if ms.get("remote_p50") is not None:
+    if ms.get("inference_p50") is not None:
+        bits.append(f"infer {ms['inference_p50']:.0f} ms")
+    elif ms.get("remote_p50") is not None:
         bits.append(f"translator {ms['remote_p50']:.0f} ms")
+    proc = s.get("process") or {}
+    if proc.get("rss_mb") is not None:
+        bits.append(f"ram {proc['rss_mb']:.0f} MB")
     return " · ".join(bits)

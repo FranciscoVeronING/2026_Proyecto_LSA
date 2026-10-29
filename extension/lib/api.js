@@ -37,7 +37,7 @@ async function apiViaWorker(path, options = {}) {
     body: options.body || null,
   });
   if (!reply || !reply.ok) {
-    throw new Error((reply && reply.error) || "ILSA is not responding on 127.0.0.1:8765. Start the engine.");
+    throw new Error((reply && reply.error) || "ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
   }
   return reply.data;
 }
@@ -54,7 +54,7 @@ async function apiDirect(path, options = {}) {
       headers,
     });
   } catch (_) {
-    throw new Error("Failed to fetch: ILSA is not responding on 127.0.0.1:8765. Start the engine.");
+    throw new Error("Failed to fetch: ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
   }
   const data = parseBody(await res.text());
   if (!res.ok) throw new Error(errorMessage(data, res.statusText));
@@ -92,6 +92,15 @@ const LsaApi = {
       body: JSON.stringify({ wav_b64: wavB64, lang: lang || "es-ES" }),
     }),
   activity: () => api("/activity", { method: "POST", body: "{}" }),
-  endUtterance: () => api("/utterance/end", { method: "POST", body: "{}" }),
+  endUtterance: (payload) =>
+    api("/utterance/end", {
+      method: "POST",
+      body: JSON.stringify(payload || {}),
+    }),
+  clientMetrics: (payload) =>
+    api("/metrics/client", {
+      method: "POST",
+      body: JSON.stringify(payload || {}),
+    }),
   exeUrl: `${API_BASE}/download/exe`,
 };

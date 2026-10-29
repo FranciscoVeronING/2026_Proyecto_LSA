@@ -82,7 +82,7 @@ class SignerSession:
         try:
             self._ensure_remote()
             if not self.semantic_ready:
-                raise RuntimeError(self.semantic_error or "Cloud Run translator is not responding")
+                raise RuntimeError(self.semantic_error or "El traductor Cloud Run no responde")
             print("[backend] Remote translator ready.")
         except Exception as e:
             with self.lock:
@@ -101,12 +101,12 @@ class SignerSession:
             return
         if not configured():
             with self.lock:
-                self.semantic_error = "Semantic translator URL is missing"
+                self.semantic_error = "Falta la URL del traductor semántico"
                 self.semantic_ready = False
             return
         if not ping():
             with self.lock:
-                self.semantic_error = "Cloud Run translator is not responding"
+                self.semantic_error = "El traductor Cloud Run no responde"
                 self.semantic_ready = False
             return
         with self._semantic_gate:
@@ -286,7 +286,7 @@ class SignerSession:
         )
         return snap
 
-    def close_utterance(self) -> dict[str, Any]:
+    def close_utterance(self, pause_ms: float | None = None) -> dict[str, Any]:
         with self.lock:
             closed = list(self.buffer.glosses)
             self.buffer.glosses.clear()
@@ -309,6 +309,31 @@ class SignerSession:
             self.spanish_text = text
             self.semantic_busy = False
 
+        timing = {}
+        if via == "llm":
+            from semantic.remote import last_timing
+
+            timing = last_timing()
+        pause = float(pause_ms) if pause_ms is not None else round(cfg.UTTERANCE_PAUSE_SEC * 1000, 1)
+        queue_ms = timing.get("queue_ms") if timing.get("queue_ms") is not None else timing.get("queued_ms")
+        infer_ms = timing.get("inference_ms") if timing.get("inference_ms") is not None else (
+            timing.get("infer_ms") if timing.get("infer_ms") is not None else (
+                round(server_ms, 1) if server_ms is not None else None
+            )
+        )
+        transport = timing.get("transport_ms")
+        if transport is None and via == "llm":
+            from utils.benchmark_logger import transport_ms as net_ms
+
+            transport = net_ms(timing.get("roundtrip_ms") or remote_ms, queue_ms, infer_ms)
+
+        print(
+            f"[metrics] Tiempo de Pausa (Heurística de Cierre): {pause:.1f} ms "
+            f"— NOT model time (t_pausa_inicio → t_pausa_fin at "
+            f"{cfg.UTTERANCE_PAUSE_SEC:.1f}s idle; excluded from RNF-01)",
+            flush=True,
+        )
+
         snap = self.snapshot()
         snap.update({
             "closed": True,
@@ -316,28 +341,38 @@ class SignerSession:
             "spanish": text,
             "via": via,
             "ms": round(total_ms, 1),
+            "pause_ms": round(pause, 1),
+            "queue_ms": queue_ms,
+            "inference_ms": infer_ms,
+            "transport_ms": transport,
+            "delivery_ms": 0.0,
         })
-        from backend.metrics import log_event
+        from backend.metrics import log_event, record_pipeline_turn
 
-        timing = {}
-        if via == "llm":
-            from semantic.remote import last_timing
-
-            timing = last_timing()
         log_event(
             "utterance",
             glosses=" ".join(closed),
             spanish=text,
             via=via,
-            pause_ms=round(cfg.UTTERANCE_PAUSE_SEC * 1000, 1),
-            queued_ms=timing.get("queued_ms"),
-            infer_ms=timing.get("infer_ms") if timing.get("infer_ms") is not None else (
-                round(server_ms, 1) if server_ms is not None else None
-            ),
+            pause_ms=round(pause, 1),
+            queued_ms=queue_ms,
+            queue_ms=queue_ms,
+            infer_ms=infer_ms,
+            inference_ms=infer_ms,
+            transport_ms=transport,
+            delivery_ms=0.0,
             remote_ms=round(remote_ms, 1),
             server_ms=round(server_ms, 1) if server_ms is not None else None,
             total_ms=round(total_ms, 1),
             n_glosses=len(closed),
+        )
+        record_pipeline_turn(
+            "direct",
+            pause_ms=pause,
+            queue_ms=queue_ms,
+            inference_ms=infer_ms,
+            transport_ms=transport,
+            delivery_ms=0,
         )
         srv = f" server={server_ms:.0f}ms" if server_ms is not None else ""
         print(

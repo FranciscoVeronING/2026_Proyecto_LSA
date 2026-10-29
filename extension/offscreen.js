@@ -15,6 +15,9 @@ let sandboxReady = false;
 let sandboxLastError = "";
 let busySign = false;
 let signQueue = null;
+let holFrames = 0;
+let holT0 = 0;
+let lastHolisticFpsPost = 0;
 
 function enqueueSign(frames, client) {
   if (busySign) {
@@ -29,7 +32,7 @@ function enqueueSign(frames, client) {
       const post_ms = Math.round(performance.now() - tPost);
       if (s && s.accepted === false) {
         emit({
-          debug: s.reason === "cooldown" ? "Wait a second…" : "Sign too short, repeat",
+          debug: s.reason === "cooldown" ? "Esperá un segundo…" : "Seña corta, repetí",
           capturing: false,
         });
         return;
@@ -86,10 +89,11 @@ const engine = createCaptureEngine(
       lastActivityPost = now;
       LsaApi.activity().catch(() => {});
     },
-    onUtterancePause() {
+    onUtterancePause(info) {
       emit({ status: "traduciendo" });
       const t0 = performance.now();
-      return LsaApi.endUtterance()
+      const pause_ms = info && typeof info.pause_ms === "number" ? info.pause_ms : undefined;
+      return LsaApi.endUtterance({ pause_ms })
         .then((s) => {
           const ms = s && s.ms != null ? Math.round(s.ms) : Math.round(performance.now() - t0);
           emit({ debug: `Traductor ${ms} ms (${(s && s.via) || "—"})` });
@@ -151,7 +155,7 @@ window.addEventListener("message", (event) => {
   if (data.type === "need-frame" || data.type === "error") {
     frameBusy = false;
     if (data.type === "error") {
-      sandboxLastError = data.message || "MediaPipe error";
+      sandboxLastError = data.message || "Error en MediaPipe";
       emit({ status: "error", error: sandboxLastError });
     }
     pumpFrame();
@@ -173,6 +177,19 @@ window.addEventListener("message", (event) => {
     });
     emitDebug(info);
     emitLandmarks(data);
+    holFrames += 1;
+    if (!holT0) holT0 = performance.now();
+    const holSpan = performance.now() - holT0;
+    if (holSpan >= 1000) {
+      const holistic_fps = (holFrames * 1000) / holSpan;
+      holFrames = 0;
+      holT0 = performance.now();
+      const now = Date.now();
+      if (now - lastHolisticFpsPost >= 5000) {
+        lastHolisticFpsPost = now;
+        LsaApi.clientMetrics({ holistic_fps }).catch(() => {});
+      }
+    }
   }
 });
 
@@ -203,11 +220,11 @@ function emitDebug(info) {
   const max = cfg.capture_buffer_size || 60;
   let debug;
   if (info.recording) {
-    debug = `Recording sign ${info.bufferLen}/${max}`;
+    debug = `Grabando seña ${info.bufferLen}/${max}`;
   } else if (info.handsPresent) {
-    debug = "Hands in view";
+    debug = "Manos a la vista";
   } else {
-    debug = "Show your hands to capture";
+    debug = "Mostrá las manos para capturar";
   }
   emit({
     status: info.recording ? "grabando" : "escuchando",
@@ -235,7 +252,7 @@ function waitSandboxReady(timeoutMs) {
         clearInterval(id);
         reject(
           new Error(
-            "MediaPipe did not start. Missing WASM (.data/.wasm) in extension/vendor/mediapipe. Run py -3 packaging/fetch_extension_assets.py and reload the extension."
+            "MediaPipe no arrancó. Faltan los WASM (.data/.wasm) en extension/vendor/mediapipe. Corré py -3 packaging/fetch_extension_assets.py y recargá la extensión."
           )
         );
       }
@@ -266,7 +283,7 @@ async function startSession(tabId, handed) {
   }
   meetTabId = tabId;
   const h = await LsaApi.health();
-  if (!h.ok) throw new Error("The LSA engine is not on.");
+  if (!h.ok) throw new Error("El motor LSA no está encendido.");
   cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
   cfg.hands_frames_to_start = 1;
   cfg.min_capture_frames = Math.min(2, Number(cfg.min_capture_frames) || 2);

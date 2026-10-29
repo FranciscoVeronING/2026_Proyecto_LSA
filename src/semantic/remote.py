@@ -20,6 +20,9 @@ _last_timing: dict = {
     "server_ms": None,
     "queued_ms": None,
     "infer_ms": None,
+    "queue_ms": None,
+    "inference_ms": None,
+    "transport_ms": None,
 }
 _keepalive_started = False
 _keepalive_lock = threading.Lock()
@@ -78,7 +81,7 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
         headers=_headers(),
         method="POST",
     )
-    t0 = time.perf_counter()
+    t_envio = time.perf_counter()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             body = resp.read().decode("utf-8")
@@ -88,22 +91,35 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
     except urllib.error.URLError as exc:
         raise RuntimeError(f"Could not reach semantic service at {base}: {exc.reason}") from exc
     data = json.loads(body) if body else {}
-    roundtrip = (time.perf_counter() - t0) * 1000
-    infer_ms = data.get("ms")
-    queued_ms = data.get("queued_ms")
-    infer_val = float(infer_ms) if isinstance(infer_ms, (int, float)) else None
-    queued_val = float(queued_ms) if isinstance(queued_ms, (int, float)) else None
+    t_recepcion = time.perf_counter()
+    roundtrip = (t_recepcion - t_envio) * 1000
+    infer_raw = data.get("inference_ms", data.get("ms"))
+    queue_raw = data.get("queue_ms", data.get("queued_ms"))
+    infer_val = float(infer_raw) if isinstance(infer_raw, (int, float)) else None
+    queued_val = float(queue_raw) if isinstance(queue_raw, (int, float)) else None
+    transport = roundtrip
+    if queued_val is not None:
+        transport -= queued_val
+    if infer_val is not None:
+        transport -= infer_val
+    transport = max(0.0, transport)
     _last_timing["roundtrip_ms"] = round(roundtrip, 1)
     _last_timing["infer_ms"] = round(infer_val, 1) if infer_val is not None else None
+    _last_timing["inference_ms"] = _last_timing["infer_ms"]
     _last_timing["queued_ms"] = round(queued_val, 1) if queued_val is not None else None
-    # `server_ms` = inference (RNF-01). Queue time is `queued_ms`.
+    _last_timing["queue_ms"] = _last_timing["queued_ms"]
+    _last_timing["transport_ms"] = round(transport, 1)
+    # `server_ms` = inference (RNF-01). Queue is `queue_ms`. Transport is RTT minus both.
     _last_timing["server_ms"] = _last_timing["infer_ms"]
     extra = ""
     if queued_val is not None:
         extra += f" queue={queued_val:.0f}ms"
     if infer_val is not None:
         extra += f" infer={infer_val:.0f}ms"
-    print(f"[semantic] POST {path} roundtrip={roundtrip:.0f}ms{extra}")
+    extra += f" transport={transport:.0f}ms"
+    print(
+        f"[semantic] POST {path} t_envio→t_recepcion roundtrip={roundtrip:.0f}ms{extra}"
+    )
     _ensure_keepalive()
     return data
 

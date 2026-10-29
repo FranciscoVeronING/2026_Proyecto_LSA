@@ -36,7 +36,7 @@ async function hasOffscreen() {
 }
 
 /**
- * Crea `offscreen.html` (Holistic no puede correr en el service worker).
+ * Create `offscreen.html` (Holistic cannot run in the service worker).
  * @returns {Promise<void>}
  */
 async function ensureOffscreen() {
@@ -44,12 +44,12 @@ async function ensureOffscreen() {
   await chrome.offscreen.createDocument({
     url: OFFSCREEN_URL,
     reasons: ["IFRAME_SCRIPTING", "BLOBS"],
-    justification: "MediaPipe procesa el video local de Google Meet en un iframe aislado.",
+    justification: "MediaPipe processes Google Meet local video in an isolated iframe.",
   });
 }
 
 /**
- * Espera a que el documento offscreen exista (el grafo WASM tarda).
+ * Wait until the offscreen document exists (the WASM graph takes a while).
  * @param {number} [timeoutMs=8000]
  * @returns {Promise<void>}
  */
@@ -227,7 +227,7 @@ function parseApiBody(text) {
  */
 async function proxyIlsaApi(msg) {
   const path = String((msg && msg.path) || "");
-  if (!path.startsWith("/")) throw new Error("Invalid request.");
+  if (!path.startsWith("/")) throw new Error("Pedido inválido.");
   const method = String((msg && msg.method) || "GET").toUpperCase();
   const opts = { method, signal: AbortSignal.timeout(method === "GET" ? 4000 : 240000) };
   if (msg && msg.body) {
@@ -238,7 +238,7 @@ async function proxyIlsaApi(msg) {
   try {
     res = await fetch(`${API_BASE}${path}`, opts);
   } catch (_) {
-    throw new Error("ILSA is not responding on 127.0.0.1:8765. Start the engine.");
+    throw new Error("ILSA no responde en 127.0.0.1:8765. Encendé el motor.");
   }
   const data = parseApiBody(await res.text());
   if (!res.ok) {
@@ -357,7 +357,7 @@ async function sendToOffscreen(message, tries = 40) {
       const ack = new Promise((resolve, reject) => {
         const t = setTimeout(() => {
           offscreenAcks.delete(id);
-          reject(new Error("The video processor did not respond."));
+          reject(new Error("El procesador de video no respondió."));
         }, 25000);
         offscreenAcks.set(id, {
           resolve: (msg) => {
@@ -376,11 +376,11 @@ async function sendToOffscreen(message, tries = 40) {
     }
     await new Promise((r) => setTimeout(r, 80));
   }
-  throw lastErr || new Error("The video processor did not connect.");
+  throw lastErr || new Error("El procesador de video no conectó.");
 }
 
 /**
- * Arranque Meet: offscreen + content script.
+ * Start Meet: offscreen + content script.
  * @param {number} tabId Tab `https://meet.google.com/…`.
  * @param {boolean} leftHanded
  * @returns {Promise<void>}
@@ -389,10 +389,10 @@ async function startMeet(tabId, leftHanded) {
   const tab = await chrome.tabs.get(tabId);
   const url = tab.url || tab.pendingUrl || "";
   if (!url.startsWith("https://meet.google.com/")) {
-    throw new Error("Open a Google Meet call and try again.");
+    throw new Error("Abrí una llamada de Google Meet y volvé a intentar.");
   }
   const h = await pingHealth();
-  if (!h) throw new Error("ILSA is not on. Pick a mode and press Start.");
+  if (!h) throw new Error("ILSA no está encendido. Elegí un modo y dale a Encender.");
   const mode = h.mode === "hearing" ? "hearing" : "signer";
   if (meetTabId === tabId && meetModeOn === mode) return;
   if (meetTabId && (meetTabId !== tabId || meetModeOn !== mode)) {
@@ -415,7 +415,7 @@ async function startMeet(tabId, leftHanded) {
       leftHanded: Boolean(leftHanded),
     });
     if (started && started.ok === false) {
-      throw new Error(started.error || "Could not start the interpreter.");
+      throw new Error(started.error || "No se pudo iniciar el intérprete.");
     }
   }
 }

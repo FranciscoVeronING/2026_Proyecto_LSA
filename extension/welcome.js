@@ -51,24 +51,24 @@ function saveAs(url, filename) {
  */
 async function downloadIlsa() {
   btnExe.disabled = true;
-  exeHint.textContent = "Preparing download…";
+  exeHint.textContent = "Preparando la descarga…";
   try {
     if (await resourceExists(PACKAGED_ZIP)) {
       saveAs(PACKAGED_ZIP, "ILSA.zip");
       exeHint.textContent =
-        "Done. Unzip ILSA.zip, open ILSA.exe, and leave that window open.";
+        "Listo. Descomprimí ILSA.zip, abrí ILSA.exe y dejá esa ventana abierta.";
       return;
     }
     if (await resourceExists(RELEASE_ZIP)) {
       saveAs(RELEASE_ZIP, "ILSA.zip");
       exeHint.textContent =
-        "Downloading from GitHub. Unzip, open ILSA.exe, and leave the window open.";
+        "Descargando desde GitHub. Descomprimí, abrí ILSA.exe y dejá la ventana abierta.";
       return;
     }
     exeHint.textContent =
-      "ILSA.zip was not found in the ilsa release.";
+      "No se encontró ILSA.zip en el release de ilsa.";
   } catch (err) {
-    exeHint.textContent = err && err.message ? err.message : "Could not download ILSA.";
+    exeHint.textContent = err && err.message ? err.message : "No se pudo descargar ILSA.";
   } finally {
     btnExe.disabled = false;
   }
@@ -83,17 +83,17 @@ async function refreshHealth() {
     const h = await LsaApi.health();
     if (!h.ok) throw new Error("pipeline not ready");
     dot.classList.add("on");
-    const mode = h.mode === "hearing" ? "hearing · voice → captions" : "signer · LSA";
+    const mode = h.mode === "hearing" ? "oyente · voz → subtítulos" : "sordo · LSA";
     const extra =
       h.mode === "hearing"
-        ? "Transcription ready."
+        ? "Transcripción lista."
         : h.semantic_ready
-          ? "Translator ready."
-          : "Translator unavailable.";
-    healthText.textContent = `ILSA running (${mode}). ${extra}`;
+          ? "Traductor listo."
+          : "Traductor no disponible.";
+    healthText.textContent = `ILSA encendido (${mode}). ${extra}`;
   } catch {
     dot.classList.remove("on");
-    healthText.textContent = "ILSA is not open. Download it, run it, and check again.";
+    healthText.textContent = "ILSA no está abierto. Descargalo, ejecutalo y volvé a comprobar.";
   }
 }
 

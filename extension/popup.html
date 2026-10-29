@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>LSA</title>
@@ -8,68 +8,68 @@
 <body class="popup">
   <div class="brand popup-brand">
     <img class="logo" src="icons/icon128.png" alt="ILSA" width="40" height="40" />
-    <h1>LSA Interpreter</h1>
+    <h1>Intérprete LSA</h1>
   </div>
   <div class="status">
     <span class="dot" id="dot"></span>
-    <span id="health-text">Checking engine…</span>
+    <span id="health-text">Comprobando el motor…</span>
   </div>
   <p class="hint" id="page-hint"></p>
 
   <dl class="meta" id="meta-block">
     <div>
-      <dt>Mode</dt>
+      <dt>Modo</dt>
       <dd id="meta-mode">—</dd>
     </div>
   </dl>
 
   <div class="field" id="input-field">
-    <span class="field-label">What is captured</span>
-    <div class="seg" role="group" aria-label="What is captured in hearing mode">
-      <button type="button" class="seg-btn" data-input="voice">Voice</button>
-      <button type="button" class="seg-btn" data-input="text">Text</button>
-      <button type="button" class="seg-btn" data-input="both">Both</button>
+    <span class="field-label">Qué se capta</span>
+    <div class="seg" role="group" aria-label="Qué se capta en modo oyente">
+      <button type="button" class="seg-btn" data-input="voice">Voz</button>
+      <button type="button" class="seg-btn" data-input="text">Texto</button>
+      <button type="button" class="seg-btn" data-input="both">Ambos</button>
     </div>
     <p class="hint" id="input-hint"></p>
   </div>
 
   <div class="field" id="output-field">
-    <span class="field-label">Output in Meet</span>
-    <div class="seg" role="group" aria-label="Output in Meet">
-      <button type="button" class="seg-btn" data-output="subtitles">Captions</button>
+    <span class="field-label">Salida en Meet</span>
+    <div class="seg" role="group" aria-label="Salida en Meet">
+      <button type="button" class="seg-btn" data-output="subtitles">Subtítulos</button>
       <button type="button" class="seg-btn" data-output="audio">Audio</button>
-      <button type="button" class="seg-btn" data-output="both">Both</button>
+      <button type="button" class="seg-btn" data-output="both">Ambos</button>
     </div>
     <p class="hint" id="output-hint"></p>
   </div>
 
   <div class="field" id="pause-field" hidden>
-    <label class="field-label" for="pause-select">Pause to close the sentence</label>
-    <select id="pause-select" class="pause-select" aria-label="Pause in seconds">
-      <option value="2">2 seconds</option>
-      <option value="3">3 seconds</option>
-      <option value="4" selected>4 seconds</option>
+    <label class="field-label" for="pause-select">Pausa para cerrar la oración</label>
+    <select id="pause-select" class="pause-select" aria-label="Pausa en segundos">
+      <option value="2">2 segundos</option>
+      <option value="3">3 segundos</option>
+      <option value="4" selected>4 segundos</option>
     </select>
-    <p class="hint">With no signs during this time, the utterance is sent to the translator.</p>
+    <p class="hint">Sin señas durante este tiempo, el enunciado va al traductor.</p>
   </div>
 
   <div id="debug-block">
   <label class="toggle" id="landmarks-row">
     <input type="checkbox" id="chk-landmarks" />
-    <span>Show landmarks</span>
+    <span>Mostrar landmarks</span>
   </label>
-  <p class="hint debug-hint">Development only: skeleton over your camera.</p>
+  <p class="hint debug-hint">Solo desarrollo: esqueleto sobre tu cámara.</p>
   </div>
 
   <div class="row" style="margin-top: 12px">
-    <button class="ghost" id="btn-setup" type="button">Install engine</button>
-    <button class="ghost" id="btn-report" type="button">Report a problem</button>
+    <button class="ghost" id="btn-setup" type="button">Instalar motor</button>
+    <button class="ghost" id="btn-report" type="button">Reportar un problema</button>
   </div>
 
   <div class="report" id="report-box" hidden>
-    <label class="field-label" for="report-text">What failed?</label>
-    <textarea id="report-text" rows="4" placeholder="What you were doing and what you saw (Meet, ILSA, captions…)."></textarea>
-    <button type="button" id="btn-report-send">Open report</button>
+    <label class="field-label" for="report-text">¿Qué falló?</label>
+    <textarea id="report-text" rows="4" placeholder="Qué estabas haciendo y qué viste (Meet, ILSA, subtítulos…)."></textarea>
+    <button type="button" id="btn-report-send">Abrir reporte</button>
     <p class="hint" id="report-hint"></p>
   </div>
 
