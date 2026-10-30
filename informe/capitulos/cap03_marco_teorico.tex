@@ -81,7 +81,7 @@ Los símbolos de esa ecuación se leen así:
     \item $\mathbf{W}_0$ son los pesos preentrenados, que permanecen fijos.
     \item $\mathbf{B}$ y $\mathbf{A}$ son las únicas matrices que se entrenan.
 \end{itemize}
-La figura dibuja el caso cuadrado $k = d$: $\mathbf{B}$ mide $d \times r$ y $\mathbf{A}$ mide $r \times d$. El producto $BA$ recupera el tamaño de $\Delta W$.
+La Figura~\ref{fig:comparacion_finetuning_lora} dibuja el caso cuadrado $k = d$: $\mathbf{B}$ mide $d \times r$ y $\mathbf{A}$ mide $r \times d$. El producto $BA$ recupera el tamaño de $\Delta W$.
 
 \subsection{Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
 Los modelos de lenguaje pequeños (SLM, por sus siglas en inglés) poseen un número reducido de parámetros en comparación con las arquitecturas de gran escala. Su función principal consiste en tomar una secuencia de texto de entrada para predecir la continuación lógica del mensaje. En este prototipo, los SLM asumen la traducción semántica bidireccional. Esta dimensión reducida facilita la etapa de ajuste fino, además de permitir la ejecución posterior del traductor, previamente cuantizado, directamente en la CPU.
@@ -96,7 +96,7 @@ La adaptación de estos modelos se ejecuta mediante la técnica de Adaptación d
 \label{eq:lora_formulation}
 \end{equation}
 
-donde $\alpha$ actúa como un factor de escala constante. La figura dibuja el caso cuadrado $k = d$: $\mathbf{B}$ mide $d \times r$ y $\mathbf{A}$ mide $r \times d$. El producto $BA$ recupera el tamaño de $\Delta W$.
+donde $\alpha$ actúa como un factor de escala constante. La Figura~\ref{fig:comparacion_finetuning_lora} dibuja el caso cuadrado $k = d$: $\mathbf{B}$ mide $d \times r$ y $\mathbf{A}$ mide $r \times d$. El producto $BA$ recupera el tamaño de $\Delta W$.
 
 \begin{figure}[!ht]
 \centering
@@ -247,7 +247,7 @@ La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducci
     \end{tabularx}
 \end{table}
 
-Cada límite de la tabla está en la fuente citada: el diccionario no reconoce, LSA64 filma con guantes, SignAll no devuelve señas, WLASL no sale de la ASL léxica, y Hand Talk parte del texto. Ninguna de esas fuentes describe el recorte de este prototipo, que es el reconocimiento aislado dentro de Meet.
+Cada límite del cuadro está en la fuente citada: el diccionario no reconoce, LSA64 filma con guantes, SignAll no devuelve señas, WLASL no sale de la ASL léxica, y Hand Talk parte del texto. Ninguna de esas fuentes describe el recorte de este prototipo, que es el reconocimiento aislado dentro de Meet.
 
 \section{Metodología de desarrollo}
 El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e incremental \parencite{pressman2014software}, compuesto por 6 fases principales:
@@ -259,6 +259,8 @@ El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e increment
     \item \textbf{Avatar e integración visual inversa:} Desarrollo del controlador del avatar para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico; e integración en la extensión.
     \item \textbf{Fase de pruebas:} Medición de las etapas de la Sección~\ref{sec:tiempo_pseudo}, con el procedimiento de la Sección~\ref{sec:latencias_pipeline}.
 \end{enumerate}
+
+Las tareas del trabajo se gestionaron en YouTrack \cite{jetbrains2024youtrack}. Cada tarea quedó registrada como un ticket, con su estado y las horas empleadas. Ese registro sigue el tiempo dedicado a cada tarea a lo largo de las fases.
 
 \paragraph{Fidelidad semántica}
 \label{sec:fidelidad_semantica}

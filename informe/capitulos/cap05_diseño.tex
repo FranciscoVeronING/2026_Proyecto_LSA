@@ -66,7 +66,7 @@ La interacción entre el navegador, el motor local y los servicios remotos se or
     \label{fig:diagrama_arquitectura}
 \end{figure}
 
-Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diagrama_secuencia_directo} y \ref{fig:diagrama_secuencia_inverso} ilustran el comportamiento de los canales directo e inverso respectivamente.
+Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diagrama_secuencia_directo} y~\ref{fig:diagrama_secuencia_inverso} ilustran el comportamiento de los canales directo e inverso, respectivamente.
 
 \begin{figure}[!ht]
     \centering
@@ -304,8 +304,8 @@ En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa l
 \node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (10.225,11.1) {[Si 2+ glosas]};
 \end{circuitikz}
 }%
-\caption{Diagrama de secuencia del sistema}
-\label{fig:diagrama_secuencia}
+\caption{Diagrama de secuencia del canal inverso, de español a LSA.}
+\label{fig:diagrama_secuencia_inverso}
 \end{figure}
 
 En ese diagrama, ILSA parte el texto por espacios antes de llamar al servidor semántico. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: el recuadro «1 palabra» no sale hacia el traductor. Si quedan dos o más palabras, la oración sigue por \texttt{POST /hearing}. La decisión no consulta el diccionario de poses. La pose de la glosa, venga de este atajo o del traductor, se pide después, en el recuadro de cada glosa.
@@ -346,10 +346,10 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 
 % Cajas de síntesis y sesión
 \draw (9.875,11) rectangle (12.375,9.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (11.125,10.4375) {sintesis de \\ voz};
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (11.125,10.4375) {síntesis de \\ voz};
 
 \draw (5.125,11) rectangle (9.375,9.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (7.25,10.4375) {sesion oyente y avatar};
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (7.25,10.4375) {sesión oyente y avatar};
 
 % Conexiones internas
 \draw [-{Stealth[scale=1.5]}] (6,16.125) -- (6,11) node[pos=0.63, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /hearing};
@@ -408,7 +408,8 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
   \caption{Endpoints de la API local del motor ILSA (\texttt{http://127.0.0.1:8765}).}
   \label{tab:api-ilsa-local}
   \scriptsize
-  \begin{tabular}{|p{0.10\textwidth}|p{0.24\textwidth}|p{0.48\textwidth}|p{0.12\textwidth}|}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\hspace{0pt}}p{1.35cm}|>{\raggedright\arraybackslash\hspace{0pt}}p{3.3cm}|>{\raggedright\arraybackslash\hspace{0pt}}X|>{\raggedright\arraybackslash\hspace{0pt}}p{1.9cm}|}
     \hline
     \textbf{Método} & \textbf{Ruta} & \textbf{Contrato} & \textbf{Códigos} \\ \hline
     GET & \texttt{/health} & Disponibilidad del proceso, del modo, del clasificador y del traductor remoto. & 200 \\ \hline
@@ -420,10 +421,10 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
     POST & \texttt{/stt} & Transcripción de audio WAV en Base64 a texto en modo oyente. & 200, 400, 502 \\ \hline
     POST & \texttt{/hearing} & Envío de oración y recepción de animación en modo oyente. & 200, 400, 503 \\ \hline
     POST & \texttt{/activity} & Reinicio del temporizador de pausa de inactividad ($\sim 4$\,s). & 200, 503 \\ \hline
-    POST & \texttt{/utterance/end} & Cierre explícito del enunciado y disparo de traducción. & 200, 503 \\ \hline
-    GET & \texttt{/mediapipe/\{name\}} & Despacho de recursos estáticos del estimador visual. & 200, 400, 404 \\ \hline
+    POST & \texttt{/utterance/\allowbreak end} & Cierre explícito del enunciado y disparo de traducción. & 200, 503 \\ \hline
+    GET & \texttt{/mediapipe/\allowbreak \{name\}} & Despacho de recursos estáticos del estimador visual. & 200, 400, 404 \\ \hline
     GET & \texttt{/download/exe} & Entrega del ejecutable del motor local. & 200, 404 \\ \hline
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 \subsection{API del servicio semántico remoto}
@@ -492,7 +493,7 @@ Antes de la reproducción de los clips, para evitar discontinuidades espaciales 
 S(x) = 3x^2 - 2x^3 \quad \text{para } x \in [0, 1]
 \label{eq:smoothstep}
 \end{equation}
-Este puente ejecuta una traslación suave sobre las coordenadas planares. Se explicita que este procedimiento constituye un ajuste gráfico e interpolatorio, diferendo del fenómeno biomecánico natural de la coarticulación gestual. El Cuadro~\ref{tab:salvaguardas_pose} sintetiza las previsiones de diseño ante contingencias en la representación.
+Este puente ejecuta una traslación suave sobre las coordenadas planares. Se explicita que este procedimiento constituye un ajuste gráfico e interpolatorio, distinto del fenómeno biomecánico natural de la coarticulación gestual. El Cuadro~\ref{tab:salvaguardas_pose} sintetiza las previsiones de diseño ante contingencias en la representación.
 
 \begin{table}[H]
   \centering
@@ -554,7 +555,7 @@ La integración con la plataforma Google Meet se resuelve mediante una extensió
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,11.8125) {video oculto \\ (flujo real)};
 
 \draw (-2.875,14) rectangle (0.125,12.875);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,13.4375) {inject-gum.js \\ (toma la camara)};
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.375,13.4375) {inject-gum.js \\ (toma la cámara)};
 
 \draw (-2.875,10.25) rectangle (0.625,9.125);
 \node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (-1.125,9.6875) {canvas virtual \\ (imagen y subtítulo)};
@@ -628,7 +629,7 @@ La integración con la plataforma Google Meet se resuelve mediante una extensió
 \section{Patrones de diseño de software aplicados}
 El diseño incorpora patrones de software consolidados para organizar las responsabilidades del sistema:
 \begin{itemize}
-    \item \textbf{Estrategia (\textit{Strategy}):} Aplicado en el módulo de filtrado de repeticiones (\texttt{RepeatGate}). Define políticas diferenciadas según la clase léxica (dígitos admiten repetición continua, letras aceptan hasta dos instancias consecutivas y vocabulario general descarta duplicados inmediatos).
+    \item \textbf{Estrategia (\textit{Strategy}):} Aplicado en el módulo de filtrado de repeticiones. \texttt{RepeatGate} define políticas diferenciadas según la clase léxica: los dígitos admiten repetición continua, las letras aceptan hasta dos instancias consecutivas y el vocabulario general descarta duplicados inmediatos.
     \item \textbf{Fachada (\textit{Facade}):} Aplicado en la API HTTP del motor ILSA local. Expone una interfaz unificada que oculta la complejidad interna de extracción, clasificación y comunicación con la nube.
     \item \textbf{Adaptador (\textit{Adapter}):} Implementado en la extensión web y en los conectores de red para transformar los formatos nativos del navegador a los contratos JSON requeridos por los servicios REST.
     \item \textbf{Estado (\textit{State}):} Gestiona la modalidad operativa de la sesión (Señante u Oyente) y altera dinámicamente el comportamiento de los endpoints sin requerir instancias de servicio separadas.

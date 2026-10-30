@@ -1268,6 +1268,35 @@
       \verb https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct
       \endverb
     \endentry
+    \entry{jetbrains2024youtrack}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=b6a77f3f5bead76a495a90d63703e1f9}{%
+           family={{JetBrains}},
+           familyi={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{fullhash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{fullhashraw}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{bibnamehash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{authorbibnamehash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{authornamehash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{authorfullhash}{b6a77f3f5bead76a495a90d63703e1f9}
+      \strng{authorfullhashraw}{b6a77f3f5bead76a495a90d63703e1f9}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Documentación oficial de {JetBrains}}
+      \field{note}{Accedido en octubre de 2026}
+      \field{title}{{YouTrack}: Issue Tracker and Project Management Tool}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.jetbrains.com/youtrack/
+      \endverb
+      \verb{url}
+      \verb https://www.jetbrains.com/youtrack/
+      \endverb
+    \endentry
     \entry{papineni2002bleu}{inproceedings}{}{}
       \name{author}{4}{}{%
         {{hash=7f72c67734e28d79452d687f2b2825d0}{%
@@ -1343,8 +1372,8 @@
       \strng{authornamehash}{bc6dfe0750848d77d639c1de6b9934e4}
       \strng{authorfullhash}{bc6dfe0750848d77d639c1de6b9934e4}
       \strng{authorfullhashraw}{bc6dfe0750848d77d639c1de6b9934e4}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Text Summarization Branches Out: Proceedings of the ACL-04 Workshop}
@@ -1719,8 +1748,8 @@
       \strng{authornamehash}{f7171dd132301ed89381e49852897f76}
       \strng{authorfullhash}{5663a84da08d9779012cfbac062a476a}
       \strng{authorfullhashraw}{5663a84da08d9779012cfbac062a476a}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of Machine Learning and Systems ({MLSys})}

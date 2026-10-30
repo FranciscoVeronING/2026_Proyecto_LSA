@@ -112,7 +112,7 @@ En el Cuadro~\ref{tab:brecha_offline_camara} se expone la diferencia observada e
 \end{table}
 
 En las iteraciones de 94 clases, el control de la iluminación del entorno elevó el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo.
-%TODO: optuna
+
 \subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
 El Cuadro~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
 
@@ -140,23 +140,23 @@ La exploración del espacio de hiperparámetros se estructuró en dos estudios c
 
 El primer estudio abarcó un vocabulario de 91 clases con una ventana fija de 32 fotogramas. La configuración seleccionada por la búsqueda conservó la dimensión de 128 y 2 capas, al tiempo que duplicó las cabezas de atención a 8, redujo la tasa de \textit{dropout} a $0{,}30$, fijó el tamaño de lote en 16 e introdujo una tasa de aprendizaje de $3{,}77\times 10^{-5}$. Tras el reentrenamiento final, este modelo obtuvo una exactitud de validación del 97{,}69\,\% y una pérdida de $0{,}087$. En las pruebas frente a cámara, las métricas registraron un 66{,}0\,\% en Top-1 y un 84{,}6\,\% en Top-3. Dichos valores se situaron 5,4 puntos porcentuales por debajo de la iteración manual B en Top-1 y 5,5 puntos por debajo de la iteración C en Top-3.
 
-El segundo estudio amplió el catálogo a 94 clases e incorporó la resolución temporal (ventanas de 8, 12 y 16 fotogramas) dentro del espacio de búsqueda. La opción de 24 fotogramas quedó excluida debido a la restricción física de los archivos de coordenadas, cuya longitud máxima era de 16 fotogramas. El ensayo de mayor rendimiento seleccionó una ventana de 12 fotogramas, 256 dimensiones, 2 cabezas de atención, 2 capas y un \textit{dropout} de 0{,}57. En la evaluación fuera de línea, la pérdida descendió a 0{,}080 y la exactitud alcanzó el 97{,}78\,\%, guarismo que resultó 0,62 puntos porcentuales inferior al \textit{baseline} de 16 fotogramas (98{,}40\,\%). Bajo condiciones controladas de iluminación en cámara, la exactitud Top-1 se registró en 80{,}9\,\%, frente al 86{,}2\,\% obtenido por el \textit{baseline}. Esta degradación afectó de forma directa al alfabeto dactilológico, donde la exactitud en las letras cayó 14,8 puntos porcentuales (con fallos específicos en \texttt{A}, \texttt{N}, \texttt{V} e \texttt{Y}). Si bien la métrica Top-3 mostró un leve incremento en sesiones independientes, una evaluación apareada sobre tomas idénticas descartó la existencia de una ventaja estadística significativa.
+El segundo estudio amplió el catálogo a 94 clases e incorporó la resolución temporal (ventanas de 8, 12 y 16 fotogramas) dentro del espacio de búsqueda. El ensayo de mayor rendimiento seleccionó una ventana de 12 fotogramas, 256 dimensiones, 2 cabezas de atención, 2 capas y un \textit{dropout} de 0{,}57. En la evaluación fuera de línea, la pérdida descendió a 0{,}080 y la exactitud alcanzó el 97{,}78\,\%, lo que resultó 0,62 puntos porcentuales inferior al \textit{baseline} de 16 fotogramas (98{,}40\,\%). Bajo condiciones controladas de iluminación en cámara, la exactitud Top-1 se registró en 80{,}9\,\%, frente al 86{,}2\,\% obtenido por el \textit{baseline}. Esta degradación afectó de forma directa al alfabeto dactilológico, donde la exactitud en las letras cayó 14,8 puntos porcentuales (con fallos específicos en \texttt{A}, \texttt{N}, \texttt{V} e \texttt{Y}). Si bien la métrica Top-3 mostró un leve incremento en sesiones independientes, una evaluación apareada sobre tomas idénticas descartó la existencia de una ventaja estadística significativa.
 
 \begin{table}[H]
     \centering
     \small
     \caption{Comparativa entre los ensayos de Optuna y las arquitecturas de referencia. Las cifras en cámara del segundo estudio corresponden a idénticas condiciones de iluminación que el \textit{baseline} de 16 fotogramas.}
     \label{tab:optuna_vs_baseline}
-    \begin{tabular}{llccc}
+    \begin{tabularx}{\textwidth}{Xlccc}
         \toprule
-        \textbf{Modelo} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \textbf{Modelo} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cám. Top-1} & \textbf{Cám. Top-3} \\
         \midrule
         Optuna v1, 32 fotogramas & 128 / 8 / 2 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
         Iteración B, 32 fotogramas & 128 / 4 / 2 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
         Optuna v2, 12 fotogramas & 256 / 2 / 2 & 97{,}78\,\% & 80{,}9\,\% & 96{,}8\,\% \\
-        \textit{Baseline} 16 fotogramas, misma luz & 128 / 4 / 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
+        \textit{Baseline} 16 frames, misma luz & 128 / 4 / 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
 \end{table}
 
 El descarte de las configuraciones producidas por Optuna obedeció a tres razones fundamentales:
@@ -222,7 +222,7 @@ El Cuadro~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de i
 
 Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores y en todos ellos la seña solicitada ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
 
-Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece, tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
+Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
 
 \subsection{Resultados de los módulos de traducción semántica}
 \label{sec:res_traduccion}
@@ -236,9 +236,10 @@ En el Cuadro~\ref{tab:sem_directo} se presentan las métricas cualitativas y cua
 \begin{table}[H]
 \centering
 \footnotesize
+\setlength{\tabcolsep}{3.5pt}
 \caption{Canal directo (LSA $\rightarrow$ Español), resultados finales (119 oraciones de evaluación). Índices en escala 0--100.}
 \label{tab:sem_directo}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{@{}lrrrrrrr@{}}
 \toprule
 \textbf{Modelo} & \textbf{Exacto} & \textbf{BLEU} & \textbf{ROUGE-L} & \textbf{METEOR} & \textbf{BERTScore} & \textbf{COMET} & \textbf{ms} \\
 \midrule
@@ -257,9 +258,10 @@ En el Cuadro~\ref{tab:sem_inverso} se detallan las métricas correspondientes al
 \begin{table}[H]
 \centering
 \footnotesize
+\setlength{\tabcolsep}{3.5pt}
 \caption{Canal inverso (Español $\rightarrow$ LSA), resultados finales (102 oraciones de evaluación). Índices en escala 0--100.}
 \label{tab:sem_inverso}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{@{}lrrrrrrr@{}}
 \toprule
 \textbf{Modelo} & \textbf{Exacto} & \textbf{BLEU} & \textbf{ROUGE-L} & \textbf{METEOR} & \textbf{BERTScore} & \textbf{COMET} & \textbf{ms} \\
 \midrule
@@ -373,7 +375,8 @@ En el Cuadro~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de 
     \small
     \caption{Métricas de uso de RAM y uso de CPU en la estación cliente durante la prueba activa.}
     \label{tab:perfilado_recursos_log}
-    \begin{tabular}{lcccc}
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{@{}lcccc@{}}
         \toprule
         \textbf{Estado del canal} & \textbf{RAM Prom.} & \textbf{RAM Máx.} & \textbf{CPU Prom. (\%)} & \textbf{CPU Máx. (\%)} \\
         \midrule
