@@ -37,6 +37,42 @@ def _pct(values: list[float], p: float) -> float | None:
     return round(ordered[idx], 1)
 
 
+def turn_extra(timing: dict | None = None, **more: Any) -> dict[str, Any]:
+    """Map Cloud Run / ILSA stats onto CSV columns."""
+    t = timing or {}
+    extra = {
+        "Via": more.get("via"),
+        "N_glosses": more.get("n_glosses"),
+        "Input_chars": more.get("input_chars"),
+        "Output_chars": more.get("output_chars"),
+        "Prompt_tokens": t.get("prompt_tokens"),
+        "Completion_tokens": t.get("completion_tokens"),
+        "Eval_tokens": t.get("eval_tokens"),
+        "Sys_tokens": t.get("sys_tokens"),
+        "Kv_hit": t.get("kv_hit"),
+        "Kv_mb": t.get("kv_mb"),
+        "T_prompt_eval_ms": t.get("t_prompt_eval_ms"),
+        "T_eval_ms": t.get("t_eval_ms"),
+        "Tokens_per_s": t.get("tokens_per_s"),
+        "Modelo": t.get("model_used"),
+        "N_ctx": t.get("n_ctx"),
+        "N_tokens": t.get("n_tokens"),
+        "Queue_depth": t.get("queue_depth"),
+        "N_threads": t.get("n_threads"),
+        "Cloud_RAM_mb": t.get("cloud_rss_mb"),
+        "Cloud_CPU_percent": t.get("cloud_cpu_percent"),
+        "Stt_ms": more.get("stt_ms", t.get("stt_ms")),
+        "Tpose_fetch_ms": more.get("tpose_fetch_ms"),
+        "Tpose_compose_ms": more.get("tpose_compose_ms"),
+        "Tpose_gets": more.get("tpose_gets"),
+        "Tpose_cache_hits": more.get("tpose_cache_hits"),
+        "Tpose_missing_n": more.get("tpose_missing_n"),
+        "Enie_restored": more.get("enie_restored", t.get("enie_restored")),
+        "Js_heap_mb": more.get("js_heap_mb"),
+    }
+    return {k: v for k, v in extra.items() if v is not None}
+
+
 def record_pipeline_turn(
     channel: str,
     *,
@@ -45,6 +81,7 @@ def record_pipeline_turn(
     inference_ms: Any = 0,
     transport_ms: Any = 0,
     delivery_ms: Any = 0,
+    extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     from utils.benchmark_logger import record_turn
 
@@ -55,6 +92,7 @@ def record_pipeline_turn(
         inference_ms=inference_ms,
         transport_ms=transport_ms,
         delivery_ms=delivery_ms,
+        extra=extra,
     )
 
 
@@ -115,8 +153,10 @@ def summary() -> dict[str, Any]:
             k = "fallback"
         via[k] += 1
     clf = _nums("sign", "classifier_ms")
+    prep = _nums("sign", "prepare_ms")
     cap = _nums("sign", "capture_ms")
     hol = _nums("sign", "holistic_ms")
+    tok_s = _nums("utterance", "tokens_per_s") + _nums("hearing", "tokens_per_s")
     rem = _nums("utterance", "remote_ms") + _nums("hearing", "remote_ms")
     inf = _nums("utterance", "infer_ms") + _nums("hearing", "infer_ms")
     if not inf:
@@ -148,6 +188,8 @@ def summary() -> dict[str, Any]:
             "holistic_p50": _pct(hol, 50),
             "classifier_p50": _pct(clf, 50),
             "classifier_p95": _pct(clf, 95),
+            "prepare_p50": _pct(prep, 50),
+            "tokens_per_s_p50": _pct(tok_s, 50),
             "remote_p50": _pct(rem, 50),
             "remote_p95": _pct(rem, 95),
             "pause_p50": _pct(pause, 50),

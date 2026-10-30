@@ -149,7 +149,7 @@ function transcribeMeetAudio(wavB64) {
         });
         return;
       }
-      sendToHearing(spanish, "voice");
+      sendToHearing(spanish, "voice", s && s.stt_ms);
     })
     .catch((err) => {
       setHud({
@@ -172,14 +172,14 @@ function applyAvatarClip(clip) {
 }
 
 /** Spanish (voice or chat) → POST /hearing → glosses burned into the video. */
-function sendToHearing(spanish, source) {
+function sendToHearing(spanish, source, sttMs) {
   const text = String(spanish || "").trim();
   if (!text || !running || meetMode !== "hearing") return;
   const now = Date.now();
   if (text === lastHearingSent.text && now - lastHearingSent.at < 2500) return;
   lastHearingSent = { text, at: now };
   setHud({ debug: "Traduciendo a glosas…", capturing: true, lastGloss: source });
-  LsaApi.hearing(text, true)
+  LsaApi.hearing(text, true, sttMs != null ? { stt_ms: sttMs } : undefined)
     .then((s) => {
       if (s && s.semantic_ready === false) {
         setHud({

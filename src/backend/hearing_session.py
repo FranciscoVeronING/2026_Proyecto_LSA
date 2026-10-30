@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from core.enie import restore_enie_glosses
+from core.enie import restore_enie_report
 from semantic.remote import configured, ping
 
 
@@ -52,7 +52,7 @@ class HearingSession:
     def ingest_sign(self, frames: list) -> dict[str, Any]:
         raise RuntimeError("Modo oyente: no se clasifican señas.")
 
-    def ingest_speech(self, spanish: str, final: bool = True) -> dict[str, Any]:
+    def ingest_speech(self, spanish: str, final: bool = True, stt_ms: float | None = None) -> dict[str, Any]:
         text = (spanish or "").strip()
         if not text:
             return self.snapshot()
@@ -83,7 +83,9 @@ class HearingSession:
                 print(f"[backend] Remote hearing failed: {exc}")
                 self.semantic_error = str(exc)
                 self.semantic_ready = False
-        glosses = restore_enie_glosses(glosses, spanish=text)
+        glosses, enie_n = restore_enie_report(glosses, spanish=text)
+        if not enie_n:
+            enie_n = timing.get("enie_restored") or 0
         self.gloss_text = glosses
         clip = None
         delivery_ms = 0.0
@@ -119,8 +121,23 @@ class HearingSession:
             "transport_ms": transport,
             "delivery_ms": round(delivery_ms, 1),
         })
-        from backend.metrics import log_event, record_pipeline_turn
+        from backend.metrics import log_event, record_pipeline_turn, turn_extra
 
+        clip = clip or {}
+        extra = turn_extra(
+            timing,
+            via="llm" if len(text.split()) > 1 else "lexical",
+            n_glosses=len(glosses.split()) if glosses else 0,
+            input_chars=len(text),
+            output_chars=len(glosses or ""),
+            tpose_fetch_ms=clip.get("tpose_fetch_ms"),
+            tpose_compose_ms=clip.get("tpose_compose_ms"),
+            tpose_gets=clip.get("tpose_gets"),
+            tpose_cache_hits=clip.get("tpose_cache_hits"),
+            tpose_missing_n=clip.get("tpose_missing_n") if clip.get("tpose_missing_n") is not None else len(clip.get("missing") or []),
+            enie_restored=enie_n,
+            stt_ms=stt_ms,
+        )
         log_event(
             "hearing",
             spanish=text,
@@ -134,6 +151,29 @@ class HearingSession:
             remote_ms=round(remote_ms, 1),
             server_ms=timing.get("server_ms"),
             delivery_ms=round(delivery_ms, 1),
+            prompt_tokens=timing.get("prompt_tokens"),
+            completion_tokens=timing.get("completion_tokens"),
+            eval_tokens=timing.get("eval_tokens"),
+            sys_tokens=timing.get("sys_tokens"),
+            kv_hit=timing.get("kv_hit"),
+            kv_mb=timing.get("kv_mb"),
+            t_prompt_eval_ms=timing.get("t_prompt_eval_ms"),
+            t_eval_ms=timing.get("t_eval_ms"),
+            tokens_per_s=timing.get("tokens_per_s"),
+            model_used=timing.get("model_used"),
+            n_ctx=timing.get("n_ctx"),
+            n_tokens=timing.get("n_tokens"),
+            queue_depth=timing.get("queue_depth"),
+            n_threads=timing.get("n_threads"),
+            cloud_rss_mb=timing.get("cloud_rss_mb"),
+            cloud_cpu_percent=timing.get("cloud_cpu_percent"),
+            enie_restored=enie_n,
+            tpose_fetch_ms=clip.get("tpose_fetch_ms"),
+            tpose_compose_ms=clip.get("tpose_compose_ms"),
+            tpose_gets=clip.get("tpose_gets"),
+            tpose_cache_hits=clip.get("tpose_cache_hits"),
+            tpose_missing_n=clip.get("tpose_missing_n"),
+            stt_ms=stt_ms,
         )
         if glosses:
             record_pipeline_turn(
@@ -143,6 +183,7 @@ class HearingSession:
                 inference_ms=infer_ms,
                 transport_ms=transport,
                 delivery_ms=delivery_ms,
+                extra=extra,
             )
         return snap
 

@@ -16,6 +16,7 @@ class SessionIn(BaseModel):
 class HearingIn(BaseModel):
     spanish: str = ""
     final: bool = True
+    stt_ms: float | None = None
 
 
 class UtteranceEndIn(BaseModel):
@@ -30,6 +31,12 @@ class ClientMetricsIn(BaseModel):
     holistic_fps: float | None = None
     rss_mb: float | None = None
     js_heap_mb: float | None = None
+    js_heap_total_mb: float | None = None
+    js_heap_limit_mb: float | None = None
+    jpeg_ms: float | None = None
+    time_to_record_ms: float | None = None
+    payload_kb: float | None = None
+    stt_ms: float | None = None
 
 
 class SttIn(BaseModel):

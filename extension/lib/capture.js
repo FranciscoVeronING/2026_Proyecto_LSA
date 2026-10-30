@@ -145,6 +145,8 @@ function createCaptureEngine(getCfg, callbacks) {
     const nRaw = frames.length;
     const payload = uniformSampleFrames(frames.slice(), c.max_frames || 16);
     const capture_ms = captureStartedAt ? Date.now() - captureStartedAt : null;
+    const time_to_record_ms =
+      captureStartedAt && handsSince ? Math.max(0, captureStartedAt - handsSince) : null;
     frames = [];
     consecutiveStill = 0;
     missingHands = 0;
@@ -156,6 +158,7 @@ function createCaptureEngine(getCfg, callbacks) {
       capture_ms,
       n_raw: nRaw,
       n_sent: payload.length,
+      time_to_record_ms,
     });
   }
 

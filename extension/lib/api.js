@@ -73,6 +73,12 @@ function chromeProcessProbe() {
     if (mem && typeof mem.usedJSHeapSize === "number") {
       out.js_heap_mb = Math.round((mem.usedJSHeapSize / 1048576) * 10) / 10;
     }
+    if (mem && typeof mem.totalJSHeapSize === "number") {
+      out.js_heap_total_mb = Math.round((mem.totalJSHeapSize / 1048576) * 10) / 10;
+    }
+    if (mem && typeof mem.jsHeapSizeLimit === "number") {
+      out.js_heap_limit_mb = Math.round((mem.jsHeapSizeLimit / 1048576) * 10) / 10;
+    }
   } catch (_) {}
   return out;
 }
@@ -87,15 +93,23 @@ const LsaApi = {
       method: "POST",
       body: JSON.stringify({ left_handed: leftHanded }),
     }),
-  sign: (frames, client) =>
-    api("/sign", {
+  sign: (frames, client) => {
+    const merged = { ...(client || {}) };
+    const body = JSON.stringify({ frames, client: merged });
+    merged.payload_kb = Math.round((body.length / 1024) * 10) / 10;
+    return api("/sign", {
       method: "POST",
-      body: JSON.stringify({ frames, client: client || {} }),
-    }),
-  hearing: (spanish, final) =>
+      body: JSON.stringify({ frames, client: merged }),
+    });
+  },
+  hearing: (spanish, final, extra) =>
     api("/hearing", {
       method: "POST",
-      body: JSON.stringify({ spanish, final: Boolean(final) }),
+      body: JSON.stringify({
+        spanish,
+        final: Boolean(final),
+        stt_ms: extra && extra.stt_ms != null ? extra.stt_ms : undefined,
+      }),
     }),
   stt: (wavB64, lang) =>
     api("/stt", {

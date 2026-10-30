@@ -70,6 +70,8 @@ LsaPrefs.onChange((p) => {
 });
 
 let lastHolisticMs = 0;
+let lastJpegAt = 0;
+let lastJpegMs = 0;
 const engine = createCaptureEngine(
   () => ({
     ...cfg,
@@ -81,7 +83,9 @@ const engine = createCaptureEngine(
         capture_ms: meta && meta.capture_ms,
         n_raw: meta && meta.n_raw,
         n_sent: meta && meta.n_sent,
+        time_to_record_ms: meta && meta.time_to_record_ms,
         holistic_ms: lastHolisticMs || undefined,
+        jpeg_ms: lastJpegMs || undefined,
       });
     },
     onSigningActivity() {
@@ -170,6 +174,10 @@ window.addEventListener("message", (event) => {
     frameBusy = false;
     pumpFrame();
     if (typeof data.holistic_ms === "number") lastHolisticMs = data.holistic_ms;
+    if (lastJpegAt) {
+      lastJpegMs = Math.max(0, Math.round(performance.now() - lastJpegAt));
+      lastJpegAt = 0;
+    }
     const results = {
       poseLandmarks: data.pose,
       leftHandLandmarks: data.left_hand,
@@ -367,6 +375,7 @@ function pumpFrame() {
 function handleFrame(msg) {
   if (msg.dataUrl) {
     latestDataUrl = msg.dataUrl;
+    lastJpegAt = performance.now();
     pumpFrame();
     return;
   }

@@ -28,12 +28,14 @@ Each turn is written to `%LOCALAPPDATA%\ILSA\metrics\` as:
 - `metrics_breakdown.json`
 - `metrics_breakdown.csv`
 
-CSV columns:
+CSV columns (`metrics_breakdown.csv`): the original five segments plus GGUF /
+KV extras (`Prompt_tokens`, `Kv_hit`, `T_eval_ms`, `Modelo`, `Cloud_RAM_mb`,
+T-pose, STT, Ñ restores, …). `Latencia_Total_ms` is still Cola + Inferencia +
+Transporte + Entrega. **Pausa is stored and labelled, then excluded.**
+`Cumple_RNF01` is `true` when `Inferencia_ms ≤ 2000`.
 
-`Timestamp, Canal, Pausa_ms, Cola_ms, Inferencia_ms, Transporte_ms, Entrega_ms, Latencia_Total_ms, Cumple_RNF01`
-
-`Latencia_Total_ms` = Cola + Inferencia + Transporte + Entrega. **Pausa is stored
-and labelled, then excluded.** `Cumple_RNF01` is `true` when `Inferencia_ms ≤ 2000`.
+Each TinySkeleton `/sign` is also written to `metrics_signs.csv`
+(`classifier_ms`, `prepare_ms`, confidences, capture/Holistic/JPEG, payload).
 
 ---
 
@@ -237,4 +239,9 @@ Meet HUD delivery is not exercised by this script.
 | `scripts/bench_latency.py` | Production Cloud Run bench |
 
 Cloud Run (not in this repo): `2026_Proyecto_LSA` — `queue_ms` / `inference_ms`
-on `/sign`, `/translate`, `/hearing`. T-pose: `2026_Proyecto_avatar` — `X-ILSA-Ms`.
+plus KV/token stats (`kv_hit`, `prompt_tokens`, `t_prompt_eval_ms`, `t_eval_ms`,
+`queue_depth`, `cloud_rss_mb`) on `/sign`, `/translate`, `/hearing`.
+T-pose: `2026_Proyecto_avatar` — `X-ILSA-Ms`.
+
+KV cache metrics apply to the **GGUF translator**, not TinySkeleton. Classifier
+time is `classifier_ms` in `live-*.jsonl` and `metrics_signs.csv`.

@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -163,14 +164,23 @@ def stt_wav(body: SttIn):
     except Exception as exc:
         raise HTTPException(status_code=400, detail="WAV inválido") from exc
     from backend.stt import transcribe_wav
+    from backend.metrics import log_event
 
+    t0 = time.perf_counter()
     try:
         text = transcribe_wav(wav, lang=body.lang or "es-ES")
     except Exception as exc:
         print(f"[backend] /stt error: {exc}")
         raise HTTPException(status_code=502, detail=str(exc)) from exc
-    print(f"[backend] /stt → {text!r}")
-    return {"spanish": text, "ok": True}
+    stt_ms = (time.perf_counter() - t0) * 1000
+    print(f"[backend] /stt → {text!r} {stt_ms:.0f}ms")
+    log_event(
+        "stt",
+        stt_ms=round(stt_ms, 1),
+        n_chars=len(text or ""),
+        wav_kb=round(len(wav) / 1024, 1),
+    )
+    return {"spanish": text, "ok": True, "stt_ms": round(stt_ms, 1)}
 
 
 @app.post("/tts")
@@ -199,7 +209,10 @@ def hearing_speech(body: HearingIn):
     ingest = getattr(session, "ingest_speech", None)
     if ingest is None:
         raise HTTPException(status_code=400, detail="Esta sesión no acepta voz.")
-    return ingest(body.spanish, final=body.final)
+    try:
+        return ingest(body.spanish, final=body.final, stt_ms=body.stt_ms)
+    except TypeError:
+        return ingest(body.spanish, final=body.final)
 
 
 @app.post("/activity")
@@ -232,6 +245,12 @@ def metrics_client(body: ClientMetricsIn):
         fps=body.fps,
         holistic_fps=body.holistic_fps,
         js_heap_mb=body.js_heap_mb,
+        js_heap_total_mb=body.js_heap_total_mb,
+        js_heap_limit_mb=body.js_heap_limit_mb,
+        jpeg_ms=body.jpeg_ms,
+        time_to_record_ms=body.time_to_record_ms,
+        payload_kb=body.payload_kb,
+        stt_ms=body.stt_ms,
         rss_mb=snap.get("rss_mb"),
         cpu_percent=snap.get("cpu_percent"),
         RAM_mb=snap.get("RAM_mb", snap.get("rss_mb")),

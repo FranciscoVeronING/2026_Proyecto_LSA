@@ -70,21 +70,27 @@ def _maps_from_spanish(spanish: str) -> dict[str, str]:
     return maps
 
 
-def restore_enie_glosses(glosses: str, spanish: str = "") -> str:
-    """Rewrite hearing glosses so captions keep Ñ (AÑOS, MAÑANA, …)."""
+def restore_enie_report(glosses: str, spanish: str = "") -> tuple[str, int]:
+    """Like ``restore_enie_glosses``, plus how many tokens gained a Ñ."""
     text = unicodedata.normalize("NFC", (glosses or "").strip())
     if not text:
-        return ""
+        return "", 0
     from_spanish = _maps_from_spanish(spanish)
+    restored = 0
 
     def one(token: str) -> str:
+        nonlocal restored
         nfc = unicodedata.normalize("NFC", token)
         folded = _fold_enie(nfc)
         if folded in from_spanish:
-            return from_spanish[folded]
-        if folded in _POSE_ENIE:
-            return _POSE_ENIE[folded]
-        return nfc
+            out = from_spanish[folded]
+        elif folded in _POSE_ENIE:
+            out = _POSE_ENIE[folded]
+        else:
+            return nfc
+        if out != nfc:
+            restored += 1
+        return out
 
     parts: list[str] = []
     last = 0
@@ -93,4 +99,10 @@ def restore_enie_glosses(glosses: str, spanish: str = "") -> str:
         parts.append(one(match.group(0)))
         last = match.end()
     parts.append(text[last:])
-    return "".join(parts)
+    return "".join(parts), restored
+
+
+def restore_enie_glosses(glosses: str, spanish: str = "") -> str:
+    """Rewrite hearing glosses so captions keep Ñ (AÑOS, MAÑANA, …)."""
+    text, _ = restore_enie_report(glosses, spanish=spanish)
+    return text

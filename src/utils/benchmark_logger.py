@@ -40,18 +40,74 @@ CSV_FIELDS = [
     "Cumple_RNF01",
     "RAM_mb",
     "CPU_percent",
+    "Via",
+    "N_glosses",
+    "Input_chars",
+    "Output_chars",
+    "Prompt_tokens",
+    "Completion_tokens",
+    "Eval_tokens",
+    "Sys_tokens",
+    "Kv_hit",
+    "Kv_mb",
+    "T_prompt_eval_ms",
+    "T_eval_ms",
+    "Tokens_per_s",
+    "Modelo",
+    "N_ctx",
+    "N_tokens",
+    "Queue_depth",
+    "N_threads",
+    "Cloud_RAM_mb",
+    "Cloud_CPU_percent",
+    "Stt_ms",
+    "Tpose_fetch_ms",
+    "Tpose_compose_ms",
+    "Tpose_gets",
+    "Tpose_cache_hits",
+    "Tpose_missing_n",
+    "Enie_restored",
+    "Js_heap_mb",
+]
+
+SIGN_CSV_FIELDS = [
+    "Timestamp",
+    "accepted",
+    "added",
+    "reason",
+    "gloss",
+    "conf1",
+    "conf2",
+    "conf3",
+    "conf_margin",
+    "classifier_ms",
+    "prepare_ms",
+    "total_ms",
+    "capture_ms",
+    "holistic_ms",
+    "jpeg_ms",
+    "time_to_record_ms",
+    "n_frames",
+    "n_raw",
+    "n_sent",
+    "payload_kb",
+    "left_handed",
+    "RAM_mb",
+    "CPU_percent",
 ]
 
 _lock = threading.Lock()
 _rows: list[dict[str, Any]] = []
+_sign_rows: list[dict[str, Any]] = []
 _dir_override: Path | None = None
 
 
 def set_metrics_dir(path: Path | None) -> None:
-    global _dir_override, _rows
+    global _dir_override, _rows, _sign_rows
     with _lock:
         _dir_override = Path(path) if path is not None else None
         _rows = []
+        _sign_rows = []
 
 
 def metrics_dir() -> Path:
@@ -70,6 +126,36 @@ def json_path() -> Path:
 
 def csv_path() -> Path:
     return metrics_dir() / "metrics_breakdown.csv"
+
+
+def signs_csv_path() -> Path:
+    return metrics_dir() / "metrics_signs.csv"
+
+
+def record_sign_row(fields: dict[str, Any]) -> dict[str, Any]:
+    """One TinySkeleton /sign (not a GGUF turn)."""
+    from utils.process_stats import snapshot as proc_snap
+
+    proc = {}
+    try:
+        proc = proc_snap()
+    except Exception:
+        proc = {}
+    row = {
+        "Timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+        "RAM_mb": proc.get("RAM_mb", proc.get("rss_mb")),
+        "CPU_percent": proc.get("CPU_percent", proc.get("cpu_percent")),
+        **{k: v for k, v in fields.items() if v is not None},
+    }
+    with _lock:
+        _sign_rows.append(row)
+        dest = signs_csv_path()
+        with dest.open("w", encoding="utf-8", newline="") as fh:
+            writer = csv.DictWriter(fh, fieldnames=SIGN_CSV_FIELDS, extrasaction="ignore")
+            writer.writeheader()
+            for item in _sign_rows:
+                writer.writerow(item)
+    return row
 
 
 def _num(value: Any) -> float:
@@ -139,6 +225,34 @@ def record_turn(
         "CPU_percent": cpu,
         "rss_mb": ram,
         "cpu_percent": cpu,
+        "Via": None,
+        "N_glosses": None,
+        "Input_chars": None,
+        "Output_chars": None,
+        "Prompt_tokens": None,
+        "Completion_tokens": None,
+        "Eval_tokens": None,
+        "Sys_tokens": None,
+        "Kv_hit": None,
+        "Kv_mb": None,
+        "T_prompt_eval_ms": None,
+        "T_eval_ms": None,
+        "Tokens_per_s": None,
+        "Modelo": None,
+        "N_ctx": None,
+        "N_tokens": None,
+        "Queue_depth": None,
+        "N_threads": None,
+        "Cloud_RAM_mb": None,
+        "Cloud_CPU_percent": None,
+        "Stt_ms": None,
+        "Tpose_fetch_ms": None,
+        "Tpose_compose_ms": None,
+        "Tpose_gets": None,
+        "Tpose_cache_hits": None,
+        "Tpose_missing_n": None,
+        "Enie_restored": None,
+        "Js_heap_mb": None,
     }
     if extra:
         row.update(extra)

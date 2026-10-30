@@ -29,6 +29,25 @@ _DIGITS = {
     "9": "NUEVE",
 }
 _CACHE_LOCK = threading.Lock()
+_tpose_stats: dict = {
+    "tpose_gets": 0,
+    "tpose_cache_hits": 0,
+    "tpose_fetch_ms": 0.0,
+    "tpose_bytes": 0,
+}
+
+
+def reset_tpose_stats() -> None:
+    _tpose_stats.update(
+        tpose_gets=0,
+        tpose_cache_hits=0,
+        tpose_fetch_ms=0.0,
+        tpose_bytes=0,
+    )
+
+
+def tpose_stats() -> dict:
+    return dict(_tpose_stats)
 
 
 def avatar_url() -> str:
@@ -90,7 +109,9 @@ def fetch_tpose(stem: str) -> Path | None:
     if not key:
         return None
     dest = _cache_dir() / f"{key}.pose"
+    _tpose_stats["tpose_gets"] = int(_tpose_stats.get("tpose_gets") or 0) + 1
     if dest.is_file() and dest.stat().st_size > 64:
+        _tpose_stats["tpose_cache_hits"] = int(_tpose_stats.get("tpose_cache_hits") or 0) + 1
         return dest
     url = f"{avatar_url()}/tposes/{key}.pose"
     req = urllib.request.Request(url, headers=_headers(), method="GET")
@@ -111,6 +132,8 @@ def fetch_tpose(stem: str) -> Path | None:
         tmp.write_bytes(blob)
         tmp.replace(dest)
     ms = (time.perf_counter() - t0) * 1000
+    _tpose_stats["tpose_fetch_ms"] = float(_tpose_stats.get("tpose_fetch_ms") or 0) + ms
+    _tpose_stats["tpose_bytes"] = int(_tpose_stats.get("tpose_bytes") or 0) + len(blob)
     print(f"[avatar] GET /tposes/{key}.pose {len(blob)} bytes {ms:.0f}ms")
     return dest
 
@@ -173,21 +196,33 @@ def resolve_chain(text: str) -> tuple[list[tuple[str, Path]], list[str]]:
 def clip_for_glosses(glosses: str) -> dict:
     """Hearing-semantic glosses → frames. Each sign is a GET to the T-pose server."""
     text = (glosses or "").strip()
+    reset_tpose_stats()
     if not text:
         return {"ok": False, "error": "No glosses arrived.", "frames": [], "missing": []}
+    t0 = time.perf_counter()
     try:
         found, missing = resolve_chain(text)
     except Exception as exc:
-        return {"ok": False, "error": str(exc), "frames": [], "missing": []}
+        return {"ok": False, "error": str(exc), "frames": [], "missing": [], **tpose_stats()}
+    resolve_ms = (time.perf_counter() - t0) * 1000
     if not found:
         return {
             "ok": False,
             "error": "No gloss has a T-pose on the server.",
             "frames": [],
             "missing": missing,
+            "tpose_resolve_ms": round(resolve_ms, 1),
+            **tpose_stats(),
         }
     from backend.ensure_pkg import ensure_module
     from poseclip.sequence import sequence_from_files
 
     ensure_module("pose_format", "pose-format")
-    return sequence_from_files(found, missing)
+    t_comp = time.perf_counter()
+    clip = sequence_from_files(found, missing)
+    compose_ms = (time.perf_counter() - t_comp) * 1000
+    clip["tpose_resolve_ms"] = round(resolve_ms, 1)
+    clip["tpose_compose_ms"] = round(compose_ms, 1)
+    clip["tpose_missing_n"] = len(clip.get("missing") or [])
+    clip.update(tpose_stats())
+    return clip

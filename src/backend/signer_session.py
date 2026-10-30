@@ -198,6 +198,7 @@ class SignerSession:
                 )
                 return {"accepted": False, "reason": "too_short", **self.snapshot()}
 
+        t_prep = time.perf_counter()
         smoother = LandmarkSmoother(alpha=0.6)
         vectors = []
         for frame in frames:
@@ -205,6 +206,7 @@ class SignerSession:
             vectors.append(smoother.update(vec))
 
         matrix = frames_to_matrix(vectors)
+        prepare_ms = (time.perf_counter() - t_prep) * 1000
         print(
             f"[backend] /sign tensor: entrada={n} "
             f"tras muestreo={matrix.shape} (esperado {cfg.MAX_FRAMES}x{matrix.shape[1] if matrix.ndim == 2 else '?'})"
@@ -247,6 +249,9 @@ class SignerSession:
         snap = self.snapshot()
         total_ms = (time.perf_counter() - t0) * 1000
         conf1 = float(top3[0][1]) if top3 else None
+        conf2 = float(top3[1][1]) if len(top3) > 1 else None
+        conf3 = float(top3[2][1]) if len(top3) > 2 else None
+        conf_margin = round(conf1 - conf2, 4) if conf1 is not None and conf2 is not None else None
         reject_reason = ""
         if not added:
             if conf1 is None or conf1 < cfg.CONFIDENCE_THRESHOLD:
@@ -265,21 +270,32 @@ class SignerSession:
             "ms": round(total_ms, 1),
         })
         from backend.metrics import log_event
+        from utils.benchmark_logger import record_sign_row
 
-        log_event(
-            "sign",
-            accepted=True,
-            added=added,
-            n_frames=n,
-            gloss=top3[0][0] if top3 else "",
-            conf1=top3[0][1] if top3 else None,
-            conf2=top3[1][1] if len(top3) > 1 else None,
-            classifier_ms=round(infer_ms, 1),
-            total_ms=round(total_ms, 1),
-            capture_ms=client.get("capture_ms"),
-            holistic_ms=client.get("holistic_ms"),
-            n_raw=client.get("n_raw"),
-        )
+        sign_fields = {
+            "accepted": True,
+            "added": added,
+            "reason": reject_reason or None,
+            "n_frames": n,
+            "gloss": top3[0][0] if top3 else "",
+            "conf1": conf1,
+            "conf2": conf2,
+            "conf3": conf3,
+            "conf_margin": conf_margin,
+            "classifier_ms": round(infer_ms, 1),
+            "prepare_ms": round(prepare_ms, 1),
+            "total_ms": round(total_ms, 1),
+            "capture_ms": client.get("capture_ms"),
+            "holistic_ms": client.get("holistic_ms"),
+            "jpeg_ms": client.get("jpeg_ms"),
+            "time_to_record_ms": client.get("time_to_record_ms"),
+            "n_raw": client.get("n_raw"),
+            "n_sent": client.get("n_sent"),
+            "payload_kb": client.get("payload_kb"),
+            "left_handed": self.left_handed,
+        }
+        log_event("sign", **sign_fields)
+        record_sign_row(sign_fields)
         print(
             f"[backend] /sign response: accepted=True added={added} "
             f"gloss={snap.get('gloss')} pending={snap.get('pending_text')!r}"
@@ -347,8 +363,15 @@ class SignerSession:
             "transport_ms": transport,
             "delivery_ms": 0.0,
         })
-        from backend.metrics import log_event, record_pipeline_turn
+        from backend.metrics import log_event, record_pipeline_turn, turn_extra
 
+        extra = turn_extra(
+            timing,
+            via=via,
+            n_glosses=len(closed),
+            input_chars=len(" ".join(closed)),
+            output_chars=len(text or ""),
+        )
         log_event(
             "utterance",
             glosses=" ".join(closed),
@@ -365,6 +388,22 @@ class SignerSession:
             server_ms=round(server_ms, 1) if server_ms is not None else None,
             total_ms=round(total_ms, 1),
             n_glosses=len(closed),
+            prompt_tokens=timing.get("prompt_tokens"),
+            completion_tokens=timing.get("completion_tokens"),
+            eval_tokens=timing.get("eval_tokens"),
+            sys_tokens=timing.get("sys_tokens"),
+            kv_hit=timing.get("kv_hit"),
+            kv_mb=timing.get("kv_mb"),
+            t_prompt_eval_ms=timing.get("t_prompt_eval_ms"),
+            t_eval_ms=timing.get("t_eval_ms"),
+            tokens_per_s=timing.get("tokens_per_s"),
+            model_used=timing.get("model_used"),
+            n_ctx=timing.get("n_ctx"),
+            n_tokens=timing.get("n_tokens"),
+            queue_depth=timing.get("queue_depth"),
+            n_threads=timing.get("n_threads"),
+            cloud_rss_mb=timing.get("cloud_rss_mb"),
+            cloud_cpu_percent=timing.get("cloud_cpu_percent"),
         )
         record_pipeline_turn(
             "direct",
@@ -373,6 +412,7 @@ class SignerSession:
             inference_ms=infer_ms,
             transport_ms=transport,
             delivery_ms=0,
+            extra=extra,
         )
         srv = f" server={server_ms:.0f}ms" if server_ms is not None else ""
         print(

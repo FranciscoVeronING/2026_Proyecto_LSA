@@ -15,6 +15,30 @@ from semantic.config import CLOUD_SEMANTIC_URL, SEMANTIC_TOKEN
 
 _TIMEOUT = 240.0
 _KEEPALIVE_SEC = 240.0
+_STAT_KEYS = (
+    "prompt_tokens",
+    "completion_tokens",
+    "eval_tokens",
+    "sys_tokens",
+    "kv_hit",
+    "kv_mb",
+    "t_prompt_eval_ms",
+    "t_eval_ms",
+    "tokens_per_s",
+    "model_used",
+    "n_ctx",
+    "n_tokens",
+    "n_layer",
+    "n_embd",
+    "n_p_eval",
+    "n_eval",
+    "queue_depth",
+    "cloud_rss_mb",
+    "cloud_cpu_percent",
+    "n_threads",
+    "enie_restored",
+)
+
 _last_timing: dict = {
     "roundtrip_ms": None,
     "server_ms": None,
@@ -23,6 +47,7 @@ _last_timing: dict = {
     "queue_ms": None,
     "inference_ms": None,
     "transport_ms": None,
+    **{key: None for key in _STAT_KEYS},
 }
 _keepalive_started = False
 _keepalive_lock = threading.Lock()
@@ -111,6 +136,15 @@ def _post(path: str, payload: dict, timeout: float = _TIMEOUT) -> dict:
     _last_timing["transport_ms"] = round(transport, 1)
     # `server_ms` = inference (RNF-01). Queue is `queue_ms`. Transport is RTT minus both.
     _last_timing["server_ms"] = _last_timing["infer_ms"]
+    for key in _STAT_KEYS:
+        if key in data:
+            _last_timing[key] = data.get(key)
+    if _last_timing.get("cloud_rss_mb") is None and isinstance(data.get("rss_mb"), (int, float)):
+        _last_timing["cloud_rss_mb"] = data.get("rss_mb")
+    if _last_timing.get("cloud_cpu_percent") is None and isinstance(
+        data.get("cpu_percent"), (int, float)
+    ):
+        _last_timing["cloud_cpu_percent"] = data.get("cpu_percent")
     extra = ""
     if queued_val is not None:
         extra += f" queue={queued_val:.0f}ms"
@@ -180,10 +214,12 @@ def translate_sign(glosses: str) -> str:
 
 def translate_hearing(spanish: str) -> str:
     """Cloud Run `POST /hearing`: sentence → glosses."""
-    from core.enie import restore_enie_glosses
+    from core.enie import restore_enie_report
 
     data = _post("/hearing", {"spanish": spanish})
-    return restore_enie_glosses(
+    restored, n_enie = restore_enie_report(
         _first_str(data, "glosses", "caption", "text", "output"),
         spanish=spanish,
     )
+    _last_timing["enie_restored"] = n_enie
+    return restored
