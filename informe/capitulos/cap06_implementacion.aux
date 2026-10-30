@@ -18,20 +18,20 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.2.2}Arquitectura neuronal TinySkeletonClassifier}{37}{subsection.6.2.2}\protected@file@percent }
 \newlabel{eq:attention_pooling}{{6.1}{37}{Arquitectura neuronal TinySkeletonClassifier}{equation.6.1}{}}
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Forma de los tensores en \textit  {TinySkeletonClassifier}. La entrada reúne 16 fotogramas de 225 coordenadas de pose y manos. Dos convoluciones de núcleo 3, con normalización por lotes y ReLU, la llevan a 128 canales. La codificación posicional y el Transformer de dos capas conservan $16 \times 128$. El \textit  {attention pooling} resume la secuencia en un vector de 128 dimensiones y la capa final distingue 100 señas.}}{38}{figure.6.1}\protected@file@percent }
-\newlabel{fig:tinyskeleton_arquitectura}{{6.1}{38}{Forma de los tensores en \textit {TinySkeletonClassifier}. La entrada reúne 16 fotogramas de 225 coordenadas de pose y manos. Dos convoluciones de núcleo 3, con normalización por lotes y ReLU, la llevan a 128 canales. La codificación posicional y el Transformer de dos capas conservan $16 \times 128$. El \textit {attention pooling} resume la secuencia en un vector de 128 dimensiones y la capa final distingue 100 señas}{figure.6.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Forma de los tensores en \textit  {TinySkeletonClassifier}.}}{38}{figure.6.1}\protected@file@percent }
+\newlabel{fig:tinyskeleton_arquitectura}{{6.1}{38}{Forma de los tensores en \textit {TinySkeletonClassifier}}{figure.6.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6.3}Implementación del subsistema de traducción semántico bidireccional}{38}{section.6.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}Selección y especificación de la suite de modelos de lenguaje}{38}{subsection.6.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Régimen de entrenamiento y ajuste LoRA}{38}{subsection.6.3.2}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Régimen de entrenamiento y ajuste LoRA}{39}{subsection.6.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{Procedimiento de evaluación y post-entrenamiento}{39}{section*.10}\protected@file@percent }
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3.3}Canal directo (LSA $\rightarrow $ Español)}{40}{subsection.6.3.3}\protected@file@percent }
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3.4}Canal inverso (Español $\rightarrow $ LSA)}{41}{subsection.6.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.5}Cuantización GGUF Q4\_K\_M y estimación de memoria}{41}{subsection.6.3.5}\protected@file@percent }
+\newlabel{eq:ram_runtime}{{6.2}{41}{Cuantización GGUF Q4\_K\_M y estimación de memoria}{equation.6.2}{}}
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.5}Cuantización GGUF Q4\_K\_M y estimación de memoria}{42}{subsection.6.3.5}\protected@file@percent }
-\newlabel{eq:ram_runtime}{{6.2}{42}{Cuantización GGUF Q4\_K\_M y estimación de memoria}{equation.6.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6.4}Integración en Google Meet y arquitectura de la extensión}{42}{section.6.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.4.1}Secuencia completa de inferencia y comunicación multidireccional}{42}{subsection.6.4.1}\protected@file@percent }
 \def\@LN@column{1}
@@ -45,8 +45,8 @@
 \newlabel{sec:impl_esqueleto}{{6.5.2}{46}{Decisiones técnicas de la reproducción}{subsection.6.5.2}{}}
 \@writefile{toc}{\contentsline {paragraph}{Valores del compositor.}{46}{section*.11}\protected@file@percent }
 \newlabel{eq:ema_pose}{{6.3}{46}{Valores del compositor}{equation.6.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Postura de espera.}{46}{section*.12}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {paragraph}{Postura de espera.}{47}{section*.12}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Reflejo de la miniatura local.}{47}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6.6}Instancia de validación del prototipo mediante microservicios en la nube}{47}{section.6.6}\protected@file@percent }
 \newlabel{sec:arquitectura_produccion}{{6.6}{47}{Instancia de validación del prototipo mediante microservicios en la nube}{section.6.6}{}}
@@ -95,7 +95,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{44}
+\setcounter{instcount}{46}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{1}
 \setcounter{maxitems}{3}

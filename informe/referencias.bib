@@ -1,156 +1,179 @@
-@misc{google2020mediapipe,
-  author       = {{Google}},
-  title        = {MediaPipe: A Framework for Building Perception Pipelines},
-  year         = {2020},
-  howpublished = {\url{https://google.github.io/mediapipe/}}
+% --- Clasificador ---
+
+@article{google2019mediapipe,
+  author    = {Lugaresi, Camillo and Tang, Jiuqiang and Nash, Hadon and McClanahan, Chris and Uboweja, Esha and Kuang, Michael and Chang, Chuo-Ling and Conway, Brian and Freeman, Michael and Guo, Di and Grundmann, Matthias},
+  title     = {{MediaPipe}: A Framework for Building Perception Pipelines},
+  journal   = {arXiv preprint arXiv:1906.08172},
+  year      = {2019},
+  eprint    = {1906.08172},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CV},
+  url       = {https://arxiv.org/abs/1906.08172}
 }
 
-@article{vaswani2017attention,
-  author  = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  title   = {Attention Is All You Need},
-  journal = {arXiv preprint arXiv:1706.03762},
-  year    = {2017}
+@inproceedings{vaswani2017attention,
+  author        = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\ Lukasz} and Polosukhin, Illia},
+  title         = {Attention Is All You Need},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume        = {30},
+  pages         = {5998--6008},
+  year          = {2017},
+  eprint        = {1706.03762},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/1706.03762}
 }
 
-@misc{argentina2023ley27710,
-  author       = {{Rep{\'u}blica Argentina}},
-  title        = {Ley 27.710 --- Lengua de Se{\~n}as Argentina},
-  year         = {2023},
-  howpublished = {Bolet{\'i}n Oficial}
-}
 
-@article{wu2020lite,
-  author  = {Wu, Ying and Lu, Shuang and Gan, Zhiqiang and Gan, Chuang and Shen, Yu and Chen, Yen-Chun and Smith, Lawrence and Ren, Shanghang and Carin, Lawrence and He, Xiaodong and others},
-  title   = {Lite Transformer with Long-Short Range Attention},
-  journal = {arXiv preprint arXiv:2004.11886},
-  year    = {2020}
-}
-
-@inproceedings{hu2022lora,
-  author    = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
-  title     = {{LoRA}: Low-Rank Adaptation of Large Language Models},
-  booktitle = {Proceedings of the International Conference on Learning Representations},
-  year      = {2022}
-}
-
-@book{gamma1994design,
-  author    = {Gamma, Erich and Helm, Richard and Johnson, Ralph and Vlissides, John},
-  title     = {Design Patterns: Elements of Reusable Object-Oriented Software},
-  publisher = {Addison-Wesley},
-  year      = {1994}
-}
+% --- Teoría de software ---
 
 @book{pressman2014software,
   author    = {Pressman, Roger S. and Maxim, Bruce R.},
   title     = {Software Engineering: A Practitioner's Approach},
   publisher = {McGraw-Hill},
   year      = {2014},
-  edition   = {8th}
+  edition   = {8th},
+  address   = {New York}
 }
+
+% --- Métricas semántico ---
 
 @inproceedings{papineni2002bleu,
   author    = {Papineni, Kishore and Roukos, Salim and Ward, Todd and Zhu, Wei-Jing},
   title     = {{BLEU}: a Method for Automatic Evaluation of Machine Translation},
   booktitle = {Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics},
   year      = {2002},
-  pages     = {311--318}
+  address   = {Philadelphia, Pennsylvania, USA},
+  pages     = {311--318},
+  doi       = {10.3115/1073083.1073135},
+  url       = {https://aclanthology.org/P02-1040}
 }
 
 @inproceedings{lin2004rouge,
   author    = {Lin, Chin-Yew},
   title     = {{ROUGE}: A Package for Automatic Evaluation of Summaries},
-  booktitle = {Text Summarization Branches Out},
+  booktitle = {Text Summarization Branches Out: Proceedings of the ACL-04 Workshop},
+  month     = jul,
   year      = {2004},
-  pages     = {74--81}
+  address   = {Barcelona, Spain},
+  publisher = {Association for Computational Linguistics},
+  pages     = {74--81},
+  url       = {https://aclanthology.org/W04-1013}
 }
 
 @inproceedings{banerjee2005meteor,
   author    = {Banerjee, Satanjeev and Lavie, Alon},
   title     = {{METEOR}: An Automatic Metric for {MT} Evaluation with Improved Correlation with Human Judgments},
   booktitle = {Proceedings of the {ACL} Workshop on Intrinsic and Extrinsic Evaluation Measures for Machine Translation and/or Summarization},
+  month     = jun,
   year      = {2005},
-  pages     = {65--72}
+  address   = {Ann Arbor, Michigan},
+  publisher = {Association for Computational Linguistics},
+  pages     = {65--72},
+  url       = {https://aclanthology.org/W05-0909}
 }
 
 @inproceedings{zhang2020bertscore,
-  author    = {Zhang, Tianyi and Kishore, Varsha and Wu, Felix and Weinberger, Kilian Q. and Artzi, Yoav},
-  title     = {{BERTScore}: Evaluating Text Generation with {BERT}},
-  booktitle = {International Conference on Learning Representations},
-  year      = {2020}
+  author        = {Zhang, Tianyi and Kishore, Varsha and Wu, Felix and Weinberger, Kilian Q. and Artzi, Yoav},
+  title         = {{BERTScore}: Evaluating Text Generation with {BERT}},
+  booktitle     = {8th International Conference on Learning Representations (ICLR)},
+  year          = {2020},
+  eprint        = {1904.09675},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/1904.09675}
 }
 
 @inproceedings{rei2020comet,
-  author    = {Rei, Ricardo and Stewart, Craig and Farinha, Ana C. and Lavie, Alon},
+  author    = {Rei, Ricardo and Stewart, Craig and Farinha, Ana C and Lavie, Alon},
   title     = {{COMET}: A Neural Framework for {MT} Evaluation},
-  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  month     = nov,
   year      = {2020},
-  pages     = {2685--2702}
-}
-
-@misc{huggingface2024transformers,
-  author       = {{Hugging Face}},
-  title        = {Transformers: State-of-the-Art Machine Learning for {PyTorch}, TensorFlow, and {JAX}},
-  year         = {2024},
-  howpublished = {\url{https://huggingface.co/docs/transformers}}
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  pages     = {2685--2702},
+  doi       = {10.18653/v1/2020.emnlp-main.213},
+  url       = {https://aclanthology.org/2020.emnlp-main.213}
 }
 
 % --- Estado del arte ---
+
+@misc{argentina2023ley27710,
+  author       = {{Rep{\'u}blica Argentina}},
+  title        = {Ley 27.710: Reconocimiento de la {L}engua de {S}e{\~n}as {A}rgentina ({LSA}) como lengua natural y originaria},
+  year         = {2023},
+  month        = apr,
+  howpublished = {Bolet{\'i}n Oficial de la Rep{\'u}blica Argentina},
+  note         = {Sancionada el 13 de abril de 2023. B.O. N{\textordmasculine} 35.150},
+  url          = {https://servicios.infoleg.gob.ar/infolegInternet/anexos/380000-384999/382022/norma.htm}
+}
 
 @misc{signall2026linkedin,
   author       = {{SignAll Technologies}},
   title        = {About {SignAll Technologies}},
   year         = {2026},
-  howpublished = {\url{https://www.linkedin.com/company/signall-technologies/about/}}
+  howpublished = {Perfil institucional en {LinkedIn}},
+  url          = {https://www.linkedin.com/company/signall-technologies/about/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{handtalk2025,
   author       = {{Hand Talk}},
   title        = {Acessibilidade digital em l{\'\i}nguas de sinais},
   year         = {2025},
-  howpublished = {\url{https://www.handtalk.me/br/}}
+  howpublished = {Sitio web oficial},
+  url          = {https://www.handtalk.me/br/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{lsapp2018,
   author       = {Bar{\'a}n, Vanesa},
   title        = {{LSApp}: Uniendo dos mundos},
   year         = {2018},
-  howpublished = {\url{https://lsapp.com.ar/}}
+  howpublished = {Plataforma web y m{\'o}vil},
+  url          = {https://lsapp.com.ar/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{cas2024senario,
   author       = {{Confederaci{\'o}n Argentina de Sordos}},
   title        = {Se{\~n}ario de t{\'e}rminos y expresiones en Lengua de Se{\~n}as Argentina},
   year         = {2024},
-  howpublished = {\url{https://senario.cas.org.ar/}}
+  howpublished = {Plataforma digital interactiva},
+  url          = {https://cas.org.ar/tag/senario/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{blessit2024interpretes,
   author       = {{Blessit}},
   title        = {Interpretaci{\'o}n Lengua de Se{\~n}as --- Central de int{\'e}rpretes},
   year         = {2024},
-  howpublished = {\url{https://www.blessit.net/interpretacion-lengua-de-senas}}
+  howpublished = {Plataforma de servicios de accesibilidad},
+  url          = {https://www.blessit.net/interpretacion-lengua-de-senas},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{argentina2024linea144,
   author       = {{Ministerio de Justicia de la Naci{\'o}n}},
   title        = {Caracter{\'\i}sticas de la comunicaci{\'o}n por videollamadas --- L{\'\i}nea 144},
   year         = {2024},
-  howpublished = {\url{https://www.argentina.gob.ar/caracteristicas-de-la-comunicacion-por-videollamadas}}
-}
-
-@misc{hetah2024avatar,
-  author       = {{HETAH}},
-  title        = {Avatar traductor a lengua de se{\~n}as},
-  year         = {2024},
-  howpublished = {\url{https://hetah.net/avatar}}
+  howpublished = {Portal oficial del Estado Argentino ({Argentina.gob.ar})},
+  url          = {https://www.argentina.gob.ar/caracteristicas-de-la-comunicacion-por-videollamadas},
+  note         = {Accedido en octubre de 2026}
 }
 
 @inproceedings{ronchetti2016lsa64,
-  author    = {Ronchetti, Franco and Quiroga, Facundo and Estrebou, C{\'e}sar and Lanzarini, Laura and Rosete, Alejandro},
-  title     = {{LSA64}: An Argentinian Sign Language Dataset},
-  booktitle = {XXII Congreso Argentino de Ciencias de la Computaci{\'o}n ({CACIC})},
-  year      = {2016},
-  pages     = {794--803}
+  author        = {Ronchetti, Franco and Quiroga, Facundo and Estrebou, C{\'e}sar and Lanzarini, Laura and Rosete, Alejandro},
+  title         = {{LSA64}: An Argentinian Sign Language Dataset},
+  booktitle     = {Proceedings of the {XXII} Congreso Argentino de Ciencias de la Computaci{\'o}n ({CACIC})},
+  year          = {2016},
+  address       = {San Luis, Argentina},
+  pages         = {794--803},
+  eprint        = {2310.17429},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2310.17429},
 }
 
 @thesis{mindlin2021reconocimiento,
@@ -164,158 +187,195 @@
 
 @inproceedings{li2020wlasl,
   author    = {Li, Dongxu and Rodriguez, Cristian and Yu, Xin and Li, Hongdong},
-  title     = {Word-level Deep Sign Language Recognition from Video: A New Large-scale Dataset and Methods Comparison},
-  booktitle = {Proceedings of the {IEEE} Winter Conference on Applications of Computer Vision ({WACV})},
+  title     = {Word-Level Deep Sign Language Recognition from Video: A New Large-Scale Dataset and Methods Comparison},
+  booktitle = {Proceedings of the {IEEE/CVF} Winter Conference on Applications of Computer Vision ({WACV})},
   year      = {2020},
-  pages     = {1459--1469}
+  address   = {Snowmass, CO, USA},
+  pages     = {1459--1469},
+  doi       = {10.1109/WACV45572.2020.9093512}
 }
 
 % --- Lingüística de LSA y morfología ---
+
 @article{liddell1989phonological,
   author    = {Liddell, Scott K. and Johnson, Robert E.},
   title     = {American {Sign Language}: The Phonological Base},
   journal   = {Sign Language Studies},
   volume    = {64},
+  number    = {1},
   pages     = {195--277},
   year      = {1989},
-  publisher = {Gallaudet University Press}
+  publisher = {Gallaudet University Press},
+  doi       = {10.1353/sls.1989.0027}
 }
 
-@article{massoneparte1,
+@article{massone1993numero,
   author    = {Massone, Mar{\'i}a Ignacia},
   title     = {El n{\'u}mero y el g{\'e}nero en la {Lengua de Se{\~n}as Argentina}},
   journal   = {Signo \& Se{\~n}a},
   volume    = {2},
   pages     = {73--99},
   year      = {1993},
-  publisher = {Facultad de Filosof{\'i}a y Letras, Universidad de Buenos Aires}
+  publisher = {Facultad de Filosof{\'i}a y Letras, Universidad de Buenos Aires},
+  issn      = {0327-8085}
 }
 
-@book{massoneparte2,
+@book{massone2012curso,
   author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
   title     = {Curso de {Lengua de Se{\~n}as Argentina}: Parte 1 y 2},
   publisher = {Cultura Sorda},
   year      = {2012},
-  url       = {http://www.cultura-sorda.eu}
-}
-
-@book{massoneparte4,
-  author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
-  title     = {Curso de {Lengua de Se{\~n}as Argentina}: Parte {IV}},
-  publisher = {Cultura Sorda},
-  year      = {2012},
-  url       = {http://www.cultura-sorda.eu},
-  note      = {Ejemplo 26, p.~23 del PDF}
-}
-
-@book{massone1993lengua,
-  author    = {Massone, María Ignacia and Machado, Emilia Margarita},
-  title     = {Lengua de Señas Argentina: Análisis y Vocabulario Bilingüe},
-  year      = {1993},
-  publisher = {Edicial},
-  address   = {Buenos Aires, Argentina},
-  isbn      = {950-506-213-3}
-}
-
-@article{fischer1993terminar,
-  author    = {Fischer, Susan D. and Gough, Bonnie},
-  title     = {Algunas ideas sin terminar acerca de {Terminar}},
-  journal   = {Signo \& Se{\~n}a},
-  volume    = {2},
-  pages     = {43--59},
-  year      = {1993},
-  publisher = {Facultad de Filosof{\'i}a y Letras, Universidad de Buenos Aires}
+  url       = {http://www.cultura-sorda.org},
+  note      = {Accedido en octubre de 2026}
 }
 
 
-% --- Inferencia y Cuantización (llama.cpp y GGUF) ---
+% --- Inferencia y Cuantización (llama.cpp, GGUF y LoRA) ---
+@inproceedings{hu2022lora,
+  author        = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
+  title         = {{LoRA}: Low-Rank Adaptation of Large Language Models},
+  booktitle     = {10th International Conference on Learning Representations (ICLR)},
+  year          = {2022},
+  eprint        = {2106.09685},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2106.09685}
+}
+
 @software{gerganov2023llamacpp,
-  author  = {Gerganov, Georgi},
-  title   = {llama.cpp: Port of {Facebook's LLaMA} model in {C/C++}},
-  year    = {2023},
-  url     = {https://github.com/ggerganov/llama.cpp}
+  author       = {Gerganov, Georgi},
+  title        = {llama.cpp: Port of {Facebook's LLaMA} model in {C/C++}},
+  year         = {2023},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {Repositorio de {GitHub}},
+  url          = {https://github.com/ggerganov/llama.cpp},
+  note         = {Accedido en octubre de 2026}
 }
 
-@article{frantar2022gptq,
-  author  = {Frantar, Elias and Ashkboos, Saleh and Torfi, Ammar and Alistarh, Dan},
-  title   = {{GPTQ}: Accurate Post-Training Quantization for Generative Pre-trained Transformers},
-  journal = {arXiv preprint arXiv:2210.17323},
-  year    = {2022}
+% --- Ecuacion calculo de ram ---
+
+@inproceedings{kwon2023vllm,
+  author    = {Kwon, Woosuk and Li, Zhuohan and Zhang, Siyuan and Zheng, Lianmin and Cai, Tianle and Yu, Joey and Gonzalez, Joseph E. and Zhang, Hao and Stoica, Ion},
+  title     = {Efficient Memory Management for Large Language Model Serving with {PagedAttention}},
+  booktitle = {Proceedings of the 29th {ACM} Symposium on Operating Systems Principles},
+  series    = {SOSP '23},
+  year      = {2023},
+  pages     = {611--626},
+  address   = {New York, NY, USA},
+  publisher = {Association for Computing Machinery},
+  doi       = {10.1145/3600006.3613165},
+  note      = {An{\'a}lisis anal{\'\i}tico del footprint de memoria: pesos, {KV Cache} y activaciones}
+}
+
+@inproceedings{dettmers2023qlora,
+  author        = {Dettmers, Tim and Pagnoni, Artidoro and Holtzman, Ari and Zettlemoyer, Luke},
+  title         = {{QLoRA}: Efficient Finetuning of Quantized {LLMs}},
+  booktitle     = {Advances in Neural Information Processing Systems ({NeurIPS})},
+  volume        = {36},
+  pages         = {10088--10115},
+  year          = {2023},
+  eprint        = {2305.14314v1},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/html/2305.14314v1},
+  note          = {Fundamentos de cuantizaci{\'o}n a 4 bits (k-quants y bloqueos de escala)}
+}
+
+@inproceedings{korthikanti2023reducing,
+  author        = {Korthikanti, Vijay Anand and Shoeybi, Mohammad and Kakarmath, Ayush and Catanzaro, Bryan and Narayanan, Deepak},
+  title         = {Reducing Activation Recomputation in Large Transformer Models},
+  booktitle     = {Proceedings of Machine Learning and Systems ({MLSys})},
+  volume        = {5},
+  pages         = {348--358},
+  year          = {2023},
+  eprint        = {2502.2205.05198},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2205.05198}
 }
 
 % --- Modelos de Lenguaje Evaluados (Llama 3.2, SmolLM2, Qwen 2.5) ---
-% El informe de Llama 3 (arXiv:2407.21783) no documenta Llama 3.2 1B.
-% La ficha de la variante usada es meta2024llama321b.
 @misc{meta2024llama321b,
   author       = {{Meta}},
   title        = {{Llama 3.2 1B Instruct}},
   year         = {2024},
-  howpublished = {\url{https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct}},
-  note         = {Ficha del modelo. Publicaci{\'o}n: 25 de septiembre de 2024}
+  howpublished = {Hugging Face Hub},
+  url          = {https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct},
+  note         = {Ficha del modelo. Publicaci{\'o}n: 25 de septiembre de 2024. Accedido en octubre de 2026}
 }
 
-@misc{allal2024smollm2,
-  author       = {Allal, Loubna Ben and Lozhkov, Anton and Bakouch, Elie and von Werra, Leandro and Wolf, Thomas},
-  title        = {{SmolLM2}: When Small Goes Big},
-  year         = {2024},
-  howpublished = {\url{https://huggingface.co/blog/smollm2}}
+@article{allal2024smollm2,
+  author        = {Allal, Loubna Ben and Lozhkov, Anton and Bakouch, Elie and von Werra, Leandro and Wolf, Thomas},
+  title         = {{SmolLM2}: When Small Goes Big --- Data-Centric Training of a Small Language Model},
+  journal       = {arXiv preprint arXiv:2502.02737},
+  year          = {2025},
+  eprint        = {2502.02737},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2502.02737}
 }
 
 @article{qwen2024qwen25,
-  author  = {{Qwen Team}},
-  title   = {{Qwen2.5} Technical Report},
-  journal = {arXiv preprint arXiv:2412.15115},
-  year    = {2024}
+  author        = {{Qwen Team}},
+  title         = {{Qwen2.5} Technical Report},
+  journal       = {arXiv preprint arXiv:2412.15115},
+  year          = {2024},
+  eprint        = {2412.15115},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2412.15115}
 }
 
 @misc{qwen2024qwen2505b,
   author       = {{Qwen Team}},
   title        = {{Qwen2.5-0.5B-Instruct}},
   year         = {2024},
-  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct}},
-  note         = {Ficha del modelo. Declara 0,49 mil millones de par{\'a}metros, 24 capas y 14/2 cabezas}
+  howpublished = {Hugging Face Hub},
+  url          = {https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct},
+  note         = {Ficha del modelo. Declara 0,49 mil millones de par{\'a}metros, 24 capas y 14/2 cabezas. Accedido en octubre de 2026}
 }
 
 @misc{qwen2024qwen2515b,
   author       = {{Qwen Team}},
   title        = {{Qwen2.5-1.5B-Instruct}},
   year         = {2024},
-  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}},
-  note         = {Ficha del modelo. Declara 1,54 mil millones de par{\'a}metros, 28 capas y 12/2 cabezas}
+  howpublished = {Hugging Face Hub},
+  url          = {https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct},
+  note         = {Ficha del modelo. Declara 1,54 mil millones de par{\'a}metros, 28 capas y 12/2 cabezas. Accedido en octubre de 2026}
 }
 
 @misc{qwen2024qwen253b,
   author       = {{Qwen Team}},
   title        = {{Qwen2.5-3B-Instruct}},
   year         = {2024},
-  howpublished = {\url{https://huggingface.co/Qwen/Qwen2.5-3B-Instruct}},
-  note         = {Ficha del modelo. Declara 3,09 mil millones de par{\'a}metros, 36 capas y 16/2 cabezas}
+  howpublished = {Hugging Face Hub},
+  url          = {https://huggingface.co/Qwen/Qwen2.5-3B-Instruct},
+  note         = {Ficha del modelo. Declara 3,09 mil millones de par{\'a}metros, 36 capas y 16/2 cabezas. Accedido en octubre de 2026}
 }
 
 % --- Frameworks de Desarrollo e Inferencia Web ---
 @software{tiangolo2018fastapi,
-  author  = {Ram{\'i}rez, Sebasti{\'a}n},
-  title   = {{FastAPI}: Modern, fast (high-performance), web framework for building {APIs} with {Python}},
-  year    = {2018},
-  url     = {https://github.com/fastapi/fastapi}
+  author       = {Ram{\'i}rez, Sebasti{\'a}n},
+  title        = {{FastAPI}: Modern, fast (high-performance), web framework for building {APIs} with {Python}},
+  year         = {2018},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {Repositorio de {GitHub}},
+  url          = {https://github.com/fastapi/fastapi},
+  note         = {Accedido en octubre de 2026}
 }
 
-@article{mann1947test,
-  author  = {Mann, Henry B. and Whitney, Donald R.},
-  title   = {On a Test of Whether One of Two Random Variables is Stochastically Larger than the Other},
-  journal = {The Annals of Mathematical Statistics},
-  year    = {1947},
-  volume  = {18},
-  number  = {1},
-  pages   = {50--60}
-}
-
-@article{akiba2019optuna,
+@inproceedings{akiba2019optuna,
   author    = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and Ohta, Takeru and Koyama, Masanori},
-  title     = {Optuna: A Next-generation Hyperparameter Optimization Framework},
-  booktitle = {Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  title     = {{Optuna}: A Next-Generation Hyperparameter Optimization Framework},
+  booktitle = {Proceedings of the 25th {ACM} {SIGKDD} International Conference on Knowledge Discovery and Data Mining},
+  series    = {KDD '19},
   year      = {2019},
-  pages     = {2623--2631}
+  pages     = {2623--2631},
+  address   = {New York, NY, USA},
+  publisher = {Association for Computing Machinery},
+  doi       = {10.1145/3292500.3330701}
 }
 
 % --- Estándares Web e Intercepción de Video ---
@@ -323,76 +383,77 @@
   author       = {{W3C}},
   title        = {Media Capture and Streams},
   year         = {2024},
-  howpublished = {\url{https://www.w3.org/TR/mediacapture-streams/}}
+  howpublished = {Estandardizaci{\'o}n web ({W3C Candidate Recommendation Snapshot})},
+  url          = {https://www.w3.org/TR/mediacapture-streams/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{w3c2024mediacapture,
   author       = {{W3C}},
   title        = {Media Capture from {DOM} Elements},
   year         = {2024},
-  howpublished = {\url{https://www.w3.org/TR/mediacapture-fromelement/}}
+  howpublished = {Estandardizaci{\'o}n web ({W3C Candidate Recommendation Snapshot})},
+  url          = {https://www.w3.org/TR/mediacapture-fromelement/},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{chrome2024manifestv3,
   author       = {{Google Chrome Developers}},
   title        = {Overview of {Manifest V3}},
   year         = {2024},
-  howpublished = {\url{https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3}}
+  howpublished = {Chrome Extension Documentation},
+  url          = {https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{chrome2024sandbox,
   author       = {{Google Chrome Developers}},
-  title        = {\texttt{sandbox} ({Manifest V3})},
+  title        = {sandbox ({Manifest V3})},
   year         = {2024},
-  howpublished = {\url{https://developer.chrome.com/docs/extensions/reference/manifest/sandbox}}
+  howpublished = {Chrome Extension Documentation},
+  url          = {https://developer.chrome.com/docs/extensions/reference/manifest/sandbox},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{chrome2024offscreen,
   author       = {{Google Chrome Developers}},
-  title        = {\texttt{chrome.offscreen}},
+  title        = {chrome.offscreen},
   year         = {2024},
-  howpublished = {\url{https://developer.chrome.com/docs/extensions/reference/api/offscreen}}
-}
-
-@inproceedings{lugaresi2019mediapipe,
-  author    = {Lugaresi, Camillo and Tang, Jiuqiang and Nash, Hadon and McClanahan, Chris and Uboweja, Esha and Hays, Michael and Zhang, Fan and Chang, Chuo-Ling and Yong, Ming Guang and Lee, Juhyun and Chang, Wan-Teh and Hua, Wei and Georg, Manfred and Grundmann, Matthias},
-  title     = {{MediaPipe}: A Framework for Building Perception Pipelines},
-  booktitle = {Third Workshop on Computer Vision for {AR/VR} at {IEEE} {CVPR}},
-  year      = {2019}
+  howpublished = {Chrome Extension Documentation},
+  url          = {https://developer.chrome.com/docs/extensions/reference/api/offscreen},
+  note         = {Accedido en octubre de 2026}
 }
 
 @misc{bazarevsky2020blazepose,
-  author       = {Bazarevsky, Valentin and Grishchenko, Ivan and Raveendran, Karthik and Zhu, Tyler and Zhang, Fan and Grundmann, Matthias},
-  title        = {{BlazePose}: On-device Real-time Body Pose Tracking},
-  year         = {2020},
-  eprint       = {2006.10204},
-  archivePrefix= {arXiv},
-  primaryClass = {cs.CV}
+  author        = {Bazarevsky, Valentin and Grishchenko, Ivan and Raveendran, Karthik and Zhu, Tyler and Zhang, Fan and Grundmann, Matthias},
+  title         = {{BlazePose}: On-Device Real-Time Body Pose Tracking},
+  journal       = {arXiv preprint arXiv:2006.10204},
+  year          = {2020},
+  eprint        = {2006.10204},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2006.10204},
+  note          = {Accedido en octubre de 2026}
 }
 
 @misc{zhang2020mediapipehands,
-  author       = {Zhang, Fan and Bazarevsky, Valentin and Vakunov, Andrey and Tkachenka, Andrei and Sung, George and Chang, Chuo-Ling and Grundmann, Matthias},
-  title        = {{MediaPipe} Hands: On-device Real-time Hand Tracking},
-  year         = {2020},
-  eprint       = {2006.10214},
-  archivePrefix= {arXiv},
-  primaryClass = {cs.CV}
+  author        = {Zhang, Fan and Bazarevsky, Valentin and Vakunov, Andrey and Tkachenka, Andrei and Sung, George and Chang, Chuo-Ling and Grundmann, Matthias},
+  title         = {{MediaPipe} Hands: On-Device Real-Time Hand Tracking},
+  journal       = {arXiv preprint arXiv:2006.10214},
+  year          = {2020},
+  eprint        = {2006.10214},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2006.10214},
+  note          = {Accedido en octubre de 2026}
 }
 
 @misc{moryossef2021poseformat,
   author       = {Moryossef, Amit and M{\"u}ller, Mathias and Fahrni, Rebecka},
-  title        = {pose-format: Library for viewing, augmenting, and handling {.pose} files},
+  title        = {{pose-format}: Library for Viewing, Augmenting, and Handling {.pose} Files},
   year         = {2021},
-  howpublished = {\url{https://github.com/sign-language-processing/pose}}
-}
-
-% --- Calculos de huella de memoria de modelo semantico quantizado ---
-
-@article{pope2023efficiently,
-  title     = {Efficiently scaling transformer inference},
-  author    = {Pope, Reiner and Douglas, Sholto and Chowdhery, Aakanksha and Devlin, Jacob and Bradbury, James and Levskaya, Anselm and Zhang, Chenggang and Nado, Zachary and Jaitly, Navdeep and Vaswani, Ashish and others},
-  journal   = {Proceedings of Machine Learning and Systems},
-  volume    = {5},
-  pages     = {606--624},
-  year      = {2023}
+  publisher    = {GitHub},
+  howpublished = {Repositorio de {GitHub}},
+  url          = {https://github.com/sign-language-processing/pose},
+  note         = {Accedido en octubre de 2026}
 }

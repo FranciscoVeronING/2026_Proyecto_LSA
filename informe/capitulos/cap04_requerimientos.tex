@@ -72,7 +72,7 @@ La CPU debe sostener a la vez la videollamada, MediaPipe en WebAssembly y el cla
 \subsection{Casos de uso esenciales en formato breve}
 \begin{itemize}
     \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Una glosa léxica sola, solo dígitos, o un deletreo de dos o más letras sin I ni T se arman en ILSA. El resto consulta el servicio semántico. Con Subtítulo, la oración queda en el video. Con Audio o Ambos, la voz suena para todos los participantes de la llamada.
-    \item \textbf{CU-02 --- Mano hábil:} ILSA muestra diestro y zurdo, con diestro ya seleccionado. La persona confirma diestro o pasa a zurdo. Con zurdo, el vector se espeja en horizontal y se cruzan las dos manos durante esa sesión.
+    \item \textbf{CU-02 --- Seleccionar mano hábil:} ILSA muestra diestro y zurdo, con diestro ya seleccionado. La persona confirma diestro o pasa a zurdo. Con zurdo, el vector se espeja en horizontal y se cruzan las dos manos durante esa sesión.
     \item \textbf{CU-03 --- Configurar canal de salida:} En el panel de la extensión, el usuario señante elige la salida en Meet: Subtítulo, Audio o Ambos. Si no toca el control, queda Subtítulo.
     \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla e ILSA transcribe esa voz. El chat es el flujo alternativo: ILSA toma ese texto y no lo transcribe. Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. El avatar encola hasta 20 animaciones, dibuja hasta 24 clips y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión.
     \item \textbf{CU-05 --- Entrar al panel:} Encender, Reiniciar o Apagar vuelven a la pantalla de carga. El panel se abre si responden el traductor semántico y el servidor de poses. Si alguno falla, queda Reintentar.
@@ -114,11 +114,11 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 \end{scope}
 
 % Casos de uso
-\node[caso] (cu01) at (5.6,4.15) {CU-01 Conversar\\(modo sordo)};
-\node[caso] (cu02) at (5.6,2.85) {CU-02 Mano hábil};
-\node[caso] (cu03) at (5.6,1.55) {CU-03 Canal de salida};
+\node[caso] (cu01) at (5.6,4.15) {CU-01 Conversar con otra persona};
+\node[caso] (cu02) at (5.6,2.85) {CU-02 Seleccionar mano hábil};
+\node[caso] (cu03) at (5.6,1.55) {CU-03 Configurar canal de salida};
 \node[caso] (cu05) at (5.6,0.25) {CU-05 Entrar al panel};
-\node[caso] (cu04) at (5.6,-1.10) {CU-04 Avatar\\(modo oyente)};
+\node[caso] (cu04) at (5.6,-1.10) {CU-04 Traducir español a LSA mediante Avatar};
 
 % Frontera del sistema
 \node[draw, dashed, thick, rounded corners=2pt, inner sep=10pt,
@@ -133,7 +133,7 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 \draw (10.65,1.10) -- (cu05);
 \draw (10.65,0.90) -- (cu04);
 \end{tikzpicture}
-\caption{Diagrama de casos de uso del prototipo. El señante opera el canal directo y la configuración. El oyente opera el canal inverso. Ambos pueden abrir el panel.}
+\caption{Diagrama de casos de uso del prototipo.}
 \label{fig:casos_uso}
 \end{figure}
 
@@ -163,7 +163,7 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \renewcommand{\arraystretch}{1.6}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Mano hábil}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Seleccionar mano hábil}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está en el panel principal. El control de mano muestra diestro seleccionado.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La sesión queda con la mano elegida. Con zurdo, el vector se espeja y se cruzan las manos.} \\ \hline

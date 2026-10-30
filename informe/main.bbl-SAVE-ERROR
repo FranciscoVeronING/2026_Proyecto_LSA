@@ -41,7 +41,7 @@
       \field{title}{Ley 27.710 --- Lengua de Señas Argentina}
       \field{year}{2023}
     \endentry
-    \entry{massoneparte2}{book}{}{}
+    \entry{massone2012curso}{book}{}{}
       \name{author}{2}{}{%
         {{hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -113,7 +113,7 @@
       \field{pages}{195\bibrangedash 277}
       \range{pages}{83}
     \endentry
-    \entry{massoneparte1}{article}{}{}
+    \entry{massone1993numero}{article}{}{}
       \name{author}{1}{}{%
         {{hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -143,7 +143,7 @@
       \field{pages}{73\bibrangedash 99}
       \range{pages}{27}
     \endentry
-    \entry{lugaresi2019mediapipe}{inproceedings}{}{}
+    \entry{google2019mediapipe}{inproceedings}{}{}
       \name{author}{14}{}{%
         {{hash=ec152126f5b7712b4664db54b34b4645}{%
            family={Lugaresi},
@@ -232,7 +232,7 @@
       \field{title}{{MediaPipe}: A Framework for Building Perception Pipelines}
       \field{year}{2019}
     \endentry
-    \entry{google2020mediapipe}{misc}{}{}
+    \entry{google2019mediapipe}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=8b36e9207c24c76e6719268e49201d94}{%
            family={{Google}},

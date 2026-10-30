@@ -23,7 +23,7 @@ La evaluación del sistema abarca desde la recolección de datos y el entrenamie
 \end{itemize}
 
 \subsection{Entornos de evaluación}
-Las pruebas se ejecutaron en dos entornos representativos:
+Las pruebas se ejecutaron en tres entornos representativos:
 \begin{enumerate}
     \item \textbf{Estación de desarrollo (GPU):} Utilizada para la evaluación estática fuera de línea, el entrenamiento de modelos y las pruebas de velocidad máxima de inferencia.
     \item \textbf{Equipo objetivo de cliente (Laptop sin GPU):} Configuración de gama media estándar orientada a verificar el comportamiento en tiempo real, el consumo de CPU/RAM y la latencia perceptible por el usuario final.
@@ -31,7 +31,9 @@ Las pruebas se ejecutaron en dos entornos representativos:
 \end{enumerate}
 
 \subsection{Criterios de aceptación y trazabilidad}
-Cada caso de prueba se vinculó de manera directa con los requerimientos funcionales y no funcionales del sistema. En la Tabla~\ref{tab:trazabilidad_pruebas} se sintetizan los criterios de aceptación principales definidos para la validación.
+Cada caso de prueba se vinculó de manera directa con los requerimientos funcionales y no funcionales del sistema. En el Cuadro~\ref{tab:trazabilidad_pruebas} se sintetizan los criterios de aceptación principales definidos para la validación.
+
+% TODO: CHEQUEAR FRANN
 
 \begin{table}[H]
     \centering
@@ -42,10 +44,10 @@ Cada caso de prueba se vinculó de manera directa con los requerimientos funcion
         \toprule
         \textbf{Módulo} & \textbf{Requerimiento asociado} & \textbf{Criterio de aceptación} \\
         \midrule
-        Clasificador Gestual & Clasificación en tiempo real de vocabulario de 100 señas LSA. & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
-        Traductor Semántico & Conversión bidireccional entre glosas y español fluido. & Exactitud sintáctica/semántica $> 85\%$, BLEU $> 90$, BERTScore $> 98$. \\
-        Motor Local & Filtrado de repeticiones y control de estado de gestos. & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
-        Integración Meet & Captura e inyección de video/texto sin alterar la videollamada. & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
+        Clasificador Gestual & RF-01, RF-02 & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
+        Traductor Semántico & RF-03, RF-06 & Exactitud sintáctica/semántica $> 85\%$, BLEU $> 90$, BERTScore $> 98$. \\
+        Motor Local & RF-02, RF-09 & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
+        Integración Meet & RF-08 & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -63,7 +65,7 @@ Esta sección presenta la evidencia empírica obtenida a partir de la ejecución
 El modelo de clasificación gestual se evaluó tanto en entornos estáticos fuera de línea como en pruebas en vivo frente a cámara web en la estación local.
 
 \subsubsection{Evolución del corpus y vocabulario}
-La incorporación de clases al modelo avanzó de manera paulatina conforme se consolidaron las muestras del dataset propio de LSA. En la Tabla~\ref{tab:evolucion_corpus} se detalla la progresión del vocabulario y las muestras recopiladas.
+La incorporación de clases al modelo avanzó de manera paulatina conforme se consolidaron las muestras del dataset propio de LSA. En el Cuadro~\ref{tab:evolucion_corpus} se detalla la progresión del vocabulario y las muestras recopiladas.
 
 \begin{table}[H]
     \centering
@@ -84,14 +86,14 @@ La incorporación de clases al modelo avanzó de manera paulatina conforme se co
 \end{table}
 
 \subsubsection{Comparativa entre evaluación fuera de línea y cámara en vivo}
-En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada entre la exactitud de validación sobre el dataset estático y el rendimiento real obtenido frente a la cámara web.
+En el Cuadro~\ref{tab:brecha_offline_camara} se expone la diferencia observada entre la exactitud de validación sobre el dataset estático y el rendimiento real obtenido frente a la cámara web.
 
 \begin{table}[H]
     \centering
     \small
     \caption{Exactitud de validación fuera de línea frente al acierto en cámara. Las filas de 91 a 97 clases corresponden a una toma por seña. Las de 100 clases corresponden a diez tomas por seña.}
     \label{tab:brecha_offline_camara}
-    \begin{tabular}{llccc}
+    \begin{tabularx}{\linewidth}{Xcccc}
         \toprule
         \textbf{Checkpoint} & \textbf{Dataset} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
         \midrule
@@ -99,40 +101,75 @@ En la Tabla~\ref{tab:brecha_offline_camara} se expone la diferencia observada en
         32 fotogramas, 128/4/2 & 1 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
         32 fotogramas, 64/2/1 & 1 & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
         Optuna v1, 32 fotogramas & 1 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
+        Optuna v2, 12 fotogramas, 94 clases & 2 & 97{,}78\,\% & 80{,}9\,\% & 96{,}8\,\% \\
         Baseline 16f, luz ambiental, 94 clases & 2 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
         Baseline 16f, iluminación dirigida, 94 clases & 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
         Baseline 16f, 97 clases & 3 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
         100 clases, 10 tomas, luz adecuada & 4 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
         100 clases, 10 tomas, luz reducida & 5 & 99{,}00\,\% & 94{,}6\,\% & 98{,}7\,\% \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
 \end{table}
 
-En las iteraciones de 94 clases, el control de la iluminación del entorno elevó el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo. Esta comparación no fija encuadre ni persona. La evaluación del checkpoint de 100 clases, descrita más adelante, sí conserva ambos factores y aísla el efecto de la luz.
-
+En las iteraciones de 94 clases, el control de la iluminación del entorno elevó el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo.
+%TODO: optuna
 \subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
-La Tabla~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
+El Cuadro~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
 
 \begin{table}[H]
     \centering
     \small
     \caption{Evaluación de la resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}
     \label{tab:frames_julio}
-    \begin{tabular}{lcccc}
+    \begin{tabularx}{\textwidth}{l X ccc}
         \toprule
-        \textbf{Iteración} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \textbf{Iteración} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cám. Top-1} & \textbf{Cám. Top-3} \\
         \midrule
-        A, 16 fotogramas & 128 dim / 4 cabezas / 2 capas & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
-        B, 32 fotogramas & 128 dim / 4 cabezas / 2 capas & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
-        C, 32 fotogramas & 64 dim / 2 cabezas / 1 capa & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
+        A, 16 frames & 128 dim / 4 cabezas / 2 capas & 97{,}36\,\% & 61{,}5\,\% & 83{,}5\,\% \\
+        B, 32 frames & 128 dim / 4 cabezas / 2 capas & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        C, 32 frames & 64 dim / 2 cabezas / 1 capa   & 97{,}36\,\% & 67{,}0\,\% & 90{,}1\,\% \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
 \end{table}
 
 A pesar de las ganancias iniciales observadas con 32 fotogramas, la incorporación de aumentaciones avanzadas de datos en agosto confirmó que la ventana de 16 fotogramas ofreció mayor capacidad de generalización sobre señas estáticas y redujo la redundancia temporal.
 
+\subsubsection{Búsqueda de hiperparámetros con Optuna}
+
+La exploración del espacio de hiperparámetros se estructuró en dos estudios compuestos por 40 ensayos cada uno, evaluados mediante validación cruzada de tres pliegues con poda de ensayos no prometedores. La función objetivo priorizó la minimización de la pérdida media de validación fuera de línea, sin incluir la exactitud directa frente a la cámara web.
+
+El primer estudio abarcó un vocabulario de 91 clases con una ventana fija de 32 fotogramas. La configuración seleccionada por la búsqueda conservó la dimensión de 128 y 2 capas, al tiempo que duplicó las cabezas de atención a 8, redujo la tasa de \textit{dropout} a $0{,}30$, fijó el tamaño de lote en 16 e introdujo una tasa de aprendizaje de $3{,}77\times 10^{-5}$. Tras el reentrenamiento final, este modelo obtuvo una exactitud de validación del 97{,}69\,\% y una pérdida de $0{,}087$. En las pruebas frente a cámara, las métricas registraron un 66{,}0\,\% en Top-1 y un 84{,}6\,\% en Top-3. Dichos valores se situaron 5,4 puntos porcentuales por debajo de la iteración manual B en Top-1 y 5,5 puntos por debajo de la iteración C en Top-3.
+
+El segundo estudio amplió el catálogo a 94 clases e incorporó la resolución temporal (ventanas de 8, 12 y 16 fotogramas) dentro del espacio de búsqueda. La opción de 24 fotogramas quedó excluida debido a la restricción física de los archivos de coordenadas, cuya longitud máxima era de 16 fotogramas. El ensayo de mayor rendimiento seleccionó una ventana de 12 fotogramas, 256 dimensiones, 2 cabezas de atención, 2 capas y un \textit{dropout} de 0{,}57. En la evaluación fuera de línea, la pérdida descendió a 0{,}080 y la exactitud alcanzó el 97{,}78\,\%, guarismo que resultó 0,62 puntos porcentuales inferior al \textit{baseline} de 16 fotogramas (98{,}40\,\%). Bajo condiciones controladas de iluminación en cámara, la exactitud Top-1 se registró en 80{,}9\,\%, frente al 86{,}2\,\% obtenido por el \textit{baseline}. Esta degradación afectó de forma directa al alfabeto dactilológico, donde la exactitud en las letras cayó 14,8 puntos porcentuales (con fallos específicos en \texttt{A}, \texttt{N}, \texttt{V} e \texttt{Y}). Si bien la métrica Top-3 mostró un leve incremento en sesiones independientes, una evaluación apareada sobre tomas idénticas descartó la existencia de una ventaja estadística significativa.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Comparativa entre los ensayos de Optuna y las arquitecturas de referencia. Las cifras en cámara del segundo estudio corresponden a idénticas condiciones de iluminación que el \textit{baseline} de 16 fotogramas.}
+    \label{tab:optuna_vs_baseline}
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Modelo} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cámara Top-1} & \textbf{Cámara Top-3} \\
+        \midrule
+        Optuna v1, 32 fotogramas & 128 / 8 / 2 & 97{,}69\,\% & 66{,}0\,\% & 84{,}6\,\% \\
+        Iteración B, 32 fotogramas & 128 / 4 / 2 & 96{,}48\,\% & 71{,}4\,\% & 87{,}9\,\% \\
+        Optuna v2, 12 fotogramas & 256 / 2 / 2 & 97{,}78\,\% & 80{,}9\,\% & 96{,}8\,\% \\
+        \textit{Baseline} 16 fotogramas, misma luz & 128 / 4 / 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+El descarte de las configuraciones producidas por Optuna obedeció a tres razones fundamentales:
+
+\begin{enumerate}
+    \item \textbf{Disparidad de dominio:} La pérdida de validación sobre secuencias previamente curadas no predice el comportamiento real frente a la cámara, puesto que las fluctuaciones de iluminación, los errores de encuadre y la inestabilidad en la extracción de puntos articulares permanecen ajenos al proceso de validación cruzada.
+    \item \textbf{Aislamiento de variables en la captura:} Las comparaciones iniciales solaparon los cambios arquitectónicos con variaciones en las condiciones de luz. Una vez estabilizada la iluminación ambiental, se constató que el incremento en el rendimiento provino de la calidad de la captura y no de los hiperparámetros.
+    \item \textbf{Criterio de desempeño del producto:} El diseño del sistema prioriza la exactitud Top-1 en vivo, con especial énfasis en el deletreo dactilológico. La arquitectura base (16 fotogramas, 128 dimensiones, 4 cabezas de atención y 2 capas) superó a los dos modelos generados por la optimización automática y constituyó la solución integrada en el prototipo final.
+\end{enumerate}
+
+
 \subsubsection{Impacto de la corrección de relación de aspecto}
-La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ con bandas de relleno generó un impacto positivo directo en la clasificación, según se detalla en la Tabla~\ref{tab:aspect}.
+La estandarización del marco de captura desde proporciones $4:3$ hacia $16:9$ con bandas de relleno generó un impacto positivo directo en la clasificación, según se detalla en el Cuadro~\ref{tab:aspect}.
 
 \begin{table}[H]
     \centering
@@ -162,7 +199,7 @@ La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano
 
 La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El script rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor corresponde a MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias se estableció un segundo de espera.
 
-La Tabla~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de iluminación cumplen el criterio de aceptación del plan (Top-1 mayor al 75\,\% y Top-3 mayor al 90\,\%).
+El Cuadro~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de iluminación cumplen el criterio de aceptación del plan (Top-1 mayor al 75\,\% y Top-3 mayor al 90\,\%).
 
 \begin{table}[H]
     \centering
@@ -185,7 +222,7 @@ La Tabla~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de il
 
 Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores y en todos ellos la seña solicitada ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
 
-Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
+Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece, tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
 
 \subsection{Resultados de los módulos de traducción semántica}
 \label{sec:res_traduccion}
@@ -194,7 +231,7 @@ Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar di
 La evaluación de los modelos de lenguaje reducidos (SLM) cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
 
 \subsubsection{Evaluación del canal directo (LSA a Español)}
-En la Tabla~\ref{tab:sem_directo} se presentan las métricas cualitativas y cuantitativas para el canal directo.
+En el Cuadro~\ref{tab:sem_directo} se presentan las métricas cualitativas y cuantitativas para el canal directo.
 
 \begin{table}[H]
 \centering
@@ -215,7 +252,7 @@ SmolLM2 1,7B & 90,76 & 93,53 & 96,48 & 95,97 & 98,85 & 97,12 & 438,31 \\
 \end{table}
 
 \subsubsection{Evaluación del canal inverso (Español a LSA)}
-En la Tabla~\ref{tab:sem_inverso} se detallan las métricas correspondientes al módulo de estructuración en glosas para el canal inverso.
+En el Cuadro~\ref{tab:sem_inverso} se detallan las métricas correspondientes al módulo de estructuración en glosas para el canal inverso.
 
 \begin{table}[H]
 \centering
@@ -238,7 +275,7 @@ SmolLM2 1,7B & 77,45 & 82,90 & 91,54 & 86,31 & 97,68 & 92,37 & 458,39 \\
 El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto del 94,96\,\% en canal directo y del 91,18\,\% en canal inverso, junto con tiempos de inferencia en CPU inferiores a 300\,ms.
 
 \subsection{Pruebas de la lógica de control del motor local}
-La batería de pruebas diseñada para validar la lógica del filtro \texttt{RepeatGate} y los tiempos de corte de enunciado produjo los resultados consignados en la Tabla~\ref{tab:bateria_logica}.
+La batería de pruebas diseñada para validar la lógica del filtro \texttt{RepeatGate} y los tiempos de corte de enunciado produjo los resultados consignados en el Cuadro~\ref{tab:bateria_logica}.
 
 \begin{table}[H]
     \centering
@@ -262,7 +299,7 @@ La batería de pruebas diseñada para validar la lógica del filtro \texttt{Repe
 \end{table}
 
 \subsection{Tratamiento de fallas de integración en Google Meet}
-Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que se solucionaron mediante intervenciones específicas de arquitectura, según se detalla en la Tabla~\ref{tab:fallas_integracion}.
+Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que se solucionaron mediante intervenciones específicas de arquitectura, según se detalla en el Cuadro~\ref{tab:fallas_integracion}.
 
 \begin{table}[H]
     \centering
@@ -299,12 +336,12 @@ La evaluación objetiva del sistema se consolidó mediante métricas cuantificab
 
 Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa. Durante dicha sesión se capturaron eventos en ambos canales de traducción (directo e inverso), con registro de la latencia por etapa, el consumo de memoria del proceso cliente (RSS) y la tasa de fotogramas por segundo (FPS).
 
-En la Tabla~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
+En el Cuadro~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
 
 \begin{table}[H]
     \centering
     \small
-    \caption{Resumen de métricas de perfilado y latencia registradas durante la prueba del 29/10/2026.}
+    \caption{Resumen de métricas de perfilado y latencia registradas.}
     \label{tab:telemetria_resumen}
     \begin{tabularx}{\textwidth}{l X X X}
         \toprule
@@ -329,7 +366,7 @@ En la Tabla~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, m�
 
 A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada.
 
-En la Tabla~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
+En el Cuadro~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
 
 \begin{table}[H]
     \centering
@@ -354,7 +391,7 @@ El análisis de perfilado muestra los siguientes comportamientos:
 
 \subsection{Consumo de memoria y huella del sistema en servidor}
 \label{sec:memoria_inferencia}
-La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En la Tabla~\ref{tab:pesos_cuant} y la Tabla~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 tokens.
+La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En el Cuadro~\ref{tab:pesos_cuant} y el Cuadro~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 tokens.
 
 \begin{table}[H]
 \centering
@@ -398,9 +435,9 @@ En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen
 \label{sec:hw_comparacion}
 \label{sec:hardware_objetivo}
 
-Con el objeto de evaluar el comportamiento del motor local en un entorno con mayor capacidad computacional y contrastar estos resultados con los de la laptop objetivo (presentado en la Tabla~\ref{tab:perfilado_recursos_log}), se ejecutaron las mismas pruebas sobre la estación de desarrollo de escritorio.
+Con el objeto de evaluar el comportamiento del motor local en un entorno con mayor capacidad computacional y contrastar estos resultados con los de la laptop objetivo (presentado en el Cuadro~\ref{tab:perfilado_recursos_log}), se ejecutaron las mismas pruebas sobre la estación de desarrollo de escritorio. Esa PC reúne un AMD Ryzen 7 8700F de ocho núcleos a 4,10\,GHz, 16\,GB de memoria RAM a 4800\,MT/s, una NVIDIA GeForce RTX 5070 de 12\,GB y un disco de 1,37\,TB.
 
-En la Tabla~\ref{tab:telemetria_pc} se detallan la tasa de captura, el refresco de pantalla, el tiempo de inferencia local y el consumo de recursos de cómputo registrados en esta plataforma.
+En el Cuadro~\ref{tab:telemetria_pc} se detallan la tasa de captura, el refresco de pantalla, el tiempo de inferencia local y el consumo de recursos de cómputo registrados en esta plataforma.
 
 \begin{table}[H]
     \centering
@@ -420,10 +457,10 @@ En la Tabla~\ref{tab:telemetria_pc} se detallan la tasa de captura, el refresco 
     \end{tabularx}
 \end{table}
 
-El contraste entre los valores reportados en la Tabla~\ref{tab:telemetria_pc} y los observados en el equipo portátil objetivo permite extraer las siguientes conclusiones técnicas:
+El contraste entre los valores reportados en el Cuadro~\ref{tab:telemetria_pc} y los observados en el equipo portátil objetivo permite extraer las siguientes conclusiones técnicas:
 
 \begin{itemize}
     \item \textbf{Desacoplamiento de la tasa de captura gestual:} En el equipo de escritorio la extracción de puntos clave alcanza el techo de rendimiento del sensor ($\approx 27\text{--}28$ FPS), en comparación con el rango de 5\text{ a }12 FPS de la laptop. No obstante, la tasa de acierto del clasificador se mantiene estable en ambos entornos, hecho que valida la robustez del remuestreo temporal implementado en la lógica de control.
     \item \textbf{Impacto en el consumo de CPU y memoria:} El uso de procesador disminuye significativamente en la estación de desarrollo (0{,}87\,\% en directo y 22{,}48\,\% en inverso), lo que confirma que el costo computacional del motor local depende del hardware cliente. El mayor consumo de memoria RAM registrado en el equipo de escritorio ($\approx 544\text{--}666$ MB) responde a las políticas de asignación de memoria y recolección de basura más permisivas del navegador Chromium sobre un sistema con mayor capacidad.
-    \item \textbf{Fundamentación de la arquitectura híbrida:} La ejecución local de un modelo de lenguaje de 1{,}5B de parámetros requeriría más de 8 segundos de procesamiento en CPU aún en la estación de desarrollo. Por consiguiente, la delegación de la inferencia semántica a la infraestructura en la nube se consolida como la decisión de diseño idónea para garantizar respuestas en tiempo real con independencia de la capacidad de cómputo del usuario.
+    \item \textbf{Fundamentación de la arquitectura híbrida:} La ejecución local de un modelo de lenguaje de 1{,}5B de parámetros requeriría más de 8 segundos de procesamiento en CPU aún en la estación de desarrollo. Por consiguiente, la delegación de la inferencia semántica a la infraestructura en la nube se consolida como la decisión de diseño idónea para garantizar respuestas en tiempo pseudo-real con independencia de la capacidad de cómputo del usuario.
 \end{itemize}

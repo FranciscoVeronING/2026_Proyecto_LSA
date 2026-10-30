@@ -9,8 +9,8 @@
 La articulación de la LSA se sostiene sobre la interacción simultánea de dos grandes conjuntos de parámetros lingüísticos:
 
 \begin{itemize}
-    \item \textbf{Rasgos manuales:} Comprenden la configuración o forma de la mano, la ubicación o punto de articulación en el espacio corporal, la orientación de la palma y la trayectoria cinemática \parencite{massoneparte2}.
-    \item \textbf{Rasgos no manuales:} Incluyen la gesticulación facial (movimiento de cejas, boca y mirada), la inclinación del torso y la postura del cuello \parencite{massoneparte2}. Estos elementos cumplen un rol determinante para matizar la intensidad de una acción, marcar interrogaciones o delimitar la polaridad en enunciados complejos.
+    \item \textbf{Rasgos manuales:} Comprenden la configuración o forma de la mano, la ubicación o punto de articulación en el espacio corporal, la orientación de la palma y la trayectoria cinemática \parencite{massone2012curso}.
+    \item \textbf{Rasgos no manuales:} Incluyen la gesticulación facial (movimiento de cejas, boca y mirada), la inclinación del torso y la postura del cuello \parencite{massone2012curso}. Estos elementos cumplen un rol determinante para matizar la intensidad de una acción, marcar interrogaciones o delimitar la polaridad en enunciados complejos.
 \end{itemize}
 
 Desde la perspectiva de la fonología gestual, la ejecución temporal de toda seña o glosa se estructura en tres fases secuenciales delimitadas en la literatura lingüística \parencite{liddell1989phonological}:
@@ -24,7 +24,7 @@ Desde la perspectiva de la fonología gestual, la ejecución temporal de toda se
 \label{sec:orden_prototipo}
 La LSA y el español rioplatense no comparten la misma gramática. Las afirmaciones generales sobre la lengua y la regla de trabajo de este prototipo van separadas.
 
-Sobre la LSA, la bibliografía de referencia sostiene tres puntos. La organización \textit{Topic-Comment} presenta un tema y después lo que se dice de ese tema \parencite{massoneparte2}. Esa organización no equivale, por sí sola, a un orden fijo de todas las palabras. La lengua no usa los artículos, las preposiciones gramaticales abstractas ni los verbos copulativos del español \parencite{massoneparte1, massoneparte2}.
+Sobre la LSA, la bibliografía de referencia sostiene tres puntos. La organización \textit{Topic-Comment} presenta un tema y después lo que se dice de ese tema \parencite{massone2012curso}. Esa organización no equivale, por sí sola, a un orden fijo de todas las palabras. La lengua no usa los artículos, las preposiciones gramaticales abstractas ni los verbos copulativos del español \parencite{massone1993numero, massone2012curso}.
 
 Este prototipo no implementa esa gramática completa. El clasificador no toma la boca, las cejas ni la cabeza como rasgos. Una pregunta, una negación o un tiempo solo se recuperan si la persona los produce con una seña manual. La ecuación siguiente es la regla simplificada con la que el prototipo ordena las glosas, no una descripción de toda la LSA:
 
@@ -60,7 +60,7 @@ El reconocimiento de señas a partir de flujo de video crudo opera, en cada foto
 \end{equation}
 escalares. Esta representación resulta altamente sensible a las variaciones de iluminación, al fondo y a la vestimenta del usuario. El reconocimiento basado en esqueletos reemplaza esta representación densa mediante la clasificación de un conjunto reducido de coordenadas articulares, denominadas \textit{landmarks}.
 
-Para la estimación postural se utiliza \textit{MediaPipe Holistic}, una arquitectura de percepción distribuida para dispositivos de borde \parencite{lugaresi2019mediapipe, google2020mediapipe}. Este marco no constituye un detector único, sino una serie de modelos preentrenados encadenados, que se ejecuta de forma local en el cliente sin transmitir la imagen cruda. El primer modelo, \textit{BlazePose}, localiza al sujeto y estima 33 puntos de pose corporal \parencite{bazarevsky2020blazepose}. Dichos puntos abarcan la estructura facial gruesa, el torso y las extremidades. A partir de las coordenadas de las muñecas, el pipeline delimita una región de interés (\textit{ROI}) para cada mano, donde el modelo específico de manos (\textit{hand}) infiere 21 puntos tridimensionales por mano (la muñeca y cuatro articulaciones por dedo) \parencite{zhang2020mediapipehands}. 
+Para la estimación postural se utiliza \textit{MediaPipe Holistic}, una arquitectura de percepción distribuida para dispositivos de borde \parencite{google2019mediapipe, google2019mediapipe}. Este marco no constituye un detector único, sino una serie de modelos preentrenados encadenados, que se ejecuta de forma local en el cliente sin transmitir la imagen cruda. El primer modelo, \textit{BlazePose}, localiza al sujeto y estima 33 puntos de pose corporal \parencite{bazarevsky2020blazepose}. Dichos puntos abarcan la estructura facial gruesa, el torso y las extremidades. A partir de las coordenadas de las muñecas, el pipeline delimita una región de interés (\textit{ROI}) para cada mano, donde el modelo específico de manos (\textit{hand}) infiere 21 puntos tridimensionales por mano (la muñeca y cuatro articulaciones por dedo) \parencite{zhang2020mediapipehands}. 
 
 Asimismo, los datos cinemáticos de referencia gestual se archivan en un formato binario especializado con extensión \texttt{.pose} \parencite{moryossef2021poseformat}. La especificación del formato y su esquema de serialización provienen de la biblioteca \textit{pose-format}, desarrollada para el almacenamiento y manipulación de datos posturales en lenguas de señas, la cual organiza los puntos en un encabezado de metadatos globales y un tensor multidimensional de coordenadas espacializadas.
 
@@ -243,13 +243,11 @@ La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducci
         WLASL \parencite{li2020wlasl} & ASL, video & Reconocimiento léxico. & Corpus. No traduce oraciones ni trabaja en LSA. \\
         \addlinespace[2pt]
         Hand Talk \parencite{handtalk2025} & Libras y ASL, texto & Hacia un avatar esquelético. & Sin reconocimiento y sin LSA. \\
-        \addlinespace[2pt]
-        HETAH \parencite{hetah2024avatar} & Español, oración escrita & Hacia síntesis gestual. & Sin reconocimiento de LSA dentro de una llamada. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-Cada límite de la tabla está en la fuente citada: el diccionario no reconoce, LSA64 filma con guantes, SignAll no devuelve señas, WLASL no sale de la ASL léxica, y Hand Talk y HETAH parten del texto. Ninguna de esas fuentes describe el recorte de este prototipo, que es el reconocimiento aislado dentro de Meet.
+Cada límite de la tabla está en la fuente citada: el diccionario no reconoce, LSA64 filma con guantes, SignAll no devuelve señas, WLASL no sale de la ASL léxica, y Hand Talk parte del texto. Ninguna de esas fuentes describe el recorte de este prototipo, que es el reconocimiento aislado dentro de Meet.
 
 \section{Metodología de desarrollo}
 El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e incremental \parencite{pressman2014software}, compuesto por 6 fases principales:
@@ -276,7 +274,7 @@ La fidelidad semántica, en este trabajo, es la conservación de la proposición
 
 Un puntaje alto de solapamiento no equivale a comprensión de LSA ni a validación del avatar. La configuración de cada métrica ---modelo de \texttt{BERT Score}, versión de \texttt{Comet Score}, normalización, agregación y tratamiento de referencias múltiples--- se informa junto con los resultados, en la Sección~\ref{sec:eval_semantica_cuant}.%TODO: AGREGAR TABLA  EN EL CAP 7
 
-\subsection{Declaración sobre el uso de herramientas de inteligencia artificial}
+\subsection{Declaración sobre el uso de herramientas de inteligencia artificial (IA)}
 \paragraph{Herramientas empleadas.}
 Durante las fases de desarrollo y redacción se utilizaron dos herramientas auxiliares:
 \begin{itemize}
@@ -319,7 +317,7 @@ Modelos de Lenguaje & Transformers, PEFT, Unsloth & Fine-tuning eficiente con ad
 \addlinespace[3pt]
 Inferencia de Lenguaje & \texttt{llama.cpp}, GGUF & Inferencia del traductor en CPU. \\
 \addlinespace[3pt]
-Comunicación y Backend & FastAPI, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
+Comunicación y Backend & FastAPI \cite{tiangolo2018fastapi}, Uvicorn & Servidor de interfaz local (ILSA) y microservicio semántico desacoplado. \\
 \addlinespace[3pt]
 Servicio en la nube & Google Cloud Run & Instancia del servicio semántico empleada en las pruebas experimentales. \\
 \addlinespace[3pt]

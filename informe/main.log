@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.4)  29 OCT 2026 19:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.4)  29 OCT 2026 23:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1696,11 +1696,11 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.260     \item \textbf
+l.258     \item \textbf
                        {IntegraciÃ³n y renderizado gestual:} Acoplamiento de...
 ]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 273.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 271.
  [13]) [14] [15
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.2}) h
 as been already used, duplicate ignored
@@ -1869,7 +1869,7 @@ Overfull \hbox (5.98474pt too wide) in paragraph at lines 71--72
 u-ra-ción alo-ja-do en \T1/lmtt/m/n/12 src/classifier/weights/
  []
 
-<figuras/integracion/tinyskeleton_tensores.jpg, id=982, 1027.84pt x 418.56375pt
+<figuras/integracion/tinyskeleton_tensores.jpg, id=980, 1027.84pt x 418.56375pt
 >
 File: figuras/integracion/tinyskeleton_tensores.jpg Graphic file (type jpg)
 <use figuras/integracion/tinyskeleton_tensores.jpg>
@@ -1881,8 +1881,9 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.119 
-       <./figuras/integracion/tinyskeleton_tensores.jpg>] [39]
+l.120 P
+       ara adaptar el modelo a la lengua de seÃ±as sin modificar sus miles d...
+ <./figuras/integracion/tinyskeleton_tensores.jpg>] [39]
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <14.4> on input line 141.
 LaTeX Font Info:    External font `lmex10' loaded for size
@@ -1915,192 +1916,184 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 157.
 
-[41] [42] [43] [44]
-Overfull \hbox (26.90698pt too wide) in paragraph at lines 229--230
-\T1/lmtt/m/n/12 chrome-extension://\T1/lmr/m/n/12 (-20) , se acep-tan con la ex
--pre-sión re-gu-lar \T1/lmtt/m/n/12 ^chrome-extension://[a-p]{32}$\T1/lmr/m/n/1
-2 (-20) .
- []
-
-[45] [46]) [47] [48]
+[41] [42] [43] [44] [45] [46]) [47] [48]
 \openout2 = `capitulos/cap07_pruebas_validacion.aux'.
 
- (capitulos/cap07_pruebas_validacion.tex
+
+(capitulos/cap07_pruebas_validacion.tex
 Cap\'{\i }tulo 7.
 [49
 
 
 
 
-]
-Underfull \hbox (badness 10000) in paragraph at lines 50--50
-[]|\T1/lmr/m/n/10.95 (+20) Captura e in-yec-ción de vi-
- []
-
-[50
+] [50
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.67 
-     ]
-Overfull \hbox (69.93712pt too wide) in paragraph at lines 94--109
- [][] 
- []
-
-
-Overfull \hbox (46.51678pt too wide) in paragraph at lines 121--130
- [][] 
- []
-
-[51
+l.69 
+     ] [51
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.2}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.131 
+l.134 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.3}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.131 
-      ] [52
+l.134 
+      ]
+Overfull \hbox (58.18948pt too wide) in paragraph at lines 150--160
+ [][] 
+ []
+
+[52
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.4}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.184 \end{table}
-                 
+l.161 
+      ] [53
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.5}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.184 \end{table}
-                 ]
-Overfull \hbox (6.60011pt too wide) in paragraph at lines 204--215
- [][] 
- []
-
-
-Overfull \hbox (6.60011pt too wide) in paragraph at lines 225--236
- [][] 
- []
-
-[53
+l.197 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.6}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.236 \end{table}
-                 
+l.197 
+      ]
+Overfull \hbox (6.60011pt too wide) in paragraph at lines 241--252
+ [][] 
+ []
+
+[54
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.7}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.236 \end{table}
+l.252 \end{table}
                  ]
-Underfull \hbox (badness 1210) in paragraph at lines 261--261
+Overfull \hbox (6.60011pt too wide) in paragraph at lines 262--273
+ [][] 
+ []
+
+
+Underfull \hbox (badness 1210) in paragraph at lines 298--298
 []|\T1/lmr/m/n/10.95 (+20) Conservación de la se-cuen-cia
  []
 
-[54
+[55
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.8}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.288 
+l.300 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.9}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.288 
+l.300 
+      ] [56
+pdfTeX warning (ext4): destination with the same identifier (name{table.7.10}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.338 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{table.7.11}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.338 
       ]
-Underfull \hbox (badness 1184) in paragraph at lines 324--324
+Underfull \hbox (badness 1184) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 1444[]4$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 896[]7$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 1184) in paragraph at lines 324--324
+Underfull \hbox (badness 1184) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 1368[]2$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 826[]6$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 324--324
+Underfull \hbox (badness 5533) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 301[]7$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 273[]4$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 324--324
+Underfull \hbox (badness 5533) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 253[]3$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 254[]2$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 324--324
+Underfull \hbox (badness 5533) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 869[]3$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 105[]9$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 1184) in paragraph at lines 324--324
+Underfull \hbox (badness 1184) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 2490[]8$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10
 .95 (+20) 105[]9$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 324--324
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 168[]8$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 96[]0$ \T1/lmr/m/n/10.95 (+20) --
  []
 
 
-Underfull \hbox (badness 5533) in paragraph at lines 324--324
+Underfull \hbox (badness 5533) in paragraph at lines 361--361
 []|$\OT1/lmr/m/n/10.95 (+20) 231[]2$ \T1/lmr/m/n/10.95 (+20) ($\OT1/lmr/m/n/10.
 95 (+20) 219[]8$ \T1/lmr/m/n/10.95 (+20) --
  []
 
-[55
-pdfTeX warning (ext4): destination with the same identifier (name{table.7.10}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.326 
-      ]
-Overfull \hbox (5.94133pt too wide) in paragraph at lines 339--347
+
+Overfull \hbox (5.94133pt too wide) in paragraph at lines 376--384
  [][] 
  []
 
-[56
-pdfTeX warning (ext4): destination with the same identifier (name{table.7.11}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.358 
-      
+[57
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.12}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.358 
-      ] [57
+l.389     \item \textbf
+                       {Carga del procesador:} Durante el procesamiento del ...
+
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.13}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.422 
-      
+l.389     \item \textbf
+                       {Carga del procesador:} Durante el procesamiento del ...
+] [58
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.14}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.422 
-      ]) [58
+l.439 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{table.7.15}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.439 
+      ]) [59
+pdfTeX warning (ext4): destination with the same identifier (name{table.7.16}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
@@ -2111,17 +2104,17 @@ l.128 \include{capitulos/cap07_pruebas_validacion}
 
 (capitulos/cap08_evaluacion.tex
 Cap\'{\i }tulo 8.
-[59
+[60
 
 
 
 
-] [60]
+] [61]
 Overfull \hbox (13.02643pt too wide) in paragraph at lines 85--85
 []|\T1/lmr/bx/n/10.95 (-20) Requerimientos|  
  []
 
-[61
+[62
 pdfTeX warning (ext4): destination with the same identifier (name{table.8.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -2137,7 +2130,7 @@ Overfull \hbox (10.67802pt too wide) in paragraph at lines 140--140
 []|\T1/lmr/bx/n/10.95 (-20) Mantenibilidad|  
  []
 
-[62]) [63
+[63]) [64
 pdfTeX warning (ext4): destination with the same identifier (name{table.8.2}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
@@ -2148,28 +2141,21 @@ l.129 \include{capitulos/cap08_evaluacion}
 
  (capitulos/cap09_conclusiones.tex
 Cap\'{\i }tulo 9.
-[64
+[65
 
 
 
 
-] [65] [66]) [67]
-Overfull \hbox (4.29333pt too wide) in paragraph at lines 134--134
-[]\T1/lmr/m/n/12 (-20) W3C. \T1/lmr/m/it/12 (-20) Me-dia Cap-tu-re from DOM Ele
--ments\T1/lmr/m/n/12 (-20) . [][]$\T1/lmtt/m/n/12 https : / / www . w3 . org / 
-TR / mediacapture -[]
- []
-
-[68
+] [66] [67]) [68] [69
 
 
 
-] [69] [70]
+] [70] [71] [72]
 \openout2 = `capitulos/apendice_a_vocabulario.aux'.
 
  (capitulos/apendice_a_vocabulario.tex
 Ap\'{e}ndice A.
-) [71
+) [73
 
 
 ]
@@ -2185,28 +2171,28 @@ y guar-da el pe-so, \T1/lmtt/m/n/12 tune_optuna.py
  []
 
 
-Overfull \hbox (8.72128pt too wide) in paragraph at lines 9--10
-\T1/lmr/m/n/12 (-20) bus-ca hi-per-pa-rá-me-tros, y \T1/lmtt/m/n/12 preprocessi
-ng.py \T1/lmr/m/n/12 (-20) con-vier-te los vi-deos en coor-de-na-das. \T1/lmtt/
-m/n/12 camera.py
+Overfull \hbox (57.54599pt too wide) in paragraph at lines 9--10
+\T1/lmr/m/n/12 (-20) pe-sos y los re-gis-tros sa-len a \T1/lmtt/m/n/12 src/mode
+l_new_2026_10_20/\T1/lmr/m/n/12 (-20) , con el check-point \T1/lmtt/m/n/12 tiny
+skeleton_best.pth\T1/lmr/m/n/12 (-20) . 
  []
 
-[72
-
-
-
-
-]) [73]
-\openout2 = `capitulos/apendice_c_arquitectura_nube.aux'.
-
- (capitulos/apendice_c_arquitectura_nube.tex
-Ap\'{e}ndice C.
 [74
 
 
 
 
-] [75
+]) [75]
+\openout2 = `capitulos/apendice_c_arquitectura_nube.aux'.
+
+ (capitulos/apendice_c_arquitectura_nube.tex
+Ap\'{e}ndice C.
+[76
+
+
+
+
+] [77
 
 ]) (main.aux
 LaTeX Info: Redefining \. on input line 9.
@@ -2226,19 +2212,19 @@ L3 programming layer <2026-09-09>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 345D38548A1ED829E3330763734464CE;30050.
+(rerunfilecheck)             Checksum: F3D16696EEF9ADFE619C2942432356D6;30084.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 66986 strings out of 467392
- 1642005 string characters out of 5405639
- 2908101 words of memory out of 5000000
- 94630 multiletter control sequences out of 15000+600000
- 808350 words of font info for 377 fonts, out of 8000000 for 9000
+ 67018 strings out of 467392
+ 1642661 string characters out of 5405639
+ 2907986 words of memory out of 5000000
+ 94636 multiletter control sequences out of 15000+600000
+ 809048 words of font info for 385 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 107i,11n,118p,1525b,2365s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 107i,11n,118p,1642b,2365s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pf
 b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pf
 b><D:/Users/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb
@@ -2262,12 +2248,11 @@ rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><D:/Use
 rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><D:/Use
 rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><D:/Use
 rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt8.pfb><D:/User
-s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtti10.pfb><D:/Use
-rs/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm
-10.pfb>
-Output written on main.pdf (82 pages, 991858 bytes).
+s/maite/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm1
+0.pfb>
+Output written on main.pdf (84 pages, 1000774 bytes).
 PDF statistics:
- 1479 PDF objects out of 1728 (max. 8388607)
- 343 named destinations out of 1000 (max. 500000)
- 102330 words of extra memory for PDF output out of 106986 (max. 10000000)
+ 1532 PDF objects out of 1728 (max. 8388607)
+ 352 named destinations out of 1000 (max. 500000)
+ 101818 words of extra memory for PDF output out of 106986 (max. 10000000)
 
