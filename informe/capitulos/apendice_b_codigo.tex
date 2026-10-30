@@ -1,29 +1,138 @@
 \chapter{Ramas de entrenamiento y de servicios}
 \label{ap:ramas}
 
-El programa que se instala en la llamada está en la rama principal y se describe en la Sección~\ref{sec:estructura_codigo}. Este apéndice reúne las otras ramas. El detalle de directorios, módulos y convenciones de nombres queda en el \texttt{README} de cada una.
+Este apéndice reúne las otras ramas. En cada una figuran el commit, los comandos de instalación y de evaluación, y el SHA-256 de los pesos usados. El detalle de directorios queda en el \texttt{README} de cada una.
 
-\section{Repositorio de entrenamiento del clasificador}
+\section{\textit{scratch-mediapipe-v3}: Repositorio de entrenamiento del clasificador}
 Este repositorio entrena y evalúa el clasificador de señas aisladas. Vive en la rama \texttt{scratch-mediapipe-v3}. El archivo de pesos que sale de ese entrenamiento es el que después carga el motor local.
 
 Todo el código está en \texttt{src/}. \texttt{train.py} ajusta el modelo y guarda el peso, \texttt{tune\_\allowbreak optuna.py} busca hiperparámetros, y \texttt{preprocessing.py} convierte los videos MP4 en coordenadas. \texttt{camera.py} mide el acierto frente a la cámara. La arquitectura está en \texttt{model\_arch.py}. \texttt{config.py} fija las rutas, las 100 clases y la ventana de 16 fotogramas. La extracción usa el Holistic del navegador, el mismo paquete que la extensión, a través de \texttt{holistic\_web.py}. Los videos quedan en \texttt{dataset/} y las coordenadas en \texttt{dataset\_\allowbreak landmarks\_\allowbreak 16frames/}. Los pesos y los registros salen a \texttt{src/\allowbreak model\_\allowbreak new\_\allowbreak 2026\_\allowbreak 10\_\allowbreak 20/}, con el checkpoint \texttt{tinyskeleton\_\allowbreak best.pth}.
 
-\section{Servicio semántico en la nube}
+El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/af16107261a2627de46fb125933bb02768c78eb0}. La instalación parte de la raíz. El entrenamiento y la evaluación parten de \texttt{src/}.
+
+\begin{lstlisting}
+conda env create -f environment.yml
+conda activate lsa_gpu
+cd src/holistic_web
+npm install
+npx playwright install chromium
+cd ..
+python check_env.py
+python train.py
+python camera.py --eval
+\end{lstlisting}
+
+El checkpoint de esa evaluación es \texttt{tinyskeleton\_best.pth}. Está en el commit. Su SHA-256 es
+
+{\ttfamily\small 6ac921623778b17c186c13f0165eee05\allowbreak 80950e4c336ed625e8a30fdf090d8a5b}.
+
+El motor local carga ese mismo archivo.
+
+\section{\textit{semantic-cloud}: Servicio semántico en la nube}
 Este repositorio es el servicio que el motor local consulta para traducir. Atiende las dos direcciones, de glosas hacia español y de español hacia glosas, con los binarios que entregan los repositorios de entrenamiento. Su tarea es responder un enunciado ya armado, y no forma parte de lo que se instala en la computadora de quien llama.
 
 El arranque está en \texttt{run\_semantic\_server.py}. El servicio vive en \texttt{src/semantic/}: \texttt{api.py} expone las rutas, \texttt{service.py} separa los dos canales y \texttt{engine.py} ejecuta el binario. Los pesos no comparten carpeta. \texttt{models/sign/} guarda el canal de glosas hacia español y \texttt{models/hearing/} el canal inverso. En cada una hay un binario principal, un respaldo y el \texttt{sys\_prompt.txt} de esa dirección.
 
-\section{Entrenamiento del canal directo}
+El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/d5bf916c55aab805338f6621b7de592b988dc0ce}. La instalación y la prueba local parten de la raíz. Git no versiona los \texttt{.gguf}. Los archivos finales de los dos canales están en \url{https://huggingface.co/maite123/lsa-semantic-gguf}. El canal directo ocupa \texttt{sordo/} y el inverso, \texttt{oyente/}. El SHA-256 de Hugging Face coincide con el de cada archivo de abajo.
+
+\begin{lstlisting}
+pip install -r requirements.txt
+python run_semantic_server.py
+curl -s http://127.0.0.1:8787/health
+curl -s -X POST http://127.0.0.1:8787/sign -H "Content-Type: application/json" -d "{\"glosses\":\"HOLA\"}"
+curl -s -X POST http://127.0.0.1:8787/hearing -H "Content-Type: application/json" -d "{\"spanish\":\"Hola\"}"
+\end{lstlisting}
+
+Cada canal carga el Qwen2.5 1,5B como principal y el Llama 3.2 1B como respaldo. El archivo del servicio es una copia del binario evaluado en la rama de entrenamiento de ese canal.
+\begin{itemize}
+    \item Canal directo, \texttt{models/sign/qwen2.5-1.5b.gguf}.\\
+SHA-256 {\ttfamily\small  fd90f6103dea2512d2f84bb57fb27818\allowbreak 69711411279571d3b12d7c84c8e830dd}.
+    \item Canal directo, \texttt{models/sign/llama-3.2-1b.gguf}.\\
+SHA-256 {\ttfamily\small  2fa6bb8347c0b55d3cafa62ac501e262\allowbreak ba4a170562d8f936ee054a050c8d1068}.
+    \item Canal inverso, \texttt{models/hearing/qwen2.5-1.5b.gguf}.\\
+SHA-256 {\ttfamily\small  aca23988584e4d3dafce6682ea6de009\allowbreak c0b1b5bdf940816c99441a56434b3a55}.
+    \item Canal inverso, \texttt{models/hearing/llama-3.2-1b.gguf}.\\
+SHA-256 {\ttfamily\small  4a35a81e48130866b778a947427ec70f\allowbreak 92b87175472b0fa266551e62cea2408e}.
+\end{itemize}
+
+\section{\textit{semantic-v2}: Entrenamiento del canal directo}
 Este repositorio ajusta y evalúa los modelos que pasan de glosas a una oración en español. El binario que resulta de ese entrenamiento es el que después carga el servicio en la nube para el canal directo.
 
 Todo el código está en \texttt{src/semantic/}. \texttt{train.py} ajusta un modelo y exporta el binario, \texttt{eval\_trial.py} lo compara sobre oraciones fuera del corte, y \texttt{models.py} es el catálogo: sumar una familia es agregar una entrada ahí. El corpus está en \texttt{dataset\_glosses.json}, las oraciones de prueba en \texttt{dataset\_trial.json} y las instrucciones del modelo en \texttt{prompts/sys\_prompt.txt}. Los pesos y los registros salen a \texttt{outputs/}. Cada familia se identifica con un id estable, como \texttt{qwen2.5-1.5b} o \texttt{llama-3.2-1b}, y ese mismo id nombra su carpeta de salida.
 
-\section{Entrenamiento del canal inverso}
+El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/9c55106abaf96bf802459ebee6b3212c3957bb3e}. Los comandos parten de \texttt{src/semantic}. Git no versiona los binarios: quedan en \texttt{outputs/}. Los cinco archivos finales están en \url{https://huggingface.co/maite123/lsa-semantic-gguf/tree/main/sordo}. Allí el Qwen2.5 1,5B se llama \texttt{qwen2.5-1.5b.gguf}, y el resto sigue ese patrón. El SHA-256 publicado es el de la lista.
+
+\begin{lstlisting}
+conda create -n lsa_semantic python=3.10 -y
+conda activate lsa_semantic
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+pip install -r requirements.txt
+pip install unsloth unsloth_zoo --no-deps
+pip install unbabel-comet==2.2.7 --no-deps
+python train_all.py --continue-on-error
+
+\end{lstlisting}
+
+El SHA-256 de cada binario \texttt{Q4\_K\_M} evaluado es el siguiente.
+\begin{itemize}
+    \item Qwen2.5 0,5B, \texttt{qwen2.5-0.5b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  1fc907c15f398ea5e709b9abb76430de\allowbreak db7cfe231ed3d0e1fd4de9041b03a8de}.
+    \item Qwen2.5 1,5B, \texttt{qwen2.5-1.5b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  fd90f6103dea2512d2f84bb57fb27818\allowbreak 69711411279571d3b12d7c84c8e830dd}.
+    \item Qwen2.5 3B, \texttt{qwen2.5-3b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  927022b3717266b1b20441ac0fff02b2\allowbreak 0e56b361c3fb1d4261d97473c7067aa6}.
+    \item Llama 3.2 1B, \texttt{llama-3.2-1b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  2fa6bb8347c0b55d3cafa62ac501e262\allowbreak ba4a170562d8f936ee054a050c8d1068}.
+    \item SmolLM2 1,7B, \texttt{SmolLM2-1.7B-Instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  22e4fe904a7facd19595002fb187c01c\allowbreak 52f5417ff52998b4ac282dae087449b4}.
+\end{itemize}
+
+\section{\textit{semantic-reverse}: Entrenamiento del canal inverso}
 Este repositorio ajusta y evalúa los modelos que pasan de una oración en español a una secuencia de glosas. El corpus y el binario son propios de esta dirección, y el servicio en la nube los usa para el canal inverso.
 
-La disposición repite la del canal directo, también bajo \texttt{src/semantic/} y también con los módulos en inglés: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El corpus, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
+La disposición repite la del canal directo, también bajo \texttt{src/semantic/}: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El corpus, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
 
-\section{Servicio de poses del avatar}
+El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/e5285fa2c08cde46bf41d6ffb5b5fe0541d6bb72}. Los comandos parten de \texttt{src/semantic}. Git tampoco versiona estos binarios. Los cinco archivos finales están en \url{https://huggingface.co/maite123/lsa-semantic-gguf/tree/main/oyente}. Allí el Qwen2.5 1,5B se llama \texttt{qwen2.5-1.5b.gguf}, y el resto sigue ese patrón. El SHA-256 publicado es el de la lista.
+
+\begin{lstlisting}
+conda create -n lsa-train python=3.11 -y
+conda activate lsa-train
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+pip install -r requirements_train.txt
+pip install unsloth unsloth_zoo --no-deps
+pip install unbabel-comet==2.2.7 --no-deps
+python train.py --continue-on-error
+python eval_trial.py
+\end{lstlisting}
+
+El SHA-256 de cada binario \texttt{Q4\_K\_M} evaluado es el siguiente.
+\begin{itemize}
+    \item Qwen2.5 0,5B, \texttt{qwen2.5-0.5b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  46786ccb127860669824d55e6328ac5d\allowbreak 25f72a0023edb7d47de4c216955049ad}.
+    \item Qwen2.5 1,5B, \texttt{qwen2.5-1.5b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  aca23988584e4d3dafce6682ea6de009\allowbreak c0b1b5bdf940816c99441a56434b3a55}.
+    \item Qwen2.5 3B, \texttt{qwen2.5-3b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  3f8e868c9ded360e2ec3849b1a7f3343\allowbreak 5affafee975c3af499c847bed122a186}.
+    \item Llama 3.2 1B, \texttt{llama-3.2-1b-instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  4a35a81e48130866b778a947427ec70f\allowbreak 92b87175472b0fa266551e62cea2408e}.
+    \item SmolLM2 1,7B, \texttt{SmolLM2-1.7B-Instruct.Q4\_K\_M.gguf}.\\
+SHA-256 {\ttfamily\small  51f3e6ac945e5386806c06806c729f30\allowbreak ddf98da326c0254872d39bfe3e3b6a1f}.
+\end{itemize}
+
+\section{\textit{avatar-cloud}: Servicio de poses del avatar}
 Este repositorio publica los archivos de pose que el motor local pide para dibujar el avatar. No entrena modelos ni traduce texto. El cliente de la videollamada solicita esas poses a este servicio.
 
-El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El nombre del archivo, sin extensión, es la glosa ya normalizada: mayúsculas, sin tildes y en ASCII.
+El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El servidor devuelve el archivo cuyo nombre coincide con el pedido. Ese nombre, sin extensión, va en mayúsculas y en ASCII: sin tildes y sin eñe.
+
+Al armar el pedido, ILSA transforma la "ñ" en "n": \texttt{MAÑANA} busca \texttt{MANANA.pose}. La letra Ñ, cuando es la glosa entera, se pide como \texttt{ENIE}. Antes del subtítulo, ILSA restituye la Ñ.
+
+Una etiqueta compuesta tampoco es el nombre del archivo. El clasificador reescribe \texttt{hermano\_a} como \texttt{HERMANO}, \texttt{esposo\_a} como \texttt{ESPOSO} y \texttt{hijo\_a} como \texttt{HIJO}: el sufijo \texttt{\_a} marca el género y no entra al archivo. \texttt{vivir\_en} se reescribe como \texttt{VIVIR\_EN}. Al pedir la pose, ILSA borra los guiones bajos, así \texttt{VIVIR\_EN} busca \texttt{VIVIREN.pose}.
+
+El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/a713860b071bceacb2e7b1ed4145ecd1a73f0b55}. Esta rama no entrena un modelo y no tiene archivo de pesos. Los comandos parten de la raíz. La comprobación es \texttt{GET /health} y un \texttt{GET /tposes/\{glosa\}.pose} en el puerto 8080.
+
+\begin{lstlisting}
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m app.main
+\end{lstlisting}

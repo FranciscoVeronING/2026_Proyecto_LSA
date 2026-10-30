@@ -1,7 +1,7 @@
 \chapter{Vocabulario del clasificador}
 \label{anexo:vocabulario}
 
-El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Rolls ayudó con la validación del conjunto. El cuadro~\ref{tab:vocab_categorias} separa el alfabeto, los dígitos y el léxico en grupos chicos, y cuenta cuántas clases hay en cada uno. La lista usa la lectura de la etiqueta: no es una traducción al español ni una definición de la seña.
+El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Rolls ayudó con la validación del conjunto. El cuadro~\ref{tab:vocab_categorias} separa el alfabeto, los dígitos y el léxico en grupos chicos, y cuenta cuántas clases hay en cada uno. La celda de señas trae la etiqueta exacta, tal como está en \texttt{mapeo\_clases.json}. \texttt{ñ} y \texttt{años} conservan la eñe. \texttt{esposo~a} conserva el espacio entre las dos palabras. Las demás etiquetas van sin tilde.
 
 \begin{table}[H]
     \centering
@@ -12,25 +12,27 @@ El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Ro
         \toprule
         \textbf{Categoría} & \textbf{Cantidad} & \textbf{Señas} \\
         \midrule
-        Alfabeto manual & 27 & A--Z \\
-        Dígitos & 10 & 0--9 \\
-        Interrogativos & 6 & cómo, cuándo, dónde, qué, quién, cuántos \\
-        Afirmación y negación & 2 & sí, no \\
-        Valoración & 2 & bien, mal \\
-        Pronombres & 5 & yo, vos, él o ella, nosotros, ellos \\
-        Posesivos & 2 & mío, tuyo \\
-        Saludos y cortesía & 3 & hola, chau, gracias \\
-        Tiempo & 6 & pasado, futuro, día, hora, ahora u hoy, ayer \\
-        Días de la semana & 7 & lunes, martes, miércoles, jueves, viernes, sábado, domingo \\
-        Lugares & 4 & lugar, casa, calle, plaza \\
-        Identificación & 5 & nombre, apellido, documento, número, años \\
-        Parentesco & 6 & familia, mamá, papá, hermano o hermana, hijo o hija, esposo o esposa \\
-        Partes del cuerpo & 3 & brazo, cara, ojo \\
-        Objeto & 1 & cuchillo \\
-        Verbos & 8 & tener, poder, vivir, vivir en, ver, llamar, llevar, repetir \\
-        Auxilio & 3 & ayudar, robar, policía \\
+        Alfabeto manual & 27 & \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}, \texttt{E}, \texttt{F}, \texttt{G}, \texttt{H}, \texttt{I}, \texttt{J}, \texttt{K}, \texttt{L}, \texttt{M}, \texttt{N}, \texttt{Ñ}, \texttt{O}, \texttt{P}, \texttt{Q}, \texttt{R}, \texttt{S}, \texttt{T}, \texttt{U}, \texttt{V}, \texttt{W}, \texttt{X}, \texttt{Y}, \texttt{Z} \\
+        Dígitos & 10 & \texttt{0}, \texttt{1}, \texttt{2}, \texttt{3}, \texttt{4}, \texttt{5}, \texttt{6}, \texttt{7}, \texttt{8}, \texttt{9} \\
+        Interrogativos & 6 & \texttt{como}, \texttt{cuando}, \texttt{donde}, \texttt{que}, \texttt{quien}, \texttt{cuantos} \\
+        Afirmación y negación & 2 & \texttt{si}, \texttt{no} \\
+        Valoración & 2 & \texttt{bien}, \texttt{mal} \\
+        Pronombres & 5 & \texttt{yo}, \texttt{vos}, \texttt{el\_ella}, \texttt{nosotros}, \texttt{ellos} \\
+        Posesivos & 2 & \texttt{mio}, \texttt{tuyo} \\
+        Saludos y cortesía & 3 & \texttt{hola}, \texttt{chau}, \texttt{gracias} \\
+        Tiempo & 6 & \texttt{pasado}, \texttt{futuro}, \texttt{dia}, \texttt{hora}, \texttt{ahora\_hoy}, \texttt{ayer} \\
+        Días de la semana & 7 & \texttt{lunes}, \texttt{martes}, \texttt{miercoles}, \texttt{jueves}, \texttt{viernes}, \texttt{sabado}, \texttt{domingo} \\
+        Lugares & 4 & \texttt{lugar}, \texttt{casa}, \texttt{calle}, \texttt{plaza} \\
+        Identificación & 5 & \texttt{nombre}, \texttt{apellido}, \texttt{documento}, \texttt{numero}, \texttt{años} \\
+        Parentesco & 6 & \texttt{familia}, \texttt{mama}, \texttt{papa}, \texttt{hermano\_a}, \texttt{hijo\_a}, \texttt{esposo\_a} \\
+        Partes del cuerpo & 3 & \texttt{brazo}, \texttt{cara}, \texttt{ojo} \\
+        Objeto & 1 & \texttt{cuchillo} \\
+        Verbos & 8 & \texttt{tener}, \texttt{poder}, \texttt{vivir}, \texttt{vivir\_en}, \texttt{ver}, \texttt{llamar}, \texttt{llevar}, \texttt{repetir} \\
+        Auxilio & 3 & \texttt{ayudar}, \texttt{robar}, \texttt{policia} \\
         \midrule
         \textbf{Total} & \textbf{100} & \\
         \bottomrule
     \end{tabularx}
 \end{table}
+
+En la prueba de cámara de la Sección~\ref{sec:eval_100_camara}, el Top-1 informado acepta dos pares como la misma seña. \texttt{0} y \texttt{O} cuentan juntas. \texttt{V} y \texttt{viernes} cuentan juntas. Con luz adecuada son 18 tomas, ocho de \texttt{0} leídas como \texttt{O} y diez de \texttt{V} leídas como \texttt{viernes}, y el acierto pasa de 978/1000 a 996/1000. Con luz reducida son 24 tomas y el acierto pasa de 922/1000 a 946/1000. La validación fuera de línea exige la misma etiqueta.

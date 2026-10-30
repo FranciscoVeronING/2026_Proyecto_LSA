@@ -8,11 +8,11 @@ Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y 
 \section{Objetivos específicos}
 \begin{itemize}
     \item Implementar un módulo local de visión computacional y clasificación gestual basado en la extracción de puntos de referencia corporales para el reconocimiento de un vocabulario de 100 señas de LSA.
-    \item Diseñar e integrar el servicio semántico del canal directo (LSA $\rightarrow$ Español) para transformar secuencias de glosas aisladas en oraciones fluidas y gramaticalmente correctas en español rioplatense. 
+    \item Diseñar e integrar el servicio semántico del canal directo (LSA $\rightarrow$ Español) para transformar secuencias de glosas aisladas en una oración en español rioplatense. 
     \item Diseñar e integrar el servicio semántico del canal inverso (Español $\rightarrow$ LSA) para reestructurar oraciones del español en la secuencia manual de glosas que fija este prototipo, dentro del orden de la Sección~\ref{sec:orden_prototipo}.
     \item Implementar un módulo de visualización gestual inversa mediante un avatar capaz de animar el clip de cada glosa con archivo y de deletrear los términos ausentes, con el límite de garantía de la Sección~\ref{sec:limites_operativos}.
     \item Diseñar una arquitectura escalable en la nube para el aprovisionamiento concurrente de los servicios, lo que desacopla el procesamiento del hardware cliente.
     \item Resguardar la privacidad de los datos biométricos de los usuarios al ejecutar la extracción de características y la clasificación de forma local en el dispositivo cliente, y, por consiguiente, limitar la transmisión hacia la nube a cargas puramente textuales.
     \item Desarrollar la arquitectura de software de una extensión para navegadores basados en la tecnología Chromium, articulada con un motor de ejecución en segundo plano (ILSA).
-    \item Evaluar el clasificador con un script local, seña por seña, según la Sección~\ref{sec:protocolo_camara}. Evaluar la fidelidad semántica de los dos canales según la Sección~\ref{sec:fidelidad_semantica}, aparte de la comprensión del avatar. Medir la latencia por etapas, según la Sección~\ref{sec:tiempo_pseudo}, y el consumo de hardware.
+    \item Evaluar el clasificador con un script local, seña por seña, según la Sección~\ref{sec:protocolo_camara}. Evaluar los dos canales semánticos con las métricas de la Sección~\ref{sec:fidelidad_semantica}. Esas métricas no sustituyen una revisión humana de quién actúa, el tiempo verbal, la negación y la pregunta; esa revisión queda fuera de este trabajo. Medir la latencia por etapas, según la Sección~\ref{sec:tiempo_pseudo}, y el consumo de hardware. La comprensión del avatar se informa aparte y no forma parte de esa fidelidad automática.
 \end{itemize}

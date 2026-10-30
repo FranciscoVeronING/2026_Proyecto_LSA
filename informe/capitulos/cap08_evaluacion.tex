@@ -15,7 +15,7 @@ La valoración de los resultados se realiza a través de la trazabilidad directa
 \subsection{Evaluación del objetivo general}
 El objetivo general consistió en desarrollar un prototipo funcional de traducción bidireccional entre la LSA y el español rioplatense en tiempo pseudo-real, integrado en una plataforma de videoconferencia mediante una arquitectura híbrida cliente-nube.
 
-El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos: en el canal directo transforma la captura de cámara en subtítulos y voz sintética, mientras que en el canal inverso traduce voz o texto a la animación de un avatar esquelético. La arquitectura híbrida mantiene el procesamiento de visión en el cliente y la inferencia de lenguaje en la nube, con lo que se mitiga la asimetría comunicacional sin transferir la señal de video fuera del dispositivo.
+El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos. En el canal directo, la sesión integrada puso la oración en el video compuesto; con Audio o Ambos, la página pide la voz al sintetizador del navegador. En el canal inverso traduce voz o texto a la animación de un avatar esquelético. La visión queda en el cliente y la inferencia de lenguaje, en la nube, sin enviar video a los servicios de traducción y de poses (Sección~\ref{sec:particion_privacidad}). 
 
 \subsection{Evaluación de los objetivos específicos}
 
@@ -24,35 +24,35 @@ A continuación se analiza el grado de logro de cada uno de los objetivos espec�
 \begin{enumerate}
     \item \textbf{Implementación del módulo local de visión y clasificación gestual:}
     \textit{Estado: Alcanzado.}
-    Se desarrolló el pipeline basado en MediaPipe Holistic para la extracción de 225 coordenadas articulares normalizadas y la red neuronal \textit{TinySkeletonClassifier}. Las pruebas experimentales demostraron una exactitud del 99{,}0\,\% en la validación fuera de línea (sobre 2\,000 secuencias de prueba) y un 99{,}6\,\% de acierto en pruebas con cámara real bajo iluminación adecuada, lo que superó la meta del 75\,\% definida en el requerimiento RNF-03.
+    Se desarrolló el pipeline basado en MediaPipe Holistic para la extracción de 225 coordenadas articulares normalizadas y la red neuronal \textit{TinySkeletonClassifier}. Las 2\,000 secuencias de la validación fuera de línea alcanzaron un 99{,}0\,\% de exactitud y sirvieron para validar y elegir el modelo. La medición de cámara, hecha después de esa elección, dio un 99{,}6\,\% de acierto con luz adecuada y un 94{,}6\,\% con luz reducida. Las dos condiciones superan el 75\,\% del requerimiento RNF-03.
 
     \item \textbf{Diseño e integración del servicio semántico para el canal directo (LSA $\rightarrow$ Español):}
     \textit{Estado: Alcanzado.}
-    Se ajustó y desplegó el modelo Qwen2.5 1,5B mediante la técnica LoRA y cuantización GGUF \texttt{Q4\_K\_M}. En las evaluaciones sobre oraciones fuera del conjunto de entrenamiento, el modelo logró un acierto exacto del 94,96\,\%, con métricas de fidelidad semántica elevadas (98{,}85 de BERTScore F1 y 97{,}12 de COMET score). La inferencia remota respondió en un tiempo medio de 1444,4\,ms en la sesión integrada, en cumplimiento con el requerimiento RF-03.
+    Se ajustó y desplegó el modelo Qwen2.5 1,5B mediante la técnica LoRA y cuantización GGUF \texttt{Q4\_K\_M}. En el Cuadro~\ref{tab:sem_directo}, sobre oraciones fuera del conjunto de entrenamiento, el acierto exacto es 94,96\,\%, el BERTScore es 99,20 y el COMET es 97,36. La inferencia remota promedió 1444,4\,ms en la sesión integrada. Ese tiempo se juzga con RNF-01, aparte de RF-03.
 
     \item \textbf{Diseño e integración del servicio semántico para el canal inverso (Español $\rightarrow$ LSA):}
     \textit{Estado: Alcanzado.}
-    Se estructuró el canal de retorno para reorganizar oraciones en español hacia el orden manual simplificado del prototipo (\textit{Topic-Comment}). El modelo ajustado alcanzó un acierto exacto del 91,18\,\% en las pruebas del laboratorio semántico y una latencia media de inferencia remota de 1368,2\,ms, lo que satisface el requerimiento RF-06.
+    Se estructuró el canal de retorno para reorganizar oraciones en español hacia el orden manual simplificado del prototipo. El modelo ajustado alcanzó un acierto exacto del 91,18\,\% en las pruebas del laboratorio semántico, en el requerimiento RF-06. La media de inferencia remota, 1368,2\,ms, se juzga con RNF-01.
 
     \item \textbf{Implementación del módulo de visualización gestual mediante avatar:}
     \textit{Estado: Alcanzado.}
     Se diseñó el motor de animación cinemática basado en archivos binarios \texttt{.pose}. El sistema reproduce hasta 24 clips por oración con suavizado exponencial y puentes de transición interpolados. Ante la ausencia de un archivo de seña, se activa automáticamente el subsistema de deletreo dactilológico. Se incorporó una cola de reproducción con capacidad para 20 animaciones, en cumplimiento con las especificaciones del requerimiento RF-07.
 
     \item \textbf{Diseño de una arquitectura escalable en la nube:}
-    \textit{Estado: Parcialmente alcanzado.}
-    Se diseñó la arquitectura elástica teórica con balanceo de carga, contenedores sin estado y escalado horizontal automático (Sección~\ref{sec:arq_escalable} y Apéndice~\ref{ap:nube}). Sin embargo, en concordancia con la restricción RC-02, la validación experimental no desplegó el clúster elástico multinodo, sino una instancia única por servicio en Google Cloud Run (\texttt{--max-instances 1}). El alcance efectivo alcanzado comprobó el desacoplamiento funcional de los microservicios, pero dejó la prueba de carga concurrente masiva como una línea futura.
+    \textit{Estado: Alcanzado.}
+    Se diseñó la arquitectura elástica, con balanceo de carga, contenedores sin estado y escalado horizontal automático (Sección~\ref{sec:arq_escalable} y Apéndice~\ref{ap:nube}). Ese diseño está documentado y queda realizado. Por separado, la prueba con carga concurrente sigue pendiente: la validación usó una instancia única por servicio en Google Cloud Run (\texttt{--max-instances 1}), según la restricción RC-02.
 
     \item \textbf{Resguardo de la privacidad de los datos biométricos:}
     \textit{Estado: Alcanzado.}
-    Se garantizó la ejecución local de la extracción de \textit{landmarks} y de la clasificación de señas en el equipo cliente. La comunicación saliente hacia la nube se restringe a cadenas de texto (glosas u oraciones) o solicitudes de nombres de archivos, lo que evita de forma estricta la transmisión de flujo de video o coordenadas crudas fuera del dispositivo, en cumplimiento estricto del requerimiento RNF-02.
+    La extracción de puntos y la clasificación corren en el cliente. El límite de enviar solo texto rige para el traductor y para el servidor de poses: hacia el traductor sale texto y hacia el servidor de poses, un nombre de glosa o las letras de un deletreo. El video compuesto sale del equipo hacia Meet, como fija RNF-02.
 
     \item \textbf{Desarrollo de la extensión web e integración con Google Meet:}
     \textit{Estado: Alcanzado.}
-    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. Se implementó la intercepción transparente del dispositivo mediante la inyección de un canvas sintético sobre la llamada de Google Meet (\texttt{captureStream()}), en cumplimiento con los requerimientos RF-08, RF-09 y RNF-05.
+    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. La sesión integrada inyectó el lienzo en Google Meet (\texttt{captureStream()}), en cumplimiento de RF-08. RF-09 se comprobó en el panel de ILSA. Con el traductor y el servidor de poses en marcha, Encender, Reiniciar y Apagar vuelven a la pantalla de carga y después abren el panel principal. Sin red, Encender mantiene la carga, muestra Reintentar y deja el panel principal cerrado. Al volver la red, Reintentar repite la consulta y abre el panel. RNF-05 se comprobó en una llamada de dos personas, con el popup de la extensión cerrado y la tarjeta del HUD en su posición inicial. En modo seña y en modo oyente, en la pantalla de quien usa el sistema y en la de la otra persona, la cara y las manos del interlocutor quedaron libres.
 
     \item \textbf{Evaluación integral del sistema y medición de desempeños:}
-    \textit{Estado: Alcanzado.}
-    Se ejecutó el protocolo de pruebas completo: medición de acierto por seña en cámara real, evaluación cuantitativa de fidelidad semántica en ambos canales con cinco métricas estandarizadas, caracterización de tiempos de respuesta desagregados por etapas (pausa, transporte, cola, inferencia y entrega) y verificación del consumo de recursos en hardware cliente estándar.
+    \textit{Estado: Parcial.}
+    Se midió el acierto en cámara, la fidelidad semántica de ambos canales y la latencia por etapas. La evaluación queda incompleta: faltan los tiempos de espera en el servidor, registros que permitan repetir las mediciones y una revisión lingüística. 
 \end{enumerate}
 
 El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los objetivos, los requerimientos asociados y los resultados obtenidos.
@@ -66,21 +66,25 @@ El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los o
         \toprule
         \textbf{Objetivo específico} & \textbf{Requerimientos} & \textbf{Evidencia / Resultado obtenido} & \textbf{Estado} \\
         \midrule
-        1. Clasificador gestual & RF-01, RF-02, RNF-03 & Exactitud fuera de línea de 99{,}0\,\%; acierto en cámara de 99{,}6\,\%. & Alcanzado \\
+        1. Clasificador gestual & RF-01, RF-02, RNF-03 & Las 2\,000 secuencias (99{,}0\,\%) sirvieron para elegir el modelo. Cámara, después de esa elección: Top-1 de 99{,}6\,\% con luz adecuada y 94{,}6\,\% con luz reducida. RNF-03 pide más del 75\,\% en luz doméstica. & Alcanzado \\
         \addlinespace[2pt]
-        2. Canal directo & RF-03 & Exactitud exacta de 94,96\,\%; BERTScore F1 de 98{,}85. Latencia media de 1444,4\,ms. & Alcanzado \\
+        2. Canal directo & RF-03 & Cuadro~\ref{tab:sem_directo}, Qwen2.5 1,5B: exacto 94,96\,\%; BERTScore 99,20; COMET 97,36. Latencia media de 1444,4\,ms. & Alcanzado \\
         \addlinespace[2pt]
-        3. Canal inverso & RF-06 & Exactitud exacta de 91,18\,\%. Latencia media de 1368,2\,ms. & Alcanzado \\
+        3. Emisión al oyente & RF-04 & Subtítulo: la oración queda en la franja del video compuesto de la sesión integrada. Audio y Ambos: la página pide la voz al sintetizador del navegador. & Alcanzado \\
         \addlinespace[2pt]
-        4. Avatar e integración & RF-07 & Renderización cinemática a 30\,FPS, suavizado EMA y contingencia por dactilología. & Alcanzado \\
+        4. Canal inverso & RF-06 & Cuadro~\ref{tab:sem_inverso}: Exactitud exacta de 91,18\,\%. Latencia media de 1368,2\,ms. & Alcanzado \\
         \addlinespace[2pt]
-        5. Arquitectura nube & RNF-04, RC-02 & Diseño elástico documentado; validación en Cloud Run con réplica única. & Parcial \\
+        5. Avatar e integración & RF-07 & Hasta 24 clips por oración, deletreo si falta el archivo y cola de 20. En la sesión integrada, el renderizado del cliente en el canal inverso fue de 58,2 a 60,5 FPS. & Alcanzado \\
         \addlinespace[2pt]
-        6. Privacidad biométrica & RNF-02 & Extracción local; solo se transmiten cadenas de texto en los payloads HTTP. & Alcanzado \\
+        6. Arquitectura nube & RNF-04, RC-02 & Diseño elástico documentado y realizado. La prueba con carga concurrente queda pendiente: Cloud Run con una réplica. & Alcanzado \\
         \addlinespace[2pt]
-        7. Extensión web & RF-08, RF-09, RNF-05 & Inyección en Google Meet mediante Canvas sintético bajo Manifest V3. & Alcanzado \\
+        7. Privacidad biométrica & RNF-02 & Puntos clave en el cliente. Solo el traductor y el servidor de poses reciben texto, un nombre de glosa o letras. El video compuesto sale hacia Meet. & Alcanzado \\
         \addlinespace[2pt]
-        8. Evaluación integral & RNF-01, RC-05 & Trazabilidad de latencia por etapas y perfilado de hardware cliente. & Alcanzado \\
+        8. Extensión web & RF-08, RF-09 & RF-08: la sesión integrada inyectó el lienzo en Meet. RF-09: con los dos servicios, Encender, Reiniciar y Apagar vuelven a la carga y abren el panel. Sin red, Encender deja Reintentar y el panel cerrado; al volver la red, Reintentar abre el panel. & Alcanzada \\
+        \addlinespace[2pt]
+        9. Usabilidad & RNF-05 & Llamada de dos personas, tarjeta en la posición inicial y popup cerrado. En modo seña y en modo oyente, en las dos pantallas, la cara y las manos quedaron libres. & Alcanzado \\
+        \addlinespace[2pt]
+        10. Evaluación integral & RNF-01, RC-05 & RNF-01 parcial: solo la inferencia. Directo: media 1444,4\,ms, 7 de 9 bajo 2\,s. Inverso: media 1368,2\,ms, 6 de 7 bajo 2\,s. Faltan la espera en el servidor, registros para repetir las mediciones, la revisión lingüística y el vínculo de algunos requisitos con sus pruebas. RC-05: mínimo propuesto. La laptop medida está en la Sección~\ref{sec:laptop_prueba}. & Parcial \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -108,11 +112,12 @@ El desarrollo y el desempeño del prototipo se encuentran condicionados por deli
     \item \textbf{Representación cinemática simplificada del avatar:}
     El ensamblado del avatar opera mediante la interpolación geométrica entre núcleos de gestos previamente grabados. Esta aproximación atenúa la discontinuidad espacial entre señas, pero no replica los fenómenos biomecánicos complejos de la coarticulación gestual presentes en el movimiento humano natural.
 
-    \item \textbf{Dependencia de conectividad de red y penalización de arranque en el prototipo:}
-    A pesar de ejecutar la clasificación gestual de forma local, el servicio semántico y la descarga de animaciones dependen de la conectividad hacia la nube. En el escenario de pruebas sobre infraestructura \textit{serverless} (Cloud Run) configurada con escalado a cero (\texttt{min-instances 0}) para optimización de costos, la inicialización del sistema enfrenta una demora por el arranque en frío (\textit{cold start}) de las instancias. Dado que el motor local exige la disponibilidad previa de los servidores para iniciar su operación, este retraso afecta exclusivamente al proceso de arranque del prototipo. En un entorno de producción, esta penalización inicial se elimina mediante el mantenimiento de instancias reservadas continuas.
+    \item \textbf{Subtítulos espejados en la miniatura del modo oyente:}
+    En el modo oyente, la persona oyente ve su cámara y el avatar en la miniatura local. En esa miniatura, los subtítulos le salen espejados. La persona sorda, que es quien tiene que comprenderlos, los recibe al derecho (Sección~\ref{sec:impl_esqueleto}). La limitación queda en la vista propia de quien usa el sistema.
 
-    \item \textbf{Entorno cliente y compatibilidad de plataforma:}
-    El empaquetado del motor local ILSA se optimizó específicamente para el sistema operativo Windows y navegadores Chromium. La ejecución concurrente de la videollamada, la extracción de puntos mediante WebAssembly y la clasificación en CPU exige el cumplimiento estricto de los requisitos mínimos de hardware (4 núcleos con instrucciones AVX2 y 8\,GB de RAM), lo que limita su despliegue en dispositivos de menor capacidad computacional.
+    \item \textbf{Dependencia de conectividad de red y penalización de arranque en el prototipo:}
+    El empaquetado del motor local ILSA se optimizó para el sistema operativo Windows y navegadores basados en Chromium. La ejecución concurrente de la videollamada, la extracción de puntos clave mediante WebAssembly y la clasificación en CPU se validaron experimentalmente en la laptop de la Sección~\ref{sec:laptop_prueba}. A partir de estas mediciones, se estimó como perfil operativo mínimo lo propuesto en la Sección~\ref{sec:entorno_cliente}.
+
 \end{itemize}
 
 % ====================================================================
@@ -122,21 +127,36 @@ El desarrollo y el desempeño del prototipo se encuentran condicionados por deli
 
 El análisis del prototipo en un escenario proyectado hacia la producción evidencia la presencia de riesgos técnicos, operativos y evolutivos. En el Cuadro~\ref{tab:eval_matriz_riesgos} se sistematizan los principales factores identificados junto con sus correspondientes líneas de mitigación y propuestas de mejora ingenieril.
 
-\begin{table}[H]
-    \centering
-    \small
+{\small
+\begin{longtable}{>{\raggedright\arraybackslash\hspace{0pt}}p{2.4cm} >{\raggedright\arraybackslash\hspace{0pt}}p{2.7cm} >{\raggedright\arraybackslash\hspace{0pt}}p{5.6cm} >{\raggedright\arraybackslash\hspace{0pt}}p{3.6cm}}
     \caption{Análisis de riesgos técnicos, operativos y evolutivos con estrategias de mitigación.}
-    \label{tab:eval_matriz_riesgos}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\hspace{0pt}}p{2.6cm} >{\raggedright\arraybackslash\hspace{0pt}}p{2.5cm} >{\raggedright\arraybackslash\hspace{0pt}}X >{\raggedright\arraybackslash\hspace{0pt}}p{3.3cm}}
-        \toprule
-        \textbf{Categoría} & \textbf{Riesgo identificado} & \textbf{Descripción e impacto} & \textbf{Estrategia de mitigación / Línea de mejora} \\
-        \midrule
+    \label{tab:eval_matriz_riesgos}\\
+    \toprule
+    \textbf{Categoría} & \textbf{Riesgo identificado} & \textbf{Descripción e impacto} & \textbf{Estrategia de mitigación / Línea de mejora} \\
+    \midrule
+    \endfirsthead
+    \multicolumn{4}{@{}l}{\tablename\ \thetable\ (continuación)}\\
+    \toprule
+    \textbf{Categoría} & \textbf{Riesgo identificado} & \textbf{Descripción e impacto} & \textbf{Estrategia de mitigación / Línea de mejora} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    \bottomrule
+    \endlastfoot
         \textbf{Seguridad y Privacidad} & Vulnerabilidad en la API local no autenticada & La escucha del servidor FastAPI en la red local sin tokens de autenticación expone endpoints a otros procesos del mismo sistema cliente. & Implementación de autenticación mediante \textit{tokens} efímeros (JWT) intercambiados de forma segura durante el arranque de la extensión. \\
         \addlinespace[3pt]
         \textbf{Evolución y Obsolescencia} & Cambios en el DOM de Google Meet y APIs web & Actualizaciones en la plataforma de videollamada o restricciones adicionales en Manifest V3 pueden romper la inyección de scripts. & Abstracción de los selectores DOM en capas de desacoplamiento y mantenimiento periódico de la extensión en el repositorio. \\
         \addlinespace[3pt]
         \textbf{Mantenibilidad} & Dificultad para incorporar nuevas señas & El reentrenamiento del clasificador y la captura de nuevos archivos \texttt{.pose} requiere trabajo manual intensivo. & Construcción de herramientas de captura automatizadas y canalizaciones de integración continua (\textit{MLOps}) para modelos de visión. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+        \addlinespace[3pt]
+        \textbf{Traducción} & Traducción incorrecta & El modelo en servicio acierta de forma exacta el 94,96\,\% de las oraciones del canal directo y el 91,18\,\% del inverso. Una salida distinta de la referencia puede cambiar quién interviene, el tiempo, la negación o la pregunta. & Revisión con personas sordas de las salidas que no conservan la proposición prevista. \\
+        \addlinespace[3pt]
+        \textbf{Reconocimiento} & Seña desconocida aceptada & Una seña ausente del vocabulario puede parecerse a una clase conocida y salir con confianza de al menos 0,75. El indicador la muestra en cian y la glosa incorrecta entra a la frase. & Confirmación de quien seña antes de incorporar esa glosa. El umbral de 0,75 solo frena la confianza baja. \\
+        \addlinespace[3pt]
+        \textbf{Reproducción} & Mensaje recortado o descartado & Cada enunciado anima hasta 24 glosas y 1200 fotogramas; el resto queda en texto. La cola guarda hasta 20 animaciones, no interrumpe la que está en curso y, al llenarse, descarta la más antigua. & Aviso visible cuando el dibujo se recorta o la cola descarta un bloque. El texto de las glosas que no entran al dibujo se conserva. \\
+        \addlinespace[3pt]
+        \textbf{Emergencia} & Avatar no entendido en un auxilio & En un pedido de auxilio, el esqueleto o el deletreo pueden no entenderse. Esa comprensión no se evaluó, y el deletreo no asegura el significado. & Prueba con personas sordas de un pedido de auxilio visto en el avatar. Las glosas de ese pedido quedan también en texto sobre el video. \\
+\end{longtable}
+}
 

@@ -10,7 +10,7 @@ La arquitectura del sistema se organiza de forma modular para facilitar la escal
 
 \subsection{Organización del Repositorio}
 
-El repositorio fuente contiene la totalidad de los módulos del sistema, recursos gráficos, archivos de configuración de entorno e instrucciones de despliegue. A continuación, se presenta la distribución lógica de directorios dentro de la rama principal del proyecto:
+El repositorio fuente contiene la totalidad de los módulos del sistema, recursos gráficos, archivos de configuración de entorno e instrucciones de despliegue. A continuación, se presenta la distribución lógica de directorios dentro de la rama principal del proyecto, la rama \texttt{main}. El commit es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/5974ac79d41ec6738e554354aad44ba963e5f412}:
 
 \begin{verbatim}
 .
@@ -38,7 +38,7 @@ El repositorio fuente contiene la totalidad de los módulos del sistema, recurso
 Cada directorio y paquete del sistema cumple una función específica dentro del flujo de inferencia y visualización:
 
 \begin{itemize}
-    \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST y los canales WebSocket mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes y coordina el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
+    \item \textbf{Núcleo del Backend (\texttt{src/backend/})}: Implementa la API REST mediante FastAPI y Uvicorn. Administra las sesiones concurrentes para usuarios oyentes y señantes y coordina el flujo continuo de datos de landmarks y la devolución de traducciones o poses.
     
     \item \textbf{Módulo Clasificador de Señas (\texttt{src/classifier/})}: Contiene la arquitectura de la red neuronal en PyTorch (\texttt{arch.py}) y los archivos de pesos entrenados (\texttt{tinyskeleton\_best.pth}).
     
@@ -76,17 +76,53 @@ El entrenamiento del clasificador, el servicio semántico en la nube, el entrena
 \section{Implementación del subsistema de reconocimiento gestual}
 
 \subsection{Preprocesamiento de datos y pipeline de extracción}
-El pipeline procesa fotogramas de entrada mediante \textit{MediaPipe Holistic} para estructurar un vector instantáneo de 225 coordenadas ($33 \times 3$ de pose, $21 \times 3$ de mano izquierda y $21 \times 3$ de mano derecha). Para corregir discrepancias en la relación de aspecto de las cámaras ($4:3$ versus $16:9$), se aplica un reencuadre con bandas de relleno a una resolución uniforme de $853 \times 480$ píxeles previa extracción. Cada vector se centra en el punto medio de los hombros y se normaliza dividiendo por la distancia inter-hombros.
-% TODO: el ancla se explica en alguna otra parte? sino, hay que explicarlo mejor
+El pipeline procesa los fotogramas de entrada mediante \textit{MediaPipe Holistic} para la estructuración de un vector instantáneo de 225 coordenadas ($33 \times 3$ de pose, $21 \times 3$ de mano izquierda y $21 \times 3$ de mano derecha). Como paso previo a la extracción, el sistema aplica un reencuadre con bandas de relleno a una resolución uniforme de $853 \times 480$ píxeles, con el objetivo de corregir las discrepancias en la relación de aspecto de las cámaras ($4:3$ frente a $16:9$). 
+
+A continuación, cada vector se traslada al punto medio de los hombros y se divide por la distancia existente entre ellos. En la topología de MediaPipe, el índice 11 corresponde al hombro izquierdo y el índice 12 al hombro derecho. Dichas coordenadas no se expresan en metros ni en píxeles: MediaPipe define $x$ como la fracción del ancho de la imagen, $y$ como la fracción del alto, y $z$ como la profundidad asociada a cada punto. El punto medio $\mathbf{a}$ utiliza las tres componentes, mientras que la escala $s$ contempla únicamente el plano $(x, y)$:
+
+\begin{equation}
+\mathbf{a} = \frac{\mathbf{p}_{11}+\mathbf{p}_{12}}{2},
+\qquad
+s = \sqrt{(x_{11}-x_{12})^{2}+(y_{11}-y_{12})^{2}}.
+\label{eq:ancla_hombros}
+\end{equation}
+
+\begin{equation}
+\mathbf{p}' = \frac{\mathbf{p}-\mathbf{a}}{s}.
+\label{eq:norm_hombros}
+\end{equation}
+
+Tras esta transformación, la coordenada $\mathbf{p}'$ se expresa en unidades de dicha distancia interhumeral, donde el valor 1 equivale a un ancho de hombros en el plano $(x, y)$ ya normalizado respecto a la imagen. La componente de profundidad $z$ también se traslada con el punto medio y se divide por $s$.
+
+El algoritmo contempla diversos casos límite durante la ejecución:
+\begin{itemize}
+    \item Si la lista de puntos de pose no está disponible, el punto medio se fija en el origen y la escala $s$ adopta el valor 1. 
+    \item Durante el armado del vector de entrenamiento, cualquier lista que contenga menos de 13 puntos recibe este mismo tratamiento.
+    \item Los bloques compuestos íntegramente por ceros se conservan sin cambios y no se someten a la división.
+    \item Si la escala $s$ resulta menor que $10^{-5}$, el sistema la reemplaza por 1; de este modo, los puntos se trasladan pero no se dividen por un valor indeterminado o cercano a cero.
+    \item El cálculo se ejecuta de forma directa sin consultar la visibilidad de los hombros: basta con la presencia de los índices 11 y 12 en la lista para su inclusión en la fórmula.
+\end{itemize}
+
 \subsection{Arquitectura neuronal TinySkeletonClassifier}
+\label{sec:tinyskeleton}
 La clasificación de la secuencia temporal de 16 fotogramas se ejecuta mediante el modelo \textit{TinySkeletonClassifier}, cuya implementación comprende:
 \begin{enumerate}
     \item Dos capas de convolución unidimensional temporal (núcleo de tamaño 3, 128 canales, normalización por lotes, activación ReLU y regularización Dropout de 0,2).
     \item Un módulo de codificación posicional sinusoidal sumado a la representación de 128 dimensiones.
     \item Un codificador Transformer de 2 capas con 4 cabezas de atención.
-    \item Una capa de agregación por atención (\textit{Attention Pooling}) que asigna un escalar de relevancia $a_t$ a cada fotograma $t$ y reduce la secuencia temporal a un vector único de 128 dimensiones:
+    \item Una capa de agregación por atención (\textit{Attention Pooling}). Una capa lineal aprendida proyecta cada vector \(\mathbf{h}_t\), de 128 componentes, a un escalar. El vector de pesos \(\mathbf{w}\) y el sesgo \(b\) salen del entrenamiento:
     \begin{equation}
-    \mathbf{v} = \sum_{t=1}^{T} a_t \mathbf{h}_t
+    s_t = \mathbf{w}^{\top} \mathbf{h}_t + b.
+    \label{eq:attn_score}
+    \end{equation}
+    Una softmax sobre los \(T\) fotogramas de esa secuencia convierte los escalares en pesos. Esos pesos son positivos y suman 1:
+    \begin{equation}
+    a_t = \frac{e^{s_t}}{\sum_{k=1}^{T} e^{s_k}}.
+    \label{eq:attn_softmax}
+    \end{equation}
+    El vector de 128 dimensiones es la suma de los fotogramas, cada uno multiplicado por su peso:
+    \begin{equation}
+    \mathbf{v} = \sum_{t=1}^{T} a_t \mathbf{h}_t.
     \label{eq:attention_pooling}
     \end{equation}
     \item Una capa densa lineal final hacia las 100 clases del vocabulario gestual.
@@ -101,7 +137,31 @@ La Figura~\ref{fig:tinyskeleton_arquitectura} resume esa sucesión y la forma de
     \label{fig:tinyskeleton_arquitectura}
 \end{figure}
 
-Los pesos que carga ILSA son los de \texttt{model\_new\_2026\_10\_20}. El entrenamiento usó 8\,000 secuencias de entrenamiento y 2\,000 de validación. La exactitud de validación fuera de línea de ese checkpoint es del 99{,}0\,\%. La evaluación en cámara de ese mismo archivo se informa en la Sección~\ref{sec:res_clasificador}.
+El corpus se conforma por las grabaciones de tres personas (dos hombres y una mujer) distribuidas en seis sesiones. El conjunto total abarca 100 clases con un aporte de 100 clips por clase. Para cada clase, los clips se aleatorizan mediante una semilla fija (42) y se dividen en una proporción de 80 clips para entrenamiento y 20 para validación. De este modo, sobre el total de 100 clases, el conjunto de entrenamiento reúne 8\,000 clips y el de validación 2\,000 clips. Esta partición se realiza a nivel de clip individual, por lo que las tres personas pueden estar presentes en ambos conjuntos. El punto de control (\textit{checkpoint}) seleccionado alcanzó una exactitud de validación fuera de línea del 99{,}0\,\%. Esta métrica evalúa clips excluidos del ajuste que pertenecen a los mismos informantes del conjunto de entrenamiento. La evaluación con cámara en vivo para este mismo archivo se detalla en la Sección~\ref{sec:res_clasificador}.
+
+Las técnicas de aumento de datos (\textit{data augmentation}) se aplican de manera exclusiva durante la lectura de los clips de entrenamiento. Cada clip entra 25 veces en cada época y recibe transformaciones con parámetros estocásticos nuevos en cada iteración. El conjunto de validación no experimenta ningún tipo de alteración. 
+
+En la dimensión temporal, la velocidad del gesto se selecciona de manera aleatoria en un rango de 0,80 a 1,25. Para factores superiores a 1, la duración de la seña se reduce y el espacio sobrante se rellena con la repetición de los fotogramas extremos. Para factores inferiores a 1, la seña se extiende y el sistema conserva una ventana de observación. Asimismo, se puede descartar hasta un 15\,\% de los fotogramas en los extremos inicial y final de la secuencia, debido a que el comienzo y la conclusión de la seña presentan variaciones en la ventana. Posteriormente, la secuencia se reajusta a una longitud fija de 16 fotogramas. Con el objetivo de simular las pérdidas accidentales en la detección de \textit{MediaPipe}, se anulan hasta 3 fotogramas (se fijan en cero) y se reconstruyen mediante interpolación lineal.
+
+En la dimensión espacial, cada secuencia recibe una rotación aleatoria compuesta por un giro lateral de hasta $15^{\circ}$, un ajuste de perspectiva vertical (cámara alta o baja) de hasta $8^{\circ}$ e una inclinación de hasta $8^{\circ}$. Se aplica un factor de escala comprendido entre 0,85 y 1,15 para modificar la amplitud del esqueleto con respecto al origen centrado en los hombros. Finalmente, se añade ruido gaussiano con una desviación estándar de 0,012 para los puntos de la pose y de 0,027 para los puntos de las manos, expresado en las unidades del vector previamente normalizado. El nivel de ruido introducido en las manos es superior para compensar la menor estabilidad en el seguimiento de estas articulaciones.
+
+El modelo se optimizó mediante el algoritmo AdamW, con una tasa de aprendizaje inicial de $3{,}24 \times 10^{-5}$ y un decaimiento de pesos (\textit{weight decay}) de $0{,}0145$. Las muestras se agruparon en lotes de 32 secuencias. La función de pérdida empleada fue la entropía cruzada con un suavizado de etiquetas (\textit{label smoothing}) de $2{,}54 \times 10^{-4}$. Se configuró un esquema de reducción de la tasa de aprendizaje a la mitad tras 5 épocas consecutivas sin mejoras en la pérdida de validación. El límite máximo de entrenamiento se fijó en 200 épocas, con una estrategia de parada temprana (\textit{early stopping}) que interrumpe el proceso si la pérdida de validación no disminuye durante 15 épocas. El sistema conserva los pesos correspondientes a la época con el menor valor de pérdida de validación.
+
+La corrida de entrenamiento finalizó tras 35 épocas. La menor pérdida de validación registrada fue de $0{,}028$, con una exactitud del 99{,}0\,\% sobre los 2\,000 clips de validación. La Figura~\ref{fig:curva_tinyskeleton} ilustra el comportamiento de las curvas de entrenamiento y validación. Por su parte, la Figura~\ref{fig:matriz_tinyskeleton} presenta la matriz de confusión correspondiente sobre esos mismos clips, donde cada clase cuenta con un aporte de 20 muestras y la escala alcanza un límite de 20.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.92\textwidth]{curva_tinyskeleton.png}
+    \caption{Pérdida de entrenamiento y de validación de \texttt{model\_new\_2026\_10\_20}. El eje horizontal es la época.}
+    \label{fig:curva_tinyskeleton}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{matriz_confusion_tinyskeleton.png}
+    \caption{Matriz de confusión de los 2\,000 clips de validación. Cada clase tiene 20 clips.}
+    \label{fig:matriz_tinyskeleton}
+\end{figure}
 
 \section{Implementación del subsistema de traducción semántico bidireccional}
 
@@ -115,26 +175,63 @@ Para la traducción semántica bidireccional se adaptaron modelos de lenguaje pe
 En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en la Sección~\ref{sec:api-semantico-remoto}.
 
 \subsection{Régimen de entrenamiento y ajuste LoRA}
-El canal directo y el canal inverso comparten el mismo procedimiento de entrenamiento. El corpus se divide en un 85\,\% para entrenamiento y un 15\,\% para evaluación. Esta separación utiliza una semilla fija para asegurar que cualquier prueba sea reproducible en las mismas condiciones. Cada ejemplo del conjunto de datos representa una interacción de tres partes: las instrucciones iniciales del sistema (\textit{prompt}), el mensaje del usuario y la respuesta esperada. La ventana de procesamiento admite hasta $2048$ tokens.
+El canal directo y el canal inverso comparten el mismo procedimiento de entrenamiento. El corpus se divide en un 85\,\% para entrenamiento y un 15\,\% para evaluación. Esta separación utiliza la semilla $3407$, la misma del entrenador, para que cualquier prueba se repita en las mismas condiciones. Cada ejemplo del conjunto de datos representa una interacción de tres partes: las instrucciones iniciales del sistema (\textit{prompt}), el mensaje del usuario y la respuesta esperada. La ventana de procesamiento admite hasta $2048$ tokens.
 
 Para adaptar el modelo a la lengua de señas sin modificar sus miles de millones de parámetros originales, se utiliza la técnica LoRA. Se eligió un rango de adaptación $r = 16$ y un factor de escala $\alpha = 32$. La relación $\alpha / r = 2$. Estos valores responden a la configuración recomendada para modelos de este volumen.
 
 Las matrices que reciben entrenamiento son las cuatro capas de proyección de atención y las tres capas de la red de avance. En cambio, la tabla de tokens de entrada y la capa de salida permanecen fijas. Esta elección se debe a que el vocabulario base del modelo no cambia; la tarea solo necesita reorganizar y conectar palabras que la red ya conoce.
 
-El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. De esta forma, el paso matemático del optimizador es idéntico entre todas las opciones y los resultados son comparables.
+El tamaño de lote efectivo se fijó en $16$ ejemplos por cada paso del optimizador. Dado que el modelo de 3B parámetros consume más memoria, su micro-lote se redujo a $2$ ejemplos y los gradientes se acumulan durante $8$ pasos. Los modelos más pequeños utilizan micro-lotes de $4$ ejemplos y acumulan durante $4$ pasos. Ese producto deja en $16$ la cantidad de ejemplos de cada paso. La actualización de los pesos depende de la arquitectura de cada modelo y de su tasa de aprendizaje.
 
-El \textit{learning rate} es de $3 \times 10^{-4}$ para el modelo de 3B y de $5 \times 10^{-4}$ para las versiones más pequeñas. Se asignó un valor menor al modelo grande porque un ajuste brusco en una red con más capas provoca inestabilidad en el aprendizaje. El optimizador elegido es AdamW cuantizado a 8 bits. Esta elección reduce el uso de memoria RAM en la GPU, ya que el estado del optimizador se guarda en $8$ bits y convive sin problemas junto al modelo base de $4$ bits. El decaimiento de pesos de $0{,}01$ evita que los adaptadores crezcan demasiado y memoricen los datos. Se incluyen $10$ pasos de calentamiento para que la tasa de aprendizaje suba de forma gradual desde cero, lo que evita desajustes iniciales bruscos en las matrices de LoRA que arrancan con valores al azar. Luego, un planificador de tipo coseno reduce de forma suave la tasa de aprendizaje hacia el cierre del entrenamiento para afinar los ajustes finales.
+La tasa de aprendizaje (\textit{learning rate}) se fijó en $3 \times 10^{-4}$ para el modelo de 3B y en $5 \times 10^{-4}$ para las versiones de menor tamaño. Se asignó un valor inferior al modelo de mayor escala debido a que las actualizaciones abruptas en redes con una cantidad superior de capas introducen inestabilidad durante el proceso de aprendizaje. 
+
+El optimizador seleccionado es AdamW con cuantización a 8 bits. Esta configuración optimiza el consumo de memoria VRAM en la GPU, en tanto que los estados del optimizador se almacenan en 8 bits y coexisten de manera eficiente con el modelo base cuantizado a 4 bits. Asimismo, el decaimiento de pesos (\textit{weight decay}) de $0{,}01$ previene el crecimiento excesivo de los adaptadores para evitar el sobreajuste (\textit{overfitting}) de los datos. 
+
+El esquema contempla un período de calentamiento (\textit{warmup}) de 10 pasos, intervalo en el cual la tasa de aprendizaje se incrementa progresivamente desde cero. Durante el procedimiento de ajuste, la matriz $\mathbf{A}$ recibe una distribución uniforme de Kaiming, mientras que la matriz $\mathbf{B}$ se inicializa en cero. De esta manera, el producto $\mathbf{B}\mathbf{A}$ expresado en la Ecuación~\ref{eq:lora_formulation} resulta igual a cero en la etapa inicial, lo que garantiza que la salida coincida con la del modelo base congelado. Posteriormente, un planificador de tipo coseno (\textit{cosine scheduler}) atenuará de forma gradual la tasa de aprendizaje hacia la fase final del entrenamiento con el propósito de refinar los ajustes residuales.
 
 Para acelerar el entrenamiento y no perder capacidad de cómputo, la función de pérdida no evalúa todo el diálogo. Una máscara excluye del cálculo directo de la pérdida las posiciones del \textit{prompt} y de la entrada, y deja el error sobre la respuesta deseada. La respuesta sigue condicionada por esos tokens durante el entrenamiento. De este modo, la red concentra su aprendizaje en la traducción.
 
 Por último, antes de ingresar al entrenamiento, los datos reciben una limpieza específica. Las letras sueltas y consecutivas del dataset se unen en un solo token con mayúscula inicial, y los dígitos sueltos forman un número consolidado. Tres letras idénticas seguidas se reducen a dos para corregir errores de tipeo o captura. Las secuencias de palabras sin separación previa, como \textit{Mar del Plata}, se agrupan en un único token \textit{Mardelplata} para que la falta de espacios no confunda al modelo durante el aprendizaje.
 
 \subsubsection{Procedimiento de evaluación y post-entrenamiento}
-Al cierre del entrenamiento, el 15\,\% del conjunto de datos reservado se evalúa sobre el binario en formato GGUF cuantizado a 4 bits. Esta prueba mide el rendimiento real sobre el servidor de inferencia en producción, y no el del modelo en precisión flotante original. La evaluación configura los siguientes parámetros generales de generación y medición:
+\label{sec:eval_lora}
+Cada canal entrena los cinco modelos durante $5$ épocas. El argumento \texttt{max\_steps} queda en $-1$, y el entrenamiento corre esas épocas. El canal directo ejecuta $210$ pasos del optimizador y el inverso ejecuta $180$. La semilla del corte y la del entrenador es $3407$. Las versiones cargadas son:
 \begin{itemize}
-    \item \textbf{Determinismo:} Una temperatura de valor $0$ anula la aleatoriedad en la generación de texto y fuerza al modelo a elegir siempre el token de mayor probabilidad matemática. De esta forma, las respuestas resultan estrictamente reproducibles.
+    \item \texttt{unsloth/Qwen2.5-0.5B-Instruct}
+    \item \texttt{unsloth/Qwen2.5-1.5B-Instruct}
+    \item \texttt{unsloth/Qwen2.5-3B-Instruct}
+    \item \texttt{unsloth/Llama-3.2-1B-Instruct}
+    \item \texttt{unsloth/SmolLM2-1.7B-Instruct}
+\end{itemize}
+
+El 85\,\% de las filas entrena cada modelo. El 15\,\% restante es el único corte reservado: $119$ filas en el canal directo y $102$ en el inverso. La comparación entre los cinco modelos y los resultados de los Cuadros~\ref{tab:sem_directo} y~\ref{tab:sem_inverso} salen de esas mismas filas. La elección de Qwen2.5 1,5B y el informe de ese modelo comparten ese corte.
+
+Al cierre de cada entrenamiento, las filas reservadas se evalúan sobre el binario GGUF cuantizado a 4 bits. Esta prueba mide el archivo que después sirve el modelo.
+
+El registro del 25 de octubre de 2026 anota el reloj entre el inicio del entrenamiento y el inicio de la exportación GGUF. El Cuadro~\ref{tab:duracion_lora} resume ese intervalo, redondeado al minuto. Esas dos líneas son las únicas marcas de tiempo del ajuste.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Reloj de entrenamiento del 25 de octubre de 2026, entre el inicio del ajuste y la exportación GGUF.}
+    \label{tab:duracion_lora}
+    \begin{tabular}{@{}lrr@{}}
+        \toprule
+        \textbf{Modelo} & \textbf{Canal directo} & \textbf{Canal inverso} \\
+        \midrule
+        Qwen2.5 0,5B & 33 min & 15 min \\
+        Qwen2.5 1,5B & 13 h 17 min & 26 min \\
+        Qwen2.5 3B & 2 h 45 min & 48 min \\
+        Llama 3.2 1B & 24 min & 22 min \\
+        SmolLM2 1,7B & 22 min & 21 min \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+La evaluación configura los siguientes parámetros generales de generación y medición:
+\begin{itemize}
+    \item \textbf{Determinismo:} Una temperatura de valor $0$ anula la aleatoriedad en la generación de texto y fuerza al modelo a elegir siempre el token de mayor probabilidad matemática.
     \item \textbf{Control de repetición y parada:} Se aplica una penalización de repetición de $1{,}05$ para desincentivar que el modelo entre en bucles de palabras o glosas idénticas durante la inferencia. El proceso se detiene ante la aparición de un salto de línea o de la marca de fin de turno, lo que evita el consumo innecesario de cómputo.
-    \item \textbf{Múltiples referencias:} Cuando existen varias salidas válidas para una misma entrada, el sistema las agrupa a todas como referencias aceptadas para no penalizar variantes correctas.
+    \item \textbf{Múltiples referencias:} Cada entrada acepta las respuestas que el corpus completo asocia a esa entrada. En el canal directo la clave es la glosa. De las $119$ filas de evaluación, $89$ tienen más de una oración española en el corpus, y $85$ usan una glosa que el corte también dejó en el entrenamiento. En el canal inverso la clave es la oración. En este archivo cada oración aparece una sola vez, y las $102$ filas reservadas quedan fuera del entrenamiento. Aceptar varias respuestas del corpus completo deja en el entrenamiento una entrada que el corte reparte entre los dos lados.
     \item \textbf{Métricas de rendimiento:} La prueba registra el acierto exacto, el acierto tras normalizar puntuación y mayúsculas, y cinco métricas de texto: BLEU, ROUGE-L, METEOR, \texttt{BERT Score} y \texttt{Comet Score}. BLEU cuenta n-gramas compartidos con la referencia. ROUGE-L cuenta la subsecuencia común más larga. METEOR alinea palabras, raíces y sinónimos. \texttt{BERT Score} mide la cercanía de los vectores de los tokens. \texttt{Comet Score} estima la calidad de la traducción a partir de la entrada, la salida y la referencia. Van juntas porque el solapamiento de palabras no alcanza para decidir si se conservó el sentido. El detalle de cada una está en la Sección~\ref{sec:fidelidad_semantica}. La latencia se registra aparte, como tiempo de respuesta.
 \end{itemize}
 
@@ -152,14 +249,14 @@ La consigna del ajuste pide una sola oración, sin notas ni datos ajenos a la en
     \item Una palabra de la secuencia en capitalización de nombre, o una cifra, se copia tal cual en la oración. La consigna prohíbe sustituirla o alterarla.
     \item La entrada sigue el orden \textit{Topic-Comment} (tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y pregunta). La oración de salida reordena esa secuencia según la sintaxis del español.
 \end{itemize}
-Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens del modelo para la salida (Sección~\ref{sec:token}). Esta restricción responde a que las oraciones traducidas del vocabulario base son breves, y frena la generación de texto infinito en caso de un fallo en la red.
+Para la evaluación post-entrenamiento de este canal, se establece un límite máximo de $24$ tokens del modelo para la salida (Sección~\ref{sec:token}). Esta restricción responde a que las oraciones traducidas del vocabulario base son breves.
 
 \subsection{Canal inverso (Español $\rightarrow$ LSA)}
 El par invierte al canal directo: la entrada es la oración y la respuesta son las glosas. La entrada antepone «Español:». La máscara deja el error sobre las glosas. Pide una sola secuencia, separada por espacios, sin notas, sin el prefijo «Glosas:» y sin artículos ni preposiciones del español:
 \begin{itemize}
     \item Las glosas léxicas van en mayúsculas sostenidas. Un nombre, un apellido o una calle va en capitalización de nombre, como \texttt{Patricia} o \texttt{Moreno}, y es una sola palabra de la secuencia, nunca letra por letra. Una cifra, como un documento o una cantidad, también es una sola palabra, no un dígito por espacio.
     \item El orden es tiempo, lugar, sujeto, sustantivo, posesivo, numeral, verbo y, al cierre, la partícula interrogativa o la negación.
-    \item Los pronombres se explicitan aunque el español los omita. Tengo un cuchillo.'' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. Me llamo X'' o Mi nombre es X'' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis voy a'', coloca \texttt{FUTURO}. El presente sin marca no agrega una glosa temporal.
+    \item Los pronombres se explicitan aunque el español los omita, se asume masculino en caso de que no esté especificado. 'Tengo un cuchillo.' $\rightarrow$ \texttt{YO CUCHILLO TENER}. El mapeo es yo $\rightarrow$ \texttt{YO}, vos o tú $\rightarrow$ \texttt{VOS}, él $\rightarrow$ \texttt{EL O}, ella $\rightarrow$ \texttt{EL A}, nosotros $\rightarrow$ \texttt{NOSOTROS}, nosotras $\rightarrow$ \texttt{NOSOTROS A}, ellos $\rightarrow$ \texttt{ELLOS O} y ellas $\rightarrow$ \texttt{ELLOS A}. \item El género del parentesco usa el sustantivo en masculino más \texttt{O} o \texttt{A}: hermana $\rightarrow$ \texttt{HERMANO A}, hija $\rightarrow$ \texttt{HIJO A}, esposa $\rightarrow$ \texttt{ESPOSO A}. Un sustantivo de persona sin marca de género queda en masculino y suma \texttt{O} si el español lo explicita. \item \texttt{MIO} y \texttt{TUYO} cubren los posesivos. 'Me llamo X' o 'Mi nombre es X' $\rightarrow$ \texttt{YO NOMBRE} más el nombre. \item El pretérito o el copretérito colocan \texttt{PASADO} al inicio. El futuro, o la perífrasis 'voy a', coloca \texttt{FUTURO}. El presente sin marca no agrega una glosa temporal.
     \item Las preguntas de dónde, quién, cómo, qué, cuándo y cuántos dejan \texttt{DONDE}, \texttt{QUIEN}, \texttt{COMO}, \texttt{QUE}, \texttt{CUANDO} o \texttt{CUANTOS} al final. La negación deja \texttt{NO} al final, junto al verbo.
 \end{itemize}
 Mediante estas reglas, el modelo aprende a emitir un nombre propio o una cifra como una sola palabra de la secuencia, y no como una cadena de letras. En la evaluación, el límite de generación de este canal es de $48$ tokens del modelo, frente a $24$ en el canal directo (Sección~\ref{sec:token}). Ese número cuenta piezas del tokenizador. Un nombre o una cifra larga es una palabra de la secuencia y, aun así, el tokenizador puede partirla en varias de esas piezas. El deletreo letra por letra ocurre después: si el avatar no encuentra el archivo de esa palabra, pide un clip por letra, con otro tope, de 24 clips.
@@ -170,7 +267,7 @@ Los modelos ajustados se fusionaron y convirtieron a binarios GGUF con cuantizac
 \text{RAM} \approx \mathbf{W} + KV_{\text{fp16}}(ctx=2048) + \text{Buffer}
 \label{eq:ram_runtime}
 \end{equation}
-donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados \cite{dettmers2023qlora} y $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto \cite{kwon2023vllm}. El buffer de activaciones es la memoria temporal de un paso de generación \cite{korthikanti2023reducing}. Ahí entran el estado oculto de cada capa, las puntuaciones de atención de ese paso y el resultado intermedio de la red de avance. El paso siguiente reutiliza ese mismo espacio. La caché $KV$ conserva, para el contexto, las claves y los valores ya calculados. La ecuación deja $\mathbf{W}$ en 4 bits por parámetro, esto es $\sim 0{,}5$ bytes, y cuenta solo el entero de cada peso. En la práctica el archivo GGUF pesa más: cada bloque guarda también la escala y el mínimo, \texttt{v\_proj} y \texttt{down\_proj} quedan en \texttt{Q6\_K}, las normalizaciones siguen en 32 bits, y el archivo incluye la cabecera y el vocabulario. La tabla de \texttt{llama.cpp} no separa esas partes. Publica un solo promedio, el tamaño del GGUF dividido por la cantidad de parámetros, medido sobre Llama 3.1 8B: para \texttt{Q4\_K\_M} da $4{,}8944$ bits por peso y un archivo de $4{,}58$ GiB. En un modelo de ese tamaño la cabecera y el vocabulario casi no mueven el promedio. En los cinco modelos de este trabajo el cociente es otro: los archivos y la memoria que resulta de sumarles la caché están en los Cuadros~\ref{tab:pesos_cuant} y~\ref{tab:ram_inferencia}.
+donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados y $KV_{\text{fp16}}$ la caché de claves y valores para 2048 tokens de contexto \cite{kwon2023vllm}. El buffer de activaciones es la memoria temporal de un paso de generación \cite{korthikanti2023reducing}. Ahí entran el estado oculto de cada capa, las puntuaciones de atención de ese paso y el resultado intermedio de la red de avance. El paso siguiente reutiliza ese mismo espacio. La caché $KV$ conserva, para el contexto, las claves y los valores ya calculados. La ecuación deja $\mathbf{W}$ en 4 bits por parámetro, esto es $\sim 0{,}5$ bytes, y cuenta solo el entero de cada peso. En la práctica el archivo GGUF pesa más: cada bloque guarda también la escala y el mínimo \cite{ggml2023kquants}, \texttt{v\_proj} y \texttt{down\_proj} quedan en \texttt{Q6\_K}, las normalizaciones siguen en 32 bits, y el archivo incluye la cabecera y el vocabulario. La tabla de \texttt{llama.cpp} no separa esas partes. Publica un solo promedio, el tamaño del GGUF dividido por la cantidad de parámetros, medido sobre Llama 3.1 8B: para \texttt{Q4\_K\_M} da $4{,}8944$ bits por peso y un archivo de $4{,}58$ GiB. En un modelo de ese tamaño la cabecera y el vocabulario casi no mueven el promedio. En los cinco modelos de este trabajo el cociente es otro: los archivos y la memoria que resulta de sumarles la caché están en los Cuadros~\ref{tab:pesos_cuant} y~\ref{tab:ram_inferencia}.
 
 \section{Integración en Google Meet y arquitectura de la extensión}
 
@@ -198,10 +295,10 @@ La extensión intercepta y sustituye la función nativa de acceso a la cámara. 
 En la modalidad para personas sordas, la extensión extrae las imágenes de la cámara oculta y las comprime en un formato liviano con resolución y calidad reducidas. El sistema envía fotogramas y aguarda la confirmación antes de despachar el siguiente. El mensaje viaja internamente a través del módulo en segundo plano sin abandonar la computadora ni ingresar de forma directa al motor principal ILSA. Si la cámara de la llamada se cierra, la página emite un aviso para reiniciar el proceso de captura y recorte.
 
 \item \textbf{Estimación de puntos articulares en el entorno aislado:} 
-Las restricciones de seguridad del navegador impiden ejecutar la herramienta de visión artificial directamente en el módulo en segundo plano. Por esta razón, el sistema decodifica la imagen comprimida sobre un lienzo, extrae los píxeles y los transfiere hacia un documento aislado y protegido. Con esta información, el sistema estructura un vector cinemático. Si el usuario seleccionó la opción de lateralidad zurda, el servidor activa la inversión automática de ejes y el cruce de manos en el vector, ajustando los datos al modelo original que fue entrenado con muestras de mano derecha. La imagen comprimida no viaja en este envío.
+Las restricciones de seguridad del navegador impiden ejecutar la herramienta de visión artificial directamente en el módulo en segundo plano. Por esta razón, el sistema decodifica la imagen comprimida sobre un lienzo, extrae los píxeles y los transfiere hacia un documento aislado y protegido. Con esta información, el sistema estructura un vector cinemático. Si el usuario seleccionó la opción de lateralidad zurda, el servidor activa la inversión automática de ejes y el cruce de manos en el vector lo que ajusta los datos al modelo original que fue entrenado con muestras de mano derecha. La imagen comprimida no viaja en este envío.
 
 \item \textbf{Criterio de corte y segmentación gestual:} 
-El algoritmo de recorte opera dentro de la extensión en modo automático, sin evaluar el movimiento de los píxeles para evitar interferencias si hay personas caminando en el fondo. El inicio de la seña se registra al detectar una mano utilizable en la imagen. El cierre ocurre cuando las manos abandonan el encuadre, con un margen de tolerancia frente a eventuales pérdidas temporales de detección. El sistema no interrumpe una seña estática por falta de movimiento. El espacio de memoria guarda hasta 60 cuadros y realiza un muestreo de 16 posiciones antes de la transmisión.
+El algoritmo de recorte opera dentro de la extensión en modo automático, sin evaluar el movimiento de los píxeles para evitar interferencias si hay personas caminando en el fondo. El inicio de la seña se registra al detectar una mano utilizable en la imagen. El cierre ocurre cuando las manos abandonan el encuadre, con un margen de tolerancia frente a eventuales pérdidas temporales de detección. El sistema no interrumpe una seña estática por falta de movimiento. El espacio de memoria guarda hasta 60 cuadros, al completarse o retirar las manos del frame, se cierra la captura y realiza un muestreo de 16 posiciones antes de la transmisión.
 
 \item \textbf{Clasificación local y filtrado mediante compuertas:} 
 Cada seña segmentada se envía mediante un paquete de datos que contiene únicamente el vector de coordenadas. El clasificador procesa la información dentro del motor local. Si el nivel de confianza es inferior al umbral mínimo del 75\,\%, la predicción se descarta y la interfaz la presenta en color coral con la etiqueta «Poca confianza». Si alcanza el umbral pero la compuerta de validación frena la entrada, la interfaz la despliega en tono gris como «No se agregó». Si la seña aprueba las validaciones, ingresa a la frase, el panel la destaca en cian con la indicación «En el mensaje» y el listado de la frase se actualiza.
@@ -210,16 +307,16 @@ Cada seña segmentada se envía mediante un paquete de datos que contiene única
 Tras un intervalo de 4 segundos sin actividad manual en la cámara, el sistema transmite la orden de cierre de frase. ILSA arma el español en el equipo si el enunciado es una sola glosa léxica, solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y el resto de las frases van al servidor semántico. Si el módulo de traducción no emite respuesta, el motor conserva las señas aceptadas en formato de texto original sin reestructurar la oración.
 
 \item \textbf{Emisión de salidas en el Canal Directo (Modo Sordo):} 
-El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En las configuraciones con Audio o Salida Doble, la página solicita una locución en español a la interfaz de voz nativa del navegador. Si una frase traducida es idéntica a la inmediata anterior, el sistema no la vuelve a reproducir.
+El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En las configuraciones con Audio o Salida Doble, la página solicita una locución en español a la interfaz de voz nativa del navegador.
 
 \item \textbf{Procesamiento de entrada por voz en el Canal Inverso (Modo Oyente):} 
-En la modalidad para personas oyentes el sistema captura el audio a través de un módulo de procesamiento sonoro. La extensión envía el bloque de audio comprimido al motor local, donde un modelo de reconocimiento de voz realiza la transcripción de forma totalmente privada y local. El modelo opera exclusivamente en idioma español. Si la conversión no produce texto, la interfaz solicita repetir la locución o recurrir al canal de texto.
+En la modalidad para personas oyentes, la extensión arma un WAV de un canal, en PCM lineal de 16 bits y a 16\,kHz, y lo envía en \texttt{POST /stt}. El cuerpo lleva ese archivo en Base64. Base64 no comprime el audio: reescribe los mismos bytes como texto, y el cuerpo queda más largo que el WAV. El motor local decodifica ese texto y transcribe con un modelo de voz en español, en el propio equipo. Si la conversión no produce texto, la interfaz solicita repetir la locución o recurrir al canal de texto.
 
 \item \textbf{Procesamiento de entrada por texto en el Canal Inverso (Modo Oyente):} 
 El sistema captura el contenido escrito sin pasar por el módulo de voz. La entrada de voz y la de texto pueden permanecer activas de forma concurrente; ambas representan distintas vías de ingreso para el mismo caso de uso y no constituyen un modo separado.
 
 \item \textbf{Generación de glosas y renderización de animación sintética:} 
-La cadena de texto en español ingresa al motor local. ILSA la parte por espacios. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: no consulta al traductor ni a un diccionario para tomar esa decisión. Si quedan dos o más palabras, la oración se envía al servicio en la nube y retorna estructurada como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descarta el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video para que el interlocutor las visualice directamente en la llamada.
+La cadena de texto en español ingresa al motor local. ILSA la parte por espacios. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: no consulta al traductor ni a un diccionario para tomar esa decisión. Si quedan dos o más palabras, la oración se envía al servicio en la nube y retorna estructurada como señas en el orden gramatical del sistema. El motor local solicita los archivos de animación cinemática correspondientes a cada seña, con un límite de hasta 24 elementos por enunciado. En ausencia del archivo para una seña específica, el sistema solicita los archivos de cada letra para realizar un deletreo dactilológico. Si el servidor de animaciones no responde, las señas se conservan en texto y el bloque visual permanece vacío. La extensión recibe los datos de movimiento ya unificados por el servidor. En la superficie del lienzo, la cámara del usuario ocupa la mitad izquierda y el modelo de esqueleto ocupa la mitad derecha. La llegada de una nueva animación no interrumpe la secuencia en ejecución, y la cola de reproducción admite hasta 20 bloques animados, descarta el más antiguo al colmar su capacidad. Las señas procesadas también se graban sobre la franja inferior del mismo video. En el modo oyente, la persona oyente ve su cámara y el avatar en la miniatura local, y ahí los subtítulos le salen espejados. La persona sorda, que es quien tiene que comprenderlos, los recibe al derecho.
 \end{enumerate}
 
 \subsection{Motor local ILSA (FastAPI)}
@@ -239,7 +336,7 @@ La emisión de voz sintética se desacopló mediante un hilo de ejecución secun
 \subsection{Vía descartada: retarget hacia un avatar VRM}
 Antes del diccionario de poses se probó un personaje VRM, con malla y huesos de longitud fija, animado por rotaciones. El fundamento del ensayo es el \textit{retarget}: el paso de posiciones de \textit{landmarks} a rotaciones de otro esqueleto. MediaPipe Holistic entrega posiciones, y el avatar exige rotaciones sobre su propio esqueleto. El visor se armó con Three.js. Para la mano se probó Kalidokit, una biblioteca de JavaScript para ese \textit{retarget}. Toma los \textit{landmarks} de MediaPipe y calcula rotaciones de Euler del esqueleto y pesos de \textit{blendshape} del rostro. En la mano resume cada dedo en un único ángulo de rizo. También se probó una cinemática inversa que lleva el extremo del hueso hasta el punto medido.
 
-La prueba no se retuvo. El desarrollo no contaba con práctica suficiente de animación tridimensional, y las bibliotecas de \textit{retarget} no sostuvieron de forma estable el paso de la pose al esqueleto VRM. El emparejamiento fallaba con frecuencia porque la pose pierde la profundidad en el eje Z: la coordenada de la mano queda relativa a la muñeca y en una escala distinta del desplazamiento en el plano, de modo que el hueso no recibe una distancia utilizable. Si se respeta la longitud del hueso, la yema no cae sobre el punto medido. Si la cinemática inversa alarga el miembro hasta ese punto, la mano pierde la configuración y, en el alfabeto manual, la letra cambia. Kalidokit, además, confunde configuraciones próximas.
+La prueba no se retuvo. El desarrollo no contaba con práctica suficiente de animación tridimensional, y las bibliotecas de \textit{retarget} no sostuvieron de forma estable el paso de la pose al esqueleto VRM. La pose conserva una profundidad relativa en el eje Z. La componente $z$ de la mano es relativa a la muñeca y no es una distancia en metros. Una sola cámara limita esa medida: una toma frontal no alcanza para reconstruir el eje. El emparejamiento fallaba con frecuencia por la escala y por el ajuste al esqueleto. Esa coordenada y el desplazamiento en el plano no comparten escala, de modo que el hueso no recibe una distancia utilizable. Si se respeta la longitud del hueso, la yema no cae sobre el punto medido. Si la cinemática inversa alarga el miembro hasta ese punto, la mano pierde la configuración y, en el alfabeto manual, la letra cambia. Kalidokit, además, confunde configuraciones próximas.
 
 El diccionario de \texttt{.pose} evita ese paso: dibuja los puntos medidos y no los convierte en rotaciones de otro cuerpo. Si más adelante se retoma el avatar tridimensional, una línea de mejora es filmar cada seña desde tres ángulos, para reconstruir la profundidad que una sola toma frontal no conserva.
 
@@ -262,13 +359,13 @@ El recuadro común mide $720 \times 780$ píxeles. El cuerpo se escala para que 
 
 El puente dura entre 4 y 8 fotogramas. Si las muñecas del final de una seña y del inicio de la siguiente ya están cerca, se usan 4. Si están lejos, se llega a 8, para que la mano no salte. Un punto cuya confianza queda por debajo de $0{,}15$ sale en la lista como ausente, y el trazo del lienzo no lo une con el punto anterior.
 
-La entrada, desde la postura de espera hasta el primer fotograma de la seña, y la salida, de vuelta a esa espera, duran cerca de seis fotogramas de la tasa de 30. A esa cadencia, cada uno de esos tramos ocupa cerca de un quinto de segundo. La secuencia se corta en el techo fijado en el diseño: 24 glosas y 1200 fotogramas.
+La entrada, desde la postura de espera hasta el primer fotograma de la seña, y la salida, de vuelta a esa espera, duran cerca de seis fotogramas de la tasa de 30. A esa cadencia, cada uno de esos tramos ocupa cerca de un quinto de segundo. La secuencia se corta en el techo fijado en el diseño: 24 glosas y 1200 fotogramas. Esos 1200 fotogramas, a 30 por segundo, son 40\,s de animación. Con la entrada y la salida, el bloque que alcanza ese techo dura 40,4\,s. El bloque en curso sigue hasta el final. El mensaje nuevo entra en la cola, que admite hasta 20 bloques. El turno siguiente espera el resto del bloque en pantalla y los que quedaron delante. En ese techo, la espera es de 40,4\,s por bloque. Con el bloque en pantalla y 19 delante, todos en el tope, la espera del último llega a 808\,s. Ese valor es el techo del código, no una medición de una sesión.
 
 \paragraph{Postura de espera.}
 No hay un archivo aparte llamado reposo. El cuerpo y las manos de la espera se copian de los primeros fotogramas de una seña de referencia, el tramo en el que la persona todavía no empezó el gesto, y se escalan al mismo ancho de hombros del lienzo. El antebrazo queda casi horizontal, levemente hacia abajo, y la mano sigue esa línea.
 
 \paragraph{Reflejo de la miniatura local.}
-La videollamada muestra la miniatura de quien usa el sistema como un reflejo. La extensión deshace ese reflejo solo en ese video local. El esqueleto que viaja hacia la otra persona no se invierte. Las dos vistas quedan iguales: la cámara en la mitad izquierda y el esqueleto, sin darlo vuelta, en la mitad derecha.
+La videollamada muestra la miniatura de quien usa el sistema como un reflejo. La extensión deshace ese reflejo solo en ese video local para la cámara y el esqueleto. El esqueleto que viaja hacia la otra persona no se invierte. Esas dos vistas quedan iguales: la cámara en la mitad izquierda y el esqueleto, sin darlo vuelta, en la mitad derecha. En el modo oyente, los subtítulos de la miniatura local le salen espejados a la persona oyente. La persona sorda los recibe al derecho.
 
 \section{Instancia de validación del prototipo mediante microservicios en la nube}
 \label{sec:arquitectura_produccion}
@@ -287,9 +384,9 @@ La arquitectura se dividió en dos microservicios independientes, empaquetados e
 El proceso de despliegue e integración en la nube se llevó a cabo bajo los siguientes criterios técnicos:
 
 \begin{enumerate}
-    \item \textbf{Empaquetamiento e integración continua (CI/CD):} Mediante la herramienta \texttt{gcloud builds}, el código fuente y las dependencias de cada rama se enviaron a Google Cloud Build para construir las imágenes de contenedor, las cuales quedaron almacenadas en Google Artifact Registry (\texttt{ilsa-repo}).
+    \item \textbf{Proceso de despliegue:} Mediante la herramienta \texttt{gcloud builds}, el código fuente y las dependencias de cada rama se enviaron a Google Cloud Build para construir las imágenes de contenedor, las cuales quedaron almacenadas en Google Artifact Registry (\texttt{ilsa-repo}).
     
-    \item \textbf{Gestión dinámica de puertos y comprobación de estado:} A fin de evitar fallos de inicialización (\textit{health-check timeouts}), cada contenedor se configuró para adaptar su punto de entrada a la variable de entorno \texttt{\$PORT} inyectada de forma dinámica por la plataforma Cloud Run, que habilita la escucha en la interfaz \texttt{0.0.0.0} con un tiempo de espera de hasta $300\text{~segundos}$ para absorber la latencia de arranque inicial (\textit{cold start}).
+    \item \textbf{Gestión dinámica de puertos y comprobación de estado:} Cada contenedor escucha en \texttt{0.0.0.0} y en el puerto de la variable \texttt{\$PORT}, que Cloud Run inyecta al crear la instancia. Esa apertura habilita la sonda de arranque y queda fuera de los plazos. El tiempo máximo de una solicitud, la comprobación de arranque y la espera del cliente son tres plazos distintos. Configurar uno deja los otros en su valor. El de la solicitud es el de Cloud Run: $300\text{~segundos}$ por defecto. Si la respuesta no sale dentro de ese plazo, la plataforma cierra la conexión y responde HTTP 504. El reloj de esa solicitud incluye el arranque del contenedor desde que la petición llega. La comprobación de arranque usa la sonda TCP por defecto, de $240\text{~segundos}$ (\texttt{timeoutSeconds} 240, \texttt{periodSeconds} 240 y \texttt{failureThreshold} 1). Esa sonda abre una conexión al puerto. La ruta \texttt{/health} queda para las consultas de la aplicación. Si el proceso no escucha dentro de esos $240\text{~segundos}$, la plataforma apaga el contenedor. El cliente es independiente: ILSA no declara un plazo propio y espera la respuesta o el corte del servidor. Un cambio del plazo de la solicitud, o del de la sonda, deja intacta esa espera.
     
     \item \textbf{Política de asignación de instancias y control presupuestario:} Con el propósito de optimizar el consumo de créditos y acotar los costos operativos dentro del marco del Trabajo Final de Grado, se configuró una política de instancias delimitada entre cero y una réplica (\texttt{--min-instances 0}, \texttt{--max-instances 1}). El escalado a cero libera los recursos cuando no existen llamadas activas.
 \end{enumerate}

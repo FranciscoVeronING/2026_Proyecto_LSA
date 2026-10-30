@@ -8,11 +8,15 @@
 El diseño adopta una arquitectura híbrida desacoplada. La extracción de puntos articulares y la clasificación gestual se ejecutan en el equipo del usuario, mientras que el módulo de traducción semántica y servidor de poses operan como un servicio remoto distribuido.
 
 \subsection{Justificación de la partición y modelo de privacidad}
+\label{sec:particion_privacidad}
 La extracción de puntos clave y la clasificación de señas se ejecutan de manera local en el dispositivo del usuario. Por esta razón, el servicio de traducción y el servidor de poses nunca reciben la señal de video original ni las coordenadas articulares.
 
 La cámara transfiere la imagen directamente desde el equipo hacia Google Meet para cumplir con la exigencia RNF-02. Así, la videollamada procesa el video compuesto, el cual integra la toma original, los subtítulos y la superposición del esqueleto en el modo oyente.
 
 Debido al consumo de memoria y al costo computacional de los modelos de lenguaje, la traducción se aloja en un servicio remoto. Hacia este componente solo se transmiten cadenas de texto, representadas por la secuencia de glosas o la oración en español. Aunque este flujo no incluye material de video, el texto puede incluir datos personales como nombres o números de documento. Por su parte, el servidor de poses procesa la solicitud a partir del nombre de una glosa o las letras de un deletreo, para luego retornar el archivo correspondiente.
+
+\subsection{Variación artificial del conjunto de señas}
+El corpus de señas reúne tres personas en seis sesiones de grabación. Una toma de ese conjunto no cubre otra velocidad, otra posición de cámara ni un fotograma que el extractor pierde. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
 
 \subsection{Flujo integral de datos entre componentes}
 La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación, mientras que la red transmite exclusivamente mensajes en formato JSON.

@@ -26,9 +26,31 @@ La evaluación del sistema abarca desde la recolección de datos y el entrenamie
 Las pruebas se ejecutaron en tres entornos representativos:
 \begin{enumerate}
     \item \textbf{Estación de desarrollo (GPU):} Utilizada para la evaluación estática fuera de línea, el entrenamiento de modelos y las pruebas de velocidad máxima de inferencia.
-    \item \textbf{Equipo objetivo de cliente (Laptop sin GPU):} Configuración de gama media estándar orientada a verificar el comportamiento en tiempo real, el consumo de CPU/RAM y la latencia perceptible por el usuario final.
+    \item \textbf{Equipo objetivo de cliente (Laptop sin GPU):} Configuración de gama media estándar orientada a verificar el comportamiento en tiempo real, el consumo de CPU/RAM y la latencia perceptible por el usuario final. Sus componentes están en la Sección~\ref{sec:laptop_prueba}.
     \item \textbf{Infraestructura en la nube:} Instancia de Google Cloud Run (configuración de 4 vCPU y 8\,GiB de memoria RAM) conectada mediante HTTPS para los servicios remotos de traducción semántica y reproducción de avatar.
 \end{enumerate}
+
+\subsection{Equipo portátil de las pruebas de cliente}
+\label{sec:laptop_prueba}
+La sesión de la Sección~\ref{sec:perfilado_cliente_recursos} corrió en una laptop con Windows 11 Home. El Cuadro~\ref{tab:laptop_prueba} reúne los componentes de ese equipo. El nombre comercial del equipo no quedó registrado. La toma del 30 de octubre de 2026, con RAM y CPU del navegador, corrió en la estación de escritorio y está en la Sección~\ref{sec:hw_comparacion}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Laptop de las pruebas de cliente.}
+    \label{tab:laptop_prueba}
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        \textbf{Componente} & \textbf{Valor} \\
+        \midrule
+        Procesador & Intel Core i7-10510U a 1{,}80\,GHz \\
+        Memoria RAM & 8\,GB a 2667\,MT/s \\
+        Gráficos & Intel UHD Graphics, 128\,MB \\
+        Almacenamiento & 477\,GB \\
+        Sistema operativo & Windows 11 Home \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \subsection{Criterios de aceptación y trazabilidad}
 Cada caso de prueba se vinculó de manera directa con los requerimientos funcionales y no funcionales del sistema. En el Cuadro~\ref{tab:trazabilidad_pruebas} se sintetizan los criterios de aceptación principales definidos para la validación.
@@ -193,7 +215,7 @@ La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales
 \label{sec:eval_100_camara}
 \label{sec:protocolo_camara}
 
-El prototipo integrado carga el modelo \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$.
+El prototipo integrado carga el modelo \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$. Ese corte es por clip dentro de cada clase, como se describe en la Sección~\ref{sec:tinyskeleton}. Las mismas tres personas pueden estar en el entrenamiento y en la validación.
 
 La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos; solo varió la iluminación de la habitación. Quien ejecuta el script anota la etiqueta de luz adecuada o reducida, dado que el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha, sin omitir tomas.
 
@@ -274,56 +296,57 @@ SmolLM2 1,7B & 77,45 & 82,90 & 91,54 & 86,31 & 97,68 & 92,37 & 458,39 \\
 \end{tabular}
 \end{table}
 
-El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto del 94,96\,\% en canal directo y del 91,18\,\% en canal inverso, junto con tiempos de inferencia en CPU inferiores a 300\,ms.
+El modelo Qwen2.5 1,5B alcanzó el equilibrio óptimo en ambas direcciones, con un acierto exacto del 94,96\,\% en canal directo y del 91,18\,\% en canal inverso. Esos cuadros y la elección del modelo usan el mismo 15\,\% reservado, descrito en la Sección~\ref{sec:eval_lora}. Las medias de 256,30\,ms y 290,82\,ms salen de la evaluación local con la GPU de la estación de desarrollo. El equipo, el programa y la longitud de cada pasada están en la Sección~\ref{sec:hw_comparacion}.
 
 \subsection{Pruebas de la lógica de control del motor local}
 La batería de pruebas diseñada para validar la lógica del filtro \texttt{RepeatGate} y los tiempos de corte de enunciado produjo los resultados consignados en el Cuadro~\ref{tab:bateria_logica}.
 
 \begin{table}[H]
-    \centering
-    \small
-    \caption{Resultados de las pruebas funcionales sobre la lógica de control del motor local.}
-    \label{tab:bateria_logica}
-    \begin{tabularx}{\textwidth}{l l X}
-        \toprule
-        \textbf{Caso de prueba} & \textbf{Entrada ingresada} & \textbf{Resultado emitido} \\
-        \midrule
-        Dígitos repetidos & \texttt{1 1 1 2 2} & Aceptación total: \texttt{1 1 1 2 2} \\
-        Letra repetida tres veces & \texttt{A A A B} & Filtrado a máximo de dos: \texttt{A A B} \\
-        Rebote del clasificador & \texttt{HOLA HOLA} & Descarte de duplicado inmediato: \texttt{HOLA} \\
-        Repetición no consecutiva & \texttt{HOLA VER HOLA} & Conservación de la secuencia completa \\
-        Glosa repetida descartada a los 3\,s & Glosa repetida & El cierre se desplaza a los 7\,s \\
-        Movimiento continuo hasta 5\,s & Sin glosa nueva & Cierre de enunciado a los 9\,s \\
-        Deletreo dactilológico & \texttt{J U A N} & Conversión directa a «Juan.» sin consulta a nube \\
-        Deletreo con ambigüedad & \texttt{T I N A} & Derivación al traductor por coincidencia con \texttt{OJO} \\
-        \bottomrule
-    \end{tabularx}
+\centering
+\small
+\caption{Resultados de las pruebas funcionales sobre la lógica de control del motor local.}
+\label{tab:bateria_logica}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Caso de prueba} & \textbf{Entrada ingresada} & \textbf{Resultado emitido} \\
+\midrule
+Dígitos repetidos & \texttt{1 1 1 2 2} & Aceptación total: \texttt{1 1 1 2 2} \\
+Letra repetida tres veces & \texttt{A A A B} & Filtrado a máximo de dos: \texttt{A A B} \\
+Rebote del clasificador & \texttt{HOLA HOLA} & Descarte de duplicado inmediato: \texttt{HOLA} \\
+Repetición no consecutiva & \texttt{HOLA VER HOLA} & Conservación de la secuencia completa \\
+Glosa repetida descartada a los 3\,s & Glosa repetida & El cierre se desplaza a los 7\,s \\
+Movimiento continuo hasta 5\,s & Sin glosa nueva & Cierre de enunciado a los 9\,s \\
+Deletreo dactilológico & \texttt{J U A N} & Conversión directa a «Juan.» sin consulta a nube \\
+Deletreo con ambigüedad & \texttt{T I N A} & Derivación al traductor por contener \texttt{T} e \texttt{I} \\
+\bottomrule
+\end{tabularx}
 \end{table}
 
 \subsection{Tratamiento de fallas de integración en Google Meet}
 Durante la evaluación sobre la interfaz de usuario en llamadas activas se identificaron inconvenientes técnicos que se solucionaron mediante intervenciones específicas de arquitectura, según se detalla en el Cuadro~\ref{tab:fallas_integracion}.
 
 \begin{table}[H]
-    \centering
-    \small
-    \caption{Anomalías detectadas en la integración con Google Meet y soluciones aplicadas.}
-    \label{tab:fallas_integracion}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth} >{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Falla detectada} & \textbf{Intervención de ingeniería aplicada} \\
-        \midrule
-        Bloqueo del inicio de video en Meet por intercepción permanente de cámara. & Activación del reemplazo de la pista únicamente con el motor ILSA encendido. \\
-        \addlinespace[2pt]
-        Pérdida de enlace al recargar la extensión con la pestaña de la reunión abierta. & Recarga automática de la pestaña de Meet ante el reinicio del contexto de la extensión. \\
-        \addlinespace[2pt]
-        Detección de falsas manos provocada por movimiento del torso. & Exigencia de un número mínimo de cuadros consecutivos con mano detectada antes de abrir el gesto. \\
-        \addlinespace[2pt]
-        Interferencia en la captura por movimiento de personas en el fondo. & Delimitación del área de actividad basada exclusivamente en los puntos articulares de las manos. \\
-        \addlinespace[2pt]
-        Sobrecarga de CPU en la transferencia de imágenes hacia la ventana \textit{offscreen}. & Reducción de la resolución de los cuadros transferidos a $240$ píxeles de ancho con compresión ajustada. \\
-        \bottomrule
-    \end{tabularx}
+\centering
+\small
+\caption{Anomalías detectadas en la integración con Google Meet y soluciones aplicadas.}
+\label{tab:fallas_integracion}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.42\textwidth} >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Falla detectada} & \textbf{Intervención de ingeniería aplicada} \\
+\midrule
+Bloqueo del inicio de video en Meet por intercepción permanente de cámara. & Activación del reemplazo de la pista únicamente con el motor ILSA encendido. \\
+\addlinespace[2pt]
+Pérdida de enlace al recargar la extensión con la pestaña de la reunión abierta. & Recarga automática de la pestaña de Meet ante el reinicio del contexto de la extensión. \\
+\addlinespace[2pt]
+Detección de falsas manos provocada por movimiento del torso. & Exigencia de un número mínimo de cuadros consecutivos con mano detectada antes de abrir el gesto. \\
+\addlinespace[2pt]
+Interferencia en la captura por movimiento de personas en el fondo. & Delimitación del área de actividad basada exclusivamente en los puntos articulares de las manos. \\
+\addlinespace[2pt]
+Sobrecarga de CPU en la transferencia de imágenes hacia la ventana \textit{offscreen}. & Reducción de la resolución de los cuadros transferidos a $240$ píxeles de ancho con compresión ajustada. \\
+\bottomrule
+\end{tabularx}
 \end{table}
+
 
 % ====================================================================
 \section{Métricas de calidad}
@@ -336,60 +359,60 @@ La evaluación objetiva del sistema se consolidó mediante métricas cuantificab
 \label{sec:eval_telemetria_vivo}
 \label{sec:latencias_pipeline}
 
-Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa. Durante dicha sesión se capturaron eventos en ambos canales de traducción (directo e inverso), con registro de la latencia por etapa, el consumo de memoria del proceso cliente (RSS) y la tasa de fotogramas por segundo (FPS).
+Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa, en la laptop de la Sección~\ref{sec:laptop_prueba}. Durante dicha sesión se capturaron eventos en ambos canales de traducción (directo e inverso), con registro de la latencia por etapa, de \texttt{RAM\_mb} y \texttt{CPU\_percent} del proceso ILSA, y de la tasa de fotogramas por segundo (FPS). Ese registro no trae la RAM ni la CPU del navegador.
 
 En el Cuadro~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
 
 \begin{table}[H]
-    \centering
-    \small
-    \caption{Resumen de métricas de perfilado y latencia registradas.}
-    \label{tab:telemetria_resumen}
-    \begin{tabularx}{\textwidth}{l X X X}
-        \toprule
-        \textbf{Métrica de ejecución} & \textbf{Canal Directo (LSA $\rightarrow$ Esp)} & \textbf{Canal Inverso (Esp $\rightarrow$ LSA)} & \textbf{Unidad} \\
-        \midrule
-        Eventos registrados & 9 & 7 & oraciones \\
-        Pausa de cierre (configurada) & $4031{,}1 \pm 23{,}5$ & $0{,}0$ & ms \\
-        Tiempo de inferencia remota & $1444{,}4$ ($896{,}7$ -- $2372{,}9$) & $1368{,}2$ ($826{,}6$ -- $2202{,}8$) & ms \\
-        Tiempo de transporte de red & $301{,}7$ ($273{,}4$ -- $336{,}4$) & $253{,}3$ ($254{,}2$ -- $328{,}2$) & ms \\
-        Tiempo de entrega / renderizado & $0{,}3$ ($0{,}2$ -- $0{,}6$) & $869{,}3$ ($105{,}9$ -- $1387{,}6$) & ms \\
-        Latencia total de procesamiento & $1712{,}9$ ($1233{,}3$ -- $2674{,}2$) & $2490{,}8$ ($105{,}9$ -- $3612{,}1$) & ms \\
-        Consumo de memoria RAM (RSS) & $168{,}8$ ($96{,}0$ -- $224{,}9$) & $231{,}2$ ($219{,}8$ -- $235{,}2$) & MB \\
-        Tasa de procesamiento (Holistic) & $5{,}8$ -- $12{,}1$ & N/A & FPS \\
-        Tasa de renderizado cliente & $45{,}0$ -- $60{,}0$ & $58{,}2$ -- $60{,}5$ & FPS \\
-        Cumplimiento RNF-01 ($< 2{,}0$\,s) & 77{,}8\,\% (7/9) & 85{,}7\,\% (6/7) & aciertos \\
-        \bottomrule
-    \end{tabularx}
+\centering
+\small
+\caption{Resumen de métricas de perfilado y latencia registradas.}
+\label{tab:telemetria_resumen}
+\begin{tabularx}{\textwidth}{l X X X}
+\toprule
+\textbf{Métrica de ejecución} & \textbf{Canal Directo (LSA $\rightarrow$ Esp)} & \textbf{Canal Inverso (Esp $\rightarrow$ LSA)} & \textbf{Unidad} \\
+\midrule
+Eventos registrados & 16 & 11 & oraciones \\
+Pausa de cierre (configurada) & $4126{,}5 \pm 68{,}0$ & $0{,}0$ & ms \\
+Tiempo de inferencia remota & $1527{,}9$ ($0{,}0$ -- $2525{,}5$) & $1407{,}3$ ($0{,}0$ -- $2224{,}1$) & ms \\
+Tiempo de transporte de red & $299{,}1$ ($0{,}0$ -- $350{,}2$) & $278{,}5$ ($0{,}0$ -- $376{,}1$) & ms \\
+Tiempo de entrega / renderizado & $0{,}4$ ($0{,}2$ -- $1{,}0$) & $988{,}9$ ($175{,}3$ -- $2945{,}1$) & ms \\
+Latencia total de procesamiento & $1827{,}5$ ($0{,}3$ -- $2853{,}2$) & $2674{,}7$ ($175{,}3$ -- $4707{,}7$) & ms \\
+RAM de ILSA & $114{,}4$ ($82{,}3$ -- $222{,}1$) & $247{,}7$ ($200{,}3$ -- $286{,}7$) & MB \\
+Tasa de procesamiento (Holistic) & $0{,}1$ -- $12{,}4$ & N/A & FPS \\
+Tasa de renderizado cliente & $10{,}8$ -- $40{,}9$ & $32{,}9$ -- $40{,}5$ & FPS \\
+Cumplimiento RNF-01 ($< 2{,}0$\,s) & 93{,}8\,\% (15/16) & 90{,}9\,\% (10/11) & aciertos \\
+\bottomrule
+\end{tabularx}
 \end{table}
 
 \subsection{Evaluación del uso de recursos de hardware en el dispositivo cliente}
 \label{sec:perfilado_cliente_recursos}
 
-A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada.
+A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada. \texttt{RAM\_mb} y \texttt{CPU\_percent} pertenecen al proceso de Python de ILSA (\texttt{os.getpid()}). \texttt{RAM\_mb} es el working set de ese proceso. \texttt{CPU\_percent} es el porcentaje de CPU del mismo proceso y supera el 100\,\% cuando el proceso usa varios núcleos. El navegador queda fuera de esas dos columnas. Esta toma no registró \texttt{Browser\_RAM\_mb} ni \texttt{Browser\_CPU\_percent}. La extensión puede enviar, aparte, \texttt{js\_heap\_mb}: el heap de JavaScript de la página. Ese heap no es la RAM del proceso del navegador.
 
 En el Cuadro~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
 
 \begin{table}[H]
-    \centering
-    \small
-    \caption{Métricas de uso de RAM y uso de CPU en la estación cliente durante la prueba activa.}
-    \label{tab:perfilado_recursos_log}
-    \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{@{}lcccc@{}}
-        \toprule
-        \textbf{Estado del canal} & \textbf{RAM Prom.} & \textbf{RAM Máx.} & \textbf{CPU Prom. (\%)} & \textbf{CPU Máx. (\%)} \\
-        \midrule
-        Canal Directo & 168{,}81 & 224{,}90 & 2{,}94\,\% & 8{,}30\,\% \\
-        Canal Inverso & 231{,}19 & 235{,}20 & 33{,}80\,\% & 106{,}20\,\% \\
-        \bottomrule
-    \end{tabular}
+\centering
+\small
+\caption{RAM y CPU de ILSA en la laptop durante la prueba activa. El navegador no entra en este cuadro.}
+\label{tab:perfilado_recursos_log}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Canal} & \textbf{RAM media (MB)} & \textbf{RAM máx. (MB)} & \textbf{CPU media} & \textbf{CPU máx.} \\
+\midrule
+Directo & 114{,}36 & 222{,}10 & 9{,}33\,\% & 60{,}10\,\% \\
+Inverso & 247{,}67 & 286{,}70 & 40{,}02\,\% & 98{,}40\,\% \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 El análisis de perfilado muestra los siguientes comportamientos:
 \begin{itemize}
-    \item \textbf{Eficiencia en memoria:} El canal directo presentó una huella de memoria reducida, la cual descendió de manera progresiva desde los 224{,}9 MB iniciales hasta un régimen permanente de 96{,}0 MB. El canal inverso mantuvo un consumo ligeramente superior pero acotado, con estabilización en $\approx 231$ MB debido al almacenamiento en caché de las animaciones del avatar.
-    \item \textbf{Carga del procesador:} Durante el procesamiento del canal directo el uso de CPU cliente permaneció reducido (2{,}94\,\% promedio), resultado que confirma la liviandad del clasificador gestual de 1{,}66 MB. En el canal inverso, el renderizado gráfico del avatar generó un incremento medio del uso de CPU hasta el 33{,}80\,\%, con picos transitorios del 106{,}20\,\% durante la decodificación inicial del audio entrante por el motor Vosk, con retorno inmediato al estado de reposo.
+\item \textbf{Eficiencia en memoria:} La RAM de ILSA en el canal directo descendió desde 222{,}1 MB hasta un régimen de 82{,}3 MB. En el canal inverso se estabilizó cerca de 247{,}7 MB.
+\item \textbf{Carga del procesador:} Durante el procesamiento del canal directo la CPU de ILSA permaneció en 9{,}33\,\% de promedio. En el canal inverso, Vosk y el armado de las secuencias llevaron la media a 40{,}02\,\%, con un pico de 98{,}40\,\%.
 \end{itemize}
 
 \subsection{Consumo de memoria y huella del sistema en servidor}
@@ -407,12 +430,13 @@ La cuantización en formato GGUF de 4 bits permitió reducir la huella de memori
 \midrule
 Qwen2.5 0,5B & 0,913 & 379,4 & 0,370 & 6,5 \\
 Qwen2.5 1,5B & 2,869 & 940,4 & 0,918 & 5,1 \\
-Qwen2.5 3B   & 5,756 & 1\,840,5 & 1,797 & 5,0 \\
+Qwen2.5 3B   & 5,756 & 1,840,5 & 1,797 & 5,0 \\
 Llama 3.2 1B & 2,291 & 770,3 & 0,752 & 5,3 \\
-SmolLM2 1,7B & 3,185 & 1\,006,7 & 0,983 & 4,9 \\
+SmolLM2 1,7B & 3,185 & 1,006,7 & 0,983 & 4,9 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
 
 \begin{table}[H]
 \centering
@@ -421,7 +445,7 @@ SmolLM2 1,7B & 3,185 & 1\,006,7 & 0,983 & 4,9 \\
 \label{tab:ram_inferencia}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Modelo} & \textbf{Caché \(KV\) (GiB)} & \textbf{16 bits + caché (GiB)} & \textbf{GGUF + caché (GiB)} \\
+\textbf{Modelo} & \textbf{Caché $KV$ (GiB)} & \textbf{16 bits + caché (GiB)} & \textbf{GGUF + caché (GiB)} \\
 \midrule
 Qwen2.5 0,5B & 0,023 & 0,936 & 0,394 \\
 Qwen2.5 1,5B & 0,055 & 2,923 & 0,973 \\
@@ -432,38 +456,75 @@ SmolLM2 1,7B & 0,375 & 3,560 & 1,358 \\
 \end{tabular}
 \end{table}
 
-En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen2.5 1,5B. La columna GGUF más caché da $0{,}973$\,GiB para ese modelo, y los dos canales suman $1{,}946$\,GiB. Esa suma es el archivo medido más la caché $KV$ en fp16, con contexto 2048. El buffer de activaciones de la Ecuación~\ref{eq:ram_runtime} queda fuera, y la cifra no es el RSS del proceso. Llama 3.2 1B queda en disco, a $0{,}815$\,GiB con su caché por canal, y entra en memoria solo si el modelo principal no carga. Los $8$\,GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada al contenedor, no esta suma.
+La columna de caché $KV$ sale de un contexto de 2048 tokens en fp16, dos bytes por elemento \cite{pope2023efficiently}. El primer 2 separa la clave del valor:
+
+\begin{equation}
+KV = 2 , n_{\mathrm{layers}} , n_{\mathrm{kv}} , d_{\mathrm{head}} , 2048 \times 2.
+\label{eq:kv_cache}
+\end{equation}
+
+$n_{\mathrm{layers}}$ es el número de capas, $n_{\mathrm{kv}}$ el de cabezas de clave y valor, y $d_{\mathrm{head}}$ el largo de cada vector. El Cuadro~\ref{tab:kv_calculo} aplica esa cuenta. El cociente en GiB es el número de bytes dividido por $1024^{3}$. El Cuadro~\ref{tab:ram_inferencia} guarda ese cociente con tres decimales.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Datos de la caché $KV$ para 2048 tokens en fp16.}
+\label{tab:kv_calculo}
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Modelo} & \textbf{Capas} & \textbf{Cabezas $KV$} & $d_{\text{head}}$ & \textbf{Bytes} & \textbf{GiB} \\
+\midrule
+Qwen2.5 0,5B & 24 & 2 & 64 & 25,165,824 & 0,023 \\
+Qwen2.5 1,5B & 28 & 2 & 128 & 58,720,256 & 0,055 \\
+Qwen2.5 3B & 36 & 2 & 128 & 75,497,472 & 0,070 \\
+Llama 3.2 1B & 16 & 8 & 64 & 67,108,864 & 0,062 \\
+SmolLM2 1,7B & 24 & 32 & 64 & 402,653,184 & 0,375 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Qwen2.5 0,5B da $0{,}0234375$,GiB y el cuadro lo deja en $0{,}023$. Qwen2.5 1,5B da $0{,}0546875$,GiB y el cuadro lo deja en $0{,}055$. Qwen2.5 3B da $0{,}0703125$,GiB y el cuadro lo deja en $0{,}070$. Llama 3.2 1B da $0{,}0625$,GiB y el cuadro lo deja en $0{,}062$. SmolLM2 1,7B da $0{,}375$,GiB exactos. En Qwen2.5 0,5B la cabeza mide 64. En Qwen2.5 1,5B y 3B mide 128. En Llama 3.2 1B, $2048 / 32 = 64$. En SmolLM2 1,7B, $2048 / 32 = 64$, y las 32 cabezas de atención son también las de $KV$.En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen2.5 1,5B con ese contexto de 2048. La columna GGUF más caché da $0{,}973$,GiB para ese modelo, y los dos canales suman $1{,}946$,GiB. Esa suma es el archivo medido más la caché $KV$ en fp16. El buffer de activaciones de la Ecuación~\ref{eq:ram_runtime} queda fuera, y la cifra no es el RSS del proceso. Llama 3.2 1B queda en disco, a $0{,}815$,GiB con su caché por canal, y entra en memoria solo si el modelo principal no carga.
 
 \subsection{Comparativa de rendimiento según arquitectura de hardware}
 \label{sec:hw_comparacion}
 \label{sec:hardware_objetivo}
 
-Con el objeto de evaluar el comportamiento del motor local en un entorno con mayor capacidad computacional y contrastar estos resultados con los de la laptop objetivo (presentado en el Cuadro~\ref{tab:perfilado_recursos_log}), se ejecutaron las mismas pruebas sobre la estación de desarrollo de escritorio. Esa PC reúne un AMD Ryzen 7 8700F de ocho núcleos a 4,10\,GHz, 16\,GB de memoria RAM a 4800\,MT/s, una NVIDIA GeForce RTX 5070 de 12\,GB y un disco de 1,37\,TB.
+La toma del 30 de octubre de 2026 corrió en la estación de desarrollo. Esa PC reúne un procesador AMD Ryzen 7 8700F de ocho núcleos a 4,10\,GHz, 16\,GB de memoria RAM a 4800\,MT/s, una GPU NVIDIA GeForce RTX 5070 de 12\,GB y un almacenamiento de 1,37\,TB. El navegador de esa toma es Microsoft Edge. \texttt{RAM\_mb} y \texttt{CPU\_percent} son el proceso de ILSA. \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} suman los procesos \texttt{msedge.exe}: 31 en el canal directo, y 30 o 31 en el inverso. El heap de JavaScript de la página es otro número, y el del documento donde corre Holistic es otro.
 
-En el Cuadro~\ref{tab:telemetria_pc} se detallan la tasa de captura, el refresco de pantalla, el tiempo de inferencia local y el consumo de recursos de cómputo registrados en esta plataforma.
+El Cuadro~\ref{tab:telemetria_pc} usa el tramo del registro que trae esas columnas del navegador. Hay 25 oraciones en el canal directo (20 pasan por el modelo, 3 quedan en forma literal y 2 en forma léxica) y 18 en el inverso (15 por el modelo y 3 léxicas). La cola de inferencia queda en 0\,ms en las dos. La pausa del directo mide de 4000 a 4050\,ms, con media 4025\,ms.
 
 \begin{table}[H]
-    \centering
-    \small
-    \caption{Métricas de procesamiento y uso de recursos en la estación de desarrollo de escritorio.}
-    \label{tab:telemetria_pc}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.38\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Métrica de ejecución} & \textbf{Canal Directo} & \textbf{Canal Inverso} \\
-        \midrule
-        Tasa de procesamiento (Holistic) & 25{,}3 -- 28{,}9 FPS & N/A \\
-        Tasa de renderizado de interfaz & 194{,}0 -- 200{,}6 FPS & 194{,}0 -- 200{,}6 FPS \\
-        CPU promedio (máximo) & 0{,}87\,\% (7{,}20\,\%) & 22{,}48\,\% (80{,}70\,\%) \\
-        Memoria RAM promedio (RSS) & 544{,}42\,MB & 665{,}98\,MB \\
-        Inferencia \textit{TinySkeleton} & 1{,}1 -- 2{,}8\,ms & N/A \\
-        \bottomrule
-    \end{tabularx}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption[Toma del 30 de octubre de 2026 en la estación de escritorio]{Toma del 30 de octubre de 2026 en la estación de escritorio. ILSA es el proceso de Python. El navegador es la suma de los procesos de Edge.}
+\label{tab:telemetria_pc}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.8cm} X X@{}}
+\toprule
+\textbf{Métrica} & \textbf{Canal directo} & \textbf{Canal inverso} \\
+\midrule
+Inferencia del modelo, media (mín.--máx.) & 1521{,}3\,ms (942{,}0 -- 2178{,}1) & 1545{,}9\,ms (1004{,}4 -- 2088{,}8) \\
+Inferencia del modelo $\le 2$\,s & 17/20 & 14/15 \\
+Transporte del modelo, media (mín.--máx.) & 291{,}5\,ms (267{,}0 -- 361{,}1) & 301{,}1\,ms (272{,}2 -- 403{,}1) \\
+Entrega, media (mín.--máx.) & 0{,}1\,ms (0{,}0 -- 0{,}3) & 854{,}3\,ms (61{,}4 -- 1532{,}6) \\
+Latencia sin la pausa, media (mín.--máx.) & 1450{,}3\,ms (0{,}1 -- 2445{,}3) & 2393{,}4\,ms (61{,}4 -- 3759{,}9) \\
+Espera hasta el subtítulo, media (mín.--máx.) & 5475{,}4\,ms (4007{,}2 -- 6487{,}3) & 2393{,}4\,ms (61{,}4 -- 3759{,}9) \\
+RAM de ILSA, media (mín.--máx.) & 551{,}1\,MB (536{,}8 -- 554{,}8) & 664{,}7\,MB (549{,}0 -- 686{,}9) \\
+CPU de ILSA, mediana (máximo) & 2{,}4\,\% (746{,}4\,\%) & 3{,}5\,\% (83{,}1\,\%) \\
+RAM de Edge, media (mín.--máx.) & 3685{,}0\,MB (3525{,}0 -- 3953{,}5) & 3987{,}2\,MB (3787{,}1 -- 4082{,}7) \\
+CPU de Edge, media (mín.--máx.) & 187{,}7\,\% (48{,}8 -- 390{,}8) & 126{,}1\,\% (77{,}0 -- 222{,}3) \\
+Heap JS de la página, media (mín.--máx.) & 95{,}4\,MB (76{,}1 -- 124{,}1) & 125{,}8\,MB (84{,}3 -- 174{,}4) \\
+Heap JS de Holistic, media (mín.--máx.) & 4{,}8\,MB (1{,}1 -- 8{,}7) & N/A \\
+FPS del lienzo & 179{,}7 -- 201{,}3 & 192{,}0 -- 200{,}1 \\
+FPS de Holistic & 22{,}4 -- 28{,}9; una muestra en 0 & N/A \\
+Clasificador, mediana (máximo) & 1{,}4\,ms (80{,}4\,ms) & N/A \\
+Transcripción local, media (mín.--máx.) & N/A & 417{,}4\,ms (261{,}6 -- 1040{,}2) \\
+Armado del clip, media (mín.--máx.) & N/A & 37{,}2\,ms (4{,}1 -- 116{,}5) \\
+\bottomrule
+\end{tabularx}
 \end{table}
 
-El contraste entre los valores reportados en el Cuadro~\ref{tab:telemetria_pc} y los observados en el equipo portátil objetivo permite extraer las siguientes conclusiones técnicas:
+La meta de 2\,s cubre la inferencia del modelo. En esas filas quedan 17 de 20 y 14 de 15. Las 5 oraciones locales del directo y las 3 del inverso tienen inferencia 0, y el registro las cuenta dentro del techo: 22 de 25 y 17 de 18. De 98 señas del directo, 83 entran a la frase y 15 quedan fuera, con confianza bajo 0,75. En 10 de 18 oraciones del inverso la descarga de poses queda en 0\,ms, con el archivo ya en caché. Las otras 8 tardan de 320{,}9 a 1254{,}4\,ms. Cuatro oraciones tienen una glosa sin archivo y una restaura la Ñ. De 14 locuciones, tres no devuelven texto.
 
-\begin{itemize}
-    \item \textbf{Desacoplamiento de la tasa de captura gestual:} En el equipo de escritorio la extracción de puntos clave alcanza el techo de rendimiento del sensor ($\approx 27\text{--}28$ FPS), en comparación con el rango de 5\text{ a }12 FPS de la laptop. No obstante, la tasa de acierto del clasificador se mantiene estable en ambos entornos, hecho que valida la robustez del remuestreo temporal implementado en la lógica de control.
-    \item \textbf{Impacto en el consumo de CPU y memoria:} El uso de procesador disminuye significativamente en la estación de desarrollo (0{,}87\,\% en directo y 22{,}48\,\% en inverso), lo que confirma que el costo computacional del motor local depende del hardware cliente. El mayor consumo de memoria RAM registrado en el equipo de escritorio ($\approx 544\text{--}666$ MB) responde a las políticas de asignación de memoria y recolección de basura más permisivas del navegador Chromium sobre un sistema con mayor capacidad.
-    \item \textbf{Fundamentación de la arquitectura híbrida:} La ejecución local de un modelo de lenguaje de 1{,}5B de parámetros requeriría más de 8 segundos de procesamiento en CPU aún en la estación de desarrollo. Por consiguiente, la delegación de la inferencia semántica a la infraestructura en la nube se consolida como la decisión de diseño idónea para garantizar respuestas en tiempo pseudo-real con independencia de la capacidad de cómputo del usuario.
-\end{itemize}
+El Cuadro~\ref{tab:perfilado_recursos_log} mide solo ILSA en la laptop. En la PC, ILSA queda cerca de 551\,MB en el directo y de 665\,MB en el inverso. Edge queda cerca de 3,7\,GB y de 4,0\,GB. La CPU de ILSA en la PC tiene mediana 2{,}4\,\% en el directo, con un muestreo de 746{,}4\,\%, y mediana 3{,}5\,\% en el inverso, con máximo 83{,}1\,\%. La CPU de Edge tiene media 187{,}7\,\% y 126{,}1\,\%. El lienzo de la PC va de 179{,}7 a 201{,}3\,FPS en el directo y de 192{,}0 a 200{,}1\,FPS en el inverso. Holistic en la PC, canal directo, va de 22{,}4 a 28{,}9\,FPS. En la laptop el mismo extractor va de 0{,}1 a 12{,}4\,FPS. Esas tasas describen el dibujo y el extractor.

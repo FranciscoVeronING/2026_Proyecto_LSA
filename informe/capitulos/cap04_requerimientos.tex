@@ -10,7 +10,7 @@
     \item \textbf{RF-04 --- Emisión hacia el oyente:} Con Subtítulo, mostrar la oración en el video. Con Audio o Ambos, reproducir la voz para quien seña y para el resto de los participantes de la llamada. En Ambos, el subtítulo y la voz salen juntos.
     \item \textbf{RF-05 --- Captura del turno del interlocutor oyente:} Capturar la voz o texto del oyente en la videollamada durante su turno de intervención con el fin de ser procesada para su uso en el canal de retorno bidireccional.
     \item \textbf{RF-06 --- Traducción semántica inversa remota (Español $\rightarrow$ LSA):} Enviar el texto en español al servicio semántico y recibir glosas en el orden manual de la Sección~\ref{sec:orden_prototipo}.
-    \item \textbf{RF-07 --- Representación visual mediante un avatar:} Dibujar el clip de cada glosa que tenga archivo, hasta 24 archivos por oración. Si falta el archivo, deletrear letra por letra. El deletreo no asegura la comprensión del significado. Lo que supere el tope queda fuera del dibujo y se conserva en texto. Si el servidor de movimientos no responde, el clip queda vacío y las glosas siguen en texto. Encolar cada oración: la cola admite hasta 20 animaciones, y una oración nueva espera su turno sin interrumpir la animación en curso.
+    \item \textbf{RF-07 --- Representación visual mediante un avatar:} Dibujar el clip de cada glosa que tenga archivo, hasta 24 archivos por oración. Si falta el archivo, deletrear letra por letra. El deletreo no asegura la comprensión del significado. Lo que supere el tope queda fuera del dibujo y se conserva en texto. Si el servidor de movimientos no responde, el clip queda vacío y las glosas siguen en texto. La llegada de una nueva animación no interrumpe la secuencia en ejecución. La cola admite hasta 20 bloques y, al colmarse, descarta el más antiguo. Ese descarte no muestra un cartel: el bloque que sale no se dibuja y su subtítulo no aparece. Siguen en pantalla la animación en curso y el texto de esa animación. Cada bloque dura 0,2\,s de entrada, los fotogramas a 30\,fps y 0,2\,s de salida. El servidor corta el bloque en 1200 fotogramas, así que un bloque llega como máximo a 40,4\,s. El último bloque espera la animación en curso y los que quedaron delante, hasta 19. Si esos 20 bloques están en el tope y el de pantalla acaba de empezar, la espera llega a 808\,s (13\,min 28\,s). Ese valor es el techo de esos topes, no una medición de una sesión.
     \item \textbf{RF-08 --- Integración con Google Meet:} Inyectar el video procesado y los canales de comunicación dentro de la pestaña de videollamada.
     \item \textbf{RF-09 --- Arranque del panel:} Al Encender, Reiniciar o Apagar, volver a la pantalla de carga. Abrir el panel principal solo si responden el traductor semántico y el servidor de poses. Si alguno falla, dejar el botón Reintentar y no abrir el panel.
 \end{itemize}
@@ -37,9 +37,9 @@
 \label{sec:entorno_cliente}
 El cuadro siguiente propone un equipo mínimo y uno con más margen. No informa una prueba sobre cada modelo de procesador ni sobre cada navegador de la lista. El nombre comercial de una familia cubre piezas distintas: el criterio operativo es el número de núcleos, el soporte AVX2 y el piso de reloj, no la etiqueta Core i3 o Ryzen 3.
 
-El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Chrome 115 o posterior es la versión en la que se comprobó Manifest V3. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA.
+El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA.
 
-La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado; no informa porcentajes de CPU ni de memoria. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador.
+La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador.
 
 
 
@@ -53,12 +53,12 @@ La fila recomendada es una propuesta de holgura: más núcleos, más memoria y c
 \toprule
 \textbf{Componente} & \textbf{Requisitos mínimos (Dispositivo base)} & \textbf{Requisitos recomendados} \\
 \midrule
-\textbf{Procesador (CPU)} & Intel Core i7-10510U / i5 (10ª gen.) o AMD Ryzen 3 (serie 3000) (4 núcleos / 8 hilos, base $\ge 1{,}8$\,GHz, AVX2). & Intel Core i5 (11ª gen.+) / AMD Ryzen 5 (serie 4000+) (6 núcleos / 12 hilos). \\
+\textbf{Procesador (CPU)} & Intel Core i7-10510U / i5 (10ª gen.) o AMD Ryzen 3 (serie 3000) (4 núcleos / 8 hilos, base $\ge 1{,}8$\,GHz, AVX2). & Intel Core i5-11400H / AMD Ryzen 5 5600U (6 núcleos / 12 hilos). \\
 \textbf{Memoria RAM} & 8\,GB DDR4 ($\ge 2{,}5$\,GB libres para el navegador y entorno de ejecución). & 16\,GB DDR4 / DDR5. \\
 \textbf{Gráficos (GPU)} & Gráficos integrados Intel UHD Graphics 620 / 630 o AMD Radeon Vega 3 con soporte WebGL 2.0. & Intel Iris Xe / AMD Radeon 600M+ o GPU dedicada básica. \\
 \textbf{Almacenamiento} & Disco de estado sólido (SSD) con 2\,GB de espacio libre disponible. & SSD NVMe con $\ge 5$\,GB libres. \\
 \textbf{Cámara web} & Resolución 720p (1280$\times$720) a 24/30 FPS. & Resolución 1080p a 30 FPS. \\
-\textbf{Conectividad} & Conexión de banda ancha ($\ge 10$\,Mbps bajada / $\ge 3$\,Mbps subida, latencia $< 80$\,ms). & Conexión por fibra óptica ($\ge 50$\,Mbps). \\
+\textbf{Conectividad} & Conexión de banda ancha ($\ge 10$\,Mbps bajada / $\ge 3$\,Mbps subida). & Conexión por fibra óptica ($\ge 50$\,Mbps). \\
 \textbf{Entorno de software} & Windows 10/11 (64 bits), Google Chrome 115+ (soporte Manifest V3). & Windows 11 (64 bits), Google Chrome última versión estable. \\
 \bottomrule
 \end{tabularx}
@@ -74,7 +74,7 @@ La CPU debe sostener a la vez la videollamada, MediaPipe en WebAssembly y el cla
     \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Una glosa léxica sola, solo dígitos, o un deletreo de dos o más letras sin I ni T se arman en ILSA. El resto consulta el servicio semántico. Con Subtítulo, la oración queda en el video. Con Audio o Ambos, la voz suena para todos los participantes de la llamada.
     \item \textbf{CU-02 --- Seleccionar mano hábil:} ILSA muestra diestro y zurdo, con diestro ya seleccionado. La persona confirma diestro o pasa a zurdo. Con zurdo, el vector se espeja en horizontal y se cruzan las dos manos durante esa sesión.
     \item \textbf{CU-03 --- Configurar canal de salida:} En el panel de la extensión, el usuario señante elige la salida en Meet: Subtítulo, Audio o Ambos. Si no toca el control, queda Subtítulo.
-    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla e ILSA transcribe esa voz. El chat es el flujo alternativo: ILSA toma ese texto y no lo transcribe. Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. El avatar encola hasta 20 animaciones, dibuja hasta 24 clips y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión.
+    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla e ILSA transcribe esa voz. El chat es el flujo alternativo: ILSA toma ese texto y no lo transcribe. Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. El avatar dibuja hasta 24 clips y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión. La llegada de una animación nueva no interrumpe la que está en curso. La cola admite hasta 20 bloques y, al colmarse, descarta el más antiguo, sin cartel: ese bloque no se dibuja y su subtítulo no aparece. El último bloque espera la animación en curso y hasta 19 bloques de adelante. En el tope de 1200 fotogramas, a 30\,fps y con 0,2\,s de entrada y 0,2\,s de salida, cada bloque dura 40,4\,s y esa espera llega a 808\,s. Ese valor es el techo del código, no una medición de una sesión.
     \item \textbf{CU-05 --- Entrar al panel:} Encender, Reiniciar o Apagar vuelven a la pantalla de carga. El panel se abre si responden el traductor semántico y el servidor de poses. Si alguno falla, queda Reintentar.
 \end{itemize}
 
@@ -114,11 +114,11 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 \end{scope}
 
 % Casos de uso
-\node[caso] (cu01) at (5.6,4.15) {CU-01 Conversar con otra persona};
-\node[caso] (cu02) at (5.6,2.85) {CU-02 Seleccionar mano hábil};
-\node[caso] (cu03) at (5.6,1.55) {CU-03 Configurar canal de salida};
-\node[caso] (cu05) at (5.6,0.25) {CU-05 Entrar al panel};
-\node[caso] (cu04) at (5.6,-1.10) {CU-04 Traducir español a LSA mediante Avatar};
+\node[caso] (cu01) at (5.6,4.15) {Conversar con otra persona};
+\node[caso] (cu02) at (5.6,2.85) {Seleccionar mano hábil};
+\node[caso] (cu03) at (5.6,1.55) {Configurar canal de salida};
+\node[caso] (cu05) at (5.6,0.25) {Entrar al panel};
+\node[caso] (cu04) at (5.6,-1.10) {Traducir español a LSA mediante Avatar};
 
 % Frontera del sistema
 \node[draw, dashed, thick, rounded corners=2pt, inner sep=10pt,
@@ -146,13 +146,13 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. ILSA está encendido.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet. Con Audio o Ambos, la voz suena en el equipo de quien seña, mediante la síntesis del navegador; esa locución no se mezcla en el \texttt{MediaStream} de la llamada.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet cuando la salida es Subtítulo o Ambos. Con Audio o Ambos, el navegador sintetiza la voz en el equipo de quien seña y esa locución la oyen también los demás participantes de la llamada.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Realiza las señas. & \\ \cline{2-4}
  & \textbf{2} & & Clasifica la seña. Si la confianza es de al menos 0,75 y el filtro de repetición la admite, el HUD la muestra en cian. \\ \hline
  & \textbf{3} & Si necesita otra seña, vuelve al paso 1. Si no, espera 4 segundos sin manos en el cuadro. &  \\ \hline
- & \textbf{4} & & Arma el texto en el equipo si hay una sola glosa léxica, solo dígitos, o solo letras desde dos y sin I ni T. Van al traductor en caso contrario. Con Subtítulo, deja la oración en el video. Con Audio o Ambos, reproduce la voz. \\ \hline
+ & \textbf{4} & & Arma el texto en el equipo si hay una sola glosa léxica, solo dígitos, o solo letras desde dos y sin I ni T. Van al traductor una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y las demás frases. Con Subtítulo, deja la oración en el video. Con Audio o Ambos, reproduce la voz: la oye quien seña y el resto de la llamada. \\ \hline
 Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Las manos no entran al cuadro: no empieza ninguna seña y no hay plazo que contar.\newline\textbf{2a.} Confianza bajo 0,75: el HUD muestra la predicción en coral.\newline\textbf{2b.} Confianza de al menos 0,75 y repetición no admitida: el HUD muestra gris.\newline\textbf{2c.} Seña ajena al vocabulario con confianza de al menos 0,75: el HUD la muestra en cian y la glosa incorrecta entra.\newline\textbf{4a.} El traductor no responde. Se conservan las glosas aceptadas, en texto, y no se rearma la oración. \newline\textbf{4b.} ILSA deja de responder: la extensión no clasifica ni traduce. La recuperación es Encender o Reintentar, y volver a señar.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-01, RF-02, RF-03, RF-04, RF-08, RNF-01, RNF-03.} \\ \hline
 \end{tabularx}
@@ -184,14 +184,14 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida del oyente}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. El panel de la extensión está disponible.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en Subtítulo, en voz local, o en ambas. El subtítulo es la vía que llega a Meet. Si no hay elección, queda Subtítulo.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en Subtítulo, Audio o Ambos, según el control «Salida en Meet». El subtítulo llega en el video. La voz, cuando hay Audio o Ambos, se sintetiza en el equipo de quien seña y la oyen también los demás participantes. Si no hay elección, queda Subtítulo.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Abre el panel de la extensión. & \\ \cline{2-4}
  & \textbf{2} & & Muestra tres opciones bajo «Salida en Meet»: Subtítulo, Audio y Ambos. \\ \cline{2-4}
  & \textbf{3} & Elige una opción. & \\ \cline{2-4}
- & \textbf{4} &  & Aplica esa salida. Subtítulo deja el texto en el video y no emite voz. Audio o Ambos reproducen la voz en el equipo de quien seña; el resto de los participantes no la oye en la llamada. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{3a.} No hay elección: se conserva Subtítulo. No hay voz. La recuperación es abrir el panel y elegir Audio o Ambos.} \\ \hline
+ & \textbf{4} &  & Aplica esa salida. Subtítulo deja el texto en el video y no emite voz. Audio reproduce la voz sin subtítulo. Ambos dejan el texto en el video y reproducen la voz. En Audio y en Ambos, la locución se oye en el equipo de quien seña y en el de los demás participantes de la llamada. \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{3a.} sin elección se conserva Subtítulo y no hay voz.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-04, RF-08.} \\ \hline
 \end{tabularx}
 \end{table}
@@ -210,8 +210,8 @@ Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|
  & \textbf{1} & Habla durante la llamada. & \\ \cline{2-4}
  & \textbf{2} & & Transcribe esa voz en la misma computadora. \\  \cline{2-4}
  & \textbf{3} & & Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor ni diccionario. Dos o más palabras van al servicio semántico. \\  \cline{2-4}
- & \textbf{4} & & Encola la animación, hasta 20, sin cortar la que está en curso. Dibuja hasta 24 clips. Si falta un archivo, deletrea; eso no asegura la comprensión. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y sigue en el paso 3. La palabra aislada también llega al paso 4.\newline\textbf{3a.} Dos o más palabras y el traductor no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run). No hay glosas nuevas y se conserva el video. Una respuesta tardía no se aplica. La recuperación es repetir el turno.\newline\textbf{4a.} Más de 24 archivos: se dibujan los primeros 24 y el resto queda en texto.\newline\textbf{4b.} El servidor de poses no responde: misma espera que en 3a. Las glosas quedan en texto y el clip queda vacío. La recuperación es repetir el turno.\newline\textbf{4c.} ILSA deja de responder: no hay transcripción ni dibujo nuevo. La recuperación es Encender o Reintentar.} \\ \hline
+ & \textbf{4} & & Dibuja hasta 24 clips. Si falta un archivo, deletrea; eso no asegura la comprensión. Encola el bloque sin cortar el que está en curso. La cola admite 20 y, al colmarse, descarta el más antiguo. \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y sigue en el paso 3. La palabra aislada también llega al paso 4.\newline\textbf{3a.} Dos o más palabras y el traductor no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run). No hay glosas nuevas y se conserva el video. Una respuesta tardía no se aplica. La recuperación es repetir el turno.\newline\textbf{4a.} Más de 24 archivos: se dibujan los primeros 24 y el resto queda en texto.\newline\textbf{4b.} El servidor de poses no responde: misma espera que en 3a. Las glosas quedan en texto y el clip queda vacío. La recuperación es repetir el turno.\newline\textbf{4c.} ILSA deja de responder: no hay transcripción ni dibujo nuevo. La recuperación es Encender o Reintentar.\newline\textbf{4d.} Cola llena: se descarta el bloque más antiguo, sin cartel. Ese bloque no se dibuja y su subtítulo no aparece. El último espera la animación en curso y hasta 19 bloques. En el tope de 1200 fotogramas, a 30\,fps, con 0,2\,s de entrada y 0,2\,s de salida, cada bloque dura 40,4\,s y esa espera llega a 808\,s. Ese valor es el techo del código, no una medición de una sesión.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-05, RF-06, RF-07, RF-08.} \\ \hline
 \end{tabularx}
 \end{table}

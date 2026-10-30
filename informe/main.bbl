@@ -49,7 +49,133 @@
       \verb https://servicios.infoleg.gob.ar/infolegInternet/anexos/380000-384999/382022/norma.htm
       \endverb
     \endentry
-    \entry{massone2012curso}{book}{}{}
+    \entry{massone2003lengua}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=2a38b5daff09cba218d6b6be3383d8a1}{%
+           family={Massone},
+           familyi={M\bibinitperiod},
+           given={María\bibnamedelima Ignacia},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=042082dc8299973788693e19a044828f}{%
+           family={Simón},
+           familyi={S\bibinitperiod},
+           given={Marina},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b102754e93fe05103ca68ccf7fb53442}{%
+           family={Gutiérrez},
+           familyi={G\bibinitperiod},
+           given={Claudia},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Buenos Aires, Argentina}%
+      }
+      \list{publisher}{1}{%
+        {Universidad de Buenos Aires}%
+      }
+      \strng{namehash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{fullhash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{fullhashraw}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{bibnamehash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{authorbibnamehash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{authornamehash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{authorfullhash}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \strng{authorfullhashraw}{f2dd6c0c97a5f445049f82f8ed56fe69}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Mano a mano: Lengua de Señas Argentina. Análisis lingüístico y texto}
+      \field{year}{2003}
+    \endentry
+    \entry{cas2024senario}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=ec644511137a5e0931dbdb09c783a13b}{%
+           family={{Confederación Argentina de Sordos}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{fullhash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{fullhashraw}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{bibnamehash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{authorbibnamehash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{authornamehash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{authorfullhash}{ec644511137a5e0931dbdb09c783a13b}
+      \strng{authorfullhashraw}{ec644511137a5e0931dbdb09c783a13b}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Plataforma digital interactiva}
+      \field{note}{Accedido en octubre de 2026}
+      \field{title}{Señario de términos y expresiones en Lengua de Señas Argentina}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://cas.org.ar/tag/senario/
+      \endverb
+      \verb{url}
+      \verb https://cas.org.ar/tag/senario/
+      \endverb
+    \endentry
+    \entry{dane2024lsaenfamilia}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=0bc200b1035b64addc3aae037fb42083}{%
+           family={{Proyecto DANE}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{fullhash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{fullhashraw}{0bc200b1035b64addc3aae037fb42083}
+      \strng{bibnamehash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{authorbibnamehash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{authornamehash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{authorfullhash}{0bc200b1035b64addc3aae037fb42083}
+      \strng{authorfullhashraw}{0bc200b1035b64addc3aae037fb42083}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Aplicación móvil}
+      \field{note}{Ficha de la aplicación: \url{http://www.proyectodane.org/aplicacion/aplicacionlsaenfamilia/}. Accedido en octubre de 2026}
+      \field{title}{LSA en Familia}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://proyectodane.org.ar/el-proyecto
+      \endverb
+      \verb{url}
+      \verb https://proyectodane.org.ar/el-proyecto
+      \endverb
+    \endentry
+    \entry{asmar2024}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=f626a9836e25ae5189cc0d62503268fe}{%
+           family={{Asociación de Sordos de Mar del Plata}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{fullhash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{fullhashraw}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{bibnamehash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{authorbibnamehash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{authornamehash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{authorfullhash}{f626a9836e25ae5189cc0d62503268fe}
+      \strng{authorfullhashraw}{f626a9836e25ae5189cc0d62503268fe}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Sitio institucional}
+      \field{note}{Accedido en octubre de 2026}
+      \field{title}{Asociación de Sordos de Mar del Plata ({ASMAR})}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://sites.google.com/view/asmardelplata/asociaci\%C3\%B3n-de-sordos-de-mar-del-plata
+      \endverb
+      \verb{url}
+      \verb https://sites.google.com/view/asmardelplata/asociaci%5C%C3%5C%B3n-de-sordos-de-mar-del-plata
+      \endverb
+    \endentry
+    \entry{massone2012parte1}{book}{}{}
       \name{author}{2}{}{%
         {{hash=2a38b5daff09cba218d6b6be3383d8a1}{%
            family={Massone},
@@ -73,57 +199,62 @@
       \strng{authornamehash}{03b1a728c8d8fe02464774a3b1b4274d}
       \strng{authorfullhash}{03b1a728c8d8fe02464774a3b1b4274d}
       \strng{authorfullhashraw}{03b1a728c8d8fe02464774a3b1b4274d}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extraname}{1}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Accedido en octubre de 2026}
-      \field{title}{Curso de {Lengua de Señas Argentina}: Parte 1 y 2}
+      \field{title}{Curso de {Lengua de Señas Argentina}. Parte {I}}
       \field{year}{2012}
+      \field{pages}{10\bibrangedash 28}
+      \range{pages}{19}
       \verb{urlraw}
-      \verb http://www.cultura-sorda.org
+      \verb https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_I_201228129.pdf
       \endverb
       \verb{url}
-      \verb http://www.cultura-sorda.org
+      \verb https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_I_201228129.pdf
       \endverb
     \endentry
-    \entry{liddell1989phonological}{article}{}{}
+    \entry{massone2012parte2}{book}{}{}
       \name{author}{2}{}{%
-        {{hash=ef75bafb769a3e205c8a823542dca978}{%
-           family={Liddell},
-           familyi={L\bibinitperiod},
-           given={Scott\bibnamedelima K.},
-           giveni={S\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
-        {{hash=a6147befef8a9834bcd382ff8af8907b}{%
-           family={Johnson},
-           familyi={J\bibinitperiod},
-           given={Robert\bibnamedelima E.},
-           giveni={R\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=2a38b5daff09cba218d6b6be3383d8a1}{%
+           family={Massone},
+           familyi={M\bibinitperiod},
+           given={María\bibnamedelima Ignacia},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=803c44c2b14b40066412b7cc43271c12}{%
+           family={Martínez},
+           familyi={M\bibinitperiod},
+           given={Rocío\bibnamedelima Anabel},
+           giveni={R\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
       }
       \list{publisher}{1}{%
-        {Gallaudet University Press}%
+        {Cultura Sorda}%
       }
-      \strng{namehash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{fullhash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{fullhashraw}{8de133887661ee479341f2666b1f5ca3}
-      \strng{bibnamehash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{authorbibnamehash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{authornamehash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{authorfullhash}{8de133887661ee479341f2666b1f5ca3}
-      \strng{authorfullhashraw}{8de133887661ee479341f2666b1f5ca3}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \strng{namehash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{fullhash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{fullhashraw}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{bibnamehash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{authorbibnamehash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{authornamehash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{authorfullhash}{03b1a728c8d8fe02464774a3b1b4274d}
+      \strng{authorfullhashraw}{03b1a728c8d8fe02464774a3b1b4274d}
+      \field{extraname}{2}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Sign Language Studies}
-      \field{number}{1}
-      \field{title}{American {Sign Language}: The Phonological Base}
-      \field{volume}{64}
-      \field{year}{1989}
-      \field{pages}{195\bibrangedash 277}
-      \range{pages}{83}
-      \verb{doi}
-      \verb 10.1353/sls.1989.0027
+      \field{note}{Accedido en octubre de 2026}
+      \field{title}{Curso de {Lengua de Señas Argentina}. Parte {II}}
+      \field{year}{2012}
+      \field{pages}{12\bibrangedash 43}
+      \range{pages}{32}
+      \verb{urlraw}
+      \verb https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_II_2012.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_II_2012.pdf
       \endverb
     \endentry
     \entry{massone1993numero}{article}{}{}
@@ -145,8 +276,8 @@
       \strng{authornamehash}{2a38b5daff09cba218d6b6be3383d8a1}
       \strng{authorfullhash}{2a38b5daff09cba218d6b6be3383d8a1}
       \strng{authorfullhashraw}{2a38b5daff09cba218d6b6be3383d8a1}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{issn}{0327-8085}
@@ -223,8 +354,8 @@
       \strng{authornamehash}{61a5cc34be11c6018e3b2391e9ea2937}
       \strng{authorfullhash}{9bc426a02aaf5c5520f000f4a7e38bcd}
       \strng{authorfullhashraw}{9bc426a02aaf5c5520f000f4a7e38bcd}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.CV}
@@ -283,8 +414,8 @@
       \strng{authornamehash}{1bd15b089228fd239d9cd7e38d190e14}
       \strng{authorfullhash}{702429e7bbf509350a61ca1f7830f982}
       \strng{authorfullhashraw}{702429e7bbf509350a61ca1f7830f982}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.CV}
@@ -350,8 +481,8 @@
       \strng{authorfullhash}{16cfb3f5ef97452df4f7505f2118712e}
       \strng{authorfullhashraw}{16cfb3f5ef97452df4f7505f2118712e}
       \field{extraname}{1}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.CV}
@@ -592,6 +723,35 @@
       \verb https://github.com/ggerganov/llama.cpp
       \endverb
     \endentry
+    \entry{ggml2023kquants}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=0e9086997b46607c50f8a8be8bb3b7a3}{%
+           family={{ggml-org}},
+           familyi={g\bibinitperiod}}}%
+      }
+      \strng{namehash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{fullhash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{fullhashraw}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{bibnamehash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{authorbibnamehash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{authornamehash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{authorfullhash}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \strng{authorfullhashraw}{0e9086997b46607c50f8a8be8bb3b7a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Documentación de {llama.cpp}}
+      \field{note}{Esquemas k-quant. En \texttt{Q4\_K} cada bloque guarda la escala y el mínimo. Accedido en octubre de 2026}
+      \field{title}{Tensor Encoding Schemes}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes
+      \endverb
+      \verb{url}
+      \verb https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes
+      \endverb
+    \endentry
     \entry{w3c2024mediacapturestreams}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=446a1ae6601a5c59360c7d591c3992da}{%
@@ -607,8 +767,8 @@
       \strng{authorfullhash}{446a1ae6601a5c59360c7d591c3992da}
       \strng{authorfullhashraw}{446a1ae6601a5c59360c7d591c3992da}
       \field{extraname}{1}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Estandardización web ({W3C Candidate Recommendation Snapshot})}
@@ -637,8 +797,8 @@
       \strng{authorfullhash}{446a1ae6601a5c59360c7d591c3992da}
       \strng{authorfullhashraw}{446a1ae6601a5c59360c7d591c3992da}
       \field{extraname}{2}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Estandardización web ({W3C Candidate Recommendation Snapshot})}
@@ -667,8 +827,8 @@
       \strng{authorfullhash}{40e56a6527d73c120abc609305d59486}
       \strng{authorfullhashraw}{40e56a6527d73c120abc609305d59486}
       \field{extraname}{1}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Chrome Extension Documentation}
@@ -697,8 +857,8 @@
       \strng{authorfullhash}{40e56a6527d73c120abc609305d59486}
       \strng{authorfullhashraw}{40e56a6527d73c120abc609305d59486}
       \field{extraname}{2}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Chrome Extension Documentation}
@@ -727,8 +887,8 @@
       \strng{authorfullhash}{40e56a6527d73c120abc609305d59486}
       \strng{authorfullhashraw}{40e56a6527d73c120abc609305d59486}
       \field{extraname}{3}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Chrome Extension Documentation}
@@ -740,35 +900,6 @@
       \endverb
       \verb{url}
       \verb https://developer.chrome.com/docs/extensions/reference/manifest/sandbox
-      \endverb
-    \endentry
-    \entry{cas2024senario}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=ec644511137a5e0931dbdb09c783a13b}{%
-           family={{Confederación Argentina de Sordos}},
-           familyi={C\bibinitperiod}}}%
-      }
-      \strng{namehash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{fullhash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{fullhashraw}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{bibnamehash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{authorbibnamehash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{authornamehash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{authorfullhash}{ec644511137a5e0931dbdb09c783a13b}
-      \strng{authorfullhashraw}{ec644511137a5e0931dbdb09c783a13b}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{Plataforma digital interactiva}
-      \field{note}{Accedido en octubre de 2026}
-      \field{title}{Señario de términos y expresiones en Lengua de Señas Argentina}
-      \field{year}{2024}
-      \verb{urlraw}
-      \verb https://cas.org.ar/tag/senario/
-      \endverb
-      \verb{url}
-      \verb https://cas.org.ar/tag/senario/
       \endverb
     \endentry
     \entry{lsapp2018}{misc}{}{}
@@ -787,8 +918,8 @@
       \strng{authornamehash}{53496f85b51a7794345e2cbff2f4f63e}
       \strng{authorfullhash}{53496f85b51a7794345e2cbff2f4f63e}
       \strng{authorfullhashraw}{53496f85b51a7794345e2cbff2f4f63e}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Plataforma web y móvil}
@@ -816,8 +947,8 @@
       \strng{authornamehash}{2452563d59b5d4c341e47ff394af3a2c}
       \strng{authorfullhash}{2452563d59b5d4c341e47ff394af3a2c}
       \strng{authorfullhashraw}{2452563d59b5d4c341e47ff394af3a2c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Plataforma de servicios de accesibilidad}
@@ -845,8 +976,8 @@
       \strng{authornamehash}{530ccae38da8ca96d634389c01c2faea}
       \strng{authorfullhash}{530ccae38da8ca96d634389c01c2faea}
       \strng{authorfullhashraw}{530ccae38da8ca96d634389c01c2faea}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Portal oficial del Estado Argentino ({Argentina.gob.ar})}
@@ -899,8 +1030,8 @@
       \strng{authornamehash}{27043cce03d9132ff5bd68d5db22bae7}
       \strng{authorfullhash}{416d15ae22fa0bb9a6dfc167be25845c}
       \strng{authorfullhashraw}{416d15ae22fa0bb9a6dfc167be25845c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the {XXII} Congreso Argentino de Ciencias de la Computación ({CACIC})}
@@ -939,8 +1070,8 @@
       \strng{authornamehash}{ac322d6a2637b2597d620851aad4be1e}
       \strng{authorfullhash}{ac322d6a2637b2597d620851aad4be1e}
       \strng{authorfullhashraw}{ac322d6a2637b2597d620851aad4be1e}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Reconocimiento de Lengua de Señas con redes neuronales recurrentes}
@@ -953,33 +1084,71 @@
       \verb http://sedici.unlp.edu.ar/handle/10915/129853
       \endverb
     \endentry
-    \entry{signall2026linkedin}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=ada6c73ce52163fdda9ef7ac9b233369}{%
-           family={{SignAll Technologies}},
+    \entry{retek2023signall}{patent}{}{}
+      \name{author}{6}{}{%
+        {{hash=b26d2fd90485528b8a962ca6a9b2fd2a}{%
+           family={Retek},
+           familyi={R\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=e728c7d070444229aa56009cbc928565}{%
+           family={Palhazi},
+           familyi={P\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=7363656d60c15fc6397fd1c896344421}{%
+           family={Kajtar},
+           familyi={K\bibinitperiod},
+           given={Marton},
+           giveni={M\bibinitperiod}}}%
+        {{hash=1a06e1c9d873093c1ec469b1c3810bf6}{%
+           family={Trosztel},
+           familyi={T\bibinitperiod},
+           given={Matyas},
+           giveni={M\bibinitperiod}}}%
+        {{hash=b80e3e65761db9b614ee0d5a0dab605c}{%
+           family={Robotka},
+           familyi={R\bibinitperiod},
+           given={Zsolt},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=18c51342938a57617e3d20506b5ffa54}{%
+           family={Rovnyai},
+           familyi={R\bibinitperiod},
+           given={Janos},
+           giveni={J\bibinitperiod}}}%
+      }
+      \name{holder}{1}{}{%
+        {{hash=a7d763faa4205f4db5566ea9cad10dc6}{%
+           family={{SignAll Technologies Zrt.}},
            familyi={S\bibinitperiod}}}%
       }
-      \strng{namehash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{fullhash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{fullhashraw}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{bibnamehash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{authorbibnamehash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{authornamehash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{authorfullhash}{ada6c73ce52163fdda9ef7ac9b233369}
-      \strng{authorfullhashraw}{ada6c73ce52163fdda9ef7ac9b233369}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \strng{namehash}{3c8af81baf03e63fbc5f9cc4784d1e23}
+      \strng{fullhash}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{fullhashraw}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{bibnamehash}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{authorbibnamehash}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{authornamehash}{3c8af81baf03e63fbc5f9cc4784d1e23}
+      \strng{authorfullhash}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{authorfullhashraw}{fbb60cd0de76a74af0ae56320e6640b9}
+      \strng{holderbibnamehash}{a7d763faa4205f4db5566ea9cad10dc6}
+      \strng{holdernamehash}{a7d763faa4205f4db5566ea9cad10dc6}
+      \strng{holderfullhash}{a7d763faa4205f4db5566ea9cad10dc6}
+      \strng{holderfullhashraw}{a7d763faa4205f4db5566ea9cad10dc6}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{howpublished}{Perfil institucional en {LinkedIn}}
-      \field{note}{Accedido en octubre de 2026}
-      \field{title}{About {SignAll Technologies}}
-      \field{year}{2026}
+      \field{month}{12}
+      \field{note}{Patente estadounidense US11847426B2, concedida el 19 de diciembre de 2023. Describe la captura visual de {ASL} y la salida en inglés escrito}
+      \field{number}{11847426}
+      \field{title}{Computer Vision Based Sign Language Interpreter}
+      \field{type}{patentus}
+      \field{year}{2023}
       \verb{urlraw}
-      \verb https://www.linkedin.com/company/signall-technologies/about/
+      \verb https://patents.google.com/patent/US11847426B2
       \endverb
       \verb{url}
-      \verb https://www.linkedin.com/company/signall-technologies/about/
+      \verb https://patents.google.com/patent/US11847426B2
       \endverb
     \endentry
     \entry{li2020wlasl}{inproceedings}{}{}
@@ -1016,8 +1185,8 @@
       \strng{authornamehash}{d96cf516eaa40a2c3c17bce35d206676}
       \strng{authorfullhash}{19532f51cd522ad2b161581972a1e928}
       \strng{authorfullhashraw}{19532f51cd522ad2b161581972a1e928}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the {IEEE/CVF} Winter Conference on Applications of Computer Vision ({WACV})}
@@ -1220,8 +1389,8 @@
       \strng{authornamehash}{1ed5fc4086bb37545740e5e1c65a2251}
       \strng{authorfullhash}{32e5084884d769c50c2b84b4d6618f8f}
       \strng{authorfullhashraw}{32e5084884d769c50c2b84b4d6618f8f}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.CL}
@@ -1253,8 +1422,8 @@
       \strng{authornamehash}{b6755d218d5f4e1cef9cce9cc39aeda9}
       \strng{authorfullhash}{b6755d218d5f4e1cef9cce9cc39aeda9}
       \strng{authorfullhashraw}{b6755d218d5f4e1cef9cce9cc39aeda9}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Hugging Face Hub}
@@ -1282,8 +1451,8 @@
       \strng{authornamehash}{b6a77f3f5bead76a495a90d63703e1f9}
       \strng{authorfullhash}{b6a77f3f5bead76a495a90d63703e1f9}
       \strng{authorfullhashraw}{b6a77f3f5bead76a495a90d63703e1f9}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Documentación oficial de {JetBrains}}
@@ -1331,8 +1500,8 @@
       \strng{authornamehash}{d4eb40956a6de2c2fe50bfef6a72df63}
       \strng{authorfullhash}{0a6e6b36539eaebe00a3fef93d4cd32a}
       \strng{authorfullhashraw}{0a6e6b36539eaebe00a3fef93d4cd32a}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics}
@@ -1565,8 +1734,8 @@
       \strng{authornamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
       \strng{authorfullhash}{f5305ee02dd2a5c6215b53401b4a10b0}
       \strng{authorfullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{Repositorio de {GitHub}}
@@ -1579,60 +1748,6 @@
       \endverb
       \verb{url}
       \verb https://github.com/fastapi/fastapi
-      \endverb
-    \endentry
-    \entry{dettmers2023qlora}{inproceedings}{}{}
-      \name{author}{4}{}{%
-        {{hash=67a40f4e13f66c2e43ce4d7d64b9d9a4}{%
-           family={Dettmers},
-           familyi={D\bibinitperiod},
-           given={Tim},
-           giveni={T\bibinitperiod}}}%
-        {{hash=14917de5b5a7cbc3cd12e6467297e657}{%
-           family={Pagnoni},
-           familyi={P\bibinitperiod},
-           given={Artidoro},
-           giveni={A\bibinitperiod}}}%
-        {{hash=c32ace2a5a2590ef3542c3713e05925d}{%
-           family={Holtzman},
-           familyi={H\bibinitperiod},
-           given={Ari},
-           giveni={A\bibinitperiod}}}%
-        {{hash=1dbd3a5b42828fb2cebd7786488ba425}{%
-           family={Zettlemoyer},
-           familyi={Z\bibinitperiod},
-           given={Luke},
-           giveni={L\bibinitperiod}}}%
-      }
-      \strng{namehash}{a50dbcd4c24eb2e86d45d36ef4076dc0}
-      \strng{fullhash}{1bf24d73d3c3884f634a1b420205ff86}
-      \strng{fullhashraw}{1bf24d73d3c3884f634a1b420205ff86}
-      \strng{bibnamehash}{1bf24d73d3c3884f634a1b420205ff86}
-      \strng{authorbibnamehash}{1bf24d73d3c3884f634a1b420205ff86}
-      \strng{authornamehash}{a50dbcd4c24eb2e86d45d36ef4076dc0}
-      \strng{authorfullhash}{1bf24d73d3c3884f634a1b420205ff86}
-      \strng{authorfullhashraw}{1bf24d73d3c3884f634a1b420205ff86}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{Advances in Neural Information Processing Systems ({NeurIPS})}
-      \field{eprintclass}{cs.CL}
-      \field{eprinttype}{arXiv}
-      \field{note}{Fundamentos de cuantización a 4 bits (k-quants y bloqueos de escala)}
-      \field{title}{{QLoRA}: Efficient Finetuning of Quantized {LLMs}}
-      \field{volume}{36}
-      \field{year}{2023}
-      \field{pages}{10088\bibrangedash 10115}
-      \range{pages}{28}
-      \verb{eprint}
-      \verb 2305.14314v1
-      \endverb
-      \verb{urlraw}
-      \verb https://arxiv.org/html/2305.14314v1
-      \endverb
-      \verb{url}
-      \verb https://arxiv.org/html/2305.14314v1
       \endverb
     \endentry
     \entry{kwon2023vllm}{inproceedings}{}{}
@@ -1697,8 +1812,8 @@
       \strng{authornamehash}{dd534d6c7046a3f7b2811b8ac2696584}
       \strng{authorfullhash}{4dd8e7c4c4916a19faaa9c4d8c3f8d54}
       \strng{authorfullhashraw}{4dd8e7c4c4916a19faaa9c4d8c3f8d54}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the 29th {ACM} Symposium on Operating Systems Principles}
@@ -1761,13 +1876,92 @@
       \field{pages}{348\bibrangedash 358}
       \range{pages}{11}
       \verb{eprint}
-      \verb 2502.2205.05198
+      \verb 2205.05198
       \endverb
       \verb{urlraw}
       \verb https://arxiv.org/abs/2205.05198
       \endverb
       \verb{url}
       \verb https://arxiv.org/abs/2205.05198
+      \endverb
+    \endentry
+    \entry{pope2023efficiently}{inproceedings}{}{}
+      \name{author}{10}{}{%
+        {{hash=d8be19e523fa307d44a1fddbff485f5c}{%
+           family={Pope},
+           familyi={P\bibinitperiod},
+           given={Reiner},
+           giveni={R\bibinitperiod}}}%
+        {{hash=5f9ac8488ec08b42c64992884a30aef4}{%
+           family={Douglas},
+           familyi={D\bibinitperiod},
+           given={Sholto},
+           giveni={S\bibinitperiod}}}%
+        {{hash=fd55b702c004c13506e70bb76a4e987c}{%
+           family={Chowdhery},
+           familyi={C\bibinitperiod},
+           given={Aakanksha},
+           giveni={A\bibinitperiod}}}%
+        {{hash=13202969e372bc82318f9629cbdd199b}{%
+           family={Devlin},
+           familyi={D\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b75383e6b48c8360c7a60031424c85cf}{%
+           family={Bradbury},
+           familyi={B\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+        {{hash=738351d7ac35edab0cd231cb64407ab4}{%
+           family={Levskaya},
+           familyi={L\bibinitperiod},
+           given={Anselm},
+           giveni={A\bibinitperiod}}}%
+        {{hash=dfde3d21dc3264e89f86d7ab9845c22a}{%
+           family={Heek},
+           familyi={H\bibinitperiod},
+           given={Jonathan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=09ffd4b93ef88f7c84a3174e6904f976}{%
+           family={Xiao},
+           familyi={X\bibinitperiod},
+           given={Kefan},
+           giveni={K\bibinitperiod}}}%
+        {{hash=aea4a56bc73650d2a59fd044b9b80fde}{%
+           family={Agrawal},
+           familyi={A\bibinitperiod},
+           given={Shivani},
+           giveni={S\bibinitperiod}}}%
+        {{hash=62f954323339abeba6c6a240e9d2855b}{%
+           family={Dean},
+           familyi={D\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Miami Beach, FL, USA}%
+      }
+      \strng{namehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{fullhash}{7292f9d9d68e09fde71fcc99242dea42}
+      \strng{fullhashraw}{7292f9d9d68e09fde71fcc99242dea42}
+      \strng{bibnamehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{authorbibnamehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{authornamehash}{80b3feac7c62618b8124a8c157a39f0e}
+      \strng{authorfullhash}{7292f9d9d68e09fde71fcc99242dea42}
+      \strng{authorfullhashraw}{7292f9d9d68e09fde71fcc99242dea42}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 6th Machine Learning and Systems Conference ({MLSys})}
+      \field{note}{Cálculo de la caché $KV$: dos tensores, capas, cabezas de $KV$, dimensión de cabeza y bytes por elemento}
+      \field{title}{Efficiently Scaling Transformer Inference}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2211.05102
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2211.05102
       \endverb
     \endentry
   \enddatalist

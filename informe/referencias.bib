@@ -108,6 +108,26 @@
 
 % --- Estado del arte ---
 
+@misc{dane2024lsaenfamilia,
+  author       = {{Proyecto DANE}},
+  title        = {LSA en Familia},
+  year         = {2024},
+  howpublished = {Aplicaci{\'o}n m{\'o}vil},
+  url          = {https://proyectodane.org.ar/el-proyecto},
+  note         = {Ficha de la aplicaci{\'o}n: \url{http://www.proyectodane.org/aplicacion/aplicacionlsaenfamilia/}. Accedido en octubre de 2026}
+}
+
+
+@misc{asmar2024,
+  author       = {{Asociaci{\'o}n de Sordos de Mar del Plata}},
+  title        = {Asociaci{\'o}n de Sordos de Mar del Plata ({ASMAR})},
+  year         = {2024},
+  howpublished = {Sitio institucional},
+  url          = {https://sites.google.com/view/asmardelplata/asociaci\%C3\%B3n-de-sordos-de-mar-del-plata},
+  note         = {Accedido en octubre de 2026}
+}
+
+
 @misc{argentina2023ley27710,
   author       = {{Rep{\'u}blica Argentina}},
   title        = {Ley 27.710: Reconocimiento de la {L}engua de {S}e{\~n}as {A}rgentina ({LSA}) como lengua natural y originaria},
@@ -118,13 +138,16 @@
   url          = {https://servicios.infoleg.gob.ar/infolegInternet/anexos/380000-384999/382022/norma.htm}
 }
 
-@misc{signall2026linkedin,
-  author       = {{SignAll Technologies}},
-  title        = {About {SignAll Technologies}},
-  year         = {2026},
-  howpublished = {Perfil institucional en {LinkedIn}},
-  url          = {https://www.linkedin.com/company/signall-technologies/about/},
-  note         = {Accedido en octubre de 2026}
+@patent{retek2023signall,
+  author = {Retek, David and Palhazi, David and Kajtar, Marton and Trosztel, Matyas and Robotka, Zsolt and Rovnyai, Janos},
+  title  = {Computer Vision Based Sign Language Interpreter},
+  number = {11847426},
+  year   = {2023},
+  month  = dec,
+  holder = {{SignAll Technologies Zrt.}},
+  type   = {patentus},
+  url    = {https://patents.google.com/patent/US11847426B2},
+  note   = {Patente estadounidense US11847426B2, concedida el 19 de diciembre de 2023. Describe la captura visual de {ASL} y la salida en ingl{\'e}s escrito}
 }
 
 @misc{handtalk2025,
@@ -229,15 +252,33 @@
   issn      = {0327-8085}
 }
 
-@book{massone2012curso,
+@book{massone2012parte1,
   author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
-  title     = {Curso de {Lengua de Se{\~n}as Argentina}: Parte 1 y 2},
+  title     = {Curso de {Lengua de Se{\~n}as Argentina}. Parte {I}},
   publisher = {Cultura Sorda},
   year      = {2012},
-  url       = {http://www.cultura-sorda.org},
+  pages     = {10--28},
+  url       = {https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_I_201228129.pdf},
   note      = {Accedido en octubre de 2026}
 }
 
+@book{massone2012parte2,
+  author    = {Massone, Mar{\'i}a Ignacia and Mart{\'i}nez, Roc{\'i}o Anabel},
+  title     = {Curso de {Lengua de Se{\~n}as Argentina}. Parte {II}},
+  publisher = {Cultura Sorda},
+  year      = {2012},
+  pages     = {12--43},
+  url       = {https://www.cultura-sorda.org/wp-content/uploads/2015/03/Massone_Martinez_curso_LSA_PARTE_II_2012.pdf},
+  note      = {Accedido en octubre de 2026}
+}
+
+@book{massone2003lengua,
+  author    = {Massone, María Ignacia and Simón, Marina and Gutiérrez, Claudia},
+  title     = {Mano a mano: Lengua de Señas Argentina. Análisis lingüístico y texto},
+  publisher = {Universidad de Buenos Aires},
+  year      = {2003},
+  address   = {Buenos Aires, Argentina}
+}
 
 % --- Inferencia y Cuantización (llama.cpp, GGUF y LoRA) ---
 @inproceedings{hu2022lora,
@@ -264,6 +305,16 @@
 
 % --- Ecuacion calculo de ram ---
 
+@inproceedings{pope2023efficiently,
+  author    = {Pope, Reiner and Douglas, Sholto and Chowdhery, Aakanksha and Devlin, Jacob and Bradbury, James and Levskaya, Anselm and Heek, Jonathan and Xiao, Kefan and Agrawal, Shivani and Dean, Jeff},
+  title     = {Efficiently Scaling Transformer Inference},
+  booktitle = {Proceedings of the 6th Machine Learning and Systems Conference ({MLSys})},
+  address   = {Miami Beach, FL, USA},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2211.05102},
+  note      = {C{\'a}lculo de la cach{\'e} $KV$: dos tensores, capas, cabezas de $KV$, dimensi{\'o}n de cabeza y bytes por elemento}
+}
+
 @inproceedings{kwon2023vllm,
   author    = {Kwon, Woosuk and Li, Zhuohan and Zhang, Siyuan and Zheng, Lianmin and Cai, Tianle and Yu, Joey and Gonzalez, Joseph E. and Zhang, Hao and Stoica, Ion},
   title     = {Efficient Memory Management for Large Language Model Serving with {PagedAttention}},
@@ -277,18 +328,13 @@
   note      = {An{\'a}lisis anal{\'\i}tico del footprint de memoria: pesos, {KV Cache} y activaciones}
 }
 
-@inproceedings{dettmers2023qlora,
-  author        = {Dettmers, Tim and Pagnoni, Artidoro and Holtzman, Ari and Zettlemoyer, Luke},
-  title         = {{QLoRA}: Efficient Finetuning of Quantized {LLMs}},
-  booktitle     = {Advances in Neural Information Processing Systems ({NeurIPS})},
-  volume        = {36},
-  pages         = {10088--10115},
-  year          = {2023},
-  eprint        = {2305.14314v1},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CL},
-  url           = {https://arxiv.org/html/2305.14314v1},
-  note          = {Fundamentos de cuantizaci{\'o}n a 4 bits (k-quants y bloqueos de escala)}
+@misc{ggml2023kquants,
+  author       = {{ggml-org}},
+  title        = {Tensor Encoding Schemes},
+  year         = {2023},
+  howpublished = {Documentaci{\'o}n de {llama.cpp}},
+  url          = {https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes},
+  note         = {Esquemas k-quant. En \texttt{Q4\_K} cada bloque guarda la escala y el m{\'\i}nimo. Accedido en octubre de 2026}
 }
 
 @inproceedings{korthikanti2023reducing,
@@ -298,7 +344,7 @@
   volume        = {5},
   pages         = {348--358},
   year          = {2023},
-  eprint        = {2502.2205.05198},
+  eprint        = {2205.05198},
   archivePrefix = {arXiv},
   primaryClass  = {cs.CL},
   url           = {https://arxiv.org/abs/2205.05198}
