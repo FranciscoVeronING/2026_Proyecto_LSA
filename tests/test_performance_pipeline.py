@@ -125,6 +125,7 @@ def test_pause_is_not_model_time(tmp_path: Path) -> None:
     assert row["Latencia_Total_ms"] == round(model_ms, 1)
     assert row["Pausa_ms"] not in (row["Cola_ms"], row["Inferencia_ms"], row["Transporte_ms"])
     assert row["Latencia_Total_ms"] < row["Pausa_ms"] + model_ms
+    assert row["Espera_subtitulos_ms"] == round(row["Pausa_ms"] + model_ms, 1)
 
 
 def test_export_json_csv_both_channels(tmp_path: Path) -> None:

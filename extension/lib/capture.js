@@ -108,6 +108,7 @@ function createCaptureEngine(getCfg, callbacks) {
   let stillSince = 0;
   let captureStartedAt = 0;
   let nHandTicks = 0;
+  let signEndedAtMs = 0;
 
   /** @returns {CaptureConfig} */
   function cfg() {
@@ -205,6 +206,7 @@ function createCaptureEngine(getCfg, callbacks) {
         handsSince = 0;
         if (pendingGlosses && lastActivity > 0 && !pauseStartLogged) {
           pauseStartLogged = true;
+          signEndedAtMs = Date.now();
           console.log(
             "[metrics] Tiempo de Pausa (Heurística de Cierre): t_pausa_inicio — NOT model time"
           );
@@ -257,7 +259,12 @@ function createCaptureEngine(getCfg, callbacks) {
             pause_ms +
             " — NOT model time"
         );
-        Promise.resolve(callbacks.onUtterancePause({ pause_ms }))
+        Promise.resolve(
+          callbacks.onUtterancePause({
+            pause_ms,
+            sign_end_ms: signEndedAtMs || Math.round(lastActivity * 1000),
+          })
+        )
           .catch(() => {})
           .finally(() => {
             closing = false;
@@ -290,6 +297,7 @@ function createCaptureEngine(getCfg, callbacks) {
       stillSince = 0;
       captureStartedAt = 0;
       nHandTicks = 0;
+      signEndedAtMs = 0;
     },
   };
 }

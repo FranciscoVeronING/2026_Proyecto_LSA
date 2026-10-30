@@ -16,12 +16,14 @@ from core.enie import restore_enie_report  # noqa: E402
 from utils.benchmark_logger import (  # noqa: E402
     CSV_FIELDS,
     SIGN_CSV_FIELDS,
+    add_delivery,
     csv_path,
     record_sign_row,
     record_turn,
     set_metrics_dir,
     signs_csv_path,
 )
+from utils.process_stats import browser_kind  # noqa: E402
 
 
 def test_turn_extra_maps_kv_fields():
@@ -85,6 +87,40 @@ def test_signs_csv_and_turn_csv(tmp_path: Path):
     assert list(signs[0].keys()) == SIGN_CSV_FIELDS
     assert signs[0]["gloss"] == "HOLA"
     assert signs[0]["classifier_ms"] == "12.4"
+    assert "Browser_RAM_mb" in CSV_FIELDS
+    assert "Espera_subtitulos_ms" in CSV_FIELDS
+    assert "Espera_voz_ms" in CSV_FIELDS
+    assert rows[0]["Espera_subtitulos_ms"] == "5010.0"
+    assert rows[0]["Espera_voz_ms"] == ""
+
+
+def test_espera_client_overrides_estimate(tmp_path: Path):
+    set_metrics_dir(tmp_path)
+    record_turn(
+        channel="direct",
+        pause_ms=4000,
+        queue_ms=80,
+        inference_ms=900,
+        transport_ms=120,
+        delivery_ms=0,
+    )
+    patched = add_delivery(
+        "direct",
+        15,
+        espera_subtitulos_ms=5120,
+        espera_voz_ms=5800,
+    )
+    assert patched is not None
+    assert patched["Entrega_ms"] == 15.0
+    assert patched["Espera_subtitulos_ms"] == 5120.0
+    assert patched["Espera_voz_ms"] == 5800.0
+    assert patched["Latencia_Total_ms"] == 80 + 900 + 120 + 15
+
+
+def test_browser_kind_maps_chrome_and_edge():
+    assert browser_kind("chrome.exe") == "chrome"
+    assert browser_kind("msedge.exe") == "msedge"
+    assert browser_kind("python.exe") is None
 
 
 if __name__ == "__main__":
@@ -98,4 +134,9 @@ if __name__ == "__main__":
     with tempfile.TemporaryDirectory() as folder:
         test_signs_csv_and_turn_csv(P(folder))
     print("ok test_signs_csv_and_turn_csv")
+    with tempfile.TemporaryDirectory() as folder:
+        test_espera_client_overrides_estimate(P(folder))
+    print("ok test_espera_client_overrides_estimate")
+    test_browser_kind_maps_chrome_and_edge()
+    print("ok test_browser_kind_maps_chrome_and_edge")
     print("all extended metrics tests passed")

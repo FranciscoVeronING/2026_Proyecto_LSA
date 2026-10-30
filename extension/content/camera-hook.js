@@ -130,7 +130,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
       );
     }
     if (data.type === "LSA_TTS_STOP") stopCallVoice();
-    if (data.type === "LSA_TTS_WAV" && data.wavB64) playCallVoice(data.wavB64);
+    if (data.type === "LSA_TTS_WAV" && data.wavB64) playCallVoice(data.wavB64, data.id);
     if (data.type === "LSA_AVATAR" && data.clip && data.clip.ok && window.LsaAvatar) {
       enqueueAvatarClip(data.clip, lastCaptionLine || caption.spanish);
     }
@@ -252,7 +252,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
     return bytes.buffer;
   }
 
-  function playCallVoice(b64) {
+  function playCallVoice(b64, id) {
     if (!b64 || !callMicOpen()) {
       window.postMessage({ source: "lsa-page", type: "LSA_VOICE_BLOCKED" }, "*");
       return;
@@ -284,6 +284,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
           };
           try {
             source.start();
+            window.postMessage({ source: "lsa-page", type: "LSA_TTS_STARTED", id }, "*");
           } catch (_) {
             window.postMessage(
               { source: "lsa-page", type: "LSA_SPEECH_ERROR", error: "no se pudo reproducir la voz en off" },

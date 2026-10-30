@@ -234,13 +234,24 @@ def metrics_client(body: ClientMetricsIn):
     from utils.benchmark_logger import add_delivery
     from utils.process_stats import snapshot as proc_snap
 
-    if body.delivery_ms is not None:
-        add_delivery(body.channel, body.delivery_ms)
+    if (
+        body.delivery_ms is not None
+        or body.espera_subtitulos_ms is not None
+        or body.espera_voz_ms is not None
+    ):
+        add_delivery(
+            body.channel,
+            body.delivery_ms,
+            espera_subtitulos_ms=body.espera_subtitulos_ms,
+            espera_voz_ms=body.espera_voz_ms,
+        )
     snap = proc_snap()
     log_event(
         "client",
         channel=body.channel,
         delivery_ms=body.delivery_ms,
+        espera_subtitulos_ms=body.espera_subtitulos_ms,
+        espera_voz_ms=body.espera_voz_ms,
         pause_ms=body.pause_ms,
         fps=body.fps,
         holistic_fps=body.holistic_fps,
@@ -255,11 +266,17 @@ def metrics_client(body: ClientMetricsIn):
         cpu_percent=snap.get("cpu_percent"),
         RAM_mb=snap.get("RAM_mb", snap.get("rss_mb")),
         CPU_percent=snap.get("CPU_percent", snap.get("cpu_percent")),
+        Browser_RAM_mb=snap.get("Browser_RAM_mb"),
+        Browser_CPU_percent=snap.get("Browser_CPU_percent"),
+        Browser_name=snap.get("Browser_name"),
+        Browser_n_proc=snap.get("Browser_n_proc"),
     )
     if body.fps is not None:
         print(
             f"[metrics] FPS captureStream={body.fps:.1f} "
-            f"RAM_mb={snap.get('rss_mb')} CPU_percent={snap.get('cpu_percent')}",
+            f"ILSA RAM_mb={snap.get('rss_mb')} CPU_percent={snap.get('cpu_percent')} "
+            f"Browser_RAM_mb={snap.get('Browser_RAM_mb')} "
+            f"Browser_CPU_percent={snap.get('Browser_CPU_percent')}",
             flush=True,
         )
     if body.holistic_fps is not None:

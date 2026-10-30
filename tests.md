@@ -31,7 +31,11 @@ Each turn is written to `%LOCALAPPDATA%\ILSA\metrics\` as:
 CSV columns (`metrics_breakdown.csv`): the original five segments plus GGUF /
 KV extras (`Prompt_tokens`, `Kv_hit`, `T_eval_ms`, `Modelo`, `Cloud_RAM_mb`,
 T-pose, STT, Ñ restores, …). `Latencia_Total_ms` is still Cola + Inferencia +
-Transporte + Entrega. **Pausa is stored and labelled, then excluded.**
+Transporte + Entrega. **Pausa is stored and labelled, then excluded from
+RNF-01.** `Espera_subtitulos_ms` / `Espera_voz_ms` are the wait from end of
+sign (hands down, **including pause**) until Meet paints the caption or
+starts TTS in the call. `RAM_mb` / `CPU_percent` are the ILSA Python process;
+`Browser_RAM_mb` / `Browser_CPU_percent` sum Chrome or Edge subprocesses.
 `Cumple_RNF01` is `true` when `Inferencia_ms ≤ 2000`.
 
 Each TinySkeleton `/sign` is also written to `metrics_signs.csv`
@@ -142,7 +146,9 @@ delivery, not inside GGUF inference.
 5. JSON `queue_ms` + `inference_ms` + client `transport_ms` are stored; pause is
    logged as heuristic, not model time.
 6. Meet paints the caption, speaks Spanish, then `POST /metrics/client`
-   `{ channel: "direct", delivery_ms }`.
+   `{ channel: "direct", delivery_ms, espera_subtitulos_ms, espera_voz_ms }`.
+   Subtitle wait is clocked when `LSA_CAPTION` is posted; voice wait when
+   TTS actually `source.start()`s in the Meet mix.
 
 **Inverso (hearing)**
 
@@ -152,9 +158,9 @@ delivery, not inside GGUF inference.
 3. ILSA times T-pose download + compose as the first delivery slice.
 4. Meet applies the avatar clip and reports a second `delivery_ms`.
 
-FPS (Holistic sandbox and `canvas.captureStream(24)`) and ILSA RAM/CPU
-(`src/utils/process_stats.py`) are logged on the same `/metrics/client` and
-`/health` paths. They are extra columns in JSON; they are not CSV fields.
+FPS (Holistic sandbox and `canvas.captureStream(24)`) and process RAM/CPU
+(`src/utils/process_stats.py`) are logged on `/metrics/client` and `/health`.
+ILSA vs browser are separate CSV columns (`RAM_mb` vs `Browser_RAM_mb`).
 
 Collector: `src/utils/benchmark_logger.py`. Session JSONL (older live log)
 stays in `src/backend/metrics.py`.
@@ -176,7 +182,7 @@ developer machine.
 |------|----------------|
 | `test_transport_excludes_queue_and_inference` | A second thread waits on the lock (`queue_ms ≥ 80`). Extra network sleep appears in `transport_ms`, not in queue or inference. `roundtrip ≈ queue + inference + transport`. |
 | `test_rnf01_inference_budget` | Simulated `inference_ms ≤ 1500`. `meets_rnf01` is true at 1500 and 2000, false at 2001. |
-| `test_pause_is_not_model_time` | Pause is stored (`Pausa_ms`) but **not** added into `Latencia_Total_ms`. |
+| `test_pause_is_not_model_time` | Pause is stored (`Pausa_ms`) but **not** added into `Latencia_Total_ms`. `Espera_subtitulos_ms` **does** include pause. |
 | `test_export_json_csv_both_channels` | One Directo row and one Inverso row; CSV header matches `CSV_FIELDS`; inverse total = 40+1100+90+310. |
 | `test_simulated_direct_and_inverse_pipeline` | End-to-end fake Directo (4 s pause annotated) and Inverso (pause 0) both stay under the 1500 ms inference target. |
 
@@ -227,7 +233,7 @@ Meet HUD delivery is not exercised by this script.
 |------|------|
 | `tests/test_performance_pipeline.py` | Offline five-segment + RNF-01 assertions |
 | `src/utils/benchmark_logger.py` | Turn collector, transport formula, JSON/CSV export |
-| `src/utils/process_stats.py` | Client RSS / CPU |
+| `src/utils/process_stats.py` | ILSA RSS/CPU and Chrome/Edge family RSS/CPU |
 | `src/semantic/remote.py` | `t_envio` / `t_recepcion`, `transport_ms` |
 | `src/backend/signer_session.py` | Directo close + pause log |
 | `src/backend/hearing_session.py` | Inverso queue/inference/transport + T-pose delivery |

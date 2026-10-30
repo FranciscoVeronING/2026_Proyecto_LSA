@@ -26,6 +26,8 @@ class UtteranceEndIn(BaseModel):
 class ClientMetricsIn(BaseModel):
     channel: str = "direct"
     delivery_ms: float | None = None
+    espera_subtitulos_ms: float | None = None
+    espera_voz_ms: float | None = None
     pause_ms: float | None = None
     fps: float | None = None
     holistic_fps: float | None = None

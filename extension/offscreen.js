@@ -55,6 +55,7 @@ function enqueueSign(frames, client) {
 }
 let meetTabId = null;
 let lastActivityPost = 0;
+let pendingSignEndMs = 0;
 let prefs = { showLandmarks: false, outputMode: "subtitles" };
 let lastLandmarkEmit = 0;
 let lastDebugEmit = 0;
@@ -98,6 +99,10 @@ const engine = createCaptureEngine(
       emit({ status: "traduciendo" });
       const t0 = performance.now();
       const pause_ms = info && typeof info.pause_ms === "number" ? info.pause_ms : undefined;
+      pendingSignEndMs =
+        info && typeof info.sign_end_ms === "number"
+          ? info.sign_end_ms
+          : Date.now() - (typeof pause_ms === "number" ? pause_ms : 0);
       return LsaApi.endUtterance({ pause_ms })
         .then((s) => {
           const ms = s && s.ms != null ? Math.round(s.ms) : Math.round(performance.now() - t0);
@@ -151,6 +156,7 @@ function applyState(s) {
   if (s.closed) {
     const line = String(s.spanish || lastSpanish || pending.join(" ")).trim();
     if (line) payload.spanish = line;
+    if (pendingSignEndMs) payload.sign_end_ms = pendingSignEndMs;
   }
   emit(payload);
 }

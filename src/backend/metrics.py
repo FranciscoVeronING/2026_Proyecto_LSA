@@ -69,6 +69,8 @@ def turn_extra(timing: dict | None = None, **more: Any) -> dict[str, Any]:
         "Tpose_missing_n": more.get("tpose_missing_n"),
         "Enie_restored": more.get("enie_restored", t.get("enie_restored")),
         "Js_heap_mb": more.get("js_heap_mb"),
+        "Espera_subtitulos_ms": more.get("espera_subtitulos_ms"),
+        "Espera_voz_ms": more.get("espera_voz_ms"),
     }
     return {k: v for k, v in extra.items() if v is not None}
 
@@ -107,6 +109,10 @@ def log_event(kind: str, **fields: Any) -> dict[str, Any]:
         "cpu_percent": proc.get("cpu_percent"),
         "RAM_mb": proc.get("RAM_mb", proc.get("rss_mb")),
         "CPU_percent": proc.get("CPU_percent", proc.get("cpu_percent")),
+        "Browser_RAM_mb": proc.get("Browser_RAM_mb"),
+        "Browser_CPU_percent": proc.get("Browser_CPU_percent"),
+        "Browser_name": proc.get("Browser_name"),
+        "Browser_n_proc": proc.get("Browser_n_proc"),
         **{k: v for k, v in fields.items() if v is not None},
     }
     line = json.dumps(record, ensure_ascii=False)
@@ -170,6 +176,10 @@ def summary() -> dict[str, Any]:
     net = _nums("utterance", "transport_ms") + _nums("hearing", "transport_ms")
     entrega = _nums("utterance", "delivery_ms") + _nums("hearing", "delivery_ms")
     pause = _nums("utterance", "pause_ms")
+    espera_sub = (
+        _nums("client", "espera_subtitulos_ms") + _nums("utterance", "espera_subtitulos_ms")
+    )
+    espera_voz = _nums("client", "espera_voz_ms") + _nums("utterance", "espera_voz_ms")
     from utils.process_stats import snapshot as proc_snap
 
     return {
@@ -203,6 +213,8 @@ def summary() -> dict[str, Any]:
             "transport_p50": _pct(net, 50),
             "entrega_p50": _pct(entrega, 50),
             "entrega_p95": _pct(entrega, 95),
+            "espera_subtitulos_p50": _pct(espera_sub, 50),
+            "espera_voz_p50": _pct(espera_voz, 50),
         },
         "process": proc_snap(),
         "last": events[-8:],
@@ -223,7 +235,12 @@ def health_line() -> str:
         bits.append(f"translator {ms['remote_p50']:.0f} ms")
     proc = s.get("process") or {}
     if proc.get("rss_mb") is not None:
-        bits.append(f"ram {proc['rss_mb']:.0f} MB")
+        bits.append(f"ilsa {proc['rss_mb']:.0f} MB")
     if proc.get("cpu_percent") is not None:
-        bits.append(f"cpu {proc['cpu_percent']:.0f}%")
+        bits.append(f"ilsa cpu {proc['cpu_percent']:.0f}%")
+    if proc.get("Browser_RAM_mb") is not None:
+        name = proc.get("Browser_name") or "browser"
+        bits.append(f"{name} {proc['Browser_RAM_mb']:.0f} MB")
+    if proc.get("Browser_CPU_percent") is not None:
+        bits.append(f"browser cpu {proc['Browser_CPU_percent']:.0f}%")
     return " · ".join(bits)

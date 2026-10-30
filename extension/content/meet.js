@@ -18,6 +18,9 @@ let rafId = 0;
 const grab = document.createElement("canvas");
 const grabCtx = grab.getContext("2d", { alpha: false, willReadFrequently: true });
 let lastSpoken = "";
+let lastSignEndMs = 0;
+let reportedSubtitleWait = false;
+let reportedVoiceWait = false;
 let voiceReq = 0;
 let lastVoiceNotice = "";
 let lastHearingSent = { text: "", at: 0 };
@@ -60,6 +63,26 @@ function applyPrefsToPage() {
     hearingInput: hearingInputMode(),
   });
 }
+
+function waitFromSignEndMs() {
+  if (!lastSignEndMs) return null;
+  return Math.max(0, Math.round(Date.now() - lastSignEndMs));
+}
+
+function reportVoiceWait() {
+  if (reportedVoiceWait) return;
+  if (prefs.outputMode === "subtitles") return;
+  const ms = waitFromSignEndMs();
+  if (ms == null) return;
+  reportedVoiceWait = true;
+  LsaApi.clientMetrics({ channel: "direct", espera_voz_ms: ms }).catch(() => {});
+}
+
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data || data.source !== "lsa-page") return;
+  if (data.type === "LSA_TTS_STARTED") reportVoiceWait();
+});
 
 function speakSpanish(text) {
   if (meetMode === "hearing") return;
@@ -756,13 +779,26 @@ try {
     if (msg.type === "lsa-caption") {
       if (meetMode === "hearing") return;
       const t0 = performance.now();
+      if (typeof msg.sign_end_ms === "number" && msg.sign_end_ms > 0) {
+        lastSignEndMs = msg.sign_end_ms;
+        reportedSubtitleWait = false;
+        reportedVoiceWait = false;
+      }
       setHud(msg);
       const spanish = typeof msg.spanish === "string" ? msg.spanish.trim() : "";
       if (spanish) {
         postToPage({ type: "LSA_CAPTION", line: spanish });
         speakSpanish(spanish);
         const delivery_ms = performance.now() - t0;
-        LsaApi.clientMetrics({ channel: "direct", delivery_ms }).catch(() => {});
+        const payload = { channel: "direct", delivery_ms };
+        if (prefs.outputMode !== "audio" && !reportedSubtitleWait) {
+          const espera = waitFromSignEndMs();
+          if (espera != null) {
+            payload.espera_subtitulos_ms = espera;
+            reportedSubtitleWait = true;
+          }
+        }
+        LsaApi.clientMetrics(payload).catch(() => {});
       }
     }
   });
