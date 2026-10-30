@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from core.enie import restore_enie_glosses
 from semantic.remote import configured, ping
 
 
@@ -82,6 +83,7 @@ class HearingSession:
                 print(f"[backend] Remote hearing failed: {exc}")
                 self.semantic_error = str(exc)
                 self.semantic_ready = False
+        glosses = restore_enie_glosses(glosses, spanish=text)
         self.gloss_text = glosses
         clip = None
         delivery_ms = 0.0

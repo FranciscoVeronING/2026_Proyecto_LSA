@@ -49,10 +49,19 @@ def rss_mb() -> float | None:
                     ("PeakPagefileUsage", ctypes.c_size_t),
                 ]
 
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            psapi = ctypes.WinDLL("psapi", use_last_error=True)
+            kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+            psapi.GetProcessMemoryInfo.argtypes = [
+                ctypes.c_void_p,
+                ctypes.POINTER(_PMC),
+                wintypes.DWORD,
+            ]
+            psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
             counters = _PMC()
             counters.cb = ctypes.sizeof(_PMC)
-            if ctypes.windll.psapi.GetProcessMemoryInfo(
-                ctypes.windll.kernel32.GetCurrentProcess(),
+            if psapi.GetProcessMemoryInfo(
+                kernel32.GetCurrentProcess(),
                 ctypes.byref(counters),
                 counters.cb,
             ):

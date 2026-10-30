@@ -180,5 +180,10 @@ def translate_sign(glosses: str) -> str:
 
 def translate_hearing(spanish: str) -> str:
     """Cloud Run `POST /hearing`: sentence → glosses."""
+    from core.enie import restore_enie_glosses
+
     data = _post("/hearing", {"spanish": spanish})
-    return _first_str(data, "glosses", "caption", "text", "output")
+    return restore_enie_glosses(
+        _first_str(data, "glosses", "caption", "text", "output"),
+        spanish=spanish,
+    )

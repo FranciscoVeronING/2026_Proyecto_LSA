@@ -906,7 +906,7 @@ registerProcessor("lsa-hearing", LsaHearingProcessor);
    * @param {number} h
    */
   function drawSubtitles(ctx, w, h) {
-    const text = caption.spanish;
+    const text = caption.spanish ? String(caption.spanish).normalize("NFC") : "";
     if (!text) return;
     const fontSize = Math.max(18, Math.round(h * 0.042));
     ctx.save();
