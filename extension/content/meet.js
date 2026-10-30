@@ -10,6 +10,7 @@ let extDead = false;
 let meetMode = "signer";
 let lastHealthOkAt = 0;
 let ilsaLeftHanded = false;
+let lastSentLeftHanded = null;
 const ILSA_DOWN_MS = 8000;
 let framesSeen = 0;
 let pending = false;
@@ -577,7 +578,13 @@ function loop() {
 /** Enable the Meet bridge. `mode`: signer (LSA) or hearing (voice → captions). */
 function startBridge(mode) {
   const next = mode === "hearing" ? "hearing" : "signer";
-  if (running && meetMode === next) return;
+  if (running && meetMode === next) {
+    if (next === "signer" && lastSentLeftHanded !== ilsaLeftHanded) {
+      lastSentLeftHanded = ilsaLeftHanded;
+      sendExt({ type: "lsa-meet-offscreen-start", leftHanded: ilsaLeftHanded });
+    }
+    return;
+  }
   if (running) stopBridge();
   meetMode = next;
   running = true;
@@ -601,6 +608,7 @@ function startBridge(mode) {
   }
   postToPage({ type: "LSA_SPEECH_STOP" });
   setHud({ status: "escuchando", capturing: false });
+  lastSentLeftHanded = ilsaLeftHanded;
   sendExt({ type: "lsa-meet-offscreen-start", leftHanded: ilsaLeftHanded });
   loop();
   setTimeout(() => {
@@ -613,6 +621,7 @@ function startBridge(mode) {
 /** Disable the gUM hook (Meet returns to the native camera on the next request). */
 function stopBridge() {
   running = false;
+  lastSentLeftHanded = null;
   pending = false;
   cancelAnimationFrame(rafId);
   stopVoice();

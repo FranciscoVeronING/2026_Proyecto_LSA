@@ -43,10 +43,36 @@ def normalize_spatial_points(
     return normalized_points.flatten()
 
 
+# MediaPipe Pose left/right pairs (indexes in the 33-point pose).
+# After X-flip the anatomy is on the other side; labels must follow.
+_POSE_LR_PAIRS = (
+    (1, 4),
+    (2, 5),
+    (3, 6),
+    (7, 8),
+    (9, 10),
+    (11, 12),
+    (13, 14),
+    (15, 16),
+    (17, 18),
+    (19, 20),
+    (21, 22),
+    (23, 24),
+    (25, 26),
+    (27, 28),
+    (29, 30),
+    (31, 32),
+)
+
+
 def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: Optional[int] = None) -> np.ndarray:
     """
-    Mirror normalized landmarks for left-handed users.
-    Flip X around the body origin and swap left/right hand blocks.
+    Mirror a right-handed-trained skeleton so a left-handed signer matches it.
+
+    Flip X around the shoulder origin, swap every pose L/R pair (shoulders,
+    wrists, …), then swap the two hand blocks. Skipping the pose swap leaves
+    the dominant hand on pose wrist 15 while the right-hand slot is 16, and
+    the classifier accepts nothing.
     """
     pose_dim = pose_dim if pose_dim is not None else cfg.POSE_DIM
     hand_dim = 21 * 3
@@ -54,6 +80,13 @@ def mirror_landmarks_for_left_handed(vector: np.ndarray, pose_dim: Optional[int]
     mirrored = vector.astype(np.float32).copy()
     points = mirrored.reshape(-1, 3)
     points[:, 0] *= -1.0
+    n_pose = min(33, points.shape[0])
+    for left_idx, right_idx in _POSE_LR_PAIRS:
+        if left_idx >= n_pose or right_idx >= n_pose:
+            continue
+        tmp = points[left_idx].copy()
+        points[left_idx] = points[right_idx]
+        points[right_idx] = tmp
     mirrored = points.flatten()
 
     hand_start = pose_dim

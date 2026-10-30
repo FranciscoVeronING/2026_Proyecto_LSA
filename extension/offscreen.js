@@ -12,6 +12,7 @@ const sandbox = document.getElementById("mp-sandbox");
 let cfg = { ...FALLBACK_CFG };
 let leftHanded = false;
 let sandboxReady = false;
+let sessionStarting = false;
 let sandboxLastError = "";
 let busySign = false;
 let signQueue = null;
@@ -126,7 +127,9 @@ let lastSpanish = "";
  */
 function applyState(s) {
   if (!s) return;
-  engine.markPending(Boolean(s.glosses && s.glosses.length));
+  const pending = Array.isArray(s.glosses) ? s.glosses : [];
+  if (s.closed) engine.markPending(false);
+  else engine.markPending(Boolean(pending.length || s.pending_text));
   if (s.spanish) lastSpanish = s.spanish;
   const lastGloss = (s.gloss && String(s.gloss)) || (s.top3 && s.top3[0] && s.top3[0].gloss) || "";
   const payload = {
@@ -141,7 +144,10 @@ function applyState(s) {
     payload.glossReject = s.reject_reason || "";
     payload.glossConfidence = typeof s.confidence === "number" ? s.confidence : null;
   }
-  if (s.closed && s.spanish) payload.spanish = s.spanish;
+  if (s.closed) {
+    const line = String(s.spanish || lastSpanish || pending.join(" ")).trim();
+    if (line) payload.spanish = line;
+  }
   emit(payload);
 }
 
@@ -276,21 +282,28 @@ async function ensureSandbox() {
  * @returns {Promise<void>}
  */
 async function startSession(tabId, handed) {
-  leftHanded = Boolean(handed);
-  if (meetTabId === tabId && sandboxReady) {
-    meetTabId = tabId;
+  const nextHanded = Boolean(handed);
+  const handedChanged = leftHanded !== nextHanded;
+  leftHanded = nextHanded;
+  if (meetTabId === tabId && (sandboxReady || sessionStarting)) {
+    if (handedChanged) engine.forgetPrevHand();
     return;
   }
+  sessionStarting = true;
   meetTabId = tabId;
-  const h = await LsaApi.health();
-  if (!h.ok) throw new Error("El motor LSA no está encendido.");
-  cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
-  cfg.hands_frames_to_start = 1;
-  cfg.min_capture_frames = Math.min(2, Number(cfg.min_capture_frames) || 2);
-  applyState(await LsaApi.session(leftHanded));
-  await ensureSandbox();
-  engine.reset();
-  emit({ status: "escuchando", glosses: "", spanish: "" });
+  try {
+    const h = await LsaApi.health();
+    if (!h.ok) throw new Error("El motor LSA no está encendido.");
+    cfg = { ...FALLBACK_CFG, ...(await LsaApi.config()) };
+    cfg.hands_frames_to_start = 1;
+    cfg.min_capture_frames = Math.min(2, Number(cfg.min_capture_frames) || 2);
+    applyState(await LsaApi.session(leftHanded));
+    await ensureSandbox();
+    engine.reset();
+    emit({ status: "escuchando", glosses: "" });
+  } finally {
+    sessionStarting = false;
+  }
 }
 
 /** Reset the cropper; do not close Holistic (reloading WASM is expensive). */

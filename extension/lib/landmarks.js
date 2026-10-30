@@ -13,6 +13,25 @@
 const POSE_DIM = 33 * 3;
 /** Dimension of one hand. */
 const HAND_DIM = 21 * 3;
+/** MediaPipe Pose left/right pairs. Must match ``src/core/landmarks.py``. */
+const POSE_LR_PAIRS = [
+  [1, 4],
+  [2, 5],
+  [3, 6],
+  [7, 8],
+  [9, 10],
+  [11, 12],
+  [13, 14],
+  [15, 16],
+  [17, 18],
+  [19, 20],
+  [21, 22],
+  [23, 24],
+  [25, 26],
+  [27, 28],
+  [29, 30],
+  [31, 32],
+];
 
 /**
  * Serialize a list of MediaPipe points to `[x,y,z]` arrays.
@@ -155,7 +174,8 @@ function normalizeSpatial(flat, anchor, scale) {
 
 /**
  * One Holistic frame → 225-d vector aligned with the classifier.
- * If `leftHanded`, mirror X and swap hand blocks (the model was trained right-handed).
+ * If `leftHanded`, mirror X, swap pose L/R pairs, and swap hand blocks
+ * (the model was trained right-handed).
  *
  * @param {object} results Holistic landmarks.
  * @param {boolean} leftHanded
@@ -181,6 +201,15 @@ function extractNormalizedVector(results, leftHanded) {
   vector.set(rh, POSE_DIM + HAND_DIM);
   if (leftHanded) {
     for (let i = 0; i < vector.length; i += 3) vector[i] *= -1;
+    for (let p = 0; p < POSE_LR_PAIRS.length; p++) {
+      const a = POSE_LR_PAIRS[p][0] * 3;
+      const b = POSE_LR_PAIRS[p][1] * 3;
+      for (let k = 0; k < 3; k++) {
+        const tmp = vector[a + k];
+        vector[a + k] = vector[b + k];
+        vector[b + k] = tmp;
+      }
+    }
     const left = vector.slice(POSE_DIM, POSE_DIM + HAND_DIM);
     const right = vector.slice(POSE_DIM + HAND_DIM, POSE_DIM + HAND_DIM * 2);
     vector.set(right, POSE_DIM);

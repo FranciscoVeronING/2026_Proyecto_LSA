@@ -14,6 +14,7 @@ const OFFSCREEN_URL = "offscreen.html";
 
 let meetTabId = null;
 let meetModeOn = null;
+let lastOffscreenHanded = null;
 let offscreenPort = null;
 const offscreenAcks = new Map();
 let lastHealthOkAt = 0;
@@ -300,9 +301,20 @@ async function syncMeetTab(tabId) {
     }
     lastHealthOkAt = now;
     const mode = h.mode === "hearing" ? "hearing" : "signer";
-    if (meetTabId === tabId && meetModeOn === mode) return;
+    const leftHanded = Boolean(h.left_handed);
+    if (meetTabId === tabId && meetModeOn === mode) {
+      if (mode === "signer" && lastOffscreenHanded !== leftHanded) {
+        lastOffscreenHanded = leftHanded;
+        await sendToOffscreen({
+          type: "lsa-meet-start",
+          tabId,
+          leftHanded,
+        }).catch(() => {});
+      }
+      return;
+    }
     try {
-      await startMeet(tabId, false);
+      await startMeet(tabId, leftHanded);
     } catch (err) {
       const message = (err && err.message) || String(err);
       chrome.tabs
@@ -394,7 +406,21 @@ async function startMeet(tabId, leftHanded) {
   const h = await pingHealth();
   if (!h) throw new Error("ILSA no está encendido. Elegí un modo y dale a Encender.");
   const mode = h.mode === "hearing" ? "hearing" : "signer";
-  if (meetTabId === tabId && meetModeOn === mode) return;
+  const handed = Boolean(h.left_handed);
+  if (meetTabId === tabId && meetModeOn === mode) {
+    if (mode === "signer" && lastOffscreenHanded !== handed) {
+      lastOffscreenHanded = handed;
+      const started = await sendToOffscreen({
+        type: "lsa-meet-start",
+        tabId,
+        leftHanded: handed,
+      });
+      if (started && started.ok === false) {
+        throw new Error(started.error || "No se pudo iniciar el intérprete.");
+      }
+    }
+    return;
+  }
   if (meetTabId && (meetTabId !== tabId || meetModeOn !== mode)) {
     await stopMeet();
   }
@@ -409,10 +435,11 @@ async function startMeet(tabId, leftHanded) {
   if (mode === "signer") {
     await ensureOffscreen();
     await waitOffscreenReady();
+    lastOffscreenHanded = handed;
     const started = await sendToOffscreen({
       type: "lsa-meet-start",
       tabId,
-      leftHanded: Boolean(leftHanded),
+      leftHanded: handed,
     });
     if (started && started.ok === false) {
       throw new Error(started.error || "No se pudo iniciar el intérprete.");
@@ -425,6 +452,7 @@ async function stopMeet() {
   const tabId = meetTabId;
   meetTabId = null;
   meetModeOn = null;
+  lastOffscreenHanded = null;
   try {
     if (offscreenPort) offscreenPort.postMessage({ type: "lsa-meet-stop" });
   } catch (_) {}

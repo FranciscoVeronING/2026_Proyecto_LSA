@@ -130,7 +130,10 @@ def metrics_summary():
 @app.post("/session")
 def open_session(body: SessionIn):
     session = get_session()
-    session.reset_session(left_handed=getattr(session, "left_handed", False))
+    # ILSA Encender is the source of truth for Zurdo/Diestro. A Meet reconnect
+    # must not flip handedness or wipe a live utterance (that skips captions).
+    handed = getattr(session, "left_handed", False)
+    session.reset_session(left_handed=handed)
     return session.snapshot()
 
 

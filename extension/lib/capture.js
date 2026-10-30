@@ -88,6 +88,7 @@ function shouldStartRecording(mode, handsPresent, isMoving, consecutiveHands, st
  * @returns {{
  *   markPending: (hasGlosses: boolean) => void,
  *   noteInferenceActivity: () => void,
+ *   forgetPrevHand: () => void,
  *   step: (args: { results: object, video?: HTMLVideoElement, motionCtx?: CanvasRenderingContext2D, leftHanded: boolean }) => object,
  *   reset: () => void
  * }}
@@ -169,6 +170,13 @@ function createCaptureEngine(getCfg, callbacks) {
     noteInferenceActivity() {
       bumpActivity(false);
       pendingGlosses = true;
+    },
+    /**
+     * Drop the last motion vector (e.g. handedness flipped). Do not clear the
+     * utterance pause clock: that would skip `/utterance/end` and the caption.
+     */
+    forgetPrevHand() {
+      prevHand = null;
     },
     /**
      * One Holistic tick.
