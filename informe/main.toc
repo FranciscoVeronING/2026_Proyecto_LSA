@@ -1,10 +1,11 @@
 \babel@toc {spanish}{}\relax 
+\contentsline {paragraph}{Palabras clave}{\es@scroman {vi}}{section*.4}%
 \contentsline {chapter}{\numberline {1}Introducción}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Contexto}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Motivación}{1}{section.1.2}%
 \contentsline {section}{\numberline {1.3}Problemática}{1}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Alcance y limitaciones}{2}{section.1.4}%
-\contentsline {subsection}{\numberline {1.4.1}Delimitación del vocabulario y asesoramiento lingüístico}{2}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.1}Delimitación del vocabulario y asesoramiento lingüístico}{3}{subsection.1.4.1}%
 \contentsline {subsection}{\numberline {1.4.2}Límites operativos y comportamiento ante entradas no contempladas}{3}{subsection.1.4.2}%
 \contentsline {subsection}{\numberline {1.4.3}Infraestructura de despliegue}{4}{subsection.1.4.3}%
 \contentsline {chapter}{\numberline {2}Objetivos}{5}{chapter.2}%
@@ -30,7 +31,7 @@
 \contentsline {chapter}{\numberline {4}Análisis de requerimientos}{16}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Requerimientos funcionales}{16}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Requerimientos no funcionales}{17}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Restricciones}{17}{section.4.3}%
+\contentsline {section}{\numberline {4.3}Restricciones}{18}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Especificación del entorno de ejecución cliente}{18}{subsection.4.3.1}%
 \contentsline {paragraph}{Condiciones de funcionamiento}{19}{section*.9}%
 \contentsline {section}{\numberline {4.4}Casos de uso}{19}{section.4.4}%
@@ -40,23 +41,23 @@
 \contentsline {chapter}{\numberline {5}Diseño del Sistema}{26}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Arquitectura del sistema}{26}{section.5.1}%
 \contentsline {subsection}{\numberline {5.1.1}Justificación de la partición y modelo de privacidad}{26}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Variación artificial del conjunto de señas}{26}{subsection.5.1.2}%
-\contentsline {subsection}{\numberline {5.1.3}Flujo integral de datos entre componentes}{26}{subsection.5.1.3}%
-\contentsline {section}{\numberline {5.2}Diseño de contratos de API REST}{27}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}API local del motor ILSA}{28}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}API del servicio semántico remoto}{28}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}API del servicio de archivos del avatar}{28}{subsection.5.2.3}%
-\contentsline {section}{\numberline {5.3}Diseño de la representación gestual inversa}{30}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Procesamiento geométrico de coordenadas y segmentación temporal}{30}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}Preparación, acondicionamiento y ensamblado cinemático}{31}{subsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.3.3}Estrategia de contingencia léxica}{32}{subsection.5.3.3}%
-\contentsline {section}{\numberline {5.4}Diseño de la extensión de videollamada}{32}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Patrones de diseño de software aplicados}{32}{section.5.5}%
+\contentsline {subsection}{\numberline {5.1.2}Variación artificial del conjunto de señas}{27}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Flujo integral de datos entre componentes}{27}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}Diseño de contratos de API REST}{28}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}API local del motor ILSA}{29}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}API del servicio semántico remoto}{29}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}API del servicio de archivos del avatar}{29}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Diseño de la representación gestual inversa}{31}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Procesamiento geométrico de coordenadas y segmentación temporal}{31}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Preparación, acondicionamiento y ensamblado cinemático}{32}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Estrategia de contingencia léxica}{33}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Diseño de la extensión de videollamada}{33}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Patrones de diseño de software aplicados}{33}{section.5.5}%
 \contentsline {section}{\numberline {5.6}Diseño conceptual de la arquitectura escalable de producción en la nube}{34}{section.5.6}%
 \contentsline {subsection}{\numberline {5.6.1}Ingreso}{34}{subsection.5.6.1}%
-\contentsline {subsection}{\numberline {5.6.2}Traductor}{34}{subsection.5.6.2}%
-\contentsline {subsection}{\numberline {5.6.3}Archivos de seña}{34}{subsection.5.6.3}%
-\contentsline {subsection}{\numberline {5.6.4}Monitoreo}{34}{subsection.5.6.4}%
+\contentsline {subsection}{\numberline {5.6.2}Traductor}{35}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}Archivos de seña}{35}{subsection.5.6.3}%
+\contentsline {subsection}{\numberline {5.6.4}Monitoreo}{35}{subsection.5.6.4}%
 \contentsline {subsection}{\numberline {5.6.5}Qué queda fuera de las pruebas}{35}{subsection.5.6.5}%
 \contentsline {chapter}{\numberline {6}Implementación y Desarrollo}{36}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Estructura del código}{36}{section.6.1}%
@@ -82,56 +83,79 @@
 \contentsline {subsection}{\numberline {6.5.2}Decisiones técnicas de la reproducción}{51}{subsection.6.5.2}%
 \contentsline {paragraph}{Valores del compositor.}{51}{section*.11}%
 \contentsline {paragraph}{Postura de espera.}{51}{section*.12}%
-\contentsline {paragraph}{Reflejo de la miniatura local.}{51}{section*.13}%
+\contentsline {paragraph}{Reflejo de la miniatura local.}{52}{section*.13}%
 \contentsline {section}{\numberline {6.6}Instancia de validación del prototipo mediante microservicios en la nube}{52}{section.6.6}%
-\contentsline {chapter}{\numberline {7}Pruebas y validación}{54}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Plan de pruebas}{54}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}Alcance y tipos de pruebas}{54}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}Entornos de evaluación}{55}{subsection.7.1.2}%
-\contentsline {subsection}{\numberline {7.1.3}Equipo portátil de las pruebas de cliente}{55}{subsection.7.1.3}%
-\contentsline {subsection}{\numberline {7.1.4}Criterios de aceptación y trazabilidad}{55}{subsection.7.1.4}%
-\contentsline {section}{\numberline {7.2}Resultados de la verificación}{56}{section.7.2}%
-\contentsline {subsection}{\numberline {7.2.1}Evaluación del clasificador gestual (TinySkeletonClassifier)}{56}{subsection.7.2.1}%
-\contentsline {subsubsection}{Evolución del corpus y vocabulario}{56}{section*.14}%
-\contentsline {subsubsection}{Comparativa entre evaluación fuera de línea y cámara en vivo}{56}{section*.15}%
-\contentsline {subsubsection}{Resolución temporal: 16 frente a 32 fotogramas}{57}{section*.16}%
-\contentsline {subsubsection}{Búsqueda de hiperparámetros con Optuna}{57}{section*.17}%
-\contentsline {subsubsection}{Impacto de la corrección de relación de aspecto}{59}{section*.18}%
-\contentsline {subsubsection}{Evaluación en cámara del modelo de 100 clases}{59}{section*.19}%
-\contentsline {subsection}{\numberline {7.2.2}Resultados de los módulos de traducción semántica}{60}{subsection.7.2.2}%
-\contentsline {subsubsection}{Evaluación del canal directo (LSA a Español)}{60}{section*.20}%
-\contentsline {subsubsection}{Evaluación del canal inverso (Español a LSA)}{60}{section*.21}%
-\contentsline {subsection}{\numberline {7.2.3}Pruebas de la lógica de control del motor local}{61}{subsection.7.2.3}%
-\contentsline {subsection}{\numberline {7.2.4}Tratamiento de fallas de integración en Google Meet}{61}{subsection.7.2.4}%
-\contentsline {section}{\numberline {7.3}Métricas de calidad}{62}{section.7.3}%
-\contentsline {subsection}{\numberline {7.3.1}Pruebas de latencia y end-to-end en llamada real}{62}{subsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.3.2}Evaluación del uso de recursos de hardware en el dispositivo cliente}{63}{subsection.7.3.2}%
-\contentsline {subsection}{\numberline {7.3.3}Consumo de memoria y huella del sistema en servidor}{64}{subsection.7.3.3}%
-\contentsline {subsection}{\numberline {7.3.4}Comparativa de rendimiento según arquitectura de hardware}{65}{subsection.7.3.4}%
-\contentsline {chapter}{\numberline {8}Evaluación}{67}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Cumplimiento de objetivos}{67}{section.8.1}%
-\contentsline {subsection}{\numberline {8.1.1}Evaluación del objetivo general}{67}{subsection.8.1.1}%
-\contentsline {subsection}{\numberline {8.1.2}Evaluación de los objetivos específicos}{67}{subsection.8.1.2}%
-\contentsline {section}{\numberline {8.2}Limitaciones}{71}{section.8.2}%
-\contentsline {section}{\numberline {8.3}Riesgos detectados y estrategias de mitigación}{72}{section.8.3}%
-\contentsline {chapter}{\numberline {9}Conclusiones y trabajos futuros}{74}{chapter.9}%
-\contentsline {section}{\numberline {9.1}Conclusiones}{74}{section.9.1}%
-\contentsline {subsection}{\numberline {9.1.1}Síntesis del cumplimiento de objetivos}{74}{subsection.9.1.1}%
-\contentsline {subsection}{\numberline {9.1.2}Aportes técnicos e ingenieriles}{75}{subsection.9.1.2}%
-\contentsline {subsection}{\numberline {9.1.3}Impacto social y marco regulatorio}{75}{subsection.9.1.3}%
-\contentsline {section}{\numberline {9.2}Trabajos futuros}{76}{section.9.2}%
-\contentsline {subsection}{\numberline {9.2.1}Inclusión de la comunidad sorda y validación participativa}{76}{subsection.9.2.1}%
-\contentsline {subsection}{\numberline {9.2.2}Ampliación del dataset y captura multicámara}{76}{subsection.9.2.2}%
-\contentsline {subsection}{\numberline {9.2.3}Incorporación de rasgos no manuales y reconocimiento continuo}{76}{subsection.9.2.3}%
-\contentsline {subsection}{\numberline {9.2.4}Evolución hacia un avatar tridimensional (3D)}{76}{subsection.9.2.4}%
-\contentsline {subsection}{\numberline {9.2.5}Despliegue del clúster elástico multinodo en la nube}{77}{subsection.9.2.5}%
-\contentsline {subsection}{\numberline {9.2.6}Generalización a nuevas plataformas y ejecución local de SLM}{77}{subsection.9.2.6}%
-\contentsline {chapter}{Bibliografía}{78}{chapter*.22}%
-\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{82}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Ramas de entrenamiento y de servicios}{84}{appendix.B}%
-\contentsline {section}{\numberline {B.1}\textit {scratch-mediapipe-v3}: Repositorio de entrenamiento del clasificador}{84}{appendix.B.1}%
-\contentsline {section}{\numberline {B.2}\textit {semantic-cloud}: Servicio semántico en la nube}{85}{appendix.B.2}%
-\contentsline {section}{\numberline {B.3}\textit {semantic-v2}: Entrenamiento del canal directo}{85}{appendix.B.3}%
-\contentsline {section}{\numberline {B.4}\textit {semantic-reverse}: Entrenamiento del canal inverso}{86}{appendix.B.4}%
-\contentsline {section}{\numberline {B.5}\textit {avatar-cloud}: Servicio de poses del avatar}{87}{appendix.B.5}%
-\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{89}{appendix.C}%
+\contentsline {section}{\numberline {6.7}Contratos HTTP de las APIs}{53}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}Motor local ILSA}{53}{subsection.6.7.1}%
+\contentsline {subsubsection}{Instantánea compartida}{53}{section*.14}%
+\contentsline {subsubsection}{\texttt {GET /state}}{53}{section*.15}%
+\contentsline {subsubsection}{\texttt {GET /health}}{54}{section*.16}%
+\contentsline {subsubsection}{\texttt {GET /config}}{54}{section*.17}%
+\contentsline {subsubsection}{\texttt {GET /metrics}}{55}{section*.18}%
+\contentsline {subsubsection}{\texttt {POST /session}}{56}{section*.19}%
+\contentsline {subsubsection}{\texttt {POST /sign}}{56}{section*.20}%
+\contentsline {subsubsection}{\texttt {POST /stt}}{57}{section*.21}%
+\contentsline {subsubsection}{\texttt {POST /hearing}}{57}{section*.22}%
+\contentsline {subsubsection}{\texttt {POST /activity} y \texttt {POST /utterance/end}}{58}{section*.23}%
+\contentsline {subsubsection}{\texttt {POST /tts} y \texttt {POST /metrics/client}}{59}{section*.24}%
+\contentsline {subsubsection}{\texttt {GET /mediapipe/\{name\}} y \texttt {GET /download/exe}}{59}{section*.25}%
+\contentsline {subsection}{\numberline {6.7.2}Servicio semántico remoto}{59}{subsection.6.7.2}%
+\contentsline {subsubsection}{\texttt {GET /health}}{59}{section*.26}%
+\contentsline {subsubsection}{\texttt {POST /sign} y \texttt {POST /hearing}}{60}{section*.27}%
+\contentsline {subsection}{\numberline {6.7.3}Servicio de poses del avatar}{60}{subsection.6.7.3}%
+\contentsline {subsubsection}{\texttt {GET /health}}{61}{section*.28}%
+\contentsline {subsubsection}{\texttt {GET /tposes/\{glosa\}.pose}}{61}{section*.29}%
+\contentsline {subsubsection}{\texttt {GET /fingerspell}}{61}{section*.30}%
+\contentsline {chapter}{\numberline {7}Pruebas y validación}{62}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Plan de pruebas}{62}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Alcance y tipos de pruebas}{62}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Entornos de evaluación}{63}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}Equipo portátil de las pruebas de cliente}{63}{subsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.1.4}Criterios de aceptación y trazabilidad}{63}{subsection.7.1.4}%
+\contentsline {section}{\numberline {7.2}Resultados de la verificación}{64}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Evaluación del clasificador gestual (TinySkeletonClassifier)}{64}{subsection.7.2.1}%
+\contentsline {subsubsection}{Evolución del corpus y vocabulario}{64}{section*.31}%
+\contentsline {subsubsection}{Comparativa entre evaluación fuera de línea y cámara en vivo}{64}{section*.32}%
+\contentsline {subsubsection}{Resolución temporal: 16 frente a 32 fotogramas}{65}{section*.33}%
+\contentsline {subsubsection}{Búsqueda de hiperparámetros con Optuna}{65}{section*.34}%
+\contentsline {subsubsection}{Impacto de la corrección de relación de aspecto}{67}{section*.35}%
+\contentsline {subsubsection}{Evaluación en cámara del modelo de 100 clases}{67}{section*.36}%
+\contentsline {subsection}{\numberline {7.2.2}Resultados de los módulos de traducción semántica}{68}{subsection.7.2.2}%
+\contentsline {paragraph}{Configuración de las métricas.}{68}{section*.37}%
+\contentsline {subsubsection}{Evaluación del canal directo (LSA a Español)}{69}{section*.38}%
+\contentsline {subsubsection}{Evaluación del canal inverso (Español a LSA)}{69}{section*.39}%
+\contentsline {subsection}{\numberline {7.2.3}Pruebas de la lógica de control del motor local}{69}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}Tratamiento de fallas de integración en Google Meet}{70}{subsection.7.2.4}%
+\contentsline {section}{\numberline {7.3}Métricas de calidad}{70}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Pruebas de latencia y end-to-end en llamada real}{71}{subsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.3.2}Evaluación del uso de recursos de hardware en el dispositivo cliente}{73}{subsection.7.3.2}%
+\contentsline {subsection}{\numberline {7.3.3}Consumo de memoria y huella del sistema en servidor}{73}{subsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.3.4}Comparativa de rendimiento según arquitectura de hardware}{75}{subsection.7.3.4}%
+\contentsline {subsection}{\numberline {7.3.5}Señas aceptadas y rechazadas en llamada}{77}{subsection.7.3.5}%
+\contentsline {chapter}{\numberline {8}Evaluación}{78}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Cumplimiento de objetivos}{78}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}Evaluación del objetivo general}{78}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}Evaluación de los objetivos específicos}{78}{subsection.8.1.2}%
+\contentsline {section}{\numberline {8.2}Limitaciones}{82}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Riesgos detectados y estrategias de mitigación}{83}{section.8.3}%
+\contentsline {chapter}{\numberline {9}Conclusiones y trabajos futuros}{85}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Conclusiones}{85}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}Síntesis del cumplimiento de objetivos}{85}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}Aportes técnicos e ingenieriles}{86}{subsection.9.1.2}%
+\contentsline {subsection}{\numberline {9.1.3}Impacto social y marco regulatorio}{86}{subsection.9.1.3}%
+\contentsline {section}{\numberline {9.2}Trabajos futuros}{87}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}Inclusión de la comunidad sorda y validación participativa}{87}{subsection.9.2.1}%
+\contentsline {subsection}{\numberline {9.2.2}Ampliación del dataset y captura multicámara}{87}{subsection.9.2.2}%
+\contentsline {subsection}{\numberline {9.2.3}Incorporación de rasgos no manuales y reconocimiento continuo}{87}{subsection.9.2.3}%
+\contentsline {subsection}{\numberline {9.2.4}Evolución hacia un avatar tridimensional (3D)}{87}{subsection.9.2.4}%
+\contentsline {subsection}{\numberline {9.2.5}Despliegue del clúster elástico multinodo en la nube}{88}{subsection.9.2.5}%
+\contentsline {subsection}{\numberline {9.2.6}Generalización a nuevas plataformas y ejecución local de SLM}{88}{subsection.9.2.6}%
+\contentsline {chapter}{Bibliografía}{89}{chapter*.40}%
+\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{93}{appendix.Alph1}%
+\contentsline {chapter}{\numberline {B}Ramas de entrenamiento y de servicios}{95}{appendix.Alph2}%
+\contentsline {section}{\numberline {B.1}\textit {scratch-mediapipe-v3}: Repositorio de entrenamiento del clasificador}{95}{section.Alph2.1}%
+\contentsline {section}{\numberline {B.2}\textit {semantic-cloud}: Servicio semántico en la nube}{96}{section.Alph2.2}%
+\contentsline {section}{\numberline {B.3}\textit {semantic-v2}: Entrenamiento del canal directo}{96}{section.Alph2.3}%
+\contentsline {section}{\numberline {B.4}\textit {semantic-reverse}: Entrenamiento del canal inverso}{97}{section.Alph2.4}%
+\contentsline {section}{\numberline {B.5}\textit {avatar-cloud}: Servicio de poses del avatar}{98}{section.Alph2.5}%
+\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{100}{appendix.Alph3}%

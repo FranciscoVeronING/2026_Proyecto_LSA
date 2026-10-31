@@ -62,13 +62,56 @@
 \@writefile{toc}{\contentsline {paragraph}{Valores del compositor.}{51}{section*.11}\protected@file@percent }
 \newlabel{eq:ema_pose}{{6.7}{51}{Valores del compositor}{equation.6.7}{}}
 \@writefile{toc}{\contentsline {paragraph}{Postura de espera.}{51}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Reflejo de la miniatura local.}{51}{section*.13}\protected@file@percent }
 \def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Reflejo de la miniatura local.}{52}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6.6}Instancia de validación del prototipo mediante microservicios en la nube}{52}{section.6.6}\protected@file@percent }
 \newlabel{sec:arquitectura_produccion}{{6.6}{52}{Instancia de validación del prototipo mediante microservicios en la nube}{section.6.6}{}}
 \def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {6.7}Contratos HTTP de las APIs}{53}{section.6.7}\protected@file@percent }
+\newlabel{sec:contratos_http}{{6.7}{53}{Contratos HTTP de las APIs}{section.6.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.1}Motor local ILSA}{53}{subsection.6.7.1}\protected@file@percent }
+\newlabel{sec:contrato-api-local}{{6.7.1}{53}{Motor local ILSA}{subsection.6.7.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Instantánea compartida}{53}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /state}}{53}{section*.15}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces Campos de la instantánea del modo sordo (\texttt  {GET /state}).}}{54}{table.6.2}\protected@file@percent }
+\newlabel{tab:api-local-snapshot}{{6.2}{54}{Campos de la instantánea del modo sordo (\texttt {GET /state})}{table.6.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{54}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /config}}{54}{section*.17}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces Campos de \texttt  {GET /config} en modo sordo.}}{55}{table.6.3}\protected@file@percent }
+\newlabel{tab:api-local-config}{{6.3}{55}{Campos de \texttt {GET /config} en modo sordo}{table.6.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /metrics}}{55}{section*.18}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /session}}{56}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign}}{56}{section*.20}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Errores y rechazos de \texttt  {POST /sign}.}}{57}{table.6.4}\protected@file@percent }
+\newlabel{tab:api-local-sign-err}{{6.4}{57}{Errores y rechazos de \texttt {POST /sign}}{table.6.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /stt}}{57}{section*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /hearing}}{57}{section*.22}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /activity} y \texttt  {POST /utterance/end}}{58}{section*.23}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /tts} y \texttt  {POST /metrics/client}}{59}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /mediapipe/\{name\}} y \texttt  {GET /download/exe}}{59}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.2}Servicio semántico remoto}{59}{subsection.6.7.2}\protected@file@percent }
+\newlabel{sec:contrato-api-semantico}{{6.7.2}{59}{Servicio semántico remoto}{subsection.6.7.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{59}{section*.26}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign} y \texttt  {POST /hearing}}{60}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.3}Servicio de poses del avatar}{60}{subsection.6.7.3}\protected@file@percent }
+\newlabel{sec:contrato-api-avatar}{{6.7.3}{60}{Servicio de poses del avatar}{subsection.6.7.3}{}}
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {6.5}{\ignorespaces Errores del servicio semántico remoto.}}{61}{table.6.5}\protected@file@percent }
+\newlabel{tab:api-sem-err}{{6.5}{61}{Errores del servicio semántico remoto}{table.6.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{61}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /tposes/\{glosa\}.pose}}{61}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /fingerspell}}{61}{section*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.6}{\ignorespaces Errores de \texttt  {GET /fingerspell}.}}{61}{table.6.6}\protected@file@percent }
+\newlabel{tab:api-avatar-err}{{6.6}{61}{Errores de \texttt {GET /fingerspell}}{table.6.6}{}}
 \@setckpt{capitulos/cap06_implementacion}{
-\setcounter{page}{54}
+\setcounter{page}{62}
 \setcounter{equation}{7}
 \setcounter{enumi}{3}
 \setcounter{enumii}{0}
@@ -78,22 +121,22 @@
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{chapter}{6}
-\setcounter{section}{6}
-\setcounter{subsection}{0}
+\setcounter{section}{7}
+\setcounter{subsection}{3}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
 \setcounter{figure}{3}
-\setcounter{table}{1}
+\setcounter{table}{6}
 \setcounter{parentequation}{0}
-\setcounter{section@level}{1}
+\setcounter{section@level}{3}
 \setcounter{Item}{30}
 \setcounter{Hfootnote}{0}
-\setcounter{bookmark@seq@number}{76}
+\setcounter{bookmark@seq@number}{80}
 \setcounter{float@type}{8}
 \setcounter{FancyVerbLine}{0}
 \setcounter{linenumber}{1}
-\setcounter{LN@truepage}{60}
+\setcounter{LN@truepage}{68}
 \setcounter{FancyVerbWriteLine}{0}
 \setcounter{FancyVerbBufferLine}{0}
 \setcounter{FV@TrueTabGroupLevel}{0}
@@ -218,6 +261,6 @@
 \setcounter{smartand}{1}
 \setcounter{bbx:relatedcount}{0}
 \setcounter{bbx:relatedtotal}{0}
-\setcounter{lstnumber}{1}
+\setcounter{lstnumber}{2}
 \setcounter{lstlisting}{0}
 }

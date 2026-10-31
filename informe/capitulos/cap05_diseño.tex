@@ -15,11 +15,15 @@ La cámara transfiere la imagen directamente desde el equipo hacia Google Meet p
 
 Debido al consumo de memoria y al costo computacional de los modelos de lenguaje, la traducción se aloja en un servicio remoto. Hacia este componente solo se transmiten cadenas de texto, representadas por la secuencia de glosas o la oración en español. Aunque este flujo no incluye material de video, el texto puede incluir datos personales como nombres o números de documento. Por su parte, el servidor de poses procesa la solicitud a partir del nombre de una glosa o las letras de un deletreo, para luego retornar el archivo correspondiente.
 
+El traductor y el servidor de poses no archivan ese texto. Cada réplica opera sin estado: la cadena permanece en memoria solo mientras dura la solicitud y se descarta al responder o al apagar el contenedor.
+
+En el equipo, ILSA retiene el último texto y el búfer de glosas mientras dura la sesión. Encender, Reiniciar o Apagar vacían esa memoria. La instrumentación de latencia escribe, en \texttt{\%LOCALAPPDATA\%/ILSA/metrics/live-AAAAMMDD.jsonl}, la glosa y la oración de cada emisión. Ese archivo no tiene plazo de retención: queda en el disco hasta que se borra a mano. Lo ven quien usa esa computadora y, en la videollamada, quienes reciben el subtítulo o la voz. Si la reunión se graba, el subtítulo queda en esa grabación, fuera del control de ILSA. Las rutas locales \texttt{GET /state} y \texttt{GET /metrics} exponen el último texto al panel, en \texttt{127.0.0.1}.
+
 \subsection{Variación artificial del conjunto de señas}
 El corpus de señas reúne tres personas en seis sesiones de grabación. Una toma de ese conjunto no cubre otra velocidad, otra posición de cámara ni un fotograma que el extractor pierde. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
 
 \subsection{Flujo integral de datos entre componentes}
-La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación, mientras que la red transmite exclusivamente mensajes en formato JSON.
+La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación. Hacia el traductor salen mensajes JSON, glosas u oración. El servidor de poses entrega el archivo \texttt{.pose} en binario, no en JSON. Esta descripción no incluye el video ni el audio que transmite Meet.
 
 \begin{figure}[!ht]
     \centering
@@ -43,7 +47,7 @@ La interacción entre el navegador, el motor local y los servicios remotos se or
 % Flechas Cliente
 \draw [-{Stealth[scale=1.5]}] (3.25,12.5) -- (3.25,11.375) node[pos=0.45, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{fotogramas};
 
-\draw [-{Stealth[scale=1.5]}] (2.375,10.625) -- (2.375,8.875) node[pos=0.5, align=center, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{frames \\ coordenadas \\ audio};
+\draw [-{Stealth[scale=1.5]}] (2.375,10.625) -- (2.375,8.875) node[pos=0.5, align=center, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{coordenadas \\ audio};
 
 \draw [-{Stealth[scale=1.5]}] (3.75,8.875) -- (3.75,10.625) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{subtitulos};
 
@@ -160,10 +164,20 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 
 \draw [-{Stealth[scale=1.5]}] (-1.5,5.125) -- (10.125,5.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Muestras subtítulos};
 
-\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (2.875,4.75) rectangle (5.625,4.25);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.25,4.5) {síntesis de voz};
+\draw [dash pattern=on 6pt off 2pt] (-2.15,4.95) rectangle (5.85,3.18);
+\node[anchor=north east, align=right, inner xsep=0.050cm, inner ysep=0.040cm, rounded corners=0.020cm, font=\fontsize{7.0pt}{8.2pt}\selectfont] at (5.75,4.88) {[Audio o Ambos]};
 
-\draw [-{Stealth[scale=1.5]}] (4.25,3.75) -- (10.125,3.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{voz};
+\draw [-{Stealth[scale=1.5]}] (1.375,4.55) -- (4.25,4.55) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /tts};
+
+\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (2.875,4.3) rectangle (5.625,3.85);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.25,4.075) {síntesis WAV};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (4.25,3.6) -- (1.375,3.6) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{WAV};
+
+\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (0.2,3.48) rectangle (2.55,3.22);
+\node[anchor=center, align=center, inner xsep=0.050cm, inner ysep=0.020cm, rounded corners=0.020cm, font=\fontsize{7.2pt}{8.6pt}\selectfont] at (1.375,3.35) {mezcla en pista};
+
+\draw [-{Stealth[scale=1.5]}] (1.375,3.28) -- (-1.5,3.28) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{audio};
 
 \draw [-{Stealth[scale=1.5]}] (-4.375,14.125) -- (-1.5,14.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{movimiento};
 
@@ -205,7 +219,7 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 \label{fig:diagrama_secuencia_directo}
 \end{figure}
 
-En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también.
+En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también. Con Audio o Ambos, la extensión pide el WAV a ILSA por \texttt{POST /tts}. El script de la página mezcla ese WAV con el micrófono y sustituye la pista de audio que Meet envía. Esa mezcla es la que oye el resto de la llamada. El sintetizador del navegador no entra en esa pista.
 
 \begin{figure}[!ht]
     \centering
@@ -305,7 +319,7 @@ En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa l
 \draw [-{Stealth[scale=1.5]}] (2.5,2.625) -- (-0.375,2.625) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Subtítulo/esqueleto};
 \draw [-{Stealth[scale=1.5]}] (-0.375,2.25) -- (14.25,2.25) node[pos=0.5,above, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Avatar señando / subtítulos};
 \draw [dashed] (4.875,11.25) rectangle (10.375,8.5);
-\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (10.225,11.1) {[Si 2+ glosas]};
+\node[anchor=north east, align=right, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (10.225,11.1) {[Si 2+ palabras]};
 \end{circuitikz}
 }%
 \caption{Diagrama de secuencia del canal inverso, de español a LSA.}
@@ -423,6 +437,7 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
     POST & \texttt{/session} & Apertura de sesión. El cuerpo fija la lateralidad mediante \texttt{left\_handed}. & 200, 503 \\ \hline
     POST & \texttt{/sign} & Ingesta de hasta 60 fotogramas para clasificación en modo señante. & 200, 400, 503 \\ \hline
     POST & \texttt{/stt} & Transcripción de audio WAV en Base64 a texto en modo oyente. & 200, 400, 502 \\ \hline
+    POST & \texttt{/tts} & Síntesis de un WAV de la oración, para mezclarlo en el audio de Meet. & 200, 400, 502 \\ \hline
     POST & \texttt{/hearing} & Envío de oración y recepción de animación en modo oyente. & 200, 400, 503 \\ \hline
     POST & \texttt{/activity} & Reinicio del temporizador de pausa de inactividad ($\sim 4$\,s). & 200, 503 \\ \hline
     POST & \texttt{/utterance/\allowbreak end} & Cierre explícito del enunciado y disparo de traducción. & 200, 503 \\ \hline
@@ -430,6 +445,8 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
     GET & \texttt{/download/exe} & Entrega del ejecutable del motor local. & 200, 404 \\ \hline
   \end{tabularx}
 \end{table}
+
+El Cuadro nombra las rutas. Los cuerpos, los campos obligatorios, las unidades y los errores están en la Sección~\ref{sec:contrato-api-local}.
 
 \subsection{API del servicio semántico remoto}
 \label{sec:api-semantico-remoto}
@@ -450,6 +467,8 @@ El microservicio remoto en la nube expone contratos REST sobre HTTPS para resolv
   \end{tabular}
 \end{table}
 
+Los cuerpos, las unidades y los errores de esas rutas están en la Sección~\ref{sec:contrato-api-semantico}.
+
 \subsection{API del servicio de archivos del avatar}
 \label{sec:api-avatar}
 El subsistema de representación gestual de salida consulta un repositorio de archivos cinemáticos binarios. El Cuadro~\ref{tab:api-avatar-endpoints} detalla las rutas disponibles.
@@ -468,6 +487,8 @@ El subsistema de representación gestual de salida consulta un repositorio de ar
     \bottomrule
   \end{tabular}
 \end{table}
+
+Los cuerpos, las unidades y los errores de esas rutas están en la Sección~\ref{sec:contrato-api-avatar}.
 
 \section{Diseño de la representación gestual inversa}
 \label{sec:repr_inversa}
@@ -512,13 +533,13 @@ Este puente ejecuta una traslación suave sobre las coordenadas planares. Se exp
     \addlinespace[2pt]
     Inexistencia de archivo para una glosa. & Activación del subsistema de deletreo manual dactilológico. \\
     \addlinespace[2pt]
-    Secuencias extensas ($>24$ glosas o $>1200$ cuadros). & Truncado de la secuencia en el límite máximo tolerable. \\
+    Secuencias extensas (más de 24 clips o más de 1200 cuadros). & El 24 cuenta los clips que se dibujan, no las glosas de entrada. Si una glosa no tiene archivo, cada letra del deletreo es un clip: un nombre de cinco letras ocupa cinco. Al llegar a 24, el resto queda en texto. Los 1200 cuadros cortan el bloque ya empalmado. \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
 \subsection{Estrategia de contingencia léxica}
-Ante palabras ausentes en el vocabulario grabado (nombres propios o términos técnicos), el sistema aplica un mecanismo de descomposición dactilológica. La palabra se segmenta en sus letras constituyentes y se sintetiza mediante la secuencia correspondiente de caracteres del alfabeto dactilológico al consultar el endpoint específico \texttt{/fingerspell}.
+Ante palabras ausentes en el vocabulario grabado (nombres propios o términos técnicos), el sistema aplica un mecanismo de descomposición dactilológica. La palabra se segmenta en sus letras constituyentes y se sintetiza mediante la secuencia correspondiente de caracteres del alfabeto dactilológico al consultar el endpoint específico \texttt{/fingerspell}. Esos clips de letra entran al tope de 24 de la fila anterior: una sola glosa puede consumir varios de esos 24.
 
 \section{Diseño de la extensión de videollamada}
 \label{sec:diseno_extension}

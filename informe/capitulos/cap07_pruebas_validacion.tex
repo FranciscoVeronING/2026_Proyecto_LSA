@@ -32,7 +32,7 @@ Las pruebas se ejecutaron en tres entornos representativos:
 
 \subsection{Equipo portátil de las pruebas de cliente}
 \label{sec:laptop_prueba}
-La sesión de la Sección~\ref{sec:perfilado_cliente_recursos} corrió en una laptop con Windows 11 Home. El Cuadro~\ref{tab:laptop_prueba} reúne los componentes de ese equipo. El nombre comercial del equipo no quedó registrado. La toma del 30 de octubre de 2026, con RAM y CPU del navegador, corrió en la estación de escritorio y está en la Sección~\ref{sec:hw_comparacion}.
+La sesión de la Sección~\ref{sec:perfilado_cliente_recursos} corrió en una laptop con Windows 11 Home. El Cuadro~\ref{tab:laptop_prueba} reúne los componentes de ese equipo. El nombre comercial del equipo no quedó registrado. La toma del 30 de octubre de 2026 se midió en esa laptop y en la estación de escritorio: cada máquina guardó el lado de quien seña y el de quien escucha. La PC está en la Sección~\ref{sec:hw_comparacion}.
 
 \begin{table}[H]
     \centering
@@ -250,7 +250,18 @@ Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar di
 \label{sec:res_traduccion}
 \label{sec:eval_semantica_cuant}
 
-La evaluación de los modelos de lenguaje reducidos (SLM) cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
+La evaluación de los SLM cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
+
+\paragraph{Configuración de las métricas.}
+Los índices de los Cuadros~\ref{tab:sem_directo} y~\ref{tab:sem_inverso} salen de \texttt{src/semantic/metrics.py}. Ese archivo lo llama \texttt{eval\_trial.py}, en las ramas de entrenamiento del Apéndice~\ref{ap:ramas}. El corte de 119 y 102 filas, y el uso de varias respuestas por entrada, están en la Sección~\ref{sec:eval_lora}.
+
+La preparación del texto no lematiza ni borra puntuación. BERTScore y COMET recortan espacios en los extremos y reemplazan una cadena vacía por un espacio, para no pasarle una cadena nula al modelo. BLEU, ROUGE-L y METEOR reciben la cadena tal cual, sin ese reemplazo.
+
+Con varias referencias, BLEU es el BLEU de corpus de la biblioteca \texttt{evaluate}: usa la lista completa de respuestas de cada entrada. ROUGE-L, METEOR, BERTScore y COMET toman, en cada oración, el máximo entre esas referencias. El número de la tabla es la media de las 119 o de las 102 oraciones, en escala $0$--$100$.
+
+BERTScore usa la biblioteca \texttt{bert-score} con \texttt{lang=es} \parencite{zhang2020bertscore}. Ese parámetro carga \texttt{bert-base-multilingual-cased}. No se aplica ponderación IDF ni el reescalado con la línea de base del idioma. El valor informado es el F1 medio.
+
+COMET usa el checkpoint \texttt{Unbabel/wmt22-comet-da} mediante \texttt{unbabel-comet} 2.2.7 \parencite{rei2020comet}. Recibe la entrada del ejemplo, la salida y la referencia. En el canal directo la entrada son las glosas; en el inverso, el español. Ese checkpoint se entrenó con pares de texto escrito, no con glosas de LSA. Un puntaje alto no demuestra, por sí solo, que las glosas sean correctas en LSA.
 
 \subsubsection{Evaluación del canal directo (LSA a Español)}
 En el Cuadro~\ref{tab:sem_directo} se presentan las métricas cualitativas y cuantitativas para el canal directo.
@@ -359,7 +370,7 @@ La evaluación objetiva del sistema se consolidó mediante métricas cuantificab
 \label{sec:eval_telemetria_vivo}
 \label{sec:latencias_pipeline}
 
-Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa, en la laptop de la Sección~\ref{sec:laptop_prueba}. Durante dicha sesión se capturaron eventos en ambos canales de traducción (directo e inverso), con registro de la latencia por etapa, de \texttt{RAM\_mb} y \texttt{CPU\_percent} del proceso ILSA, y de la tasa de fotogramas por segundo (FPS). Ese registro no trae la RAM ni la CPU del navegador.
+Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa, en la laptop de la Sección~\ref{sec:laptop_prueba}. El registro de quien seña y el de quien escucha cubren los dos canales. Quedan la latencia por etapa, \texttt{RAM\_mb} y \texttt{CPU\_percent} de ILSA, \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} de Edge, el heap de JavaScript, las glosas por oración, la vía (\texttt{llm} o léxica), el STT y las poses del inverso, y la tasa de fotogramas (FPS).
 
 En el Cuadro~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
 
@@ -373,12 +384,31 @@ En el Cuadro~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, m
 \textbf{Métrica de ejecución} & \textbf{Canal Directo (LSA $\rightarrow$ Esp)} & \textbf{Canal Inverso (Esp $\rightarrow$ LSA)} & \textbf{Unidad} \\
 \midrule
 Eventos registrados & 16 & 11 & oraciones \\
+Vía & 15 LLM, 1 léxica & 10 LLM, 1 léxica & oraciones \\
+Glosas por oración & $3{,}6$ ($1$ -- $10$) & $3{,}1$ ($1$ -- $6$) & glosas \\
+Caracteres de entrada & $17{,}3$ ($4$ -- $36$) & $17{,}6$ ($4$ -- $25$) & car. \\
+Caracteres de salida & $17{,}2$ ($5$ -- $27$) & $15{,}2$ ($4$ -- $25$) & car. \\
 Pausa de cierre (configurada) & $4126{,}5 \pm 68{,}0$ & $0{,}0$ & ms \\
+Cola de inferencia & $0{,}0$ & $0{,}0$ & ms \\
 Tiempo de inferencia remota & $1527{,}9$ ($0{,}0$ -- $2525{,}5$) & $1407{,}3$ ($0{,}0$ -- $2224{,}1$) & ms \\
+Inferencia del modelo $\le 2$\,s & 14/15 & 9/10 & oraciones \\
 Tiempo de transporte de red & $299{,}1$ ($0{,}0$ -- $350{,}2$) & $278{,}5$ ($0{,}0$ -- $376{,}1$) & ms \\
 Tiempo de entrega / renderizado & $0{,}4$ ($0{,}2$ -- $1{,}0$) & $988{,}9$ ($175{,}3$ -- $2945{,}1$) & ms \\
 Latencia total de procesamiento & $1827{,}5$ ($0{,}3$ -- $2853{,}2$) & $2674{,}7$ ($175{,}3$ -- $4707{,}7$) & ms \\
+Espera hasta el subtítulo & $5830{,}9$ ($3958{,}0$ -- $6866{,}0$) & $2674{,}7$ ($175{,}3$ -- $4707{,}7$) & ms \\
+Transcripción local & N/A & $1658{,}0$ ($1015{,}7$ -- $3762{,}8$) & ms \\
+WAV de cada locución & N/A & $64{,}7$ ($42{,}8$ -- $84{,}8$) & KB \\
+Descarga de poses & N/A & $82{,}1$ ($0{,}0$ -- $479{,}0$); 9/11 en caché & ms \\
+Armado del clip & N/A & $203{,}8$ ($58{,}7$ -- $499{,}0$) & ms \\
+Consultas de pose / aciertos de caché & N/A & $116$ / $68$ & n \\
+Glosas sin archivo & N/A & 3 oraciones & n \\
+Ñ restaurada & N/A & 2 oraciones & n \\
 RAM de ILSA & $114{,}4$ ($82{,}3$ -- $222{,}1$) & $247{,}7$ ($200{,}3$ -- $286{,}7$) & MB \\
+RAM de Edge & $2062{,}9$ ($1793{,}9$ -- $2640{,}6$) & $2324{,}6$ ($2049{,}5$ -- $2487{,}6$) & MB \\
+CPU de Edge & $199{,}0$ ($143{,}1$ -- $347{,}2$) & $174{,}4$ ($133{,}6$ -- $219{,}3$) & \% \\
+Procesos de Edge & $19$ -- $20$ & $19$ & n \\
+Heap JS de la página & $105{,}5$ ($78{,}9$ -- $209{,}8$) & $164{,}1$ ($92{,}1$ -- $260{,}4$) & MB \\
+Heap JS de Holistic & $3{,}9$ ($0{,}8$ -- $7{,}3$) & N/A & MB \\
 Tasa de procesamiento (Holistic) & $0{,}1$ -- $12{,}4$ & N/A & FPS \\
 Tasa de renderizado cliente & $10{,}8$ -- $40{,}9$ & $32{,}9$ -- $40{,}5$ & FPS \\
 Cumplimiento RNF-01 ($< 2{,}0$\,s) & 93{,}8\,\% (15/16) & 90{,}9\,\% (10/11) & aciertos \\
@@ -389,30 +419,31 @@ Cumplimiento RNF-01 ($< 2{,}0$\,s) & 93{,}8\,\% (15/16) & 90{,}9\,\% (10/11) & a
 \subsection{Evaluación del uso de recursos de hardware en el dispositivo cliente}
 \label{sec:perfilado_cliente_recursos}
 
-A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada. \texttt{RAM\_mb} y \texttt{CPU\_percent} pertenecen al proceso de Python de ILSA (\texttt{os.getpid()}). \texttt{RAM\_mb} es el working set de ese proceso. \texttt{CPU\_percent} es el porcentaje de CPU del mismo proceso y supera el 100\,\% cuando el proceso usa varios núcleos. El navegador queda fuera de esas dos columnas. Esta toma no registró \texttt{Browser\_RAM\_mb} ni \texttt{Browser\_CPU\_percent}. La extensión puede enviar, aparte, \texttt{js\_heap\_mb}: el heap de JavaScript de la página. Ese heap no es la RAM del proceso del navegador.
+A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada. \texttt{RAM\_mb} y \texttt{CPU\_percent} pertenecen al proceso de Python de ILSA (\texttt{os.getpid()}). \texttt{RAM\_mb} es el working set de ese proceso. \texttt{CPU\_percent} es el porcentaje de CPU del mismo proceso y supera el 100\,\% cuando el proceso usa varios núcleos. \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} suman los procesos \texttt{msedge.exe}: 19 o 20 en el directo, 19 en el inverso. La extensión envía, aparte, \texttt{js\_heap\_mb}: el heap de JavaScript de la página. Ese heap no es la RAM del proceso del navegador.
 
 En el Cuadro~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
 
 \begin{table}[H]
 \centering
-\small
-\caption{RAM y CPU de ILSA en la laptop durante la prueba activa. El navegador no entra en este cuadro.}
+\footnotesize
+\caption{RAM y CPU de ILSA y de Edge en la laptop durante la prueba activa.}
 \label{tab:perfilado_recursos_log}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lcccc@{}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-\textbf{Canal} & \textbf{RAM media (MB)} & \textbf{RAM máx. (MB)} & \textbf{CPU media} & \textbf{CPU máx.} \\
+\textbf{Canal} & \textbf{ILSA media} & \textbf{ILSA máx.} & \textbf{ILSA CPU} & \textbf{Edge media} & \textbf{Edge máx.} & \textbf{Edge CPU} \\
 \midrule
-Directo & 114{,}36 & 222{,}10 & 9{,}33\,\% & 60{,}10\,\% \\
-Inverso & 247{,}67 & 286{,}70 & 40{,}02\,\% & 98{,}40\,\% \\
+Directo & 114{,}4\,MB & 222{,}1\,MB & 9{,}33\,\% (60{,}1\,\%) & 2062{,}9\,MB & 2640{,}6\,MB & 199{,}0\,\% (347{,}2\,\%) \\
+Inverso & 247{,}7\,MB & 286{,}7\,MB & 40{,}02\,\% (98{,}4\,\%) & 2324{,}6\,MB & 2487{,}6\,MB & 174{,}4\,\% (219{,}3\,\%) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 El análisis de perfilado muestra los siguientes comportamientos:
 \begin{itemize}
-\item \textbf{Eficiencia en memoria:} La RAM de ILSA en el canal directo descendió desde 222{,}1 MB hasta un régimen de 82{,}3 MB. En el canal inverso se estabilizó cerca de 247{,}7 MB.
-\item \textbf{Carga del procesador:} Durante el procesamiento del canal directo la CPU de ILSA permaneció en 9{,}33\,\% de promedio. En el canal inverso, Vosk y el armado de las secuencias llevaron la media a 40{,}02\,\%, con un pico de 98{,}40\,\%.
+\item \textbf{Eficiencia en memoria:} La RAM de ILSA en el canal directo descendió desde 222{,}1 MB hasta un régimen de 82{,}3 MB. En el canal inverso se estabilizó cerca de 247{,}7 MB. Edge quedó cerca de 2{,}1\,GB en el directo y de 2{,}3\,GB en el inverso.
+\item \textbf{Carga del procesador:} Durante el procesamiento del canal directo la CPU de ILSA permaneció en 9{,}33\,\% de promedio, con un pico de 60{,}1\,\% en la oración y de 176{,}3\,\% en el muestreo continuo. En el canal inverso, Vosk y el armado de las secuencias llevaron la media a 40{,}02\,\%, con un pico de 98{,}40\,\% en la oración y de 184{,}8\,\% en el muestreo continuo. La CPU de Edge tiene media 199{,}0\,\% en el directo y 174{,}4\,\% en el inverso.
+\item \textbf{Heap de la página:} En el directo el heap de Meet queda en $105{,}5$\,MB ($78{,}9$ -- $209{,}8$). El documento de Holistic queda en $3{,}9$\,MB ($0{,}8$ -- $7{,}3$). En el inverso el heap de la página sube a $164{,}1$\,MB ($92{,}1$ -- $260{,}4$).
 \end{itemize}
 
 \subsection{Consumo de memoria y huella del sistema en servidor}
@@ -504,6 +535,9 @@ El Cuadro~\ref{tab:telemetria_pc} usa el tramo del registro que trae esas column
 \toprule
 \textbf{Métrica} & \textbf{Canal directo} & \textbf{Canal inverso} \\
 \midrule
+Glosas por oración, media (mín.--máx.) & $3{,}3$ ($1$ -- $9$) & $3{,}1$ ($1$ -- $5$) \\
+Caracteres de entrada, media (mín.--máx.) & $12{,}9$ ($1$ -- $28$) & $15{,}0$ ($4$ -- $30$) \\
+Caracteres de salida, media (mín.--máx.) & $12{,}6$ ($2$ -- $21$) & $15{,}2$ ($4$ -- $22$) \\
 Inferencia del modelo, media (mín.--máx.) & 1521{,}3\,ms (942{,}0 -- 2178{,}1) & 1545{,}9\,ms (1004{,}4 -- 2088{,}8) \\
 Inferencia del modelo $\le 2$\,s & 17/20 & 14/15 \\
 Transporte del modelo, media (mín.--máx.) & 291{,}5\,ms (267{,}0 -- 361{,}1) & 301{,}1\,ms (272{,}2 -- 403{,}1) \\
@@ -520,11 +554,51 @@ FPS del lienzo & 179{,}7 -- 201{,}3 & 192{,}0 -- 200{,}1 \\
 FPS de Holistic & 22{,}4 -- 28{,}9; una muestra en 0 & N/A \\
 Clasificador, mediana (máximo) & 1{,}4\,ms (80{,}4\,ms) & N/A \\
 Transcripción local, media (mín.--máx.) & N/A & 417{,}4\,ms (261{,}6 -- 1040{,}2) \\
+WAV de cada locución, media (mín.--máx.) & N/A & 53{,}0\,KB (34{,}8 -- 75{,}3) \\
 Armado del clip, media (mín.--máx.) & N/A & 37{,}2\,ms (4{,}1 -- 116{,}5) \\
+Consultas de pose / aciertos de caché & N/A & $143$ / $68$ \\
+Ñ restaurada & N/A & 1 oración \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-La meta de 2\,s cubre la inferencia del modelo. En esas filas quedan 17 de 20 y 14 de 15. Las 5 oraciones locales del directo y las 3 del inverso tienen inferencia 0, y el registro las cuenta dentro del techo: 22 de 25 y 17 de 18. De 98 señas del directo, 83 entran a la frase y 15 quedan fuera, con confianza bajo 0,75. En 10 de 18 oraciones del inverso la descarga de poses queda en 0\,ms, con el archivo ya en caché. Las otras 8 tardan de 320{,}9 a 1254{,}4\,ms. Cuatro oraciones tienen una glosa sin archivo y una restaura la Ñ. De 14 locuciones, tres no devuelven texto.
+La meta de 2\,s cubre la inferencia del modelo. En esas filas quedan 17 de 20 y 14 de 15. Las 5 oraciones locales del directo y las 3 del inverso tienen inferencia 0, y el registro las cuenta dentro del techo: 22 de 25 y 17 de 18. En 10 de 18 oraciones del inverso la descarga de poses queda en 0\,ms, con el archivo ya en caché. Las otras 8 tardan de 320{,}9 a 1254{,}4\,ms. Cuatro oraciones tienen una glosa sin archivo y una restaura la Ñ. De 14 locuciones, tres no devuelven texto. En la laptop las 11 locuciones del inverso devolvieron texto (4 a 25 caracteres).
 
-El Cuadro~\ref{tab:perfilado_recursos_log} mide solo ILSA en la laptop. En la PC, ILSA queda cerca de 551\,MB en el directo y de 665\,MB en el inverso. Edge queda cerca de 3,7\,GB y de 4,0\,GB. La CPU de ILSA en la PC tiene mediana 2{,}4\,\% en el directo, con un muestreo de 746{,}4\,\%, y mediana 3{,}5\,\% en el inverso, con máximo 83{,}1\,\%. La CPU de Edge tiene media 187{,}7\,\% y 126{,}1\,\%. El lienzo de la PC va de 179{,}7 a 201{,}3\,FPS en el directo y de 192{,}0 a 200{,}1\,FPS en el inverso. Holistic en la PC, canal directo, va de 22{,}4 a 28{,}9\,FPS. En la laptop el mismo extractor va de 0{,}1 a 12{,}4\,FPS. Esas tasas describen el dibujo y el extractor.
+El Cuadro~\ref{tab:perfilado_recursos_log} incluye Edge en la laptop. En la PC, ILSA queda cerca de 551\,MB en el directo y de 665\,MB en el inverso. Edge queda cerca de 3,7\,GB y de 4,0\,GB. La CPU de ILSA en la PC tiene mediana 2{,}4\,\% en el directo, con un muestreo de 746{,}4\,\%, y mediana 3{,}5\,\% en el inverso, con máximo 83{,}1\,\%. La CPU de Edge tiene media 187{,}7\,\% y 126{,}1\,\%. El lienzo de la PC va de 179{,}7 a 201{,}3\,FPS en el directo y de 192{,}0 a 200{,}1\,FPS en el inverso. Holistic en la PC, canal directo, va de 22{,}4 a 28{,}9\,FPS. En la laptop el mismo extractor va de 0{,}1 a 12{,}4\,FPS. Esas tasas describen el dibujo y el extractor.
+
+\subsection{Señas aceptadas y rechazadas en llamada}
+\label{sec:senas_vivo}
+
+El lado de quien seña guarda una fila por cada toma: glosa, confianza Top-1 a Top-3, margen, tiempos del clasificador y de Holistic, fotogramas y payload. El umbral de 0{,}75 deja la seña fuera de la frase. El Cuadro~\ref{tab:senas_vivo} compara las 83 tomas de la laptop con las 98 de la PC.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption{Señas del canal directo en la toma del 30 de octubre de 2026.}
+\label{tab:senas_vivo}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{5.2cm} X X@{}}
+\toprule
+\textbf{Métrica} & \textbf{Laptop} & \textbf{PC} \\
+\midrule
+Señas registradas & 83 & 98 \\
+Entran a la frase & 58 & 83 \\
+Quedan fuera (confianza $< 0{,}75$) & 25 & 15 \\
+Clases distintas (todas / aceptadas) & 41 / 37 & 37 / 35 \\
+Confianza media en aciertos & $0{,}981$ ($0{,}806$ -- $1{,}000$) & $0{,}956$ ($0{,}756$ -- $1{,}000$) \\
+Confianza media en rechazos & $0{,}594$ ($0{,}345$ -- $0{,}741$) & $0{,}587$ ($0{,}298$ -- $0{,}741$) \\
+Margen Top-1 $-$ Top-2, media & $0{,}770$ & $0{,}830$ \\
+Clasificador, mediana (máximo) & $7{,}2$\,ms ($88{,}2$) & $1{,}4$\,ms ($80{,}4$) \\
+Preparación del tensor, media & $8{,}3$\,ms & $2{,}4$\,ms \\
+Holistic por seña, media (mín.--máx.) & $209{,}1$\,ms ($176$ -- $271$) & $27{,}2$\,ms ($18$ -- $40$) \\
+JPEG por seña, media & $31{,}2$\,ms ($1$ -- $81$) & N/A \\
+Captura, media (mín.--máx.) & $1616{,}7$\,ms ($845$ -- $2738$) & $1461{,}1$\,ms ($776$ -- $2705$) \\
+Fotogramas enviados, media (mín.--máx.) & $8{,}5$ ($5$ -- $13$) & $16$ (fijo) \\
+Fotogramas crudos, media (mín.--máx.) & $8{,}5$ ($5$ -- $13$) & $38{,}6$ ($21$ -- $72$) \\
+Payload JPEG, media (mín.--máx.) & $29{,}4$\,KB ($16{,}3$ -- $54{,}1$) & N/A \\
+Mano dominante & derecha en las 83 & derecha en las 98 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+En la laptop el rechazo es 25 de 83. Las glosas que más caen por confianza son \texttt{mio} (5), \texttt{3} (4) y \texttt{6} (3). En la PC el rechazo es 15 de 98, con más caídas en \texttt{O} (3), \texttt{6} (2) y \texttt{hermano\_a} (2). La laptop envía de 5 a 13 fotogramas; la PC recorta 16 de 21 a 72 crudos. Holistic por seña pasa de $209$\,ms en la laptop a $27$\,ms en la PC. El clasificador queda en $7{,}2$\,ms de mediana en la laptop y en $1{,}4$\,ms en la PC. La primera seña de cada máquina es la más lenta: $88{,}2$\,ms y $80{,}4$\,ms.

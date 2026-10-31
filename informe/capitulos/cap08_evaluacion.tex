@@ -15,7 +15,7 @@ La valoración de los resultados se realiza a través de la trazabilidad directa
 \subsection{Evaluación del objetivo general}
 El objetivo general consistió en desarrollar un prototipo funcional de traducción bidireccional entre la LSA y el español rioplatense en tiempo pseudo-real, integrado en una plataforma de videoconferencia mediante una arquitectura híbrida cliente-nube.
 
-El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos. En el canal directo, la sesión integrada puso la oración en el video compuesto; con Audio o Ambos, la página pide la voz al sintetizador del navegador. En el canal inverso traduce voz o texto a la animación de un avatar esquelético. La visión queda en el cliente y la inferencia de lenguaje, en la nube, sin enviar video a los servicios de traducción y de poses (Sección~\ref{sec:particion_privacidad}). 
+El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos. En el canal directo, la sesión integrada puso la oración en el video compuesto; con Audio o Ambos, ILSA sintetiza un WAV y el script de la página lo mezcla en la pista de audio de Meet. En el canal inverso traduce voz o texto a la animación de un avatar esquelético. La visión queda en el cliente y la inferencia de lenguaje, en la nube, sin enviar video a los servicios de traducción y de poses (Sección~\ref{sec:particion_privacidad}). 
 
 \subsection{Evaluación de los objetivos específicos}
 
@@ -48,7 +48,7 @@ A continuación se analiza el grado de logro de cada uno de los objetivos espec�
 
     \item \textbf{Desarrollo de la extensión web e integración con Google Meet:}
     \textit{Estado: Alcanzado.}
-    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. La sesión integrada inyectó el lienzo en Google Meet (\texttt{captureStream()}), en cumplimiento de RF-08. RF-09 se comprobó en el panel de ILSA. Con el traductor y el servidor de poses en marcha, Encender, Reiniciar y Apagar vuelven a la pantalla de carga y después abren el panel principal. Sin red, Encender mantiene la carga, muestra Reintentar y deja el panel principal cerrado. Al volver la red, Reintentar repite la consulta y abre el panel. RNF-05 se comprobó en una llamada de dos personas, con el popup de la extensión cerrado y la tarjeta del HUD en su posición inicial. En modo seña y en modo oyente, en la pantalla de quien usa el sistema y en la de la otra persona, la cara y las manos del interlocutor quedaron libres.
+    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. La sesión integrada inyectó el lienzo en Google Meet (\texttt{captureStream()}), en cumplimiento de RF-08. RF-09 se comprobó en el panel de ILSA. Al iniciar la aplicación, al Encender un modo o al Reiniciar, con el traductor y el servidor de poses en marcha, vuelve a la pantalla de carga y después abre el panel principal. Sin red, Encender mantiene la carga, muestra Reintentar y deja el panel principal cerrado. Al volver la red, Reintentar repite la consulta y abre el panel. Al Apagar, la sesión se detiene y el panel queda a la vista, sin esa consulta. RNF-05 se comprobó en una llamada de dos personas, con el popup de la extensión cerrado y la tarjeta del HUD en su posición inicial. En una captura de $1920 \times 1080$ esa tarjeta mide $382 \times 77$ píxeles, $15$\,px desde el borde izquierdo y $156$\,px desde el borde superior; queda $49$\,px por encima del recuadro de video. En modo seña y en modo oyente, en la pantalla de quien usa el sistema y en la de la otra persona, la cara y las manos del interlocutor quedaron libres.
 
     \item \textbf{Evaluación integral del sistema y medición de desempeños:}
     \textit{Estado: Parcial.}
@@ -70,7 +70,7 @@ El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los o
         \addlinespace[2pt]
         2. Canal directo & RF-03 & Cuadro~\ref{tab:sem_directo}, Qwen2.5 1,5B: exacto 94,96\,\%; BERTScore 99,20; COMET 97,36. Latencia media de 1444,4\,ms. & Alcanzado \\
         \addlinespace[2pt]
-        3. Emisión al oyente & RF-04 & Subtítulo: la oración queda en la franja del video compuesto de la sesión integrada. Audio y Ambos: la página pide la voz al sintetizador del navegador. & Alcanzado \\
+        3. Emisión al oyente & RF-04 & Subtítulo: la oración queda en la franja del video compuesto de la sesión integrada. Audio y Ambos: ILSA sintetiza un WAV; el script de la página lo mezcla en la pista de audio de Meet. & Alcanzado \\
         \addlinespace[2pt]
         4. Canal inverso & RF-06 & Cuadro~\ref{tab:sem_inverso}: Exactitud exacta de 91,18\,\%. Latencia media de 1368,2\,ms. & Alcanzado \\
         \addlinespace[2pt]
@@ -80,9 +80,9 @@ El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los o
         \addlinespace[2pt]
         7. Privacidad biométrica & RNF-02 & Puntos clave en el cliente. Solo el traductor y el servidor de poses reciben texto, un nombre de glosa o letras. El video compuesto sale hacia Meet. & Alcanzado \\
         \addlinespace[2pt]
-        8. Extensión web & RF-08, RF-09 & RF-08: la sesión integrada inyectó el lienzo en Meet. RF-09: con los dos servicios, Encender, Reiniciar y Apagar vuelven a la carga y abren el panel. Sin red, Encender deja Reintentar y el panel cerrado; al volver la red, Reintentar abre el panel. & Alcanzada \\
+        8. Extensión web & RF-08, RF-09 & RF-08: la sesión integrada inyectó el lienzo en Meet. RF-09: al iniciar, Encender o Reiniciar, con los dos servicios, vuelve a la carga y abre el panel. Sin red, Encender deja Reintentar y el panel cerrado; al volver la red, Reintentar abre el panel. Apagar detiene la sesión sin consultar los servicios. & Alcanzada \\
         \addlinespace[2pt]
-        9. Usabilidad & RNF-05 & Llamada de dos personas, tarjeta en la posición inicial y popup cerrado. En modo seña y en modo oyente, en las dos pantallas, la cara y las manos quedaron libres. & Alcanzado \\
+        9. Usabilidad & RNF-05 & Llamada de dos personas, popup cerrado. Tarjeta inicial $382 \times 77$\,px, arriba a la izquierda ($15$\,px, $156$\,px) en $1920 \times 1080$, $49$\,px sobre el video. En modo seña y en modo oyente, en las dos pantallas, la cara y las manos quedaron libres. & Alcanzado \\
         \addlinespace[2pt]
         10. Evaluación integral & RNF-01, RC-05 & RNF-01 parcial: solo la inferencia. Directo: media 1444,4\,ms, 7 de 9 bajo 2\,s. Inverso: media 1368,2\,ms, 6 de 7 bajo 2\,s. Faltan la espera en el servidor, registros para repetir las mediciones, la revisión lingüística y el vínculo de algunos requisitos con sus pruebas. RC-05: mínimo propuesto. La laptop medida está en la Sección~\ref{sec:laptop_prueba}. & Parcial \\
         \bottomrule

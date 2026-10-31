@@ -172,7 +172,7 @@ Para la traducción semántica bidireccional se adaptaron modelos de lenguaje pe
     \item \textbf{Familia Llama 3.2:} Variante de instrucciones de 1B parámetros.
     \item \textbf{Familia SmolLM2:} Variante de instrucciones de 1,7B parámetros.
 \end{itemize}
-En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El contrato de esas rutas está en la Sección~\ref{sec:api-semantico-remoto}.
+En el servidor, cada canal arranca con Qwen2.5 de 1,5B y, si ese archivo no está disponible, con Llama 3.2 de 1B. El inventario de esas rutas está en la Sección~\ref{sec:api-semantico-remoto}. Los cuerpos, las unidades y los errores están en la Sección~\ref{sec:contrato-api-semantico}.
 
 \subsection{Régimen de entrenamiento y ajuste LoRA}
 El canal directo y el canal inverso comparten el mismo procedimiento de entrenamiento. El corpus se divide en un 85\,\% para entrenamiento y un 15\,\% para evaluación. Esta separación utiliza la semilla $3407$, la misma del entrenador, para que cualquier prueba se repita en las mismas condiciones. Cada ejemplo del conjunto de datos representa una interacción de tres partes: las instrucciones iniciales del sistema (\textit{prompt}), el mensaje del usuario y la respuesta esperada. La ventana de procesamiento admite hasta $2048$ tokens.
@@ -273,7 +273,7 @@ donde $\mathbf{W}$ representa el tamaño de los tensores cuantizados y $KV_{\tex
 
 \subsection{Secuencia completa de inferencia y comunicación multidireccional}
 
-El motor local de la plataforma determina el modo operativo antes de cualquier interacción con la extensión de navegador. A través del panel de control, el usuario configura la lateralidad (diestro o zurdo) y el canal de comunicación (Sordo u Oyente). Las acciones de encendido, reinicio o apagado retornan a la pantalla de carga. La interfaz principal solo habilita sus funciones si el traductor semántico y el servidor de posturas responden correctamente.
+El motor local de la plataforma determina el modo operativo antes de cualquier interacción con la extensión de navegador. A través del panel de control, el usuario configura la lateralidad (diestro o zurdo) y el canal de comunicación (Sordo u Oyente). Al iniciar la aplicación, al Encender un modo o al Reiniciar, ILSA vuelve a la pantalla de carga y solo habilita el panel si el traductor semántico y el servidor de poses responden. Al Apagar, detiene la sesión y queda en el panel: no vuelve a la carga ni consulta esos servicios.
 
 El proceso principal escucha peticiones en una dirección de red local. Dado que las políticas de seguridad de Google Chrome identifican esa dirección como una red interna restringida, la página de la llamada no puede comunicarse con ella de forma directa. Por este motivo, el módulo en segundo plano de la extensión opera como intermediario, mientras que el documento secundario sin pantalla y la ventana emergente —al pertenecer al mismo origen de la extensión— entran en contacto directo con el motor local.
 
@@ -307,7 +307,7 @@ Cada seña segmentada se envía mediante un paquete de datos que contiene única
 Tras un intervalo de 4 segundos sin actividad manual en la cámara, el sistema transmite la orden de cierre de frase. ILSA arma el español en el equipo si el enunciado es una sola glosa léxica, solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y el resto de las frases van al servidor semántico. Si el módulo de traducción no emite respuesta, el motor conserva las señas aceptadas en formato de texto original sin reestructurar la oración.
 
 \item \textbf{Emisión de salidas en el Canal Directo (Modo Sordo):} 
-El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En las configuraciones con Audio o Salida Doble, la página solicita una locución en español a la interfaz de voz nativa del navegador.
+El sistema recibe la traducción en español y la publica en la página de la llamada. El módulo de video graba este texto sobre una franja oscura en la zona inferior del lienzo virtual, el cual conforma la imagen que los demás participantes observan. La capa visual del panel mantiene el texto visible durante 8 segundos. En la modalidad con salida por Subtítulo no se genera audio. En Audio o Ambos, la extensión pide a ILSA un WAV por \texttt{POST /tts}. ILSA lo sintetiza con la voz de Windows. El script inyectado en la página de Meet decodifica ese WAV, lo mezcla con el micrófono en un \textit{AudioContext} y sustituye la pista de audio que Meet envía a la llamada. Esa mezcla es el componente que incorpora la voz al audio de Meet: el sintetizador del navegador no entra en esa pista. Quien seña oye la locución por los parlantes locales. Si el micrófono de Meet está silenciado, la voz no sale a la llamada y la extensión muestra un aviso.
 
 \item \textbf{Procesamiento de entrada por voz en el Canal Inverso (Modo Oyente):} 
 En la modalidad para personas oyentes, la extensión arma un WAV de un canal, en PCM lineal de 16 bits y a 16\,kHz, y lo envía en \texttt{POST /stt}. El cuerpo lleva ese archivo en Base64. Base64 no comprime el audio: reescribe los mismos bytes como texto, y el cuerpo queda más largo que el WAV. El motor local decodifica ese texto y transcribe con un modelo de voz en español, en el propio equipo. Si la conversión no produce texto, la interfaz solicita repetir la locución o recurrir al canal de texto.
@@ -329,7 +329,9 @@ La expresión regular se usa porque la extensión todavía no está publicada en
 
 Ese control no autentica al llamador. La API local no exige credencial, y un programa de la misma computadora puede consultar el puerto sin presentar el origen de una extensión. El servidor responde además con la cabecera de acceso a red privada (\texttt{Access-Control-Allow-Private-Network: true}), requerida cuando una página HTTPS realiza peticiones hacia el dominio local.
 
-La emisión de voz sintética se desacopló mediante un hilo de ejecución secundario que consume una cola secuencial de mensajes, lo que evita bloqueos en la atención de las solicitudes HTTP de la API. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) mediante PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
+La voz de salida se sintetiza en ILSA, en \texttt{POST /tts}, con la API de Windows. El WAV vuelve a la extensión y el script de la página lo suma a la pista de audio de Meet. El motor local se empaquetó como un ejecutable independiente de Windows (\texttt{ILSA.exe}) mediante PyInstaller, e incluye una interfaz gráfica desarrollada en Tkinter para permitir la selección de modo (Sordo u Oyente), la configuración de la mano dominante y el control de encendido del servicio.
+
+Los cuerpos, las unidades y los errores de cada ruta local están en la Sección~\ref{sec:contrato-api-local}.
 
 \section{Implementación del avatar}
 
@@ -392,3 +394,416 @@ El proceso de despliegue e integración en la nube se llevó a cabo bajo los sig
 \end{enumerate}
 
 El motor local ILSA y la extensión de navegador se enlazaron con las URLs públicas HTTPS de ambas instancias en Cloud Run. Esta integración confirmó la correcta transmisión de cargas textuales y la recuperación de activos para la sintaxis del avatar en tiempo pseudo-real y mantiene liberados los núcleos de cómputo y la memoria del dispositivo cliente.
+
+\section{Contratos HTTP de las APIs}
+\label{sec:contratos_http}
+
+Los Cuadros~\ref{tab:api-ilsa-local},~\ref{tab:api-semantico-endpoints} y~\ref{tab:api-avatar-endpoints} del Capítulo~\ref{cap:diseno_sistema} nombran las rutas. Esta sección fija lo que se envía, lo que se recibe, qué campo es obligatorio, en qué unidad se expresa y qué ocurre si el pedido falla. El contrato local coincide con \texttt{src/backend/server.py} del commit \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/5974ac79d41ec6738e554354aad44ba963e5f412}. El semántico coincide con la rama \texttt{semantic-cloud}. El de poses, con \texttt{avatar-cloud}.
+
+Las tres APIs hablan JSON UTF-8, salvo las que entregan un archivo. El encabezado de un \texttt{POST} con cuerpo es \texttt{Content-Type: application/json}. Los tiempos van en milisegundos. La confianza del clasificador es un número en $[0, 1]$. Un cuerpo que no cumple el esquema de Pydantic responde HTTP 422; el detalle lista el campo y el motivo. Ese código no figura en los cuadros del diseño: lo agrega FastAPI al validar.
+
+\subsection{Motor local ILSA}
+\label{sec:contrato-api-local}
+
+La base es \texttt{http://127.0.0.1:8765}. No hay token. Encender en la ventana de ILSA crea la sesión. Mientras esa sesión no existe, \texttt{GET /health} responde 200 con \texttt{ok} en falso y el resto de las rutas de sesión responde 503, con \texttt{detail} igual a «El backend todavía no inicializó el pipeline.». El modo \texttt{signer} es el canal sordo. El modo \texttt{hearing} es el canal oyente.
+
+\subsubsection{Instantánea compartida}
+
+\texttt{GET /state}, \texttt{POST /session} y las respuestas de \texttt{POST /sign} y \texttt{POST /utterance/end} reutilizan el mismo objeto. El Cuadro~\ref{tab:api-local-snapshot} lista sus campos. En modo oyente el mismo objeto se reduce a \texttt{mode}, \texttt{classifier\_ready} (siempre falso), \texttt{semantic\_ready}, \texttt{semantic\_error}, \texttt{spanish}, \texttt{glosses} y \texttt{device}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Campos de la instantánea del modo sordo (\texttt{GET /state}).}
+  \label{tab:api-local-snapshot}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.4cm} l l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Campo} & \textbf{Obligatorio} & \textbf{Unidad} & \textbf{Significado} \\
+    \midrule
+    \texttt{left\_handed} & sí & adimensional & \texttt{true} si la sesión es zurda. \\
+    \texttt{classifier\_ready} & sí & adimensional & El \texttt{.pth} está en memoria. \\
+    \texttt{num\_classes} & sí & cantidad & Clases del mapeo; el prototipo usa 100. \\
+    \texttt{semantic\_ready} & sí & adimensional & El \texttt{GET /health} remoto respondió 2xx. \\
+    \texttt{semantic\_error} & sí & texto & Vacío si no hay fallo. \\
+    \texttt{semantic\_model} & sí & texto & En este prototipo, \texttt{remote}. \\
+    \texttt{semantic\_busy} & sí & adimensional & Traducción en curso. \\
+    \texttt{top3} & sí & lista & Hasta tres pares \texttt{gloss} y \texttt{confidence} $\in [0, 1]$. \\
+    \texttt{glosses} & sí & lista de textos & Búfer del enunciado aún no cerrado. \\
+    \texttt{pending\_text} & sí & texto & Esas glosas unidas por espacio. \\
+    \texttt{spanish} & sí & texto & Última oración emitida. \\
+    \texttt{last\_utterance} & sí & texto & Última secuencia enviada al traductor. \\
+    \texttt{device} & sí & texto & Dispositivo del clasificador; aquí \texttt{cpu}. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsubsection{\texttt{GET /state}}
+
+Sin cuerpo. HTTP 200 con el objeto del Cuadro~\ref{tab:api-local-snapshot}, o 503 si aún no hay sesión. No agrega campos extra.
+
+\subsubsection{\texttt{GET /health}}
+
+Sin cuerpo. Siempre HTTP 200. Suma a la instantánea el modo, las etiquetas del traductor y una línea de métricas. \texttt{ok} es verdadero solo si ya hay sesión.
+
+\begin{lstlisting}[language=json]
+{
+  "ok": true,
+  "mode": "signer",
+  "classifier_ready": true,
+  "num_classes": 100,
+  "semantic_ready": true,
+  "semantic_error": "",
+  "semantic_model": "remote",
+  "semantic_label": "Remote translator",
+  "semantic_load": "cloud",
+  "device": "cpu",
+  "left_handed": false,
+  "metrics": "signs 12/15 - conf 91% - clf 40 ms"
+}
+\end{lstlisting}
+
+Si el traductor remoto no responde, \texttt{semantic\_ready} queda en falso, \texttt{semantic\_label} vale «Translator unavailable» o «No translator» y \texttt{semantic\_load} queda vacío. Eso no cambia el código HTTP.
+
+\subsubsection{\texttt{GET /config}}
+
+Sin cuerpo. HTTP 200 o 503. En modo oyente la respuesta es \texttt{\{"mode": "hearing"\}}. En modo sordo entrega los umbrales que usa la extensión para recortar. El Cuadro~\ref{tab:api-local-config} fija las unidades. El JSON de respuesta es el siguiente.
+
+\begin{lstlisting}[language=json]
+{
+  "max_frames": 16,
+  "min_capture_frames": 5,
+  "capture_buffer_size": 60,
+  "confidence_threshold": 0.75,
+  "inference_cooldown_sec": 1.0,
+  "utterance_pause_sec": 4.0,
+  "mode": "signer",
+  "left_handed": false,
+  "num_classes": 100
+}
+\end{lstlisting}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Campos de \texttt{GET /config} en modo sordo.}
+  \label{tab:api-local-config}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{5.15cm} l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Campo} & \textbf{Unidad} & \textbf{Valor del prototipo} \\
+    \midrule
+    \texttt{max\_frames} & fotogramas & 16, ventana del clasificador. \\
+    \texttt{min\_capture\_frames} & fotogramas & 5, piso para no rechazar la seña. \\
+    \texttt{capture\_buffer\_size} & fotogramas & 60, techo de lo que llega en \texttt{POST /sign}. \\
+    \texttt{confidence\_threshold} & adimensional & $0{,}75$ sobre la softmax. \\
+    \texttt{inference\_cooldown\_sec} & segundos & $1{,}0$ entre dos clasificaciones. \\
+    \texttt{utterance\_pause\_sec} & segundos & $4{,}0$ de inactividad para cerrar el enunciado. \\
+    \texttt{landmark\_motion\_threshold} & dist.\ interhumeral & $0{,}008$. \\
+    \texttt{motion\_pixel\_threshold} & píxeles & 500. El recorte en vivo no usa este valor. \\
+    \texttt{hands\_frames\_to\_start} & fotogramas & 2 con mano visible para abrir la captura. \\
+    \texttt{missing\_hands\_limit} & fotogramas & 12 sin mano para cerrar la captura. \\
+    \texttt{still\_frames\_limit} & fotogramas & 10. \\
+    \texttt{pose\_dim} & coordenadas & $33 \times 3 = 99$. \\
+    \texttt{mode} & texto & \texttt{signer}. \\
+    \texttt{left\_handed} & adimensional & Copia de la sesión. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsubsection{\texttt{GET /metrics}}
+
+Sin cuerpo. HTTP 200. Conteos de la sesión en curso y percentiles de tiempo en milisegundos. \texttt{file} es la ruta del JSONL diario en \texttt{\%LOCALAPPDATA\%/ILSA/metrics/}. \texttt{n\_sign}, \texttt{n\_accepted} y \texttt{n\_added} son cantidades de señas. \texttt{mean\_conf1} es la media de la primera confianza, en $[0, 1]$. Los percentiles dentro de \texttt{ms} están en milisegundos. \texttt{process.rss\_mb} está en mebibytes. \texttt{process.cpu\_percent} está en por ciento del proceso.
+
+\begin{lstlisting}[language=json]
+{
+  "file": "C:/Users/x/AppData/Local/ILSA/metrics/live-20261030.jsonl",
+  "n_sign": 15,
+  "n_accepted": 12,
+  "n_added": 9,
+  "n_utterance": 3,
+  "n_hearing": 0,
+  "mean_conf1": 0.91,
+  "via": {"literal": 1, "llm": 2, "fallback": 0},
+  "ms": {"classifier_p50": 40.0, "inference_p50": 410.0, "transport_p50": 95.0}
+}
+\end{lstlisting}
+
+\subsubsection{\texttt{POST /session}}
+
+El cuerpo admite \texttt{left\_handed} (booleano, por omisión \texttt{false}). La extensión lo envía. El servidor no lo aplica: la lateralidad queda fijada al Encender en la ventana de ILSA, para que una reconexión de Meet no cambie la mano ni borre el enunciado en curso. La respuesta es la instantánea, HTTP 200, o 503 si aún no hay sesión.
+
+\begin{lstlisting}[language=json]
+{"left_handed": false}
+\end{lstlisting}
+
+\subsubsection{\texttt{POST /sign}}
+
+Solo modo sordo. El campo obligatorio es \texttt{frames}: una lista de 1 a 60 fotogramas. Cada fotograma es un objeto con \texttt{pose}, \texttt{left\_hand} y \texttt{right\_hand}. Cada lista de puntos acepta como máximo 33 elementos. Un punto es \texttt{\{"x", "y", "z"\}} o una terna. \texttt{x} e \texttt{y} llegan como fracción del ancho y del alto de la imagen, según MediaPipe. \texttt{z} es la profundidad relativa de ese paquete, no un metro ni un píxel. El servidor ancla esos valores al punto medio de los hombros y los divide por la distancia interhumeral (Ecuaciones~\ref{eq:ancla_hombros} y~\ref{eq:norm_hombros}). Una lista ausente o nula se rellena con ceros. \texttt{client} es opcional: \texttt{capture\_ms} y \texttt{holistic\_ms} van en milisegundos; \texttt{n\_raw} es la cantidad de fotogramas antes del muestreo a 16.
+
+El ejemplo siguiente muestra un fotograma abreviado. El envío real lleva 33 puntos de pose y 21 de cada mano, y hasta 60 fotogramas.
+
+\begin{lstlisting}[language=json]
+{
+  "frames": [
+    {
+      "pose": [{"x": 0.51, "y": 0.42, "z": -0.08}],
+      "left_hand": null,
+      "right_hand": [{"x": 0.62, "y": 0.55, "z": 0.01}]
+    }
+  ],
+  "client": {"capture_ms": 180.0, "holistic_ms": 45.0, "n_raw": 24}
+}
+\end{lstlisting}
+
+HTTP 200 no significa que la glosa haya entrado al búfer. El servidor distingue el rechazo de aplicación del error de protocolo. El Cuadro~\ref{tab:api-local-sign-err} junta ambos. El JSON siguiente es una seña aceptada y agregada.
+
+\begin{lstlisting}[language=json]
+{
+  "accepted": true,
+  "added": true,
+  "activity": true,
+  "gloss": "HOLA",
+  "confidence": 0.91,
+  "reject_reason": "",
+  "ms": 42.0,
+  "glosses": ["HOLA"],
+  "pending_text": "HOLA",
+  "spanish": "",
+  "left_handed": false,
+  "classifier_ready": true,
+  "num_classes": 100,
+  "semantic_ready": true,
+  "top3": [{"gloss": "hola", "confidence": 0.91}]
+}
+\end{lstlisting}
+
+\texttt{ms} es el tiempo total de esa petición, en milisegundos. \texttt{confidence} es la primera softmax, en $[0, 1]$. Si \texttt{added} es falso y la confianza queda bajo $0{,}75$, \texttt{reject\_reason} vale \texttt{confidence}. Si la compuerta de repetición la frena, vale \texttt{repeat}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Errores y rechazos de \texttt{POST /sign}.}
+  \label{tab:api-local-sign-err}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{HTTP} & \textbf{Campo o \texttt{detail}} & \textbf{Cuándo} \\
+    \midrule
+    400 & \texttt{Modo oyente: no se clasifican señas.} & La ventana está en modo oyente. \\
+    400 & \texttt{Faltan frames de la seña.} & \texttt{frames} llega vacío. \\
+    422 & lista de validación & Más de 60 fotogramas, un ítem que no es objeto, o más de 33 puntos en una lista. \\
+    503 & pipeline no inicializado & ILSA todavía no Encendió. \\
+    200 & \texttt{accepted: false}, \texttt{reason: cooldown} & Menos de $1{,}0$\,s desde la seña anterior. \\
+    200 & \texttt{accepted: false}, \texttt{reason: too\_short} & Menos de 5 fotogramas. \\
+    200 & \texttt{accepted: false}, \texttt{reason: bad\_tensor} & Tras el muestreo no quedan 16 filas. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsubsection{\texttt{POST /stt}}
+
+Solo modo oyente. El campo obligatorio es \texttt{wav\_b64}: el WAV en Base64. \texttt{lang} se acepta y se ignora; el modelo es español. El archivo es PCM lineal de 16 bits. Un canal se usa tal cual. Varios canales se reducen al primero. La tasa se remuestrea a $16$\,kHz si hace falta. Menos de $0{,}35$\,s de audio produce HTTP 200 con \texttt{spanish} vacío: no es un error. La extensión arma exactamente ese formato, un canal a $16$\,kHz.
+
+\begin{lstlisting}[language=json]
+{"wav_b64": "UklGRiQAAABXQVZFZm10IBAAAAABAAE...", "lang": "es-ES"}
+
+{"spanish": "hola me llamo maite", "ok": true}
+\end{lstlisting}
+
+Errores: 400 «Solo modo oyente.» si el modo es sordo; 400 «Falta el audio.» si \texttt{wav\_b64} viene vacío; 400 «WAV inválido» si Base64 no decodifica; 502 con el texto de la excepción si el WAV no es PCM de 16 bits o si Vosk no carga.
+
+\subsubsection{\texttt{POST /hearing}}
+
+Solo modo oyente. El campo de trabajo es \texttt{spanish} (texto). \texttt{final} es un booleano; por omisión \texttt{true}. Una cadena vacía no es error: HTTP 200 devuelve la instantánea sin traducir. Con \texttt{final} en falso tampoco traduce. Una sola palabra se pasa a mayúsculas y no sale a la nube. Dos o más palabras van al \texttt{POST /hearing} remoto. Después ILSA pide los archivos de pose y arma el clip.
+
+\begin{lstlisting}[language=json]
+{"spanish": "Hola, me llamo Maite.", "final": true}
+
+{
+  "closed": true,
+  "spanish": "Hola, me llamo Maite.",
+  "glosses": "YO NOMBRE Maite HOLA",
+  "caption": "YO NOMBRE Maite HOLA",
+  "pause_ms": 0.0,
+  "queue_ms": 12.0,
+  "inference_ms": 380.0,
+  "transport_ms": 90.0,
+  "delivery_ms": 210.0,
+  "avatar": {
+    "ok": true,
+    "fps": 30.0,
+    "w": 720,
+    "h": 780,
+    "shoulder": 250.0,
+    "played": ["YO", "NOMBRE", "M", "A", "I", "T", "E", "HOLA"],
+    "missing": [],
+    "frames": [{"p": [210, 180, 460, 180], "f": [], "l": [], "r": []}]
+  }
+}
+\end{lstlisting}
+
+\texttt{pause\_ms}, \texttt{queue\_ms}, \texttt{inference\_ms}, \texttt{transport\_ms} y \texttt{delivery\_ms} están en milisegundos. \texttt{fps} está en fotogramas por segundo. \texttt{w} y \texttt{h} están en píxeles del recuadro $720 \times 780$. \texttt{shoulder} es el ancho de hombros en píxeles. Cada fotograma de \texttt{avatar.frames} lleva \texttt{p}, \texttt{f}, \texttt{l} y \texttt{r}: enteros $x, y$ intercalados. El valor $-1$ marca un punto con confianza menor que $0{,}15$. El ejemplo recorta esas listas.
+
+Errores: 400 «Solo modo oyente.»; 400 «Esta sesión no acepta voz.» si la sesión no es la oyente; 503 si no hay sesión. Si el traductor o el servidor de poses fallan, HTTP sigue en 200: \texttt{glosses} puede quedar vacío y \texttt{avatar.ok} en falso, con \texttt{avatar.error} en texto y \texttt{frames} vacío.
+
+\subsubsection{\texttt{POST /activity} y \texttt{POST /utterance/end}}
+
+\texttt{POST /activity} no exige cuerpo. Reinicia el reloj de inactividad de $\sim 4$\,s. Responde \texttt{\{"ok": true\}}, o 503.
+
+\texttt{POST /utterance/end} cierra el búfer y traduce. El cuerpo es opcional. \texttt{pause\_ms} va en milisegundos; si falta, se usa $4000$. Sin glosas pendientes, HTTP 200 con \texttt{closed: false}. Con glosas, \texttt{closed: true}, la lista en \texttt{glosses}, la oración en \texttt{spanish} y \texttt{via} igual a \texttt{literal}, \texttt{lexical}, \texttt{llm} o \texttt{fallback}. \texttt{ms}, \texttt{pause\_ms}, \texttt{queue\_ms}, \texttt{inference\_ms} y \texttt{transport\_ms} están en milisegundos. 503 si no hay sesión.
+
+\begin{lstlisting}[language=json]
+{"pause_ms": 4000.0}
+
+{
+  "closed": true,
+  "glosses": ["HOLA", "YO", "NOMBRE", "Maite"],
+  "spanish": "Hola, me llamo Maite.",
+  "via": "llm",
+  "ms": 520.0,
+  "pause_ms": 4000.0,
+  "queue_ms": 8.0,
+  "inference_ms": 410.0,
+  "transport_ms": 95.0,
+  "delivery_ms": 0.0
+}
+\end{lstlisting}
+
+\subsubsection{\texttt{POST /tts} y \texttt{POST /metrics/client}}
+
+\texttt{POST /tts} es del modo sordo. El campo es \texttt{text}, como máximo 500 caracteres. Responde \texttt{wav\_b64}: un WAV PCM de la voz de Windows, en Base64. Errores: 400 «La voz en off es del modo sordo.»; 502 si Windows no sintetiza o si el texto llega vacío.
+
+\begin{lstlisting}[language=json]
+{"text": "Hola, me llamo Maite."}
+
+{"ok": true, "wav_b64": "UklGRiQAAABXQVZFZm10IBAAAAABAAE..."}
+\end{lstlisting}
+
+\texttt{POST /metrics/client} registra la entrega en el cliente. No figura en el Cuadro~\ref{tab:api-ilsa-local}. Campos opcionales: \texttt{channel} (\texttt{direct} u otro), \texttt{delivery\_ms} y \texttt{pause\_ms} en milisegundos, \texttt{fps} y \texttt{holistic\_fps} en fotogramas por segundo, \texttt{rss\_mb} y \texttt{js\_heap\_mb} en mebibytes. Responde \texttt{\{"ok": true\}} y el snapshot del proceso.
+
+\begin{lstlisting}[language=json]
+{"channel": "direct", "delivery_ms": 18.0, "fps": 24.0, "js_heap_mb": 85.3}
+\end{lstlisting}
+
+\subsubsection{\texttt{GET /mediapipe/\{name\}} y \texttt{GET /download/exe}}
+
+\texttt{GET /mediapipe/\{name\}} entrega un archivo estático de Holistic. \texttt{name} es el nombre de archivo, sin barras. Extensiones admitidas: \texttt{.wasm}, \texttt{.js}, \texttt{.data}, \texttt{.tflite}, \texttt{.binarypb}. HTTP 200 con el binario; 400 «Nombre inválido» o «Tipo de archivo no permitido»; 404 con \texttt{detail} «Falta» seguido del nombre, por ejemplo «Falta holistic.wasm».
+
+\texttt{GET /download/exe} entrega \texttt{ILSA.exe}. HTTP 200 con el binario; 404 «No hay .exe. En desarrollo usá: python run\_backend.py».
+
+\subsection{Servicio semántico remoto}
+\label{sec:contrato-api-semantico}
+
+ILSA llama a este servicio por HTTPS. El cuerpo es JSON. Si la variable \texttt{LSA\_SEMANTIC\_TOKEN} está vacía, no hay autenticación. Si tiene valor, el pedido debe repetirlo en \texttt{Authorization: Bearer \ldots} o en \texttt{X-LSA-Token}. Un token distinto responde 401, con \texttt{detail} igual a \texttt{Invalid token}. El alias \texttt{POST /translate} ejecuta lo mismo que \texttt{POST /sign}.
+
+\subsubsection{\texttt{GET /health}}
+
+Sin cuerpo. HTTP 200. \texttt{ready} es verdadero cuando los dos canales tienen un GGUF en memoria. \texttt{rss\_mb} está en mebibytes. \texttt{cpu\_percent} está en por ciento. Un 200 con \texttt{ready} en falso ocurre durante la carga: el ping de ILSA solo mira el código HTTP, no este campo.
+
+\begin{lstlisting}[language=json]
+{
+  "ok": true,
+  "ready": true,
+  "loading": false,
+  "load_error": null,
+  "primary": "qwen2.5-1.5b.gguf",
+  "backup": "llama-3.2-1b.gguf",
+  "sign_gguf": "src/semantic/models/sign/qwen2.5-1.5b.gguf",
+  "hearing_gguf": "src/semantic/models/hearing/qwen2.5-1.5b.gguf",
+  "model_used_sign": "qwen2.5-1.5b.gguf",
+  "model_used_hearing": "qwen2.5-1.5b.gguf",
+  "rss_mb": 2100.0,
+  "cpu_percent": 3.5
+}
+\end{lstlisting}
+
+\subsubsection{\texttt{POST /sign} y \texttt{POST /hearing}}
+
+El canal directo exige \texttt{glosses}. El inverso exige \texttt{spanish}. Ambos son texto de 1 a 2000 caracteres. ILSA envía la secuencia ya compacta, o la oración, sin el prefijo «Glosas:» ni «Español:»: eso lo antepone el servidor.
+
+\begin{lstlisting}[language=json]
+{"glosses": "HOLA YO NOMBRE Maite"}
+
+{
+  "spanish": "Hola, me llamo Maite.",
+  "glosses": "HOLA YO NOMBRE Maite",
+  "model_used": "qwen2.5-1.5b.gguf",
+  "ms": 410.0,
+  "inference_ms": 410.0,
+  "queued_ms": 8.0,
+  "queue_ms": 8.0
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=json]
+{"spanish": "Hola, me llamo Maite."}
+
+{
+  "glosses": "YO NOMBRE Maite HOLA",
+  "spanish": "Hola, me llamo Maite.",
+  "model_used": "qwen2.5-1.5b.gguf",
+  "ms": 390.0,
+  "inference_ms": 390.0,
+  "queued_ms": 5.0,
+  "queue_ms": 5.0
+}
+\end{lstlisting}
+
+\texttt{ms} e \texttt{inference\_ms} son el mismo reloj de inferencia, en milisegundos. \texttt{queued\_ms} y \texttt{queue\_ms} son la espera por el candado de \texttt{llama.cpp}, también en milisegundos. \texttt{model\_used} es el nombre del archivo GGUF que respondió.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Errores del servicio semántico remoto.}
+  \label{tab:api-sem-err}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{HTTP} & \textbf{\texttt{detail}} & \textbf{Cuándo} \\
+    \midrule
+    401 & \texttt{Invalid token} & Hay token configurado y el pedido no lo trae o no coincide. \\
+    422 & validación de Pydantic & Falta \texttt{glosses} o \texttt{spanish}, llega vacío o supera 2000 caracteres. \\
+    503 & texto de la excepción & No hay GGUF usable, el archivo no está o la inferencia lanza \texttt{RuntimeError}. \\
+    504 & corte de Cloud Run & La respuesta no salió en $300$\,s (arranca el contenedor incluido). \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Servicio de poses del avatar}
+\label{sec:contrato-api-avatar}
+
+Este servicio no genera animación: lee un archivo. La base es la URL pública de Cloud Run. El nombre pedido va en mayúsculas ASCII, sin tilde y sin eñe. ILSA convierte «ñ» en «n» (\texttt{MAÑANA} busca \texttt{MANANA.pose}). La letra Ñ, cuando es la glosa entera, se pide como \texttt{ENIE}. Los guiones bajos se borran: \texttt{VIVIR\_EN} busca \texttt{VIVIREN.pose}. Cada respuesta lleva el encabezado \texttt{X-ILSA-Ms} con el tiempo de esa lectura, en milisegundos.
+
+\subsubsection{\texttt{GET /health}}
+
+Sin cuerpo. HTTP 200 y \texttt{\{"status": "ok"\}}. No lista los archivos.
+
+\subsubsection{\texttt{GET /tposes/\{glosa\}.pose}}
+
+Sin cuerpo. El segmento \texttt{\{glosa\}} es el nombre sin extensión y sin espacios. HTTP 200 entrega el binario \texttt{.pose}, tipo \texttt{application/octet-stream}. HTTP 404 si ese nombre no está en la carpeta. No hay JSON de error en el 404 de archivos estáticos. ILSA interpreta el 404 como «no hay clip» y pasa al deletreo.
+
+\begin{lstlisting}
+GET /tposes/HOLA.pose
+\end{lstlisting}
+
+\subsubsection{\texttt{GET /fingerspell}}
+
+La query \texttt{letters} es obligatoria. Acepta repeticiones (\texttt{letters=M\&letters=A}) o una lista separada por comas (\texttt{letters=M,A,I,T,E}). Como máximo 20 letras por pedido. El alfabeto admitido es A--Z, \texttt{CH} y \texttt{ENIE} (la eñe). La respuesta 200 es \texttt{multipart/mixed}: cada parte es un \texttt{.pose}, con \texttt{X-Index} (entero desde 0) y \texttt{X-Letter} (la letra canónica). El encabezado \texttt{X-Count} es la cantidad de partes.
+
+\begin{lstlisting}
+GET /fingerspell?letters=M,A,I,T,E
+\end{lstlisting}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Errores de \texttt{GET /fingerspell}.}
+  \label{tab:api-avatar-err}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{HTTP} & \textbf{Cuerpo JSON} & \textbf{Cuándo} \\
+    \midrule
+    400 & \texttt{The request does not include any letters.} & \texttt{letters} llega vacío. \\
+    400 & tope de 20, con \texttt{received} y \texttt{limit} & Más de 20 tokens. \\
+    400 & \texttt{\{token\} is not a fingerspelling letter.} & El token no está en A--Z, \texttt{CH} ni \texttt{ENIE}. \\
+    404 & \texttt{No pose file exists for letter \{letter\}.} & La letra es válida y falta el archivo. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

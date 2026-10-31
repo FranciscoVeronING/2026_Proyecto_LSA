@@ -72,10 +72,20 @@
 
 \draw [-{Stealth[scale=1.5]}] (-1.5,5.125) -- (10.125,5.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{Muestras subtítulos};
 
-\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (2.875,4.75) rectangle (5.625,4.25);
-\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.25,4.5) {síntesis de voz};
+\draw [dash pattern=on 6pt off 2pt] (-2.15,4.95) rectangle (5.85,3.18);
+\node[anchor=north east, align=right, inner xsep=0.050cm, inner ysep=0.040cm, rounded corners=0.020cm, font=\fontsize{7.0pt}{8.2pt}\selectfont] at (5.75,4.88) {[Audio o Ambos]};
 
-\draw [-{Stealth[scale=1.5]}] (4.25,3.75) -- (10.125,3.75) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{voz};
+\draw [-{Stealth[scale=1.5]}] (1.375,4.55) -- (4.25,4.55) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{POST /tts};
+
+\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (2.875,4.3) rectangle (5.625,3.85);
+\node[anchor=center, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.25,4.075) {síntesis WAV};
+
+\draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (4.25,3.6) -- (1.375,3.6) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{WAV};
+
+\draw [draw opacity=0, fill={rgb,255:red,215; green,215; blue,215}, fill opacity=1] (0.2,3.48) rectangle (2.55,3.22);
+\node[anchor=center, align=center, inner xsep=0.050cm, inner ysep=0.020cm, rounded corners=0.020cm, font=\fontsize{7.2pt}{8.6pt}\selectfont] at (1.375,3.35) {mezcla en pista};
+
+\draw [-{Stealth[scale=1.5]}] (1.375,3.28) -- (-1.5,3.28) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{audio};
 
 \draw [-{Stealth[scale=1.5]}] (-4.375,14.125) -- (-1.5,14.125) node[pos=0.5, above, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{movimiento};
 
