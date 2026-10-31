@@ -3,14 +3,14 @@
 \label{cap:pruebas_validacion}
 % ====================================================================
 
-En el presente capítulo se expone la estrategia de verificación y validación del sistema de traducción en tiempo pseudo-real de LSA. Se detallan el plan de pruebas adoptado, la ejecución de los experimentos sobre los distintos componentes y el análisis cuantitativo y cualitativo de los resultados obtenidos frente a los requerimientos del proyecto. El objetivo central consiste en evidenciar la aplicación de criterios técnicos para evaluar el funcionamiento, el desempeño y la calidad del software, con una distinción clara entre planificación, ejecución y análisis de resultados.
+En el presente capítulo se expone la estrategia de verificación y validación del sistema de traducción en tiempo pseudo-real de LSA. Se detallan el plan de pruebas adoptado, la ejecución de los experimentos sobre los distintos componentes y el análisis cuantitativo y cualitativo de los resultados obtenidos frente a los requerimientos del proyecto. El objetivo central consiste en evidenciar la aplicación de criterios técnicos para evaluar el funcionamiento, el desempeño y la calidad del \textit{software}, con una distinción clara entre planificación, ejecución y análisis de resultados.
 
 % ====================================================================
 \section{Plan de pruebas}
 \label{sec:plan_pruebas}
 % ====================================================================
 
-El plan de pruebas establece la estrategia sistemática para comprobar el correcto funcionamiento, el desempeño en tiempo real y la calidad del software desarrollado.
+El plan de pruebas establece la estrategia sistemática para comprobar el correcto funcionamiento, el desempeño en tiempo real y la calidad del \textit{software} desarrollado.
 
 \subsection{Alcance y tipos de pruebas}
 La evaluación del sistema abarca desde la recolección de datos y el entrenamiento de modelos de aprendizaje profundo hasta la integración completa de los componentes en una videollamada web. Se aplicaron los siguientes tipos de pruebas:
@@ -66,10 +66,10 @@ Cada caso de prueba se vinculó de manera directa con los requerimientos funcion
         \toprule
         \textbf{Módulo} & \textbf{Requerimiento asociado} & \textbf{Criterio de aceptación} \\
         \midrule
-        Clasificador Gestual & RF-01, RF-02 & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
+        Clasificador Gestual & RF-02 & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
         Traductor Semántico & RF-03, RF-06 & Exactitud sintáctica/semántica $> 85\%$, BLEU $> 90$, BERTScore $> 98$. \\
-        Motor Local & RF-02, RF-09 & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
-        Integración Meet & RF-08 & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
+        Motor Local & RF-02 & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
+        Integración Meet & RF-04, RF-08 & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -86,7 +86,7 @@ Esta sección presenta la evidencia empírica obtenida a partir de la ejecución
 
 El modelo de clasificación gestual se evaluó tanto en entornos estáticos fuera de línea como en pruebas en vivo frente a cámara web en la estación local.
 
-\subsubsection{Evolución del corpus y vocabulario}
+\subsubsection{Evolución del \textit{corpus} y vocabulario}
 La incorporación de clases al modelo avanzó de manera paulatina conforme se consolidaron las muestras del dataset propio de LSA. En el Cuadro~\ref{tab:evolucion_corpus} se detalla la progresión del vocabulario y las muestras recopiladas.
 
 \begin{table}[H]
@@ -136,13 +136,13 @@ En el Cuadro~\ref{tab:brecha_offline_camara} se expone la diferencia observada e
 En las iteraciones de 94 clases, el control de la iluminación del entorno elevó el acierto en cámara del 67{,}0\,\% al 86{,}2\,\% en Top-1 sobre la misma arquitectura, sin modificar los pesos del modelo.
 
 \subsubsection{Resolución temporal: 16 frente a 32 fotogramas}
-El Cuadro~\ref{tab:frames_julio} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
+El Cuadro~\ref{tab:evaluacion_frames} sintetiza los experimentos realizados para determinar la longitud óptima de la ventana temporal de entrada.
 
 \begin{table}[H]
     \centering
     \small
-    \caption{Evaluación de la resolución temporal en julio de 2026 (91 clases, 50 videos por clase).}
-    \label{tab:frames_julio}
+    \caption{Evaluación de la resolución temporal (91 clases, 50 videos por clase).}
+    \label{tab:evaluacion_frames}
     \begin{tabularx}{\textwidth}{l X ccc}
         \toprule
         \textbf{Iteración} & \textbf{Arquitectura} & \textbf{Val. Top-1} & \textbf{Cám. Top-1} & \textbf{Cám. Top-3} \\
@@ -154,7 +154,7 @@ El Cuadro~\ref{tab:frames_julio} sintetiza los experimentos realizados para dete
     \end{tabularx}
 \end{table}
 
-A pesar de las ganancias iniciales observadas con 32 fotogramas, la incorporación de aumentaciones avanzadas de datos en agosto confirmó que la ventana de 16 fotogramas ofreció mayor capacidad de generalización sobre señas estáticas y redujo la redundancia temporal.
+A pesar de las ganancias iniciales observadas con 32 fotogramas, la incorporación de aumentaciones avanzadas de datos confirmó que la ventana de 16 fotogramas ofreció mayor capacidad de generalización sobre señas estáticas y redujo la redundancia temporal.
 
 \subsubsection{Búsqueda de hiperparámetros con Optuna}
 
@@ -215,7 +215,7 @@ La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales
 \label{sec:eval_100_camara}
 \label{sec:protocolo_camara}
 
-El prototipo integrado carga el modelo \texttt{model\_new\_2026\_10\_20}: 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$. Ese corte es por clip dentro de cada clase, como se describe en la Sección~\ref{sec:tinyskeleton}. Las mismas tres personas pueden estar en el entrenamiento y en la validación.
+El prototipo integrado carga el modelo de 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$. Ese corte es por clip dentro de cada clase, como se describe en la Sección~\ref{sec:tinyskeleton}. Las mismas tres personas pueden estar en el entrenamiento y en la validación.
 
 La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos; solo varió la iluminación de la habitación. Quien ejecuta el script anota la etiqueta de luz adecuada o reducida, dado que el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha, sin omitir tomas.
 
@@ -242,7 +242,7 @@ El Cuadro~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de i
     \end{tabular}
 \end{table}
 
-Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores y en todos ellos la seña solicitada ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, eñe y dígitos alcanza un 99{,}5\,\% de Top-1.
+Con luz adecuada, 97 señas registran diez aciertos en diez tomas. Restan cuatro errores y en todos ellos la seña solicitada ocupa el segundo lugar: \texttt{A} se confunde dos veces con \texttt{6}; \texttt{ahora\_hoy} una vez con \texttt{tuyo}; \texttt{repetir} una vez con \texttt{esposo\_a}. El subconjunto de 37 letras, ñ y dígitos alcanza un 99{,}5\,\% de Top-1.
 
 Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar diez aciertos sobre diez. El Top-3 permanece por encima del 98\,\%. Las caídas más marcadas en señas con diez o nueve aciertos con luz adecuada corresponden a \texttt{T} (3/10, hacia \texttt{I}), \texttt{como} (3/10, hacia \texttt{numero}), \texttt{años} (5/10, hacia \texttt{G}), \texttt{hola} (6/10, hacia \texttt{chau}) y \texttt{ahora\_hoy} (6/10, con destinos diversos). En trece tomas la seña solicitada no entra al Top-3. En luz reducida la confianza media de los errores asciende a $0{,}771$, indicador de que la red se equivoca con mayor certeza que con luz adecuada.
 
@@ -250,14 +250,14 @@ Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar di
 \label{sec:res_traduccion}
 \label{sec:eval_semantica_cuant}
 
-La evaluación de los SLM cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del corpus (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
+La evaluación de los SLM cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del \textit{corpus} (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
 
 \paragraph{Configuración de las métricas.}
 Los índices de los Cuadros~\ref{tab:sem_directo} y~\ref{tab:sem_inverso} salen de \texttt{src/semantic/metrics.py}. Ese archivo lo llama \texttt{eval\_trial.py}, en las ramas de entrenamiento del Apéndice~\ref{ap:ramas}. El corte de 119 y 102 filas, y el uso de varias respuestas por entrada, están en la Sección~\ref{sec:eval_lora}.
 
 La preparación del texto no lematiza ni borra puntuación. BERTScore y COMET recortan espacios en los extremos y reemplazan una cadena vacía por un espacio, para no pasarle una cadena nula al modelo. BLEU, ROUGE-L y METEOR reciben la cadena tal cual, sin ese reemplazo.
 
-Con varias referencias, BLEU es el BLEU de corpus de la biblioteca \texttt{evaluate}: usa la lista completa de respuestas de cada entrada. ROUGE-L, METEOR, BERTScore y COMET toman, en cada oración, el máximo entre esas referencias. El número de la tabla es la media de las 119 o de las 102 oraciones, en escala $0$--$100$.
+Con varias referencias, BLEU es el BLEU de \textit{corpus} de la biblioteca \texttt{evaluate}: usa la lista completa de respuestas de cada entrada. ROUGE-L, METEOR, BERTScore y COMET toman, en cada oración, el máximo entre esas referencias. El número de la tabla es la media de las 119 o de las 102 oraciones, en escala $0$--$100$.
 
 BERTScore usa la biblioteca \texttt{bert-score} con \texttt{lang=es} \parencite{zhang2020bertscore}. Ese parámetro carga \texttt{bert-base-multilingual-cased}. No se aplica ponderación IDF ni el reescalado con la línea de base del idioma. El valor informado es el F1 medio.
 
@@ -448,7 +448,7 @@ El análisis de perfilado muestra los siguientes comportamientos:
 
 \subsection{Consumo de memoria y huella del sistema en servidor}
 \label{sec:memoria_inferencia}
-La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En el Cuadro~\ref{tab:pesos_cuant} y el Cuadro~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 tokens.
+La cuantización en formato GGUF de 4 bits permitió reducir la huella de memoria del modelo de lenguaje a valores compatibles con despliegues eficientes. En el Cuadro~\ref{tab:pesos_cuant} y el Cuadro~\ref{tab:ram_inferencia} se sintetizan el tamaño de los archivos y el consumo estimado de memoria RAM en inferencia con un contexto de 2048 \textit{tokens}.
 
 \begin{table}[H]
 \centering
@@ -472,7 +472,7 @@ SmolLM2 1,7B & 3,185 & 1,006,7 & 0,983 & 4,9 \\
 \begin{table}[H]
 \centering
 \footnotesize
-\caption{Estimación del consumo de memoria RAM en inferencia (contexto de 2048 tokens).}
+\caption{Estimación del consumo de memoria RAM en inferencia (contexto de 2048 \textit{tokens}).}
 \label{tab:ram_inferencia}
 \begin{tabular}{lrrr}
 \toprule
@@ -487,7 +487,7 @@ SmolLM2 1,7B & 0,375 & 3,560 & 1,358 \\
 \end{tabular}
 \end{table}
 
-La columna de caché $KV$ sale de un contexto de 2048 tokens en fp16, dos bytes por elemento \cite{pope2023efficiently}. El primer 2 separa la clave del valor:
+La columna de caché $KV$ sale de un contexto de 2048 \textit{tokens} en fp16, dos bytes por elemento \cite{pope2023efficiently}. El primer 2 separa la clave del valor:
 
 \begin{equation}
 KV = 2 , n_{\mathrm{layers}} , n_{\mathrm{kv}} , d_{\mathrm{head}} , 2048 \times 2.
@@ -500,7 +500,7 @@ $n_{\mathrm{layers}}$ es el número de capas, $n_{\mathrm{kv}}$ el de cabezas de
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Datos de la caché $KV$ para 2048 tokens en fp16.}
+\caption{Datos de la caché $KV$ para 2048 \textit{tokens} en fp16.}
 \label{tab:kv_calculo}
 \begin{tabular}{lrrrrr}
 \toprule

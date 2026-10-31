@@ -4,42 +4,67 @@
 
 \section{Requerimientos funcionales}
 \begin{itemize}
-    \item \textbf{RF-01 --- Captura y extracción local de landmarks:} Capturar el video del usuario señante en el cliente y extraer los 33 puntos de pose y los 21 de cada mano, en tres coordenadas. Cada punto resta el centro de los hombros y queda dividido por la distancia entre hombros.
-    \item \textbf{RF-02 --- Clasificación gestual temporal local:} Clasificar localmente secuencias fijas de coordenadas en una de las 100 clases de LSA soportadas y utilizar arquitecturas de aprendizaje profundo para reportar la glosa asignada y su confianza.
-    \item \textbf{RF-03 --- Traducción semántica directa remota (LSA $\rightarrow$ Español):} Enviar a la nube el texto de glosas de un enunciado y recibir una oración en español rioplatense. Una glosa léxica sola, un deletreo de letras o una seguidilla de dígitos se resuelven en ILSA y no salen a la nube.
-    \item \textbf{RF-04 --- Emisión hacia el oyente:} Con Subtítulo, mostrar la oración en el video. Con Audio o Ambos, ILSA sintetiza un WAV y el script de la página lo mezcla en la pista de audio que Meet envía, para quien seña y para el resto de los participantes. En Ambos, el subtítulo y la voz salen juntos. Si el micrófono de Meet está silenciado, la voz no sale a la llamada.
-    \item \textbf{RF-05 --- Captura del turno del interlocutor oyente:} Capturar la voz o texto del oyente en la videollamada durante su turno de intervención con el fin de ser procesada para su uso en el canal de retorno bidireccional.
-    \item \textbf{RF-06 --- Traducción semántica inversa remota (Español $\rightarrow$ LSA):} Enviar el texto en español al servicio semántico y recibir glosas en el orden manual de la Sección~\ref{sec:orden_prototipo}.
-    \item \textbf{RF-07 --- Representación visual mediante un avatar:} Dibujar el clip de cada glosa que tenga archivo, hasta 24 archivos por oración. Si falta el archivo, deletrear letra por letra. El deletreo no asegura la comprensión del significado. Lo que supere el tope queda fuera del dibujo y se conserva en texto. Si el servidor de movimientos no responde, el clip queda vacío y las glosas siguen en texto. La llegada de una nueva animación no interrumpe la secuencia en ejecución. La cola admite hasta 20 bloques y, al colmarse, descarta el más antiguo. Ese descarte no muestra un cartel: el bloque que sale no se dibuja y su subtítulo no aparece. Siguen en pantalla la animación en curso y el texto de esa animación. Cada bloque dura 0,2\,s de entrada, los fotogramas a 30\,fps y 0,2\,s de salida. El servidor corta el bloque en 1200 fotogramas, así que un bloque llega como máximo a 40,4\,s. El último bloque espera la animación en curso y los que quedaron delante, hasta 19. Si esos 20 bloques están en el tope y el de pantalla acaba de empezar, la espera llega a 808\,s (13\,min 28\,s). Ese valor es el techo de esos topes, no una medición de una sesión.
-    \item \textbf{RF-08 --- Integración con Google Meet:} Inyectar el video procesado y los canales de comunicación dentro de la pestaña de videollamada.
-    \item \textbf{RF-09 --- Arranque del panel:} Al iniciar la aplicación, al Encender un modo o al Reiniciar, volver a la pantalla de carga. Abrir el panel principal solo si responden el traductor semántico y el servidor de poses. Si alguno falla, dejar el botón Reintentar y no abrir el panel. Al Apagar, detener la sesión sin volver a la carga y sin consultar esos servicios.
+    \item \textbf{RF-01 --- Captura y extracción de puntos clave gestuales:} El sistema debe capturar el flujo de video del usuario en tiempo real en el cliente y extraer la información posicional de la pose corporal y de ambas manos para su posterior procesamiento.
+    \item \textbf{RF-02 --- Reconocimiento y clasificación de gestos:} El sistema debe procesar las secuencias de puntos clave extraídos y clasificar localmente los gestos realizados en su correspondiente glosa en LSA, y reportar la glosa identificada y su nivel de confianza.
+    \item \textbf{RF-03 --- Traducción semántica de LSA a Español:} El sistema debe convertir una secuencia de glosas identificadas en una oración en español rioplatense, procesar localmente las construcciones simples (deletreos o glosas únicas) y derivar las estructuras complejas al servicio de traducción semántica.
+    \item \textbf{RF-04 --- Presentación y síntesis de la salida traducida:} El sistema debe permitir la emisión del mensaje traducido al español hacia los participantes de la videollamada mediante subtítulos en pantalla, síntesis de voz inyectada en el canal de audio, o ambos modos, y respetar el estado de silencio del micrófono del usuario.
+    \item \textbf{RF-05 --- Captura del turno del interlocutor oyente:} El sistema debe capturar las intervenciones de voz o texto de los participantes oyentes en la videollamada para alimentar el canal de traducción hacia el usuario sordo.
+    \item \textbf{RF-06 --- Traducción semántica de Español a LSA:} El sistema debe transformar el texto en español capturado desde el turno del interlocutor en una secuencia ordenada de glosas equivalentes en LSA.
+    \item \textbf{RF-07 --- Interpretación visual mediante avatar:} El sistema debe representar la secuencia de glosas traducidas mediante la reproducción animada de un avatar esquelético en tiempo psudo-real. En caso de ausencia de animación para una glosa específica, el sistema debe recurrir a la representación por dactilología (deletreo manual).
+    \item \textbf{RF-08 --- Integración con la interfaz de videollamada:} El sistema debe integrarse sobre la interfaz del cliente de videollamadas (Google Meet), superponer los paneles de control, el flujo de video procesado y las salidas de texto y avatar sin interrumpir el funcionamiento nativo de la plataforma.
+    \item \textbf{RF-09 --- Gestión de estado e inicialización del sistema:} El sistema debe verificar la disponibilidad de los servicios de procesamiento y traducción durante la etapa de inicialización, permitir el acceso al panel de control únicamente tras validar la conectividad operativa, y preveer mecanismos de reintento en caso de falla.
 \end{itemize}
 
 \section{Requerimientos no funcionales}
 \begin{itemize}
-    \item \textbf{RNF-01 --- Latencia y tiempo de respuesta:} La pausa, la cola, la inferencia, el transporte y la entrega se cuentan por separado, como fija la Sección~\ref{sec:tiempo_pseudo}. La meta de 2 segundos rige solo para la inferencia, con el servicio ya activo. No cubre la cola, el transporte, el arranque en frío ni la pausa de 4 segundos. El cumplimiento de esa meta se informa en la Sección~\ref{sec:latencias_pipeline}, con inferencia, cola y red en campos distintos.
-    \item \textbf{RNF-02 --- Datos que recibe cada componente:} Meet recibe el video ya compuesto (cámara, subtítulo y, en modo oyente, el esqueleto) y el audio de la llamada, incluida la voz sintética cuando la salida es Audio o Ambos. ILSA, en la misma computadora, recibe los puntos articulares y el audio local para transcribir. El traductor en la nube recibe solo texto: glosas u oración. El servidor de movimientos recibe el nombre de una glosa o las letras de un deletreo, y devuelve archivos. La prohibición de enviar imagen o video crudo rige para el traductor y para el servidor de movimientos. El tratamiento dentro de este alcance es ese reparto: la imagen de la cámara sale hacia Meet porque es la llamada, y no sale hacia los dos servicios de la nube.
-    \item \textbf{RNF-03 --- Robustez en reconocimiento en vivo:} El clasificador debe superar el 75\,\% de acierto en luz doméstica. Ese valor es una meta de reconocimiento.
-    \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad de los servicios en la nube:} La arquitectura del backend semántico y del servidor de archivos .pose deben estar concebidas para operar de forma desacoplada y elástica, lo que permita sus despliegues en infraestructuras con auto-escalado horizontal a través de interfaces REST tipadas.
-    \item \textbf{RNF-05 --- Usabilidad y no invasividad:} La tarjeta del HUD queda, en su posición inicial, en la esquina superior izquierda de la página de Meet. En una captura de $1920 \times 1080$, con el navegador maximizado y el popup de la extensión cerrado, mide $382 \times 77$ píxeles: $15$\,px desde el borde izquierdo y $156$\,px desde el borde superior de la pantalla ($8$\,px bajo la barra de marcadores). Su borde inferior queda $49$\,px por encima del recuadro de video. No cubre la cara ni las manos. La prueba es una llamada de dos personas, en modo seña y en modo oyente, en las dos pantallas, con esa posición y el popup cerrado.
+    \item \textbf{RNF-01 --- Rendimiento y latencia del pipeline de procesamiento:} 
+    El sistema debe operar bajo un régimen de tiempo pseudo-real. las metas operativas se dividen por subsistemas:
+    \begin{enumerate}
+        \item \textit{Clasificación gestual local:} El módulo de inferencia corporal (TinySkeleton) debe procesar y clasificar el vector de landmarks en un tiempo inferior a $50\,\text{ms}$ por seña.
+        \item \textit{Transcripción de voz:} La conversión de audio a texto en el extremo oyente debe ejecutarse de forma local con un tiempo de procesamiento inferior a $2000\,\text{ms}$.
+        \item \textit{Inferencia semántica remota:} La generación de la oración en español (canal directo) o la reestructuración a glosas (canal inverso) en el servidor remoto no debe superar los $2000\,\text{ms}$ por solicitud con el servicio en estado activo.
+        \item \textit{Transporte de red:} La latencia de ida y vuelta (RTT) entre el cliente y las APIs remotas en la nube debe ser inferior a $500\,\text{ms}$ bajo conexiones de banda ancha estándar.
+        \item \textit{Ensamblado cinemático del avatar:} El procesamiento geométrico y la interpolación de clips de animación en el cliente debe realizarse en un tiempo inferior a $350\,\text{ms}$.
+    \end{enumerate}
+
+    \item \textbf{RNF-02 --- Privacidad y segregación de datos biométricos:} 
+    El procesamiento de visión computacional y extracción de características corporales debe ejecutarse exclusivamente en el dispositivo cliente. Queda estrictamente prohibida la transmisión de flujos de video o imágenes crudas hacia los servicios remotos en la nube; el canal de comunicación externo debe transmitir únicamente cargas de datos puramente textuales (glosas, letras de dactilología o cadenas en español).
+
+    \item \textbf{RNF-03 --- Fiabilidad y precisión del reconocimiento gestual:} 
+    El clasificador gestual local debe alcanzar un acierto Top-1 superior al 75\,\% en condiciones de iluminación doméstica estándar.
+
+    \item \textbf{RNF-04 --- Desacoplamiento y escalabilidad de la arquitectura en la nube:} 
+    Los servicios backend (traducción semántica y servidor de activos de animación) deben implementarse como microservicios sin estado (\textit{stateless}) desacoplados, expuestos mediante interfaces REST HTTP/HTTPS, lo que permita su escalado horizontal dinámico e independiente ante incrementos en la demanda concurrente.
+
+    \item \textbf{RNF-05 --- Usabilidad, ergometría visual y no invasividad:} 
+    La interfaz de usuario inyectada en la plataforma de videollamada (HUD) debe posicionarse en un recuadro no invasivo que evite la oclusión de los elementos críticos del dominio comunicativo (rostro, torso y manos del señante o interlocutor) durante el desarrollo de la videollamada.
 \end{itemize}
 
-\section{Restricciones}
+\section{Restricciones del sistema}
 \begin{itemize}
-    \item \textbf{RC-01 --- Alcance léxico:} El vocabulario reconocido por el clasificador está acotado a 100 señas validadas por profesionales de LSA, enmarcadas en las pautas pedagógicas y lingüísticas vigentes.
-    \item \textbf{RC-02 --- Despliegue en la nube del prototipo:} Las pruebas no despliegan la arquitectura elástica del servicio semántico o del servicio de archivos .pose. La validación usa Cloud Run, de Google Cloud.
-    \item \textbf{RC-03 --- Compatibilidad de plataforma cliente:} El empaquetado del motor local (ILSA) y la extensión están diseñados para el sistema operativo Windows y navegadores basados en Chromium bajo las especificaciones de seguridad vigentes.
-    \item \textbf{RC-04 --- Dependencia de visión:} El clasificador depende del correcto funcionamiento de MediaPipe Holistic para la extracción de landmarks.
-    \item \textbf{RC-05 --- Recursos del cliente objetivo:} El componente local del prototipo debe ser capaz de operar en laptops estándar (procesadores de 4 núcleos y 8 GB de memoria RAM, sin placa gráfica dedicada).
+    \item \textbf{RC-01 --- Delimitación del alcance léxico:} 
+    El modelo de reconocimiento gestual está acotado estrictamente a un corpus de 100 señas aisladas de la LSA, previamente validadas con profesionales lingüísticos calificados.
+
+    \item \textbf{RC-02 --- Alcance del despliegue en la nube:} 
+    La evaluación experimental del prototipo está acotada al aprovisionamiento de los microservicios semánticos y de movimiento en la infraestructura \textit{serverless} de Google Cloud Run mediante instancias de ejecución fija. Queda fuera del alcance de validación el despliegue del \textit{clúster} elástico multinodo con auto-escalado dinámico.
+
+    \item \textbf{RC-03 --- Entorno de ejecución y compatibilidad de plataforma:} 
+    ILSA y el componente de extensión web deben operar exclusivamente sobre sistemas operativos Windows (64 bits) y en navegadores basados en la arquitectura Chromium compatibles con la especificación Manifest V3.
+
+    \item \textbf{RC-04 --- Marco tecnológico de estimación postural:} 
+    El pipeline de extracción de coordenadas articulares en el extremo cliente está supeditado a la ejecución del framework MediaPipe Holistic como motor primario de visión computacional.
+
+    \item \textbf{RC-05 --- Perfil de hardware objetivo en el cliente:} 
+    El subsistema cliente debe ser capaz de ejecutar la extracción de puntos y la clasificación gestual en computadoras portátiles convencionales de gama media (procesadores de 4 núcleos con soporte AVX2 y 8 GB de memoria RAM), sin requerir la presencia de unidades de procesamiento gráfico (GPU) dedicadas. % TODO: Creo que no hace falta hacer referencia a requisitos minimos, asi queda claro
 \end{itemize}
 
 \subsection{Especificación del entorno de ejecución cliente}
 \label{sec:entorno_cliente}
-El cuadro siguiente propone un equipo mínimo y uno con más margen. No informa una prueba sobre cada modelo de procesador ni sobre cada navegador de la lista. El nombre comercial de una familia cubre piezas distintas: el criterio operativo es el número de núcleos, el soporte AVX2 y el piso de reloj, no la etiqueta Core i3 o Ryzen 3.
+El cuadro siguiente propone un equipo mínimo y uno con más margen. El nombre comercial de una familia cubre piezas distintas: el criterio operativo es el número de núcleos, el soporte AVX2 y el piso de reloj, no la etiqueta Core i3 o Ryzen 3.
 
-El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA.
+El mínimo se elige para que convivan tres cargas: la videollamada, la extracción de puntos en el navegador y la clasificación de ILSA en CPU \parencite{chrome2024manifestv3}. De ahí salen cuatro núcleos, 8\,GB de RAM, gráficos con WebGL para el lienzo, disco de estado sólido, cámara de 720p y banda ancha. Windows 10/11 de 64 bits es el sistema del empaquetado de ILSA. Por otra parte, la fila recomendada, es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida.
 
-La fila recomendada es una propuesta de holgura: más núcleos, más memoria y cámara de 1080p. No es una configuración medida. Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador.
+Edge, Brave, Opera y Vivaldi comparten motor Chromium, y por eso se proponen. Este trabajo no informa una pasada en cada uno: las políticas y las APIs pueden diferir. La comparación entre la máquina de desarrollo y la máquina objetivo queda en la Sección~\ref{sec:hardware_objetivo}. Esa sección describe el comportamiento observado. El cuadro de mínimos de esta sección es una propuesta de entorno, no una batería de pruebas por modelo de procesador.
 
 
 
@@ -47,7 +72,7 @@ La fila recomendada es una propuesta de holgura: más núcleos, más memoria y c
 \centering
 \small
 \renewcommand{\arraystretch}{1.3}
-\caption{Requisitos de hardware y software del dispositivo cliente.}
+\caption{Requisitos de har\textit{hardware}dware y \textit{software} del dispositivo cliente.}
 \label{tab:requisitos_hardware}
 \begin{tabularx}{\textwidth}{@{}l p{5.5cm} X @{}}
 \toprule
@@ -59,7 +84,7 @@ La fila recomendada es una propuesta de holgura: más núcleos, más memoria y c
 \textbf{Almacenamiento} & Disco de estado sólido (SSD) con 2\,GB de espacio libre disponible. & SSD NVMe con $\ge 5$\,GB libres. \\
 \textbf{Cámara web} & Resolución 720p (1280$\times$720) a 24/30 FPS. & Resolución 1080p a 30 FPS. \\
 \textbf{Conectividad} & Conexión de banda ancha ($\ge 10$\,Mbps bajada / $\ge 3$\,Mbps subida). & Conexión por fibra óptica ($\ge 50$\,Mbps). \\
-\textbf{Entorno de software} & Windows 10/11 (64 bits), Google Chrome 115+ (soporte Manifest V3). & Windows 11 (64 bits), Google Chrome última versión estable. \\
+\textbf{Entorno de \textit{software}} & Windows 10/11 (64 bits), Google Chrome 115+ (soporte Manifest V3). & Windows 11 (64 bits), Google Chrome última versión estable. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -70,12 +95,17 @@ La CPU debe sostener a la vez la videollamada, MediaPipe en WebAssembly y el cla
 \section{Casos de uso}
 
 \subsection{Casos de uso esenciales en formato breve}
+
 \begin{itemize}
-    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo seña frente a la cámara durante la videollamada. El sistema clasifica las señas en el equipo. Una glosa léxica sola, solo dígitos, o un deletreo de dos o más letras sin I ni T se arman en ILSA. El resto consulta el servicio semántico. Con Subtítulo, la oración queda en el video. Con Audio o Ambos, ILSA sintetiza un WAV y el script de la página lo mezcla en la pista de audio de Meet.
-    \item \textbf{CU-02 --- Seleccionar mano hábil:} ILSA muestra diestro y zurdo, con diestro ya seleccionado. La persona confirma diestro o pasa a zurdo. Con zurdo, el vector se espeja en horizontal y se cruzan las dos manos durante esa sesión.
-    \item \textbf{CU-03 --- Configurar canal de salida:} En el panel de la extensión, el usuario señante elige la salida en Meet: Subtítulo, Audio o Ambos. Si no toca el control, queda Subtítulo.
-    \item \textbf{CU-04 --- Traducir español a LSA mediante Avatar (Modo Oyente):} El usuario oyente habla e ILSA transcribe esa voz. El chat es el flujo alternativo: ILSA toma ese texto y no lo transcribe. Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. El avatar dibuja hasta 24 clips y deletrea lo que no tiene archivo. El deletreo no asegura la comprensión. La llegada de una animación nueva no interrumpe la que está en curso. La cola admite hasta 20 bloques y, al colmarse, descarta el más antiguo, sin cartel: ese bloque no se dibuja y su subtítulo no aparece. El último bloque espera la animación en curso y hasta 19 bloques de adelante. En el tope de 1200 fotogramas, a 30\,fps y con 0,2\,s de entrada y 0,2\,s de salida, cada bloque dura 40,4\,s y esa espera llega a 808\,s. Ese valor es el techo del código, no una medición de una sesión.
-    \item \textbf{CU-05 --- Entrar al panel:} Al abrir ILSA, al Encender un modo o al Reiniciar, vuelve a la pantalla de carga. El panel se abre si responden el traductor semántico y el servidor de poses. Si alguno falla, queda Reintentar. Al Apagar, la sesión se detiene y el panel queda a la vista, sin esa consulta.
+    \item \textbf{CU-01 --- Conversar con otra persona (Modo Sordo):} El usuario sordo realiza señas frente a la cámara web durante la videollamada. El sistema procesa localmente los gestos, consulta el servicio semántico en la nube para estructurar la oración en español y proyecta el resultado en la videollamada mediante subtítulos, síntesis de voz o ambos canales simultáneamente.
+    
+    \item \textbf{CU-02 --- Seleccionar lateralidad (mano hábil):} El usuario accede a la configuración de lateralidad en la extensión y selecciona entre la modalidad diestra o zurda. El sistema aplica las transformaciones geométricas correspondientes sobre las coordenadas articulares para ajustar el motor de clasificación durante la sesión activa.
+    
+    \item \textbf{CU-03 --- Configurar canal de salida:} El usuario selecciona el canal de preferencia para proyectar la traducción en la llamada de Google Meet (subtítulos, audio o ambos). El sistema actualiza la interfaz de salida de la extensión.
+    
+    \item \textbf{CU-04 --- Conversar con otra persona (Modo Oyente):} El usuario oyente introduce el mensaje mediante voz o texto dentro de la llamada. El sistema analiza la entrada en español, deriva la secuencia de glosas hacia el motor gráfico y reproduce la animación correspondiente mediante el avatar esquelético o el recurso dactilológico.
+    
+    \item \textbf{CU-05 --- Iniciar y verificar sesión:} El usuario inicia el motor local o cambia de modo operativo desde la interfaz de la extensión. El sistema verifica la disponibilidad de los servicios en la nube y habilita el panel principal de control tras confirmar la conectividad.
 \end{itemize}
 
 \subsection{Diagrama de casos de uso}
@@ -89,55 +119,53 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
     font=\small,
     caso/.style={
         ellipse, draw, thick, align=center,
-        inner sep=2.5pt, minimum width=3.7cm, minimum height=1.05cm
+        font=\footnotesize,
+        text width=2.5cm,
+        inner sep=1.2pt
     },
-    actorlabel/.style={align=center, font=\small\bfseries}
+    actorlabel/.style={align=center, font=\footnotesize\bfseries}
 ]
-% Actor izquierdo: señante
-\begin{scope}[shift={(-0.2,0)}]
-    \draw (0,2.55) circle (0.20);
-    \draw (0,2.35) -- (0,1.70);
-    \draw (-0.32,2.12) -- (0.32,2.12);
-    \draw (0,1.70) -- (-0.26,1.20);
-    \draw (0,1.70) -- (0.26,1.20);
-    \node[actorlabel] (senante) at (0,0.80) {Usuario\\señante};
-\end{scope}
+\node[caso] (cu01) at (0, 3.40) {Conversar con\\otra persona\\(modo sordo)};
+\node[caso] (cu02) at (0, 1.70) {Seleccionar\\lateralidad};
+\node[caso] (cu03) at (0, 0.00) {Configurar\\canal de salida};
+\node[caso] (cu05) at (0,-1.70) {Iniciar y\\verificar sesión};
+\node[caso] (cu04) at (0,-3.40) {Conversar con\\otra persona\\(modo oyente)};
 
-% Actor derecho: oyente
-\begin{scope}[shift={(11.4,0)}]
-    \draw (0,2.55) circle (0.20);
-    \draw (0,2.35) -- (0,1.70);
-    \draw (-0.32,2.12) -- (0.32,2.12);
-    \draw (0,1.70) -- (-0.26,1.20);
-    \draw (0,1.70) -- (0.26,1.20);
-    \node[actorlabel] (oyente) at (0,0.80) {Usuario\\oyente};
-\end{scope}
-
-% Casos de uso
-\node[caso] (cu01) at (5.6,4.15) {Conversar con otra persona};
-\node[caso] (cu02) at (5.6,2.85) {Seleccionar mano hábil};
-\node[caso] (cu03) at (5.6,1.55) {Configurar canal de salida};
-\node[caso] (cu05) at (5.6,0.25) {Entrar al panel};
-\node[caso] (cu04) at (5.6,-1.10) {Traducir español a LSA mediante Avatar};
-
-% Frontera del sistema
 \node[draw, dashed, thick, rounded corners=2pt, inner sep=10pt,
       fit=(cu01) (cu02) (cu03) (cu04) (cu05),
-      label={[font=\small\bfseries]above:ILSA en Google Meet}] {};
+      label={[font=\small\bfseries]above:ILSA en Google Meet}] (sistema) {};
 
-% Asociaciones
-\draw (0.55,1.55) -- (cu01);
-\draw (0.55,1.40) -- (cu02);
-\draw (0.55,1.25) -- (cu03);
-\draw (0.55,1.10) -- (cu05);
-\draw (10.65,1.10) -- (cu05);
-\draw (10.65,0.90) -- (cu04);
+\node[actorlabel, left=1.7cm of sistema] (senante) {Usuario\\señante};
+\node[actorlabel, right=1.7cm of sistema] (oyente) {Usuario\\oyente};
+
+\begin{scope}[shift={(senante.north)}]
+    \draw (0,1.35) circle (0.16);
+    \draw (0,1.19) -- (0,0.62);
+    \draw (-0.26,0.98) -- (0.26,0.98);
+    \draw (0,0.62) -- (-0.22,0.18);
+    \draw (0,0.62) -- (0.22,0.18);
+\end{scope}
+\begin{scope}[shift={(oyente.north)}]
+    \draw (0,1.35) circle (0.16);
+    \draw (0,1.19) -- (0,0.62);
+    \draw (-0.26,0.98) -- (0.26,0.98);
+    \draw (0,0.62) -- (-0.22,0.18);
+    \draw (0,0.62) -- (0.22,0.18);
+\end{scope}
+
+\draw (senante.east) -- (cu01);
+\draw (senante.east) -- (cu02);
+\draw (senante.east) -- (cu03);
+\draw (senante.east) -- (cu05);
+\draw (oyente.west) -- (cu05);
+\draw (oyente.west) -- (cu04);
 \end{tikzpicture}
 \caption{Diagrama de casos de uso del prototipo.}
 \label{fig:casos_uso}
 \end{figure}
 
 \subsection{Casos de uso expandidos}
+
 \begin{table}[h!]
 \centering
 \renewcommand{\arraystretch}{1.35}
@@ -146,14 +174,14 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. ILSA está encendido.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet cuando la salida es Subtítulo o Ambos. Con Audio o Ambos, ILSA sintetiza un WAV y el script de la página lo mezcla en la pista de audio que Meet envía. Quien seña la oye por los parlantes y el resto de la llamada, por esa pista.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet cuando la salida es Subtítulo o Ambos. Con Audio o Ambos, ILSA sintetiza un WAV y el \textit{script} de la página lo mezcla en la pista de audio que Meet envía. Quien seña la oye por los parlantes y el resto de la llamada, por esa pista.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Realiza las señas. & \\ \cline{2-4}
  & \textbf{2} & & Clasifica la seña. Si la confianza es de al menos 0,75 y el filtro de repetición la admite, el HUD la muestra en cian. \\ \hline
  & \textbf{3} & Si necesita otra seña, vuelve al paso 1. Si no, espera 4 segundos sin manos en el cuadro. &  \\ \hline
  & \textbf{4} & & Arma el texto en el equipo si hay una sola glosa léxica, solo dígitos, o solo letras desde dos y sin I ni T. Van al traductor una letra sola, un deletreo con I o T, OJO, VIERNES o AÑOS solas, y las demás frases. Con Subtítulo, deja la oración en el video. Con Audio o Ambos, pide el WAV a ILSA y el script de la página lo mezcla en la pista de Meet. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Las manos no entran al cuadro: no empieza ninguna seña y no hay plazo que contar.\newline\textbf{2a.} Confianza bajo 0,75: el HUD muestra la predicción en coral.\newline\textbf{2b.} Confianza de al menos 0,75 y repetición no admitida: el HUD muestra gris.\newline\textbf{2c.} Seña ajena al vocabulario con confianza de al menos 0,75: el HUD la muestra en cian y la glosa incorrecta entra.\newline\textbf{4a.} El traductor no responde. Se conservan las glosas aceptadas, en texto, y no se rearma la oración. \newline\textbf{4b.} ILSA deja de responder: la extensión no clasifica ni traduce. La recuperación es Encender o Reintentar, y volver a señar.\newline\textbf{4c.} El micrófono de Meet está silenciado: la voz no sale a la llamada y la extensión muestra un aviso.} \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Las manos no entran al cuadro: no empieza ninguna seña y no hay plazo que contar.\newline\textbf{2a.} Confianza bajo 0,75: el HUD muestra la predicción en coral.\newline\textbf{2b.} Confianza de al menos 0,75 y repetición no admitida: el HUD muestra gris.\newline\textbf{2c.} Seña ajena al vocabulario con confianza de al menos 0,75: el HUD la muestra en cian y la glosa incorrecta entra.\newline\textbf{4a.} El traductor no responde. Se conservan las glosas aceptadas, en texto, y no se rearma la oración. \newline\textbf{4b.} ILSA deja de responder: la extensión no clasifica ni traduce.\newline\textbf{4c.} El micrófono de Meet está silenciado: la voz no sale a la llamada y la extensión muestra un aviso.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-01, RF-02, RF-03, RF-04, RF-08, RNF-01, RNF-03.} \\ \hline
 \end{tabularx}
 \end{table}
@@ -163,15 +191,15 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \renewcommand{\arraystretch}{1.35}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Seleccionar mano hábil}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-02: Seleccionar lateralidad (mano hábil)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está en el panel principal. El control de mano muestra diestro seleccionado.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La sesión queda con la mano elegida. Con zurdo, el vector se espeja y se cruzan las manos.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
- & \textbf{1} & Ve diestro ya seleccionado y lo confirma. & \\ \cline{2-4}
+ & \textbf{1} & Ve diestro ya seleccionado y selecciona ENCENDER. & \\ \cline{2-4}
  & \textbf{2} & & Conserva la mano derecha. El vector no se espeja. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Selecciona zurdo: ILSA espeja el eje horizontal y cruza las dos manos, porque el modelo se entrenó con mano derecha. Conserva esa mano durante la sesión.} \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Selecciona zurdo: ILSA espeja el eje horizontal y cruza las dos manos.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-01, RF-02.} \\ \hline
 \end{tabularx}
 \end{table}
@@ -181,7 +209,7 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \renewcommand{\arraystretch}{1.35}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida del oyente}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. El panel de la extensión está disponible.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en Subtítulo, Audio o Ambos, según el control «Salida en Meet». El subtítulo llega en el video. La voz, cuando hay Audio o Ambos, sale de un WAV de ILSA mezclado en la pista de Meet. Si no hay elección, queda Subtítulo.} \\ \hline
@@ -201,7 +229,7 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \renewcommand{\arraystretch}{1.35}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-04: Traducir español a LSA mediante Avatar (Modo Oyente)}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-04: Conversar con otra persona (Modo Oyente)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario oyente} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada y la extensión está en modo oyente.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor ve el esqueleto de las glosas que tienen archivo. Lo que no se dibuja queda en texto.} \\ \hline
@@ -216,13 +244,12 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \end{tabularx}
 \end{table}
 
-
 \begin{table}[h!]
 \centering
 \renewcommand{\arraystretch}{1.35}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash\bfseries}p{4cm}|p{0.5cm}|X|X|}
 \hline
-Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-05: Entrar al panel}} \\ \hline
+Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-05: Iniciar y verificar sesión}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está instalado en la computadora.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Si responden el traductor semántico y el servidor de poses, se abre el panel principal. Al Apagar, la sesión queda detenida en ese panel, sin nueva consulta.} \\ \hline

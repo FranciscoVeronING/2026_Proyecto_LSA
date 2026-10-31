@@ -20,7 +20,7 @@ El traductor y el servidor de poses no archivan ese texto. Cada réplica opera s
 En el equipo, ILSA retiene el último texto y el búfer de glosas mientras dura la sesión. Encender, Reiniciar o Apagar vacían esa memoria. La instrumentación de latencia escribe, en \texttt{\%LOCALAPPDATA\%/ILSA/metrics/live-AAAAMMDD.jsonl}, la glosa y la oración de cada emisión. Ese archivo no tiene plazo de retención: queda en el disco hasta que se borra a mano. Lo ven quien usa esa computadora y, en la videollamada, quienes reciben el subtítulo o la voz. Si la reunión se graba, el subtítulo queda en esa grabación, fuera del control de ILSA. Las rutas locales \texttt{GET /state} y \texttt{GET /metrics} exponen el último texto al panel, en \texttt{127.0.0.1}.
 
 \subsection{Variación artificial del conjunto de señas}
-El corpus de señas reúne tres personas en seis sesiones de grabación. Una toma de ese conjunto no cubre otra velocidad, otra posición de cámara ni un fotograma que el extractor pierde. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
+El \textit{corpus} de señas reúne tres personas en seis sesiones de grabación. Una toma de ese conjunto no cubre otra velocidad, otra posición de cámara ni un fotograma que el extractor pierde. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
 
 \subsection{Flujo integral de datos entre componentes}
 La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación. Hacia el traductor salen mensajes JSON, glosas u oración. El servidor de poses entrega el archivo \texttt{.pose} en binario, no en JSON. Esta descripción no incluye el video ni el audio que transmite Meet.
@@ -350,11 +350,8 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 \node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (6.5625,16.725) {Extension};
 
 % Subcaja Clasificador
-\draw [line width=0.7pt] (1,11) rectangle (4.625,5.25);
-\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (1.15,10.85) {clasificador};
-
-\draw (1.25,10) rectangle (4.375,8.75);
-\node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (2.8125,9.85) {extraccion de \\ puntos corporales};
+\draw [line width=0.7pt] (1,9) rectangle (4.625,5.25);
+\node[anchor=north west, align=left, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (1.15,8.85) {clasificador};
 
 \draw (1.25,7.875) rectangle (4.375,7.125);
 \node[anchor=north, align=center, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{10.8pt}{14.1pt}\selectfont] at (2.8125,7.725) {clasificador};
@@ -375,7 +372,6 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 \draw [short] (4.25,12.25) -- (4.25,12.25);
 \draw [short] (3.5,11.75) -- (3.5,11.75);
 
-\draw [-{Stealth[scale=1.5]}] (2.75,8.75) -- (2.75,7.875) node[pos=0.41, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{puntos corporales};
 \draw [-{Stealth[scale=1.5]}] (2.75,7.125) -- (2.75,6.25) node[pos=0.38, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{glosa y confianza};
 
 % Contenedor Nube
@@ -386,8 +382,9 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 \draw [-{Stealth[scale=1.5]}] (5.5,9.875) -- (5.5,3.75) node[pos=0.92, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{GET /tposes/\{archivo\}};
 \draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (6.75,3.75) -- (6.75,9.875) node[pos=0.6, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{archivo pose};
 
-\draw [-{Stealth[scale=1.5]}] (5.125,16.125) -- (5.125,13.625) -- (3.25,13.625) -- (3.25,10);
-\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (4.125,13.625) {POST /sign};
+% POST /sign directo a la caja clasificador
+\draw [-{Stealth[scale=1.5]}] (5.125,16.125) -- (5.125,13.625) -- (2.8125,13.625) -- (2.8125,7.875);
+\node[fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm, font=\fontsize{8.0pt}{10.4pt}\selectfont] at (3.96875,13.625) {POST /sign};
 
 \draw [-{Stealth[scale=1.5]}] (11,3.75) -- (11,9.875) node[pos=0.5, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{oración};
 \draw [-{Stealth[scale=1.5]}, dash pattern=on 6pt off 2pt] (6.75,11) -- (6.75,16.125) node[pos=0.61, fill=white, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm]{animación};
@@ -419,7 +416,7 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 \label{fig:ilsa_local_arquitectura}
 \end{figure}
 
-El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local.
+El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local. Los cuerpos, los campos obligatorios, las unidades y los errores están en la Sección~\ref{sec:contrato-api-local}.
 
 \begin{table}[htbp]
   \centering
@@ -445,8 +442,6 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
     GET & \texttt{/download/exe} & Entrega del ejecutable del motor local. & 200, 404 \\ \hline
   \end{tabularx}
 \end{table}
-
-El Cuadro nombra las rutas. Los cuerpos, los campos obligatorios, las unidades y los errores están en la Sección~\ref{sec:contrato-api-local}.
 
 \subsection{API del servicio semántico remoto}
 \label{sec:api-semantico-remoto}
@@ -651,8 +646,8 @@ La integración con la plataforma Google Meet se resuelve mediante una extensió
 \label{fig:arquitectura_video_ilsa}
 \end{figure}
 
-\section{Patrones de diseño de software aplicados}
-El diseño incorpora patrones de software consolidados para organizar las responsabilidades del sistema:
+\section{Patrones de diseño de \textit{software} aplicados}
+El diseño incorpora patrones de \textit{software} consolidados para organizar las responsabilidades del sistema:
 \begin{itemize}
     \item \textbf{Estrategia (\textit{Strategy}):} Aplicado en el módulo de filtrado de repeticiones. \texttt{RepeatGate} define políticas diferenciadas según la clase léxica: los dígitos admiten repetición continua, las letras aceptan hasta dos instancias consecutivas y el vocabulario general descarta duplicados inmediatos.
     \item \textbf{Fachada (\textit{Facade}):} Aplicado en la API HTTP del motor ILSA local. Expone una interfaz unificada que oculta la complejidad interna de extracción, clasificación y comunicación con la nube.
@@ -677,9 +672,7 @@ Las computadoras cliente salen por HTTPS. El ingreso resuelve el nombre, present
 \end{itemize}
 
 \subsection{Traductor}
-El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Cada réplica corre en procesador, sin placa de video. Carga el modelo principal de los dos canales, Qwen2.5 1,5B, con un contexto de 2048 tokens, y deja el respaldo Llama 3.2 1B en disco hasta que ese principal no carga. La estimación de menos de 2 GiB por réplica es la suma de esos dos archivos y de sus cachés de claves y valores, calculada en la Sección~\ref{sec:memoria_inferencia}. El buffer de activaciones, definido junto a la Ecuación~\ref{eq:ram_runtime}, queda fuera de esa suma. Los 8 GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada a la instancia de validación, no una medición de este consumo.
-
-% TODO: ARRIBA. Necesitariamos medir el tamaño del buffer. lo mas probable es que no entre en los 2gib per oigual lo medimos y lo reportamos. porque hacer la medicion sin buffer es una caca
+El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Cada réplica corre en procesador, sin placa de video. Carga el modelo principal de los dos canales, Qwen2.5 1,5B, con un contexto de 2048 \textit{tokens}, y deja el respaldo Llama 3.2 1B en disco hasta que ese principal no carga. La estimación de menos de 2 GiB por réplica es la suma de esos dos archivos y de sus cachés de claves y valores, calculada en la Sección~\ref{sec:memoria_inferencia}. El buffer de activaciones, definido junto a la Ecuación~\ref{eq:ram_runtime}, queda fuera de esa suma. Los 8 GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada a la instancia de validación, no una medición de este consumo.
 
 \subsection{Archivos de seña}
 Una petición de pose es una lectura, no una generación. El contrato es el de la Sección~\ref{sec:api-avatar}. Las réplicas no guardan estado y leen la misma carpeta. El escalador de este grupo mira la cantidad de lecturas, no la cola del traductor. La ruta de salud queda aparte de la ruta del archivo. La caché del cliente sigue como primer recurso.

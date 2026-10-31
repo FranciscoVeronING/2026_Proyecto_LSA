@@ -3,7 +3,7 @@
 % ====================================================================
 
 \section{Objetivo general}
-Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y el español rioplatense con procesamiento en tiempo pseudo-real, diseñado para operar sobre plataformas de videoconferencia mediante una arquitectura híbrida cliente-nube, con el fin de mitigar la asimetría en la comunicación expresiva y receptiva, lo que ayudaría a fomentar la autonomía de las personas sordas en la interacción con interlocutores oyentes no señantes.
+Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y el español rioplatense con procesamiento en tiempo pseudo-real, diseñado para operar sobre plataformas de videoconferencia mediante una arquitectura híbrida cliente-nube, con el fin de mitigar la asimetría en la comunicación expresiva y receptiva, lo que ayudaría a fomentar la autonomía de las personas sordas en la interacción con interlocutores oyentes no señantes. % TODO: entiendo tu punto de decir solo meet, pero, no es que no importa que app eso? como no hice lo de la extension no entiendo. solo anda con meet por tema de APIs? que pasa si probamos en zoom?
 
 \section{Objetivos específicos}
 \begin{itemize}
@@ -13,6 +13,13 @@ Desarrollar un prototipo de sistema de traducción bidireccional entre la LSA y 
     \item Implementar un módulo de visualización gestual inversa mediante un avatar capaz de animar el clip de cada glosa con archivo y de deletrear los términos ausentes, con el límite de garantía de la Sección~\ref{sec:limites_operativos}.
     \item Diseñar una arquitectura escalable en la nube para el aprovisionamiento concurrente de los servicios, lo que desacopla el procesamiento del hardware cliente.
     \item Resguardar la privacidad de los datos biométricos de los usuarios al ejecutar la extracción de características y la clasificación de forma local en el dispositivo cliente, y, por consiguiente, limitar la transmisión hacia la nube a cargas puramente textuales.
-    \item Desarrollar la arquitectura de software de una extensión para navegadores basados en la tecnología Chromium, articulada con un motor de ejecución en segundo plano (ILSA).
-    \item Evaluar el clasificador con un script local, seña por seña, según la Sección~\ref{sec:protocolo_camara}. Evaluar los dos canales semánticos con las métricas de la Sección~\ref{sec:fidelidad_semantica}. Esas métricas no sustituyen una revisión humana de quién actúa, el tiempo verbal, la negación y la pregunta; esa revisión queda fuera de este trabajo. Medir la latencia por etapas, según la Sección~\ref{sec:tiempo_pseudo}, y el consumo de hardware. La comprensión del avatar se informa aparte y no forma parte de esa fidelidad automática.
+    \item Desarrollar la arquitectura de \textit{software} de una extensión para navegadores basados en la tecnología Chromium, articulada con un motor de ejecución en segundo plano (ILSA).
+   \item Evaluar el prototipo en cuatro ejes:
+    \begin{itemize}
+        \item \textbf{Clasificador.} Reconocer, seña por seña y con un \textit{script} local, el vocabulario de 100 clases según la Sección~\ref{sec:protocolo_camara}, con una meta de más del 75\,\% de acierto Top-1 en luz doméstica.
+        \item \textbf{Canales semánticos.} Medir la fidelidad de ambos sentidos con las métricas de la Sección~\ref{sec:fidelidad_semantica}. Esa medición no incluye una revisión humana de persona, tiempo verbal, negación y pregunta.
+        \item \textbf{Latencia y hardware.} Medir los tramos de la Sección~\ref{sec:tiempo_pseudo} y el consumo de CPU y memoria. En el canal directo, medir la espera desde que las manos salen del cuadro hasta el subtítulo. En el canal inverso, medir la transcripción, la cola, la inferencia, el transporte y la entrega hasta la animación.
+        \item \textbf{Avatar.} Evaluar la comprensión del dibujo de forma aparte de la fidelidad automática.
+    \end{itemize}
+    %TODO: siento que esta mal este punteado, como que un objetivo tiene que ser algo concreto, no se, llegar a una meta especifica, como el 75% en el clasificador, en latencias seria un ms especifico, pero entiendo que en esas cosas esta los RNF
 \end{itemize}

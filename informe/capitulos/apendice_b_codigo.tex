@@ -58,7 +58,7 @@ SHA-256 {\ttfamily\small  4a35a81e48130866b778a947427ec70f\allowbreak 92b8717547
 \section{\textit{semantic-v2}: Entrenamiento del canal directo}
 Este repositorio ajusta y evalúa los modelos que pasan de glosas a una oración en español. El binario que resulta de ese entrenamiento es el que después carga el servicio en la nube para el canal directo.
 
-Todo el código está en \texttt{src/semantic/}. \texttt{train.py} ajusta un modelo y exporta el binario, \texttt{eval\_trial.py} lo compara sobre oraciones fuera del corte, y \texttt{models.py} es el catálogo: sumar una familia es agregar una entrada ahí. El corpus está en \texttt{dataset\_glosses.json}, las oraciones de prueba en \texttt{dataset\_trial.json} y las instrucciones del modelo en \texttt{prompts/sys\_prompt.txt}. Los pesos y los registros salen a \texttt{outputs/}. Cada familia se identifica con un id estable, como \texttt{qwen2.5-1.5b} o \texttt{llama-3.2-1b}, y ese mismo id nombra su carpeta de salida.
+Todo el código está en \texttt{src/semantic/}. \texttt{train.py} ajusta un modelo y exporta el binario, \texttt{eval\_trial.py} lo compara sobre oraciones fuera del corte, y \texttt{models.py} es el catálogo: sumar una familia es agregar una entrada ahí. El \textit{corpus} está en \texttt{dataset\_glosses.json}, las oraciones de prueba en \texttt{dataset\_trial.json} y las instrucciones del modelo en \texttt{prompts/sys\_prompt.txt}. Los pesos y los registros salen a \texttt{outputs/}. Cada familia se identifica con un id estable, como \texttt{qwen2.5-1.5b} o \texttt{llama-3.2-1b}, y ese mismo id nombra su carpeta de salida.
 
 El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/9c55106abaf96bf802459ebee6b3212c3957bb3e}. Los comandos parten de \texttt{src/semantic}. Git no versiona los binarios: quedan en \texttt{outputs/}. Los cinco archivos finales están en \url{https://huggingface.co/maite123/lsa-semantic-gguf/tree/main/sordo}. Allí el Qwen2.5 1,5B se llama \texttt{qwen2.5-1.5b.gguf}, y el resto sigue ese patrón. El SHA-256 publicado es el de la lista.
 
@@ -88,9 +88,9 @@ SHA-256 {\ttfamily\small  22e4fe904a7facd19595002fb187c01c\allowbreak 52f5417ff5
 \end{itemize}
 
 \section{\textit{semantic-reverse}: Entrenamiento del canal inverso}
-Este repositorio ajusta y evalúa los modelos que pasan de una oración en español a una secuencia de glosas. El corpus y el binario son propios de esta dirección, y el servicio en la nube los usa para el canal inverso.
+Este repositorio ajusta y evalúa los modelos que pasan de una oración en español a una secuencia de glosas. El \textit{corpus} y el binario son propios de esta dirección, y el servicio en la nube los usa para el canal inverso.
 
-La disposición repite la del canal directo, también bajo \texttt{src/semantic/}: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El corpus, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
+La disposición repite la del canal directo, también bajo \texttt{src/semantic/}: \texttt{train.py} entrena, \texttt{eval\_trial.py} compara y \texttt{config.py} reúne rutas, hiperparámetros y la lista de modelos. El \textit{corpus}, el archivo de prueba y el prompt ocupan los mismos nombres de archivo que en el otro laboratorio. Los id de modelo también coinciden, de modo que \texttt{qwen2.5-1.5b} designa la misma familia en las dos direcciones, con pesos distintos.
 
 El commit de la rama es \url{https://github.com/FranciscoVeronING/2026_Proyecto_LSA/commit/e5285fa2c08cde46bf41d6ffb5b5fe0541d6bb72}. Los comandos parten de \texttt{src/semantic}. Git tampoco versiona estos binarios. Los cinco archivos finales están en \url{https://huggingface.co/maite123/lsa-semantic-gguf/tree/main/oyente}. Allí el Qwen2.5 1,5B se llama \texttt{qwen2.5-1.5b.gguf}, y el resto sigue ese patrón. El SHA-256 publicado es el de la lista.
 
@@ -122,7 +122,7 @@ SHA-256 {\ttfamily\small  51f3e6ac945e5386806c06806c729f30\allowbreak ddf98da326
 \section{\textit{avatar-cloud}: Servicio de poses del avatar}
 Este repositorio publica los archivos de pose que el motor local pide para dibujar el avatar. No entrena modelos ni traduce texto. El cliente de la videollamada solicita esas poses a este servicio.
 
-El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El servidor devuelve el archivo cuyo nombre coincide con el pedido. Ese nombre, sin extensión, va en mayúsculas y en ASCII: sin tildes y sin eñe.
+El código cabe en \texttt{app/}: \texttt{main.py} arranca el servicio, \texttt{config.py} fija rutas y tipos de archivo, y \texttt{fingerspell.py} resuelve el alfabeto manual. Las poses están en \texttt{poses/}. El servidor devuelve el archivo cuyo nombre coincide con el pedido. Ese nombre, sin extensión, va en mayúsculas y en ASCII: sin tildes y sin ñ.
 
 Al armar el pedido, ILSA transforma la "ñ" en "n": \texttt{MAÑANA} busca \texttt{MANANA.pose}. La letra Ñ, cuando es la glosa entera, se pide como \texttt{ENIE}. Antes del subtítulo, ILSA restituye la Ñ.
 

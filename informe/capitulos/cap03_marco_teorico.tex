@@ -6,7 +6,7 @@
 \section{Marco teórico}
 
 \subsection{Componentes articulatorios y estructura fonológica de la LSA}
-La articulación de la LSA se sostiene sobre la interacción simultánea de dos grandes conjuntos de parámetros lingüísticos. El curso se publicó en dos partes. La Parte I reúne el punto de partida etnográfico y los aspectos sociolingüísticos \parencite[10, 28]{massone2012parte1}. La Parte II describe los parámetros:
+La articulación de la LSA se sostiene sobre la interacción simultánea de dos grandes conjuntos de parámetros lingüísticos:
 
 \begin{itemize}
     \item \textbf{Rasgos manuales:} Comprenden la configuración de la mano, la ubicación, la orientación y la dirección del movimiento \parencite[43]{massone2012parte2}.
@@ -23,20 +23,20 @@ Este prototipo no implementa esa gramática completa. El clasificador no toma la
 
 \begin{equation}
 \begin{aligned}
-\text{Glosas del prototipo} \rightarrow\;& \text{Tiempo} \rightarrow \text{Lugar} \rightarrow \text{Sujeto} \\
+\text{Tiempo} \rightarrow \text{Lugar} \rightarrow \text{Sujeto} \\
 &\rightarrow \text{Sustantivo} \rightarrow \text{Posesivo} \rightarrow \text{Numeral} \\
 &\rightarrow \text{Verbo} \rightarrow \text{Negación o pregunta}
 \end{aligned}
 \end{equation}
-
-Canal directo, entrada \texttt{AYER CASA YO HERMANO A MIO LLAMAR}: «Ayer, en casa, llamé a mi hermana.»
+Por ejemplo: \\
+Canal directo, entrada \texttt{AYER CASA YO HERMANO A MIO LLAMAR}: «Ayer, en casa, llamé a mi hermana.» \\
 Canal inverso, «Tengo un cuchillo.»: \texttt{YO CUCHILLO TENER}.
 
 Debido a estas divergencias morfosintácticas, la equivalencia entre ambas lenguas no admite un mapeo léxico directo o traducción término a término. Quedan fuera la pregunta o la negación hechas solo con la cara, y cualquier significado que no tenga una seña manual en este recorte.
 
 \subsection{Sistemas de tiempo real y tiempo pseudo-real}
 \label{sec:tiempo_pseudo}
-El tiempo pseudo-real, en este prototipo, es una suma de esperas distintas. Cada una se cuenta desde un evento propio, y el servidor no las mezcla.
+El tiempo pseudo-real, en este prototipo, es una suma de esperas distintas:
 
 \begin{itemize}
     \item \textbf{Pausa.} Empieza cuando las manos salen del cuadro y termina a los 4 segundos si no vuelven. Cierra la frase. No es tiempo del modelo.
@@ -56,7 +56,7 @@ El reconocimiento de señas a partir de flujo de video crudo opera, en cada foto
 \end{equation}
 escalares. Esta representación resulta altamente sensible a las variaciones de iluminación, al fondo y a la vestimenta del usuario. El reconocimiento basado en esqueletos reemplaza esta representación densa mediante la clasificación de un conjunto reducido de coordenadas articulares, denominadas \textit{landmarks}.
 
-Para la estimación postural se utiliza \textit{MediaPipe Holistic}, una arquitectura de percepción distribuida para dispositivos de borde \parencite{google2019mediapipe}. Este marco no constituye un detector único, sino una serie de modelos preentrenados encadenados, que se ejecuta de forma local en el cliente sin transmitir la imagen cruda. El primer modelo, \textit{BlazePose}, localiza al sujeto y estima 33 puntos de pose corporal \parencite{bazarevsky2020blazepose}. Dichos puntos abarcan la estructura facial gruesa, el torso y las extremidades. A partir de las coordenadas de las muñecas, el pipeline delimita una región de interés (\textit{ROI}) para cada mano, donde el modelo específico de manos (\textit{hand}) infiere 21 puntos tridimensionales por mano (la muñeca y cuatro articulaciones por dedo) \parencite{zhang2020mediapipehands}. La coordenada $z$ de cada mano es una profundidad relativa al origen en la muñeca, no una distancia en metros. Los 33 puntos de pose usan otra referencia. Esos dos conjuntos no comparten una escala métrica común.
+Para la estimación postural se utiliza \textit{MediaPipe Holistic}, una arquitectura de percepción distribuida para dispositivos de borde \parencite{google2019mediapipe}. Este marco no constituye un detector único, sino una serie de modelos preentrenados encadenados, que se ejecuta de forma local en el cliente sin transmitir la imagen cruda. El primer modelo, \textit{BlazePose}, localiza al sujeto y estima 33 puntos de pose corporal \parencite{bazarevsky2020blazepose}. Dichos puntos abarcan la estructura facial gruesa, el torso y las extremidades. A partir de las coordenadas de las muñecas, el pipeline delimita una región de interés (\textit{ROI}) para cada mano, donde el modelo específico de manos (\textit{hand}) infiere 21 puntos tridimensionales por mano (la muñeca y cuatro articulaciones por dedo) \parencite{zhang2020mediapipehands}. La coordenada $z$ de cada mano es una profundidad relativa al origen en la muñeca, no una distancia en metros.
 
 Asimismo, los datos cinemáticos de referencia gestual se archivan en un formato binario especializado con extensión \texttt{.pose} \parencite{moryossef2021poseformat}. La especificación del formato y su esquema de serialización provienen de la biblioteca \textit{pose-format}, desarrollada para el almacenamiento y manipulación de datos posturales en lenguas de señas, la cual organiza los puntos en un encabezado de metadatos globales y un tensor multidimensional de coordenadas espacializadas.
 
@@ -71,10 +71,10 @@ El mecanismo de atención permite que cualquier instante consulte otros instante
 $Q$, $K$ y $V$ son las proyecciones de consulta, clave y valor. $d_k$ es la dimensión de las claves; el cociente $1/\sqrt{d_k}$ evita que el producto $QK^{\top}$ crezca con esa dimensión y sature el \textit{softmax}.
 
 
-\subsection{Modelos de lenguaje pequeños y adaptación \textit{LoRA}}
+\subsection{Modelos de lenguaje pequeños, adaptación \textit{LoRA} y cuantización}
 Los modelos de lenguaje pequeños (SLM, por sus siglas en inglés) poseen un número reducido de parámetros en comparación con las arquitecturas de gran escala. Su función principal consiste en tomar una secuencia de texto de entrada para predecir la continuación lógica del mensaje. En este prototipo, los SLM asumen la traducción semántica bidireccional. Esta dimensión reducida facilita la etapa de ajuste fino, además de permitir la ejecución posterior del traductor, previamente cuantizado, directamente en la CPU.
 
-El procesamiento de información requiere la conversión del texto en tokens, los cuales constituyen los componentes básicos del vocabulario del tokenizador. Cabe destacar que un token no equivale necesariamente a una palabra completa, sino que puede abarcar caracteres individuales, subpalabras o palabras enteras. Estos segmentos representan la unidad fundamental mediante la cual la arquitectura divide la entrada y cuantifica la salida generada.
+El procesamiento de información requiere la conversión del texto en \textit{tokens}, los cuales constituyen los componentes básicos del vocabulario del tokenizador. Cabe destacar que un \textit{token} no equivale necesariamente a una palabra completa, sino que puede abarcar caracteres individuales, subpalabras o palabras enteras. Estos segmentos representan la unidad fundamental mediante la cual la arquitectura divide la entrada y cuantifica la salida generada.
 \label{sec:token}
 
 La adaptación de estos modelos se ejecuta mediante la técnica de Adaptación de Bajo Rango (\textit{LoRA}) \parencite{hu2022lora}, la cual congela la matriz de pesos preentrenados $\mathbf{W}_0 \in \mathbb{R}^{d \times k}$ e introduce dos matrices entrenables de bajo rango $\mathbf{B} \in \mathbb{R}^{d \times r}$ y $\mathbf{A} \in \mathbb{R}^{r \times k}$, con rango $r \ll \min(d, k)$. La actualización lineal adopta la forma:
@@ -176,10 +176,17 @@ donde $\alpha$ actúa como un factor de escala constante. La Figura~\ref{fig:com
 
 \end{circuitikz}%
 }
-\caption{Comparación algebraica del ajuste. A la izquierda, un ajuste completo se escribe como $W+\Delta W$. En la práctica se actualizan los pesos originales; no se conserva una base congelada con una rama aparte. A la derecha, LoRA descompone $\Delta W$ en $B$ y $A$. El dibujo muestra el caso $k=d$ y escribe $BA$; la ecuación~\ref{eq:lora_formulation} incluye el factor $\alpha/r$.}
+\caption{Comparación algebraica del ajuste. A la izquierda, un ajuste completo se escribe como $W \cdot x + \Delta W \cdot x$. En la práctica se actualizan los pesos originales; no se conserva una base congelada con una rama aparte. A la derecha, LoRA descompone $\Delta W$ en $B$ y $A$. El dibujo muestra el caso $k=d$ y escribe $BA$.}
 \label{fig:comparacion_finetuning_lora}
 \end{figure}
 
+En este trabajo, el procedimiento de inicialización de los adaptadores sigue la formulación estándar propuesto por \textcite{hu2022lora}: la matriz $\mathbf{A}$ se inicializa mediante una distribución uniforme de Kaiming \parencite{he2015delving} (esquema que escala la varianza de los pesos según la dimensión de entrada para preservar la estabilidad de los gradientes), mientras que la matriz $\mathbf{B}$ se establece en cero ($\mathbf{B} = \mathbf{0}$). Esta configuración asegura que el producto inicial $\mathbf{B}\mathbf{A}$ resulte nulo, de modo que el modelo comience el proceso de ajuste respondiendo de forma idéntica a la arquitectura base $W_0$.
+
+%TODO: El tema de hacer una subseccion es que queda re pobre cuantizacion, habria que explicar mas sino, igual dame tu opinion
+% FIX: Me molestaba que sea brusco el cambio. Ahi lo redacte de nuevo y borre unainformacion que se repetia en otro cap
+
+
+% ANTES
 Tras el ajuste, los adaptadores se fusionan con la base. Ese resultado sigue en 16 bits. Hay que distinguir tres cosas. El formato de archivo es GGUF. La configuración de cuantización es el preset \texttt{Q4\_K\_M} de \texttt{llama.cpp} \parencite{gerganov2023llamacpp}. La ecuación de abajo es una reconstrucción simplificada de un peso dentro de un bloque.
 
 El conversor parte cada tensor en superbloques de 256 pesos y, dentro, en bloques más cortos. Cada bloque guarda enteros de 4 bits junto con una escala $s$ y un mínimo $m$ \parencite{ggml2023kquants}:
@@ -187,12 +194,30 @@ El conversor parte cada tensor en superbloques de 256 pesos y, dentro, en bloque
 \hat{w} = m + s\, q
 \label{eq:reconstruccion_q4k}
 \end{equation}
-donde $q$ es el entero de ese peso. En la tabla de cuantización de \texttt{llama.cpp}, medida sobre Llama 3.1 8B, \texttt{Q4\_K\_M} queda en $4{,}8944$ bits por peso, cerca de 5 frente a 16 \parencite{gerganov2023llamacpp}. Esa fila es el archivo completo dividido por los parámetros de ese modelo. No separa la cabecera, el vocabulario ni los tensores de otra precisión, y no se traslada tal cual a los modelos de este trabajo. No es una medición de calidad sobre las oraciones. La mayor parte de los tensores queda en \texttt{Q4\_K}.  El convertidor reserva \texttt{Q6\_K} para las proyecciones \texttt{v\_proj} y \texttt{down\_proj}. Las normalizaciones permanecen en 32 bits. Esa mezcla depende de la versión del convertidor; no se informa aquí el porcentaje exacto sobre los GGUF de este trabajo.
+donde $q$ es el entero de ese peso. En la tabla de cuantización de \texttt{llama.cpp}, medida sobre Llama 3.1 8B, \texttt{Q4\_K\_M} queda en $4{,}8944$ bits por peso, cerca de 5 frente a 16 \parencite{gerganov2023llamacpp}. Esa fila es el archivo completo dividido por los parámetros de ese modelo. No separa la cabecera, el vocabulario ni los tensores de otra precisión, y no se traslada tal cual a los modelos de este trabajo. No es una medición de calidad sobre las oraciones. La mayor parte de los tensores queda en \texttt{Q4\_K}.  El convertidor reserva \texttt{Q6\_K} para las proyecciones \texttt{v\_proj} y \texttt{down\_proj}. Las normalizaciones permanecen en 32 bits. Esa mezcla depende de la versión del convertidor; no se informa aquí el porcentaje exacto sobre los GGUF de este trabajo. % TODO: Yo no lo sacaria, porque no es algo que nos marco Gonza, y ademas es muchisimo. IGUAL, te doy la derecha, me suena a un comentario sacado por un resultado que marco teorico
+%ANTES
+
+%DESPEUS
+Una vez finalizada la adaptación del modelo mediante LoRA, la fusión de las matrices de bajo rango con los pesos base genera una arquitectura consolidada en precisión de punto flotante de 16 bits. Sin embargo, su despliegue directo en el microservicio demanda una optimización adicional para reducir la huella de memoria y acelerar la inferencia en CPU. En esta etapa interviene la cuantización, un proceso de compresión numérica que representa los parámetros con una menor cantidad de bits sin comprometer sustancialmente la precisión lingüística del sistema.
+
+La configuración de cuantización utilizada es el preset \texttt{Q4\_K\_M} de \texttt{llama.cpp} \parencite{gerganov2023llamacpp}. La ecuación de abajo es una reconstrucción simplificada de un peso dentro de un bloque.
+
+El conversor parte cada tensor en superbloques de 256 pesos y, dentro, en bloques más cortos. Cada bloque guarda enteros de 4 bits junto con una escala $s$ y un mínimo $m$ \parencite{ggml2023kquants}:
+\begin{equation}
+\hat{w} = m + s\, q
+\label{eq:reconstruccion_q4k}
+\end{equation}
+donde $q$ es el entero de ese peso.
+El formato de almacenamiento empleado es GGUF. Según las mediciones de la tabla de cuantización de \texttt{llama.cpp} sobre el modelo Llama 3.1 8B, la configuración \texttt{Q4\_K\_M} alcanza un promediado de $4{,}8944$ bits por peso, valor cercano a 5 bits frente a los 16 bits originales \parencite{gerganov2023llamacpp}. Cabe destacar que dicha métrica representa el tamaño total del archivo dividido por el número global de parámetros. Por ende, no discrimina la cabecera, el vocabulario ni los tensores preservados en otras precisiones, de modo que el valor no se traslada de manera idéntica a los modelos desarrollados en este trabajo ni constituye una evaluación de la calidad de las oraciones generadas.
+
+%DESPUES
+
 
 \subsection{Estándares de captura web y arquitecturas de extensión web}
-La captura de video en el navegador se apoya en dos especificaciones. \textit{Media Capture and Streams} define \texttt{getUserMedia()} \parencite{w3c2024mediacapturestreams}. Esa llamada entrega pistas de un dispositivo, por ejemplo la cámara. La misma especificación permite varias pistas asociadas a una misma fuente.
 
-En las pruebas de captura de este trabajo, en Windows con Chrome y Google Meet, la apertura directa de la cámara mediante \texttt{getUserMedia()} devolvió la excepción \texttt{NotReadableError} cuando la videoconferencia ya tenía el dispositivo. Esa observación no se presenta como una propiedad de todo Windows con Meet. Por ese motivo, la arquitectura de ILSA omite una segunda apertura de la cámara y reutiliza el objeto \texttt{MediaStream} de la reunión. Al desactivar la extensión, el sistema conserva los flujos activos y no invoca \texttt{stop()} sobre sus pistas.
+La captura de flujo de video desde el navegador se fundamenta en la API \textit{Media Capture and Streams} \parencite{w3c2024mediacapturestreams}. Mediante la interfaz \texttt{getUserMedia()}, el sistema solicita acceso a los dispositivos de entrada locales (como la cámara web) para obtener las pistas de dispositivos, por ejemplo la cámara. La misma especificación permite varias pistas asociadas a una misma fuente.
+
+En las pruebas de captura de este trabajo, en Windows con Chrome y Google Meet, la apertura directa de la cámara mediante \texttt{getUserMedia()} devolvió la excepción \texttt{NotReadableError} cuando la videoconferencia ya tenía el dispositivo. Por ese motivo, la arquitectura de ILSA omite una segunda apertura de la cámara y reutiliza el objeto \texttt{MediaStream} de la reunión. Al desactivar la extensión, el sistema conserva los flujos activos y no invoca \texttt{stop()} sobre sus pistas.
 
 El lienzo arma la imagen que sale a la llamada. Los fotogramas se leen de ese mismo flujo y el dibujo agrega el subtítulo o el esqueleto. \texttt{canvas.captureStream()}, de \textit{Media Capture from DOM Elements} \parencite{w3c2024mediacapture}, construye un \texttt{MediaStream} a partir del lienzo donde esos dibujos ya están.
 
@@ -203,8 +228,11 @@ En el ámbito de las extensiones web bajo el estándar Manifest V3 \parencite{ch
 \end{itemize}
 
 \section{Estado del arte}
+\label{sec:estado_del_arte}
+La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducción e integración en una llamada. El prototipo reconoce señas aisladas de LSA, a partir de los puntos de una cámara web, dentro de Google Meet. No reconoce un discurso continuo sin corte entre señas.
 
-La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducción e integración en una llamada. El prototipo reconoce señas aisladas de LSA, a partir de los puntos de una cámara web, en los dos sentidos, dentro de Google Meet. No reconoce un discurso continuo sin corte entre señas.
+% FIX:: Fijate si te gusta este y volamos el de arriba a la meirda
+Para evaluar el alcance del prototipo propuesto en relación con los desarrollos vigentes, la Tabla~\ref{tab:estado_arte} sintetiza las herramientas y trabajos de investigación más representativos actuales. La comparación se realiza a partir de cuatro ejes estructurales: la lengua abarcada, la modalidad de la entrada, el sentido de la traducción y el nivel de integración en plataformas de comunicación sincrónica.
 
 \begin{table}[H]
     \centering
@@ -228,22 +256,23 @@ La comparación usa cuatro ejes: lengua, tipo de entrada, sentido de la traducci
         \addlinespace[2pt]
         SignAll \parencite{retek2023signall} & ASL, visión & Hacia inglés escrito. & Escena de captura, fuera de la llamada. \\
         \addlinespace[2pt]
-        WLASL \parencite{li2020wlasl} & ASL, video & Reconocimiento léxico. & Corpus. No traduce oraciones ni trabaja en LSA. \\
+        WLASL \parencite{li2020wlasl} & ASL, video & Reconocimiento léxico. & \textit{Corpus}. No traduce oraciones ni trabaja en LSA. \\
         \addlinespace[2pt]
-        Hand Talk \parencite{handtalk2025} & Libras y ASL, texto & Hacia un avatar tridimensional. & Sin reconocimiento y sin LSA. \\
+        Hand Talk \parencite{handtalk2025} & Lengua de señas brasileña (Libras) y ASL, texto & Hacia un avatar tridimensional. & Sin reconocimiento y sin LSA. \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
-Cada límite del cuadro está en la fuente citada: el diccionario no reconoce, LSA64 filma con guantes, SignAll toma una escena de ASL y el caso de uso principal es el inglés escrito, WLASL no sale de la ASL léxica, y Hand Talk parte del texto. La misma patente describe, además, un avatar cuando la lengua de llegada es una lengua de señas. Ninguna de esas fuentes describe el recorte de este prototipo, que es el reconocimiento aislado dentro de Meet.
+%FIX: Si, gonza pidio el cuadro. Fijate si te gusta este de abajo, sino volamoss a la mierda y no ponemos nada
+A partir del análisis del estado del arte se evidencia la falta de soluciones informáticas capaces de integrar de forma simultánea tres aspectos clave: el procesamiento específico de la LSA, la bidireccionalidad en la traducción y la integración con plataformas de videollamada. Mientras que las herramientas existentes se limitan a la consulta estática de diccionarios, la intermediación humana o la ejecución en escenarios controlados fuera del flujo de conversación, el prototipo propuesto satisface esta vacancia mediante una arquitectura automatizada en tiempo pseudo-real que opera de manera transparente dentro de Google Meet.
 
 \section{Metodología de desarrollo}
 El proyecto se estructuró bajo un modelo de ciclo de vida iterativo e incremental \parencite{pressman2014software}, compuesto por 6 fases principales:
 \begin{enumerate}
     \item \textbf{Curación de datos y formalización léxica:} Delimitación de 100 señas de LSA en colaboración con un informante calificado; diseño del entorno de grabación; captura de clips en resolución 1080p; y generación del dataset de coordenadas vectoriales normalizadas.
     \item \textbf{Entrenamiento y diagnóstico del clasificador gestual:} Prueba de ventanas de 8, 12, 16 y 32 fotogramas; búsqueda de hiperparámetros con Optuna \parencite{akiba2019optuna}; y evaluación en cámara del checkpoint de 100 clases, con diez tomas por seña, dos condiciones de iluminación, y persona y encuadre fijos.
-    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} Diseño de prompts; ajuste con LoRA sobre Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 1B Instruct \parencite{meta2024llama321b}, en el orden manual de la Sección~\ref{sec:orden_prototipo}; cuantización GGUF \parencite{gerganov2023llamacpp}; y evaluación de fidelidad según la Sección~\ref{sec:fidelidad_semantica}.
-    \item \textbf{Integración y renderizado gestual:} Acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados; comunicación con el servidor semántico; e intercepción de video en Google Meet mediante Canvas sintético y extensión Manifest V3 \parencite{chrome2024manifestv3}.
+    \item \textbf{Desarrollo de los módulos semánticos bidireccionales y diseño de despliegue:} Ingeniería de prompts; ajuste con LoRA sobre Qwen2.5 \parencite{qwen2024qwen25}, SmolLM2 \parencite{allal2024smollm2} y Llama 3.2 1B Instruct \parencite{meta2024llama321b}, en el orden manual de la Sección~\ref{sec:orden_prototipo}; cuantización GGUF \parencite{gerganov2023llamacpp}; y evaluación de fidelidad según la Sección~\ref{sec:fidelidad_semantica}.
+    \item \textbf{Integración y renderizado gestual:} Acoplamiento del pipeline en el motor local ILSA mediante patrones de diseño desacoplados; comunicación con el servidor semántico; e intercepción de video en Google Meet mediante \textit{canvas} sintético y extensión Manifest V3 \parencite{chrome2024manifestv3}.
     \item \textbf{Avatar e integración visual inversa:} Desarrollo del controlador del avatar para la representación esquelética de las glosas del canal inverso; implementación del subsistema de contingencia para deletreo manual dactilológico; e integración en la extensión.
     \item \textbf{Fase de pruebas:} Medición de las etapas de la Sección~\ref{sec:tiempo_pseudo}, con el procedimiento de la Sección~\ref{sec:latencias_pipeline}.
 \end{enumerate}
@@ -252,13 +281,14 @@ Las tareas del trabajo se gestionaron en YouTrack \cite{jetbrains2024youtrack}. 
 
 \paragraph{Fidelidad semántica}
 \label{sec:fidelidad_semantica}
-La fidelidad semántica, en este trabajo, es la conservación de la proposición dentro de los mensajes que el prototipo admite: quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. La evaluación automática compara la salida con una referencia. Se registran cinco métricas porque cada una mira un fallo distinto. BLEU y ROUGE-L castigan una paráfrasis correcta y pueden premiar un texto que repite palabras pero cambia la persona, el tiempo, la negación o la pregunta. Un ejemplo: la referencia «¿Cómo estás vos?» y la salida «Cómo estás vos.» coinciden en casi todas las palabras; BLEU y ROUGE-L quedan altos y se pierde la pregunta. METEOR afloja esa exigencia cuando coincide la raíz. \texttt{bertscore\_f1} acepta palabras distintas si sus vectores quedan cerca. \texttt{comet\_score} mira también la entrada, no solo la referencia.
+La fidelidad semántica, en este trabajo, es la conservación de la proposición dentro de los mensajes que el prototipo admite: quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. La evaluación automática compara la salida con una referencia. Se registran cinco métricas, cada una evalúa un fallo distinto:
 
 \begin{itemize}
     \item \textbf{BLEU} \parencite{papineni2002bleu}. Precisión de n-gramas: qué porción de las secuencias de la salida ya está en la referencia. Una salida corta recibe una penalización. No premia, con el mismo peso, las palabras de la referencia que la salida omitió.
     \item \textbf{ROUGE-L} \parencite{lin2004rouge}. La subsecuencia común más larga que respeta el orden. Dos textos pueden compartir palabras y aun así bajar si esas palabras no aparecen en el mismo orden.
     \item \textbf{METEOR} \parencite{banerjee2005meteor}. Alinea palabras sueltas. Cuenta la coincidencia exacta, la raíz y, si hay un léxico de sinónimos, el sinónimo. Junta precisión y recall, y baja si el texto queda partido en muchos fragmentos.
-    \item \textbf{\texttt{BERT Score}} \parencite{zhang2020bertscore}. Compara el vector de cada token de la salida con los de la referencia, mediante un modelo de lenguaje preentrenado. El F1 de esa alineación sube cuando el sentido está cerca aunque las palabras no coincidan.
+    \item \textbf{\texttt{BERT Score}} \parencite{zhang2020bertscore}. Compara el vector de cada \textit{token} de la salida con los de la referencia, mediante un modelo de lenguaje preentrenado. El F1 de esa alineación sube cuando el sentido está cerca aunque las palabras no coincidan.
+    \item \textbf{\texttt{BERT Score}} \parencite{zhang2020bertscore}. Compara el vector de cada \textit{token} de la salida con los de la referencia mediante un modelo de lenguaje preentrenado. Su valor $F_1$ representa la media armónica entre la precisión (fidelidad de los términos generados) y la cobertura (\textit{recall}, porcentaje de información retenida de la referencia). De este modo, la métrica sube cuando el sentido se mantiene próximo, aun cuando no exista coincidencia exacta de palabras.
     \item \textbf{\texttt{Comet Score}} \parencite{rei2020comet}. Un modelo entrenado para aproximar juicios humanos de traducción. Usa la entrada, la salida y la referencia. Estima si el sentido de la entrada llegó a la salida.
 \end{itemize}
 
@@ -269,19 +299,19 @@ Un puntaje alto de solapamiento no equivale a comprensión de LSA ni a validaci�
 Durante las fases de desarrollo y redacción se utilizaron dos herramientas auxiliares:
 \begin{itemize}
     \item \textbf{Cursor:} Entorno de desarrollo integrado asistido por inteligencia artificial, utilizado para la navegación del repositorio, autocompletado sintáctico y asistencia en la edición de código en Python y JavaScript.
-    \item \textbf{Gemini (Google):} Modelo de lenguaje utilizado como soporte de consulta técnica, facilitador en la asimilación de conceptos teóricos y asistencia en la revisión del documento. También redactó borradores de pares español--glosas para el corpus semántico, a partir de un prompt que fijaba el orden manual, el vocabulario y los fenómenos a cubrir. Cada par se leyó y se corrigió para que respetara las instrucciones de sistema de cada canal (Subsecciones del canal directo y del canal inverso, Capítulo~\ref{cap:implementacion}).
+    \item \textbf{Gemini (Google):} Modelo de lenguaje utilizado como soporte de consulta técnica, facilitador en la asimilación de conceptos teóricos y asistencia en la revisión del documento. También redactó borradores de pares español--glosas para el \textit{corpus} semántico, a partir de un prompt que fijaba el orden manual, el vocabulario y los fenómenos a cubrir. Cada par se leyó y se corrigió para que respetara las instrucciones de sistema de cada canal (Subsecciones del canal directo y del canal inverso, Capítulo~\ref{cap:implementacion}).
 \end{itemize}
 
 \paragraph{Alcance y propósito de su utilización.}
 La intervención de dichas herramientas fue con el propósito de:
 \begin{itemize}
     \item \textbf{Consultas técnicas y conceptuales:} Asistencia en la comprensión de aspectos específicos relativos a la cuantización GGUF Q4\_K\_M con \texttt{llama.cpp}, fundamentos de LoRA, la gestión de memoria en entornos \textit{serverless} y esquemas de comunicación asíncrona en extensiones Manifest V3.
-    \item \textbf{Asistencia en el desarrollo de software:} Sugerencias de refactorización de código y resolución de incompatibilidades sintácticas en el entorno Chrome Extensions y en los conectores asíncronos de FastAPI.
+    \item \textbf{Asistencia en el desarrollo de \textit{software}:} Sugerencias de refactorización de código y resolución de incompatibilidades sintácticas en el entorno Chrome Extensions y en los conectores asíncronos de FastAPI.
     \item \textbf{Revisión de formato:} Corrección gramatical y adecuación de estilo académico del informe.
 \end{itemize}
 
 \paragraph{Límites y responsabilidad de autoría.}
-Ninguna herramienta generativa reemplazó la labor intelectual, analítica ni experimental del proyecto. La concepción de la arquitectura híbrida, la recolección y curación del corpus de 100 señas, el diseño e iteración de las redes neuronales, el ajuste de los modelos de lenguaje y el análisis de resultados constituyen desarrollo de los autores, quienes asumen la responsabilidad técnica y académica por la totalidad del contenido. Los pares del corpus semántico se redactaron con asistencia de Gemini bajo un prompt definido por los autores. Ellos revisaron y aceptaron cada ejemplo antes de entrenar.
+Ninguna herramienta generativa reemplazó la labor intelectual, analítica ni experimental del proyecto. La concepción de la arquitectura híbrida, la recolección y curación del \textit{corpus} de 100 señas, el diseño e iteración de las redes neuronales, el ajuste de los modelos de lenguaje y el análisis de resultados constituyen desarrollo de los autores, quienes asumen la responsabilidad técnica y académica por la totalidad del contenido.
 
 \section{Herramientas y tecnologías empleadas}
 
@@ -311,7 +341,7 @@ Comunicación y Backend & FastAPI \cite{tiangolo2018fastapi}, Uvicorn & Servidor
 \addlinespace[3pt]
 Servicio en la nube & Google Cloud Run & Instancia del servicio semántico empleada en las pruebas experimentales. \\
 \addlinespace[3pt]
-Integración Web & Chrome Extensions (MV3) & Intercepción de media mediante Canvas \texttt{captureStream()} en Google Meet. \\
+Integración Web & Chrome Extensions (MV3) & Intercepción de media mediante \textit{canvas} \texttt{captureStream()} en Google Meet. \\
 \addlinespace[3pt]
 Transcripción & Vosk & Transcripción local de audio a texto en el cliente. \\
 \addlinespace[3pt]

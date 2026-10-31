@@ -26,7 +26,7 @@ La integración del sistema se contrasta aquí con el objetivo general y las met
 
 \subsection{Aportes técnicos e ingenieriles}
 
-El proyecto aporta decisiones de diseño y arquitecturas aplicadas que resuelven problemas concretos de la ingeniería de software y el aprendizaje profundo en dispositivos de borde:
+El proyecto aporta decisiones de diseño y arquitecturas aplicadas que resuelven problemas concretos de la ingeniería de \textit{software} y el aprendizaje profundo en dispositivos de borde:
 
 \begin{itemize}
     \item \textbf{Partición eficiente de cómputo híbrido:} La delegación de los modelos de lenguaje hacia la nube y la conservación del pipeline de visión en el cliente permitió ejecutar el sistema en hardware estándar sin placa gráfica dedicada. Los 96 a 231\,MB son \texttt{RAM\_mb} del proceso ILSA en la laptop (Sección~\ref{sec:perfilado_cliente_recursos}): el working set de ese PID, 96\,MB en el canal directo y cerca de 231\,MB en el inverso. En ese proceso están el clasificador y, en el canal inverso, Vosk. Chrome no entra en esa columna. \texttt{js\_heap\_mb} es otro campo: el heap de JavaScript de la página, no la RAM total del navegador, de MediaPipe ni de la videollamada.
@@ -46,7 +46,7 @@ El aporte técnico de este trabajo es el prototipo de traducción bidireccional 
 Las líneas de continuidad y expansión del sistema surgen de manera coherente a partir de las limitaciones identificadas en la etapa de evaluación y de la necesidad de escalar la solución hacia entornos de producción masiva. Se proponen los siguientes ejes de desarrollo:
 
 \subsection{Inclusión de la comunidad sorda y validación participativa}
-Incorporar a personas nativas de la comunidad sorda y a especialistas en LSA en el diseño, la anotación del corpus y la validación del sistema. Esa participación es una mejora que deberá comprobarse con dos pruebas hechas con personas sordas. En la de comprensión, la persona verá la salida del prototipo sin la oración en español y dirá quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. En la de aceptación, indicará si acepta esa seña como LSA para ese sentido. El caso será satisfactorio cuando lo que dice coincida con la proposición prevista y acepte la seña.
+Incorporar a personas nativas de la comunidad sorda y a especialistas en LSA en el diseño, la anotación del \textit{corpus} y la validación del sistema. Esa participación es una mejora que deberá comprobarse con dos pruebas hechas con personas sordas. En la de comprensión, la persona verá la salida del prototipo sin la oración en español y dirá quién interviene, de qué se habla, en qué tiempo, si hay negación y si hay pregunta. En la de aceptación, indicará si acepta esa seña como LSA para ese sentido. El caso será satisfactorio cuando lo que dice coincida con la proposición prevista y acepte la seña.
 
 \subsection{Ampliación del dataset y captura multicámara}
 Regrabar y expandir el conjunto de datos gestual mediante tomas simultáneas desde múltiples ángulos y perspectivas espaciales. La integración de registros multicámara permitirá entrenar clasificadores con mayor invariancia frente a oclusiones mutuas de las manos, cambios en el punto de vista de la lente y variaciones en la postura del usuario respecto del plano frontal.
