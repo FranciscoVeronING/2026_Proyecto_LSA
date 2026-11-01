@@ -61,6 +61,7 @@ class IlsaWindow:
         self.backend.semantic_model_id = DEFAULT_MODEL_ID
         self.log_win: tk.Toplevel | None = None
         self.log_text: tk.Text | None = None
+        self.vocab_win: tk.Toplevel | None = None
         self._boot_q: queue.Queue = queue.Queue()
         self._ready = False
         self._pad = None
@@ -471,6 +472,17 @@ class IlsaWindow:
         link.pack(anchor="w")
         link.bind("<Button-1>", lambda _e: webbrowser.open(REPO_URL))
 
+        vocab_link = tk.Label(
+            pad,
+            text="Señas del clasificador",
+            font=small_f,
+            fg=ACCENT,
+            bg=BG,
+            cursor="hand2",
+        )
+        vocab_link.pack(anchor="w")
+        vocab_link.bind("<Button-1>", lambda _e: self._open_vocab())
+
         logs = tk.Label(
             pad,
             text="Registros",
@@ -529,6 +541,18 @@ class IlsaWindow:
         self._link_label(body, "Señario CAS · tomo 1", SENARIO_1_URL, small_f)
         self._link_label(body, "Señario CAS · tomo 2", SENARIO_2_URL, small_f)
         self._link_label(body, "LSA en familia (Play Store)", LSA_FAMILIA_URL, small_f)
+        vocab = tk.Label(
+            body,
+            text="Ver las 100 señas del clasificador",
+            font=small_f,
+            fg=ACCENT,
+            bg=BG,
+            cursor="hand2",
+            justify="left",
+            wraplength=340,
+        )
+        vocab.pack(anchor="w", pady=(10, 0))
+        vocab.bind("<Button-1>", lambda _e: (win.destroy(), self._open_vocab()))
         close = tk.Button(body, text="Cerrar", font=body_f, padx=16, pady=6, command=win.destroy, **BTN_LIVE["secondary"])
         close.pack(anchor="e", pady=(18, 0))
         win.update_idletasks()
@@ -538,6 +562,157 @@ class IlsaWindow:
         win.geometry(f"+{max(x, 0)}+{max(y, 0)}")
         win.grab_set()
         win.focus_set()
+
+    def _open_vocab(self) -> None:
+        if self.vocab_win is not None:
+            try:
+                if self.vocab_win.winfo_exists():
+                    self.vocab_win.deiconify()
+                    self.vocab_win.lift()
+                    self.vocab_win.focus_set()
+                    return
+            except tk.TclError:
+                self.vocab_win = None
+
+        from classifier.vocabulario import load_class_names, uncategorized, vocab_rows
+
+        names = load_class_names()
+        rows = vocab_rows(names)
+        extra = uncategorized(names)
+        if extra:
+            rows.append({"category": "Otras", "count": len(extra), "signs": extra})
+        total = sum(int(row["count"]) for row in rows)
+
+        win = tk.Toplevel(self.root)
+        self.vocab_win = win
+        win.title("ILSA · señas del clasificador")
+        win.configure(bg=BG)
+        win.transient(self.root)
+        win.geometry("640x520")
+        win.minsize(520, 360)
+        win.protocol("WM_DELETE_WINDOW", self._close_vocab)
+
+        title_f = tkfont.Font(family="Segoe UI", size=12, weight="bold")
+        body_f = tkfont.Font(family="Segoe UI", size=10)
+        small_f = tkfont.Font(family="Segoe UI", size=9)
+        mono_f = tkfont.Font(family="Consolas", size=9)
+
+        head = tk.Frame(win, bg=BG, padx=20, pady=16)
+        head.pack(fill="x")
+        tk.Label(head, text="Señas del clasificador", font=title_f, fg=TEXT, bg=BG).pack(
+            anchor="w"
+        )
+        tk.Label(
+            head,
+            text=(
+                f"El modelo reconoce {total} señas. Si hacés una que no está en "
+                "esta lista, el clasificador puede tomarla por otra parecida y "
+                "devolver esa. Las etiquetas son las del clasificador "
+                "(incluida ñ y años)."
+            ),
+            font=body_f,
+            fg=TEXT,
+            bg=BG,
+            wraplength=580,
+            justify="left",
+        ).pack(anchor="w", pady=(8, 0))
+
+        table_wrap = tk.Frame(win, bg=BG, padx=20)
+        table_wrap.pack(fill="both", expand=True)
+        canvas = tk.Canvas(table_wrap, bg=BG2, highlightthickness=0)
+        scroll = tk.Scrollbar(table_wrap, orient="vertical", command=canvas.yview)
+        inner = tk.Frame(canvas, bg=BG2)
+        inner.bind(
+            "<Configure>",
+            lambda _e: canvas.configure(scrollregion=canvas.bbox("all")),
+        )
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+        canvas.configure(yscrollcommand=scroll.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scroll.pack(side="right", fill="y")
+
+        def _wheel(event):
+            canvas.yview_scroll(int(-event.delta / 120), "units")
+
+        canvas.bind("<Enter>", lambda _e: canvas.bind_all("<MouseWheel>", _wheel))
+        canvas.bind("<Leave>", lambda _e: canvas.unbind_all("<MouseWheel>"))
+
+        inner.grid_columnconfigure(2, weight=1)
+        headers = ("Categoría", "Cant.", "Señas")
+        for col, text in enumerate(headers):
+            tk.Label(
+                inner,
+                text=text,
+                font=small_f,
+                fg=MUTED,
+                bg=BG2,
+                anchor="w",
+            ).grid(row=0, column=col, sticky="nw", padx=(10 if col else 12, 8), pady=(10, 6))
+
+        for i, row in enumerate(rows, start=1):
+            bg_row = BG if i % 2 else BG2
+            signs = ", ".join(str(s) for s in row["signs"])
+            tk.Label(
+                inner,
+                text=str(row["category"]),
+                font=small_f,
+                fg=TEXT,
+                bg=bg_row,
+                anchor="nw",
+                justify="left",
+                wraplength=150,
+            ).grid(row=i, column=0, sticky="nwe", padx=(12, 8), pady=4)
+            tk.Label(
+                inner,
+                text=str(row["count"]),
+                font=small_f,
+                fg=TEXT,
+                bg=bg_row,
+                anchor="nw",
+            ).grid(row=i, column=1, sticky="nw", padx=(0, 8), pady=4)
+            tk.Label(
+                inner,
+                text=signs,
+                font=mono_f,
+                fg=TEXT,
+                bg=bg_row,
+                anchor="nw",
+                justify="left",
+                wraplength=380,
+            ).grid(row=i, column=2, sticky="nwe", padx=(0, 12), pady=4)
+
+        foot = tk.Frame(win, bg=BG, padx=20, pady=12)
+        foot.pack(fill="x")
+        tk.Label(
+            foot,
+            text=f"Total  {total}",
+            font=small_f,
+            fg=MUTED,
+            bg=BG,
+        ).pack(side="left")
+        tk.Button(
+            foot,
+            text="Cerrar",
+            font=body_f,
+            padx=16,
+            pady=6,
+            command=self._close_vocab,
+            **BTN_LIVE["secondary"],
+        ).pack(side="right")
+        win.update_idletasks()
+        x = self.root.winfo_rootx() + 24
+        y = self.root.winfo_rooty() + 24
+        win.geometry(f"640x520+{max(x, 0)}+{max(y, 0)}")
+        win.focus_set()
+
+    def _close_vocab(self) -> None:
+        if self.vocab_win is None:
+            return
+        try:
+            self.vocab_win.destroy()
+        except tk.TclError:
+            pass
+        self.vocab_win = None
 
     def _mode_choice(self, mode: str) -> tuple[str, str]:
         if mode == "signer":
