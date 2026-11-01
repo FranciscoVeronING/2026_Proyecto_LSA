@@ -174,7 +174,7 @@ La Figura~\ref{fig:casos_uso} ubica a los dos actores frente a las cinco funcion
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-01: Conversar con otra persona (Modo Sordo)}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. ILSA está encendido.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet cuando la salida es Subtítulo o Ambos. Con Audio o Ambos, ILSA sintetiza un WAV y el \textit{script} de la página lo mezcla en la pista de audio que Meet envía. Quien seña la oye por los parlantes y el resto de la llamada, por esa pista.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El interlocutor lee el subtítulo en el video de Meet cuando la salida es Subtítulo o Ambos. Con Audio o Ambos, ILSA sintetiza un WAV y todos los usuarios en llamada pueden escucharlo.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Realiza las señas. & \\ \cline{2-4}
@@ -212,7 +212,7 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-03: Configurar canal de salida}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario señante} \\ \hline
 Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El usuario está unido a una llamada. El panel de la extensión está disponible.} \\ \hline
-Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{La salida queda en Subtítulo, Audio o Ambos, según el control «Salida en Meet». El subtítulo llega en el video. La voz, cuando hay Audio o Ambos, sale de un WAV de ILSA mezclado en la pista de Meet. Si no hay elección, queda Subtítulo.} \\ \hline
+Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{El subtítulo llega en el video. La voz, cuando hay Audio o Ambos, sale de un WAV de ILSA mezclado en la pista de Meet. Si no hay elección, queda Subtítulo.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario señante} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Abre el panel de la extensión. & \\ \cline{2-4}
@@ -237,9 +237,9 @@ Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|
  & & \textbf{Usuario oyente} & \textbf{Sistema} \\ \cline{2-4}
  & \textbf{1} & Habla durante la llamada. & \\ \cline{2-4}
  & \textbf{2} & & Transcribe esa voz en la misma computadora. \\  \cline{2-4}
- & \textbf{3} & & Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor ni diccionario. Dos o más palabras van al servicio semántico. \\  \cline{2-4}
- & \textbf{4} & & Dibuja hasta 24 clips. Si falta un archivo, deletrea; eso no asegura la comprensión. Encola el bloque sin cortar el que está en curso. La cola admite 20 y, al colmarse, descarta el más antiguo. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y sigue en el paso 3. La palabra aislada también llega al paso 4.\newline\textbf{3a.} Dos o más palabras y el traductor no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run). No hay glosas nuevas y se conserva el video. Una respuesta tardía no se aplica. La recuperación es repetir el turno.\newline\textbf{4a.} Más de 24 archivos: se dibujan los primeros 24 y el resto queda en texto.\newline\textbf{4b.} El servidor de poses no responde: misma espera que en 3a. Las glosas quedan en texto y el clip queda vacío. La recuperación es repetir el turno.\newline\textbf{4c.} ILSA deja de responder: no hay transcripción ni dibujo nuevo. La recuperación es Encender o Reintentar.\newline\textbf{4d.} Cola llena: se descarta el bloque más antiguo, sin cartel. Ese bloque no se dibuja y su subtítulo no aparece. El último espera la animación en curso y hasta 19 bloques. En el tope de 1200 fotogramas, a 30\,fps, con 0,2\,s de entrada y 0,2\,s de salida, cada bloque dura 40,4\,s y esa espera llega a 808\,s. Ese valor es el techo del código, no una medición de una sesión.} \\ \hline
+ & \textbf{3} & & Parte el texto por espacios. Una sola palabra pasa a mayúsculas y es la glosa, sin traductor. Dos o más palabras van al servicio semántico. \\  \cline{2-4}
+ & \textbf{4} & & Dibuja hasta 24 clips. Si falta un archivo, deletrea; Encola el bloque sin cortar el que está en curso. \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{1a.} Escribe en el chat: ILSA toma ese texto, sin transcribirlo, y sigue en el paso 3.\newline\textbf{3a.} Dos o más palabras y el traductor no responde: se debe repetir el turno.\newline\textbf{4a.} Más de 24 archivos: se dibujan los primeros 24 y el resto queda en texto.\newline\textbf{4b.} El servidor de poses no responde: Las glosas se subtitulan y no hay animación. La recuperación es repetir el turno. \newline\textbf{4c.} ILSA deja de responder: no hay transcripción ni dibujo nuevo. La recuperación es Encender o Reintentar.\newline\textbf{4d.} Cola llena: se descarta el mas nuevo (no se animan)} \\ \hline %TODO: REIVSAR
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-05, RF-06, RF-07, RF-08.} \\ \hline
 \end{tabularx}
 \end{table}
@@ -251,14 +251,14 @@ Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\r
 \hline
 Identificador & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{CU-05: Iniciar y verificar sesión}} \\ \hline
 Actor principal & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Usuario} \\ \hline
-Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está instalado en la computadora.} \\ \hline
+Precondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{ILSA está instalado y encendido en la computadora.} \\ \hline
 Postcondiciones & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{Si responden el traductor semántico y el servidor de poses, se abre el panel principal. Al Apagar, la sesión queda detenida en ese panel, sin nueva consulta.} \\ \hline
 \multirow{3}{4cm}{Escenario\\ Principal de éxito\\ (flujo básico)}
  & & \textbf{Usuario} & \textbf{Sistema} \\ \cline{2-4}
- & \textbf{1} & Abre ILSA, o pulsa Encender o Reiniciar. & \\ \cline{2-4}
- & \textbf{2} & & Vuelve a la pantalla de carga y consulta el traductor semántico y el servidor de poses. \\ \cline{2-4}
+ & \textbf{1} & Abre ILSA & \\ \cline{2-4}
+ & \textbf{2} & & Consulta el traductor semántico y el servidor de poses. \\ \cline{2-4}
  & \textbf{3} & & Ambos responden. Abre el panel principal. \\ \hline
-Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{2a.} El traductor o el servidor de poses no responde: el cliente no declara un plazo propio y espera la respuesta o el corte del servidor (hasta 300\,s en Cloud Run, plazo que cubre también un arranque en frío). Queda el botón Reintentar y el panel principal no se abre. La recuperación es pulsar Reintentar, que repite la consulta de los dos servicios.\newline\textbf{2b.} ILSA no está en ejecución: la consulta no llega a los servicios. La recuperación es Encender.\newline\textbf{1a.} Pulsa Apagar: detiene la sesión, queda en el panel y el botón vuelve a Encender. No vuelve a la carga ni consulta los servicios.} \\ \hline
+Extensiones (flujos alternativos) & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{\textbf{2a.} El traductor o el servidor de poses no responde: el cliente espera la respuesta (Traductor 240s; servidor de poses 20s). Queda el botón Reintentar y el panel principal no se abre. La recuperación es pulsar Reintentar, que repite la consulta de los dos servicios.} \\ \hline
 Requisitos especiales & \multicolumn{3}{p{\dimexpr\textwidth-4.5cm-4\tabcolsep\relax}|}{RF-09.} \\ \hline
 \end{tabularx}
 \end{table}

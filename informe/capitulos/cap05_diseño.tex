@@ -5,7 +5,7 @@
 
 \section{Arquitectura del sistema}
 
-El diseño adopta una arquitectura híbrida desacoplada. La extracción de puntos articulares y la clasificación gestual se ejecutan en el equipo del usuario, mientras que el módulo de traducción semántica y servidor de poses operan como un servicio remoto distribuido.
+El diseño adopta una arquitectura híbrida desacoplada. La extracción de puntos articulares y la clasificación gestual se ejecutan en el equipo del usuario, mientras que el módulo de traducción semántica y servidor de poses operan como un servicio en la nube.
 
 \subsection{Justificación de la partición y modelo de privacidad}
 \label{sec:particion_privacidad}
@@ -17,15 +17,16 @@ Debido al consumo de memoria y al costo computacional de los modelos de lenguaje
 
 El traductor y el servidor de poses no archivan ese texto. Cada réplica opera sin estado: la cadena permanece en memoria solo mientras dura la solicitud y se descarta al responder o al apagar el contenedor.
 
-En el equipo, ILSA retiene el último texto y el búfer de glosas mientras dura la sesión. Encender, Reiniciar o Apagar vacían esa memoria. La instrumentación de latencia escribe, en \texttt{\%LOCALAPPDATA\%/ILSA/metrics/live-AAAAMMDD.jsonl}, la glosa y la oración de cada emisión. Ese archivo no tiene plazo de retención: queda en el disco hasta que se borra a mano. Lo ven quien usa esa computadora y, en la videollamada, quienes reciben el subtítulo o la voz. Si la reunión se graba, el subtítulo queda en esa grabación, fuera del control de ILSA. Las rutas locales \texttt{GET /state} y \texttt{GET /metrics} exponen el último texto al panel, en \texttt{127.0.0.1}.
+En el equipo, ILSA retiene el último texto y el búfer de glosas mientras dura la sesión. Encender, Reiniciar o Apagar vacían esa memoria. La instrumentación de latencia escribe, en \texttt{\%LOCALAPPDATA\%/ILSA/metrics/live-AAAAMMDD.jsonl}, la glosa y la oración de cada emisión. Ese archivo no tiene plazo de retención: queda en el disco hasta que se borra a mano. Las rutas locales \texttt{GET /state} y \texttt{GET /metrics} exponen el último texto al panel, en \texttt{127.0.0.1}.
 
 \subsection{Variación artificial del conjunto de señas}
-El \textit{corpus} de señas reúne tres personas en seis sesiones de grabación. Una toma de ese conjunto no cubre otra velocidad, otra posición de cámara ni un fotograma que el extractor pierde. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
+El \textit{corpus} reúne tres personas en seis sesiones de grabación, 100 clases y 100 clips por cada una. Tras el corte, el entrenamiento tiene 80 clips por seña. Ese volumen cubre poco la variación de velocidad, de encuadre y de pérdida de puntos. El diseño agrega variaciones artificiales solo sobre los clips de entrenamiento, para que el clasificador vea esos cambios sin una grabación nueva. Los clips apartados para la validación quedan como se grabaron. Los tipos y los rangos están en la Sección~\ref{sec:tinyskeleton}.
+%TODO: Revisar
 
 \subsection{Flujo integral de datos entre componentes}
-La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación. Hacia el traductor salen mensajes JSON, glosas u oración. El servidor de poses entrega el archivo \texttt{.pose} en binario, no en JSON. Esta descripción no incluye el video ni el audio que transmite Meet.
+La interacción entre el navegador, el motor local y los servicios remotos se organiza según la estructura representada en la Figura~\ref{fig:diagrama_arquitectura}. El procesamiento local gestiona la captura y clasificación. Hacia el traductor salen mensajes JSON, glosas u oración. El servidor de poses entrega el archivo \texttt{.pose} en binario. Esta descripción no incluye el video ni el audio que transmite Meet.  %TODO: no entendi el comentario que dejaste. "habria que incluirla", te referís aca abajo en el cuadro o a que cosa???
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
@@ -74,9 +75,9 @@ La interacción entre el navegador, el motor local y los servicios remotos se or
     \label{fig:diagrama_arquitectura}
 \end{figure}
 
-Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diagrama_secuencia_directo} y~\ref{fig:diagrama_secuencia_inverso} ilustran el comportamiento de los canales directo e inverso, respectivamente.
+Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diagrama_secuencia_directo} y~\ref{fig:diagrama_secuencia_inverso} ilustran el comportamiento de los canales directo e inverso, respectivamente. %TODO: No entendi tu comentario. "o borraria todo lo que abajo, la explicacion de los graficos, o la corregiria". Lo redactaste con las tetas me parece
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
@@ -219,9 +220,9 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 \label{fig:diagrama_secuencia_directo}
 \end{figure}
 
-En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también. Con Audio o Ambos, la extensión pide el WAV a ILSA por \texttt{POST /tts}. El script de la página mezcla ese WAV con el micrófono y sustituye la pista de audio que Meet envía. Esa mezcla es la que oye el resto de la llamada. El sintetizador del navegador no entra en esa pista.
+En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también. Con Audio o Ambos, la extensión pide el WAV a ILSA por \texttt{POST /tts}. El script de la página mezcla ese WAV con el micrófono y sustituye la pista de audio que Meet envía. Esa mezcla es la que oye el resto de la llamada.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
@@ -326,7 +327,7 @@ En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa l
 \label{fig:diagrama_secuencia_inverso}
 \end{figure}
 
-En ese diagrama, ILSA parte el texto por espacios antes de llamar al servidor semántico. Si queda una sola palabra, la pasa a mayúsculas y esa cadena es la glosa: el recuadro «1 palabra» no sale hacia el traductor. Si quedan dos o más palabras, la oración sigue por \texttt{POST /hearing}. La decisión no consulta el diccionario de poses. La pose de la glosa, venga de este atajo o del traductor, se pide después, en el recuadro de cada glosa.
+En ese diagrama, ILSA parte la oración por espacios. Una sola palabra se pasa a mayúsculas y queda como glosa: no hay llamada al traductor. Dos o más palabras siguen por \texttt{POST /hearing}, que es el recuadro \texttt{[Si 2+ palabras]}. Esa cuenta no consulta si existe un archivo \texttt{.pose}. Con la lista de glosas ya armada, el recuadro \texttt{[Por cada glosa]} pide el clip al servidor de poses.
 
 \section{Diseño de contratos de API REST}
 
@@ -335,7 +336,7 @@ La comunicación entre el cliente local y los microservicios se rige por contrat
 \subsection{API local del motor ILSA}
 El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web actúa como cliente y el proceso local como servidor. El esquema general de componentes internos se representa en la Figura~\ref{fig:ilsa_local_arquitectura}.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
 \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
@@ -418,7 +419,7 @@ El motor ILSA expone una interfaz HTTP en el bucle local. La extensión web act�
 
 El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local. Los cuerpos, los campos obligatorios, las unidades y los errores están en la Sección~\ref{sec:contrato-api-local}.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Endpoints de la API local del motor ILSA (\texttt{http://127.0.0.1:8765}).}
   \label{tab:api-ilsa-local}
@@ -447,7 +448,7 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
 \label{sec:api-semantico-remoto}
 El microservicio remoto en la nube expone contratos REST sobre HTTPS para resolver la traducción semántica desacoplada. El Cuadro~\ref{tab:api-semantico-endpoints} resume los endpoints principales.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Endpoints del servicio semántico remoto.}
   \label{tab:api-semantico-endpoints}
@@ -468,7 +469,7 @@ Los cuerpos, las unidades y los errores de esas rutas están en la Sección~\ref
 \label{sec:api-avatar}
 El subsistema de representación gestual de salida consulta un repositorio de archivos cinemáticos binarios. El Cuadro~\ref{tab:api-avatar-endpoints} detalla las rutas disponibles.
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{Endpoints del servicio de archivos del avatar.}
   \label{tab:api-avatar-endpoints}
@@ -491,17 +492,54 @@ Los cuerpos, las unidades y los errores de esas rutas están en la Sección~\ref
 El canal inverso procesa la lista de glosas devuelta por el traductor e infiere la secuencia cinemática correspondiente. Cada glosa se asocia a un clip de referencias cinemáticas previamente parametrizado.
 
 \subsection{Procesamiento geométrico de coordenadas y segmentación temporal}
-Los clips cinemáticos registran la secuencia de puntos clave extraídos mediante la ejecución previa e independiente de \textit{MediaPipe Holistic} sobre el video de un informante calificado. Las coordenadas planares $(x, y)$ se representan en el espacio discreto de píxeles de la cámara de captura ($x \in [0, W]$, $y \in [0, H]$) y preservan las proporciones nativas. La componente de profundidad $z$ posee carácter relativo con origen en la muñeca y actúa como métrica para resolver oclusiones mutuas. Por consiguiente, la proyección gráfica reproyecta $x$ e $y$ directamente sobre el plano bidimensional.
+Los clips cinemáticos registran la secuencia de puntos clave extraídos mediante la ejecución previa e independiente de \textit{MediaPipe Holistic} sobre el video de un informante calificado. Las coordenadas planares $(x, y)$ se representan en el espacio discreto de píxeles de la cámara de captura ($x \in [0, W]$, $y \in [0, H]$) y preservan las proporciones nativas. La componente de profundidad $z$, en \textit{Hand left/right}, posee carácter relativo con origen en la muñeca y actúa como métrica para resolver oclusiones mutuas. Igual idea para \textit{BlazePose}, pero la componente $z$ posee caracter relativo al punto medio de las caderas. Por consiguiente, la proyección gráfica reproyecta $x$ e $y$ directamente sobre el plano bidimensional.
 
-El archivo binario \texttt{.pose} conserva las tres fases fonológicas estándar (preparación, núcleo, retracción). Para aislar el tramo con valor morfosintáctico distintivo sin alterar el archivo original, el sistema registra los marcadores temporales de inicio ($t_{\text{inicio}}$) y fin ($t_{\text{fin}}$) del núcleo en un índice de anotaciones externo. Durante la renderización, la lectura consulta este índice para aislar el segmento relevante.
+El archivo binario \texttt{.pose} almacena un encabezado ---cadencia e inventario de puntos--- y un tensor de $T$ fotogramas. Cada fotograma reúne los 33 puntos de \textit{pose}, la malla facial y las 21 coordenadas de cada mano. El servicio entrega ese binario intacto. ILSA, ya en el cliente, descarta el 25\,\% inicial y el 25\,\% final de cada clip y conserva el tramo central para el dibujo. Una oración no cabe en un solo archivo: el prototipo pide un \texttt{.pose} por glosa y, si ese archivo no existe, un clip por letra.
+
+\begin{figure}[H]
+\centering
+{\small\bfseries (a) Un archivo}\\[0.35em]
+\begin{tikzpicture}[
+    font=\small,
+    caja/.style={draw, thick, align=center, inner sep=5pt, text width=11.2cm}
+]
+\node[caja] (cab) {%
+    \textbf{Encabezado}\\
+    cadencia (p.\ ej.\ 30\,fps);\quad
+    componentes: pose 33, cara 468, mano izquierda 21, mano derecha 21};
+\node[caja, below=0.28cm of cab] (cuerpo) {%
+    \textbf{Cuerpo}\\
+    tensor $[T \times 1 \times 543 \times (x,y,z)]$
+    y confianza $[T \times 1 \times 543]$};
+\node[caja, below=0.28cm of cuerpo] (eje) {%
+    \texttt{HOLA.pose}, $T$ fotogramas\\[0.25em]
+    \texttt{|---- 25\,\% ----|-------- tramo que se dibuja --------|---- 25\,\% ----|}};
+\end{tikzpicture}
+
+\vspace{1.1em}
+{\small\bfseries (b) Oración «Me llamo X» $\rightarrow$ \texttt{YO NOMBRE X}}\\[0.45em]
+\begin{tikzpicture}[
+    font=\footnotesize,
+    clip/.style={draw, thick, align=center, inner sep=4pt, minimum height=1.15cm, text width=2.15cm},
+    puente/.style={align=center, font=\scriptsize, text width=1.35cm}
+]
+\node[clip] (yo) {\texttt{YO.pose}\\[-0.1em]{\scriptsize tramo central}};
+\node[puente, right=0.12cm of yo] (p1) {puente\\4 u 8 fot.};
+\node[clip, right=0.12cm of p1] (nom) {\texttt{NOMBRE.pose}\\[-0.1em]{\scriptsize tramo central}};
+\node[puente, right=0.12cm of nom] (p2) {puente\\4 u 8 fot.};
+\node[clip, right=0.12cm of p2] (x) {deletreo de X\\[-0.1em]{\scriptsize un clip por letra}};
+\end{tikzpicture}
+\caption{Estructura de un archivo \texttt{.pose} y empalme de la oración «Me llamo X». El recorte del 25\,\% no altera el archivo en disco.}
+\label{fig:pose_estructura}
+\end{figure}
 
 \subsection{Preparación, acondicionamiento y ensamblado cinemático}
-El servicio de poses entrega el archivo \texttt{.pose} que corresponde a la glosa pedida. Esa preparación corre en ILSA, después de la descarga. La extensión recibe la lista de fotogramas ya armada y la dibuja; no rehace el empalme.
+El servicio de poses entrega el archivo \texttt{.pose} que corresponde a la glosa pedida. Esa preparación corre en ILSA, después de la descarga.
 
 ILSA aplica entonces estas operaciones sobre cada archivo recibido:
 \begin{enumerate}
     \item \textbf{Normalización temporal:} Conversión de los clips a una cadencia común de 30 fotogramas por segundo.
-    \item \textbf{Aislamiento del núcleo:} Recorte del tramo delimitado por $t_{\text{inicio}}$ y $t_{\text{fin}}$.
+    \item \textbf{Recorte temporal:} Descarte del 25\,\% inicial y del 25\,\% final de cada clip.
     \item \textbf{Interpolación de faltantes:} Relleno de ausencias puntuales mediante interpolación entre fotogramas válidos adyacentes.
     \item \textbf{Ajuste de extremidad inactiva:} Reposicionamiento de la mano no participante hacia el costado del torso.
     \item \textbf{Filtro de suavizado:} Aplicación de un promedio exponencial para atenuar la oscilación entre fotogramas.
@@ -541,7 +579,7 @@ Ante palabras ausentes en el vocabulario grabado (nombres propios o términos t�
 
 La integración con la plataforma Google Meet se resuelve mediante una extensión de navegador que intercepta la señal de video y gestiona la superposición de capas gráficas. La Figura~\ref{fig:arquitectura_video_ilsa} detalla la distribución funcional de sus componentes.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
 \centering
 \resizebox{1\textwidth}{!}{%
 \begin{circuitikz}
@@ -672,10 +710,10 @@ Las computadoras cliente salen por HTTPS. El ingreso resuelve el nombre, present
 \end{itemize}
 
 \subsection{Traductor}
-El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Cada réplica corre en procesador, sin placa de video. Carga el modelo principal de los dos canales, Qwen2.5 1,5B, con un contexto de 2048 \textit{tokens}, y deja el respaldo Llama 3.2 1B en disco hasta que ese principal no carga. La estimación de menos de 2 GiB por réplica es la suma de esos dos archivos y de sus cachés de claves y valores, calculada en la Sección~\ref{sec:memoria_inferencia}. El buffer de activaciones, definido junto a la Ecuación~\ref{eq:ram_runtime}, queda fuera de esa suma. Los 8 GiB de la Sección~\ref{sec:arquitectura_produccion} son la memoria asignada a la instancia de validación, no una medición de este consumo.
+El traductor viaja en una imagen de contenedor. Cada réplica monta los binarios GGUF Q4\_K\_M desde un volumen de solo lectura, así un arranque nuevo no vuelve a bajar los modelos. Un escalador horizontal mira la cola y el tiempo de generación. Si los turnos simultáneos superan a las réplicas activas, el orquestador abre contenedores nuevos. Cada réplica corre en procesador, sin placa de video. Carga el modelo principal de los dos canales, Qwen2.5 1,5B, con un contexto de 2048 \textit{tokens}, y deja el respaldo Llama 3.2 1B en disco hasta que ese principal no carga. La estimación de menos de 2 GiB por réplica es la suma de esos dos archivos y de sus cachés de claves y valores, calculada en la Sección~\ref{sec:memoria_inferencia}. El buffer de activaciones, definido junto a la Ecuación~\ref{eq:ram_runtime}, queda fuera de esa suma.
 
 \subsection{Archivos de seña}
-Una petición de pose es una lectura, no una generación. El contrato es el de la Sección~\ref{sec:api-avatar}. Las réplicas no guardan estado y leen la misma carpeta. El escalador de este grupo mira la cantidad de lecturas, no la cola del traductor. La ruta de salud queda aparte de la ruta del archivo. La caché del cliente sigue como primer recurso.
+Este servicio no genera animación: lee un archivo \texttt{.pose} y lo envía. Las rutas son las de la Sección~\ref{sec:api-avatar}. Varias réplicas sirven la misma carpeta; ninguna guarda el estado de una llamada. Un escalador propio abre o cierra réplicas según cuántas lecturas hay, no según la cola del traductor. La ruta \texttt{/health} comprueba que el proceso responde; no entrega un clip. ILSA consulta primero su caché local y solo pide al servidor el archivo que aún no tiene.
 
 \subsection{Monitoreo}
 Un recolector de métricas observa la latencia por oración, la memoria de cada contenedor del traductor, los errores de red y los errores de lectura del servicio de archivos. Esas series ajustan los dos escaladores.
