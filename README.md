@@ -57,7 +57,7 @@ python train.py --epochs 5
 python train.py --dataset .\dataset_glosses.json
 ```
 
-Each model uses LoRA (`r=16`, `alpha=32`, dropout 0, attention and MLP modules). Training quantization is 4-bit. Load context is 2048. Training text is truncated to 512. Batch 4 and accumulation 4 (the 3B uses 2 and 8). Learning rate 5e-4, or 3e-4 for the 3B. 5 epochs, warmup 10, AdamW 8-bit, cosine, seed 3407. The internal split is 85/15 with seed 3407.
+Each model uses LoRA (`r=16`, `alpha=32`, dropout 0, attention and MLP modules). Training quantization is 4-bit. Load context is 2048. Training text is truncated to 2048. Batch 4 and accumulation 4 (the 3B uses 2 and 8). Learning rate 5e-4, or 3e-4 for the 3B. 5 epochs, warmup 10, AdamW 8-bit, cosine, seed 3407. The internal split is 85/15 with seed 3407.
 
 Before the prompt is built, loose letters are compacted (`M a i t e` -> `Maite`, at most two identical letters in a row) and loose digits are concatenated without truncation. The system prompt is the `system` message, glosses go in `Glosas: ...`, and the Spanish sentence is the `assistant` message. Only the response is trained. Both prompts stay in Spanish.
 

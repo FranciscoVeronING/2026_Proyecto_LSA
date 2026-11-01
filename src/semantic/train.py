@@ -204,7 +204,7 @@ def train_one_model(model_cfg: dict, output_dir: Path, dataset_path: Path, syste
         "lr_scheduler_type": "cosine",
         "seed": 3407,
         "dataset_text_field": "text",
-        "max_length": 512,
+        "max_length": 2048,
         "packing": False,
         "report_to": "none",
     }

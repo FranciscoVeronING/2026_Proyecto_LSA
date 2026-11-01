@@ -1,0 +1,125 @@
+{
+  "started_at": "2026-10-31T16:43:34.592385+00:00",
+  "log_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\logs\\train_20261031_134334.log",
+  "models_requested": [
+    "qwen2.5-0.5b",
+    "qwen2.5-1.5b",
+    "qwen2.5-3b",
+    "llama-3.2-1b",
+    "smollm2-1.7b"
+  ],
+  "results": [
+    {
+      "id": "qwen2.5-0.5b",
+      "model_name": "unsloth/Qwen2.5-0.5B-Instruct",
+      "label": "Qwen2.5 0.5B (ultra light)",
+      "started_at": "2026-10-31T16:43:34.593636+00:00",
+      "finished_at": "2026-10-31T17:17:08.720121+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-0.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 92.44,
+        "accuracy_normalized_percent": 92.44,
+        "bleu_score": 95.58,
+        "rouge_l_score": 95.78,
+        "meteor_score": 95.51,
+        "bertscore_f1": 99.16,
+        "comet_score": 97.47,
+        "bleurt_score": 20.94,
+        "avg_latency_ms": 131.38,
+        "train_loss_final": 0.31468145904086886
+      }
+    },
+    {
+      "id": "qwen2.5-1.5b",
+      "model_name": "unsloth/Qwen2.5-1.5B-Instruct",
+      "label": "Qwen2.5 1.5B",
+      "started_at": "2026-10-31T17:17:08.723121+00:00",
+      "finished_at": "2026-11-01T01:45:30.266924+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-1.5B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 94.96,
+        "accuracy_normalized_percent": 94.96,
+        "bleu_score": 96.32,
+        "rouge_l_score": 98.02,
+        "meteor_score": 97.35,
+        "bertscore_f1": 99.2,
+        "comet_score": 97.36,
+        "bleurt_score": 21.78,
+        "avg_latency_ms": 244.5,
+        "train_loss_final": 0.25206647373381114
+      }
+    },
+    {
+      "id": "qwen2.5-3b",
+      "model_name": "unsloth/Qwen2.5-3B-Instruct",
+      "label": "Qwen2.5 3B (higher capacity)",
+      "started_at": "2026-11-01T01:45:30.267923+00:00",
+      "finished_at": "2026-11-01T02:49:10.003275+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Qwen2.5-3B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 95.8,
+        "accuracy_normalized_percent": 95.8,
+        "bleu_score": 97.88,
+        "rouge_l_score": 98.39,
+        "meteor_score": 97.84,
+        "bertscore_f1": 99.2,
+        "comet_score": 97.56,
+        "bleurt_score": 21.38,
+        "avg_latency_ms": 471.33,
+        "train_loss_final": 0.22918508734021867
+      }
+    },
+    {
+      "id": "llama-3.2-1b",
+      "model_name": "unsloth/Llama-3.2-1B-Instruct",
+      "label": "Llama 3.2 1B (Meta)",
+      "started_at": "2026-11-01T02:49:10.005275+00:00",
+      "finished_at": "2026-11-01T03:16:31.925907+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_Llama-3.2-1B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 89.92,
+        "accuracy_normalized_percent": 89.92,
+        "bleu_score": 92.64,
+        "rouge_l_score": 95.94,
+        "meteor_score": 96.13,
+        "bertscore_f1": 98.58,
+        "comet_score": 96.83,
+        "bleurt_score": 21.4,
+        "avg_latency_ms": 215.59,
+        "train_loss_final": 0.34004657949720113
+      }
+    },
+    {
+      "id": "smollm2-1.7b",
+      "model_name": "unsloth/SmolLM2-1.7B-Instruct",
+      "label": "SmolLM2 1.7B",
+      "started_at": "2026-11-01T03:16:31.926908+00:00",
+      "finished_at": "2026-11-01T03:43:54.531339+00:00",
+      "exit_code": 0,
+      "output_dir": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct",
+      "metrics_file": "D:\\Mis Archivos\\Proyectos\\2026_Proyecto_semantico_sordo\\src\\semantic\\outputs\\unsloth_SmolLM2-1.7B-Instruct\\metrics.json",
+      "metrics": {
+        "accuracy_strict_percent": 94.12,
+        "accuracy_normalized_percent": 94.96,
+        "bleu_score": 96.05,
+        "rouge_l_score": 98.06,
+        "meteor_score": 96.99,
+        "bertscore_f1": 99.18,
+        "comet_score": 97.51,
+        "bleurt_score": 22.11,
+        "avg_latency_ms": 406.8,
+        "train_loss_final": 0.2506902285984584
+      }
+    }
+  ],
+  "finished_at": "2026-11-01T03:43:54.532354+00:00",
+  "failures": 0
+}

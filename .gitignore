@@ -16,6 +16,7 @@ src/semantic/outputs/*
 !src/semantic/outputs/eval_trial/
 !src/semantic/outputs/eval_trial/**
 !src/semantic/outputs/training_summary.json
+!src/semantic/outputs/training_batch_*.json
 
 # Rest of the project (recognition / web), outside this module
 dataset/
