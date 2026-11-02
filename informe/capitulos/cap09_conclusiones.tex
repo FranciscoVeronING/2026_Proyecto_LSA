@@ -37,6 +37,47 @@ El proyecto aporta decisiones de diseño y arquitecturas aplicadas que resuelven
 
 El aporte técnico de este trabajo es el prototipo de traducción bidireccional en tiempo pseudo-real sobre videoconferencia. La Ley 27.710 reconoce a la LSA como lengua natural y el derecho de las personas sordas a comunicarse en su lengua en los ámbitos sociales \parencite{argentina2023ley27710}. Una mayor autonomía en salud, trámites y educación virtual, y un acceso más equitativo cuando falta la interpretación humana, son beneficios sociales posibles de ese aporte. Sin pruebas con usuarios, esa mejora de autonomía y de acceso todavía no está demostrada.
 
+\section{Planificación y ejecución del cronograma}
+\label{sec:cronograma}
+
+Las actividades del proyecto iniciaron el 30 de marzo de 2026. El cronograma planificado en la etapa inicial (Figura~\ref{fig:gantt_inicial}) contemplaba una estimación global de 650 horas de trabajo distribuidas en 24 semanas. Dicha planificación secuencial organizaba el desarrollo en cinco fases tradicionales: adquisición de datos (100\,h), desarrollo del clasificador gestual (100\,h), desarrollo del módulo semántico (125\,h), fase de pruebas (150\,h) y prototipado e integración del software (175\,h). Cabe señalar que este esquema preliminar no preveía la inclusión del módulo de avatar ni contemplaba un enfoque de desarrollo iterativo.
+
+Por su parte, el cronograma ejecutado (Figura~\ref{fig:gantt_final}) adoptó un esquema estructurado por iteraciones con una dedicación total acumulada de 986 horas de trabajo a lo largo de 31 semanas, cuyo cierre se concretó el 30 de octubre de 2026. La distribución final de la carga horaria se organizó en los siguientes bloques de trabajo e iteraciones, en los cuales se detallan las actividades ejecutadas y los factores que reajustaron su alcance:
+
+\begin{enumerate}
+    \item \textbf{Investigación previa y formalización lingüística (116\,h):} Ante la ausencia del soporte institucional externo previsto, el equipo dedicó este bloque al estudio autónomo de la gramática de la LSA (tareas 1.1 y 1.2), lo cual desplazó el inicio del desarrollo técnico.
+    
+    \item \textbf{Adquisición y estructuración del corpus (130\,h):} Fase ampliada respecto a la estimación inicial debido a la complejidad en la recolección y preprocesamiento del conjunto de datos.
+    
+    \item \textbf{Primera iteración de desarrollo (200\,h):} Período enfocado en la arquitectura base del clasificador y del backend semántico preliminar, cuya ejecución coincidió con los períodos de evaluaciones parciales de la cursada curricular.
+    
+    \item \textbf{Segunda iteración y optimización (120\,h):} Etapa orientada al refinamiento del modelo gestual, la cuantización de los modelos de lenguaje y la reducción de latencias.
+    
+    \item \textbf{Incorporación de la bidireccionalidad (130\,h):} Replanificación del alcance para incluir el módulo semántico inverso y la generación gráfica mediante el avatar esquelético (tarea 5.3), componentes ausentes en la propuesta original.
+    
+    \item \textbf{Desarrollo de la extensión web (70\,h):} Construcción de la interfaz de integración para la plataforma Google Meet bajo el estándar Manifest V3.
+    
+    \item \textbf{Otras actividades y redacción técnica (220\,h):} Redacción del informe final.
+\end{enumerate}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{gantt_inicial.pdf}
+\caption{Cronograma inicial del proyecto.}
+\label{fig:gantt_inicial}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{gantt_final.pdf}
+\caption{Cronograma ejecutado del proyecto.}
+\label{fig:gantt_final}
+\end{figure}
+\end{landscape}
+
 % ====================================================================
 \section{Trabajos futuros}
 \label{sec:trabajos_futuros}

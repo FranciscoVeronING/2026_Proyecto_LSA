@@ -143,19 +143,20 @@
 \contentsline {subsection}{\numberline {9.1.1}Síntesis del cumplimiento de objetivos}{87}{subsection.9.1.1}%
 \contentsline {subsection}{\numberline {9.1.2}Aportes técnicos e ingenieriles}{88}{subsection.9.1.2}%
 \contentsline {subsection}{\numberline {9.1.3}Impacto social y marco regulatorio}{88}{subsection.9.1.3}%
-\contentsline {section}{\numberline {9.2}Trabajos futuros}{88}{section.9.2}%
-\contentsline {subsection}{\numberline {9.2.1}Inclusión de la comunidad sorda y validación participativa}{89}{subsection.9.2.1}%
-\contentsline {subsection}{\numberline {9.2.2}Ampliación del dataset}{89}{subsection.9.2.2}%
-\contentsline {subsection}{\numberline {9.2.3}Incorporación de rasgos no manuales y reconocimiento continuo}{89}{subsection.9.2.3}%
-\contentsline {subsection}{\numberline {9.2.4}Evolución hacia un avatar tridimensional (3D)}{89}{subsection.9.2.4}%
-\contentsline {subsection}{\numberline {9.2.5}Despliegue del clúster elástico multinodo en la nube}{89}{subsection.9.2.5}%
-\contentsline {subsection}{\numberline {9.2.6}Generalización a nuevas plataformas y ejecución local de SLM}{89}{subsection.9.2.6}%
-\contentsline {chapter}{Bibliografía}{91}{chapter*.40}%
-\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{95}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Ramas de entrenamiento y de servicios}{96}{appendix.B}%
-\contentsline {section}{\numberline {B.1}\textit {scratch-mediapipe-v3}: Repositorio de entrenamiento del clasificador}{96}{section.B.1}%
-\contentsline {section}{\numberline {B.2}\textit {semantic-cloud}: Servicio semántico en la nube}{97}{section.B.2}%
-\contentsline {section}{\numberline {B.3}\textit {semantic-v2}: Entrenamiento del canal directo}{97}{section.B.3}%
-\contentsline {section}{\numberline {B.4}\textit {semantic-reverse}: Entrenamiento del canal inverso}{98}{section.B.4}%
-\contentsline {section}{\numberline {B.5}\textit {avatar-cloud}: Servicio de poses del avatar}{99}{section.B.5}%
-\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{101}{appendix.C}%
+\contentsline {section}{\numberline {9.2}Planificación y ejecución del cronograma}{88}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Trabajos futuros}{92}{section.9.3}%
+\contentsline {subsection}{\numberline {9.3.1}Inclusión de la comunidad sorda y validación participativa}{92}{subsection.9.3.1}%
+\contentsline {subsection}{\numberline {9.3.2}Ampliación del dataset}{92}{subsection.9.3.2}%
+\contentsline {subsection}{\numberline {9.3.3}Incorporación de rasgos no manuales y reconocimiento continuo}{92}{subsection.9.3.3}%
+\contentsline {subsection}{\numberline {9.3.4}Evolución hacia un avatar tridimensional (3D)}{92}{subsection.9.3.4}%
+\contentsline {subsection}{\numberline {9.3.5}Despliegue del clúster elástico multinodo en la nube}{92}{subsection.9.3.5}%
+\contentsline {subsection}{\numberline {9.3.6}Generalización a nuevas plataformas y ejecución local de SLM}{93}{subsection.9.3.6}%
+\contentsline {chapter}{Bibliografía}{94}{chapter*.40}%
+\contentsline {chapter}{\numberline {A}Vocabulario del clasificador}{98}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Ramas de entrenamiento y de servicios}{99}{appendix.B}%
+\contentsline {section}{\numberline {B.1}\textit {scratch-mediapipe-v3}: Repositorio de entrenamiento del clasificador}{99}{section.B.1}%
+\contentsline {section}{\numberline {B.2}\textit {semantic-cloud}: Servicio semántico en la nube}{100}{section.B.2}%
+\contentsline {section}{\numberline {B.3}\textit {semantic-v2}: Entrenamiento del canal directo}{100}{section.B.3}%
+\contentsline {section}{\numberline {B.4}\textit {semantic-reverse}: Entrenamiento del canal inverso}{101}{section.B.4}%
+\contentsline {section}{\numberline {B.5}\textit {avatar-cloud}: Servicio de poses del avatar}{102}{section.B.5}%
+\contentsline {chapter}{\numberline {C}Arquitectura escalable de producción en la nube}{104}{appendix.C}%
