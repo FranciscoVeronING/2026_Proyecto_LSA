@@ -1,7 +1,7 @@
 \chapter{Vocabulario del clasificador}
 \label{anexo:vocabulario}
 
-El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Rolls ayudó con la validación del conjunto. El cuadro~\ref{tab:vocab_categorias} separa el alfabeto, los dígitos y el léxico en grupos chicos, y cuenta cuántas clases hay en cada uno. La celda de señas trae la etiqueta exacta, tal como está en \texttt{mapeo\_clases.json}. \texttt{ñ} y \texttt{años} conservan la ñ. \texttt{esposo~a} conserva el espacio entre las dos palabras. Las demás etiquetas van sin tilde.
+El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Rolls ayudó con la validación del conjunto. El cuadro~\ref{tab:vocab_categorias} separa el alfabeto, los dígitos y el léxico en grupos chicos, y cuenta cuántas clases hay en cada uno. La celda de señas trae la etiqueta exacta, tal como está en \texttt{mapeo\_clases.json}. \texttt{ñ} y \texttt{años} conservan la ñ. Las demás etiquetas van sin tilde.
 
 \begin{table}[H]
     \centering
@@ -35,4 +35,4 @@ El clasificador distingue 100 clases. Cada clase cuenta con 100 clips. Miriam Ro
     \end{tabularx}
 \end{table}
 
-En la prueba de cámara de la Sección~\ref{sec:eval_100_camara}, el Top-1 informado acepta dos pares como la misma seña. \texttt{0} y \texttt{O} cuentan juntas. \texttt{V} y \texttt{viernes} cuentan juntas. Con luz adecuada son 18 tomas, ocho de \texttt{0} leídas como \texttt{O} y diez de \texttt{V} leídas como \texttt{viernes}, y el acierto pasa de 978/1000 a 996/1000. Con luz reducida son 24 tomas y el acierto pasa de 922/1000 a 946/1000. La validación fuera de línea exige la misma etiqueta.
+En la prueba de cámara de la Sección~\ref{sec:eval_100_camara}, el Top-1 informado acepta dos pares como la misma seña. \texttt{0} y \texttt{O} cuentan juntas. \texttt{V} y \texttt{viernes} cuentan juntas.

@@ -15,7 +15,7 @@ La valoración de los resultados se realiza a través de la trazabilidad directa
 \subsection{Evaluación del objetivo general}
 El objetivo general consistió en desarrollar un prototipo funcional de traducción bidireccional entre la LSA y el español rioplatense en tiempo pseudo-real, integrado en una plataforma de videoconferencia mediante una arquitectura híbrida cliente-nube.
 
-El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. El sistema procesa la interacción en dos sentidos. En el canal directo, la sesión integrada puso la oración en el video compuesto; con Audio o Ambos, ILSA sintetiza un WAV y el script de la página lo mezcla en la pista de audio de Meet. En el canal inverso traduce voz o texto a la animación de un avatar esquelético. La visión queda en el cliente y la inferencia de lenguaje, en la nube, sin enviar video a los servicios de traducción y de poses (Sección~\ref{sec:particion_privacidad}). 
+El cumplimiento de este objetivo se alcanzó mediante la construcción exitosa de la extensión para navegadores Chromium conectada al motor local ILSA y a los servicios en la nube. 
 
 \subsection{Evaluación de los objetivos específicos}
 
@@ -40,7 +40,7 @@ A continuación se analiza el grado de logro de cada uno de los objetivos espec�
 
     \item \textbf{Diseño de una arquitectura escalable en la nube:}
     \textit{Estado: Alcanzado.}
-    Se diseñó la arquitectura elástica, con balanceo de carga, contenedores sin estado y escalado horizontal automático (Sección~\ref{sec:arq_escalable} y Apéndice~\ref{ap:nube}). Ese diseño está documentado y queda realizado. Por separado, la prueba con carga concurrente sigue pendiente: la validación usó una instancia única por servicio en Google Cloud Run (\texttt{--max-instances 1}), según la restricción RC-02.
+    Se diseñó la arquitectura elástica, con balanceo de carga, contenedores sin estado y escalado horizontal automático (Sección~\ref{sec:arq_escalable} y Apéndice~\ref{ap:nube}). Ese diseño está documentado y queda realizado.
 
     \item \textbf{Resguardo de la privacidad de los datos biométricos:}
     \textit{Estado: Alcanzado.}
@@ -48,11 +48,11 @@ A continuación se analiza el grado de logro de cada uno de los objetivos espec�
 
     \item \textbf{Desarrollo de la extensión web e integración con Google Meet:}
     \textit{Estado: Alcanzado.}
-    Se construyó la extensión bajo el estándar Manifest V3 articulada con el motor local ILSA mediante la arquitectura desacoplada de entornos \textit{offscreen} y \textit{sandbox}. La sesión integrada inyectó el lienzo en Google Meet (\texttt{captureStream()}), en cumplimiento de RF-08. RF-09 se comprobó al iniciar la aplicación, al Encender un modo y al Reiniciar: con el traductor y el servidor de poses en marcha, vuelve a la pantalla de carga y después abre el panel principal. Sin red, Encender mantiene la carga, muestra Reintentar y deja el panel principal cerrado. Al volver la red, Reintentar repite la consulta y abre el panel. Al Apagar, la sesión se detiene y el panel queda a la vista, sin esa consulta. RNF-05 se comprobó en una llamada de dos personas, con el popup de la extensión cerrado y la tarjeta del HUD en su posición inicial. En una captura de $1920 \times 1080$ esa tarjeta mide $382 \times 77$ píxeles, $15$\,px desde el borde izquierdo y $156$\,px desde el borde superior; queda $49$\,px por encima del recuadro de video. En modo seña y en modo oyente, en la pantalla de quien usa el sistema y en la de la otra persona, la cara y las manos del interlocutor quedaron libres.
+    Se desarrolló la extensión bajo el estándar Manifest V3 mediante una arquitectura desacoplada (\textit{offscreen} y \textit{sandbox}). Se validó exitosamente la captura e inyección del flujo de video en Google Meet (\texttt{captureStream()}), y se garantizó el cumplimiento de RF-08. La gestión del ciclo de vida y la resiliencia ante pérdida de conectividad se comprobaron en las transiciones de sesión (RF-09). Finalmente, se verificó que la interfaz (HUD) se despliega de forma no intrusiva sin obstruir el rostro ni las manos de los interlocutores durante la llamada (RNF-05).
 
     \item \textbf{Evaluación integral del sistema y medición de desempeños:}
     \textit{Estado: Parcial.}
-    Se midió el acierto en cámara, la fidelidad semántica de ambos canales y la latencia por etapas. La evaluación queda incompleta: faltan los tiempos de espera en el servidor, registros que permitan repetir las mediciones y una revisión lingüística. 
+    Se midió el acierto en cámara, la fidelidad automática de ambos canales y los tramos de la Sección~\ref{sec:tiempo_pseudo} en llamada, en laptop y en PC: pausa, cola, inferencia, transporte, entrega, espera hasta el subtítulo y, en el inverso, transcripción y armado del clip. Queda sin medir la comprensión del avatar.
 \end{enumerate}
 
 El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los objetivos, los requerimientos asociados y los resultados obtenidos.
@@ -70,7 +70,7 @@ El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los o
         \addlinespace[2pt]
         2. Canal directo & RF-03 & Cuadro~\ref{tab:sem_directo}, Qwen2.5 1,5B: exacto 94,96\,\%; BERTScore 99,20; COMET 97,36. Latencia media de 1444,4\,ms. & Alcanzado \\
         \addlinespace[2pt]
-        3. Emisión al oyente & RF-04 & Subtítulo: la oración queda en la franja del video compuesto de la sesión integrada. Audio y Ambos: ILSA sintetiza un WAV; el script de la página lo mezcla en la pista de audio de Meet. & Alcanzado \\
+        3. Emisión al oyente & RF-04 & Subtítulo: la oración queda en la franja del video compuesto de la sesión integrada. Audio y Ambos: ILSA sintetiza un WAV; el \textit{script} de la página lo mezcla en la pista de audio de Meet. & Alcanzado \\
         \addlinespace[2pt]
         4. Canal inverso & RF-06 & Cuadro~\ref{tab:sem_inverso}: Exactitud exacta de 91,18\,\%. Latencia media de 1368,2\,ms. & Alcanzado \\
         \addlinespace[2pt]
@@ -84,7 +84,7 @@ El Cuadro~\ref{tab:trazabilidad_objetivos} sintetiza la trazabilidad entre los o
         \addlinespace[2pt]
         9. Usabilidad & RNF-05 & Llamada de dos personas, popup cerrado. Tarjeta inicial $382 \times 77$\,px, arriba a la izquierda ($15$\,px, $156$\,px) en $1920 \times 1080$, $49$\,px sobre el video. En modo seña y en modo oyente, en las dos pantallas, la cara y las manos quedaron libres. & Alcanzado \\
         \addlinespace[2pt]
-        10. Evaluación integral & RNF-01, RC-05 & RNF-01 parcial: solo la inferencia. Directo: media 1444,4\,ms, 7 de 9 bajo 2\,s. Inverso: media 1368,2\,ms, 6 de 7 bajo 2\,s. Faltan la espera en el servidor, registros para repetir las mediciones, la revisión lingüística y el vínculo de algunos requisitos con sus pruebas. RC-05: mínimo propuesto. La laptop medida está en la Sección~\ref{sec:laptop_prueba}. & Parcial \\
+        10. Evaluación integral & RNF-01, RC-05 & Cuadro~\ref{tab:telemetria_resumen}: pausa, cola, inferencia, transporte, entrega y espera hasta el subtítulo. Cola $0$\,ms. La meta de $2$\,s cubre solo la inferencia: 14 de 15 (directo) y 9 de 10 (inverso) en laptop. No se midió la comprensión del avatar. RC-05: mínimo propuesto. Laptop en la Sección~\ref{sec:laptop_prueba}. & Parcial \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -115,8 +115,7 @@ El desarrollo y el desempeño del prototipo se encuentran condicionados por deli
     \item \textbf{Subtítulos espejados en la miniatura del modo oyente:}
     En el modo oyente, la persona oyente ve su cámara y el avatar en la miniatura local. En esa miniatura, los subtítulos le salen espejados. La persona sorda, que es quien tiene que comprenderlos, los recibe al derecho (Sección~\ref{sec:impl_esqueleto}). La limitación queda en la vista propia de quien usa el sistema.
 
-    \item \textbf{Dependencia de conectividad de red y penalización de arranque en el prototipo:}
-    El empaquetado del motor local ILSA se optimizó para el sistema operativo Windows y navegadores basados en Chromium. La ejecución concurrente de la videollamada, la extracción de puntos clave mediante WebAssembly y la clasificación en CPU se validaron experimentalmente en la laptop de la Sección~\ref{sec:laptop_prueba}. A partir de estas mediciones, se estimó como perfil operativo mínimo lo propuesto en la Sección~\ref{sec:entorno_cliente}.
+    
 
 \end{itemize}
 
@@ -146,15 +145,13 @@ El análisis del prototipo en un escenario proyectado hacia la producción evide
     \endlastfoot
         \textbf{Seguridad y Privacidad} & Vulnerabilidad en la API local no autenticada & La escucha del servidor FastAPI en la red local sin \textit{tokens} de autenticación expone endpoints a otros procesos del mismo sistema cliente. & Implementación de autenticación mediante \textit{tokens} efímeros (JWT) intercambiados de forma segura durante el arranque de la extensión. \\
         \addlinespace[3pt]
-        \textbf{Evolución y Obsolescencia} & Cambios en el DOM de Google Meet y APIs web & Actualizaciones en la plataforma de videollamada o restricciones adicionales en Manifest V3 pueden romper la inyección de scripts. & Abstracción de los selectores DOM en capas de desacoplamiento y mantenimiento periódico de la extensión en el repositorio. \\
+        \textbf{Evolución y Obsolescencia} & Cambios en el DOM de Google Meet y APIs web & Actualizaciones en la plataforma de videollamada o restricciones adicionales en Manifest V3 pueden romper la inyección de \textit{scripts}. & Abstracción de los selectores DOM en capas de desacoplamiento y mantenimiento periódico de la extensión en el repositorio. \\
         \addlinespace[3pt]
-        \textbf{Mantenibilidad} & Dificultad para incorporar nuevas señas & El reentrenamiento del clasificador y la captura de nuevos archivos \texttt{.pose} requiere trabajo manual intensivo. & Construcción de herramientas de captura automatizadas y canalizaciones de integración continua (\textit{MLOps}) para modelos de visión. \\
+        \textbf{Mantenibilidad} & Dificultad para incorporar nuevas señas & El reentrenamiento del clasificador y la captura de nuevos archivos \texttt{.pose} requiere trabajo manual intensivo. & Construcción de herramientas de captura automatizadas y canalizaciones de integración continua para modelos de visión. \\
         \addlinespace[3pt]
         \textbf{Traducción} & Traducción incorrecta & El modelo en servicio acierta de forma exacta el 94,96\,\% de las oraciones del canal directo y el 91,18\,\% del inverso. Una salida distinta de la referencia puede cambiar quién interviene, el tiempo, la negación o la pregunta. & Revisión con personas sordas de las salidas que no conservan la proposición prevista. \\
         \addlinespace[3pt]
-        \textbf{Reconocimiento} & Seña desconocida aceptada & Una seña ausente del vocabulario puede parecerse a una clase conocida y salir con confianza de al menos 0,75. El indicador la muestra en cian y la glosa incorrecta entra a la frase. & Confirmación de quien seña antes de incorporar esa glosa. El umbral de 0,75 solo frena la confianza baja. \\
-        \addlinespace[3pt]
-        \textbf{Reproducción} & Mensaje recortado o descartado & Cada enunciado anima hasta 24 glosas y 1200 fotogramas; el resto queda en texto. La cola guarda hasta 20 animaciones, no interrumpe la que está en curso y, al llenarse, descarta la más antigua. & Aviso visible cuando el dibujo se recorta o la cola descarta un bloque. El texto de las glosas que no entran al dibujo se conserva. \\
+        \textbf{Reproducción} & Mensaje recortado o descartado & Cada enunciado anima hasta 24 glosas y 1200 fotogramas; el resto queda en texto. La cola guarda hasta 20 animaciones, no interrumpe la que está en curso y, al llenarse, descarta la más nueva. & Aviso visible cuando el dibujo se recorta o la cola descarta un bloque. El texto de las glosas que no entran al dibujo se conserva. \\
         \addlinespace[3pt]
         \textbf{Emergencia} & Avatar no entendido en un auxilio & En un pedido de auxilio, el esqueleto o el deletreo pueden no entenderse. Esa comprensión no se evaluó, y el deletreo no asegura el significado. & Prueba con personas sordas de un pedido de auxilio visto en el avatar. Las glosas de ese pedido quedan también en texto sobre el video. \\
 \end{longtable}

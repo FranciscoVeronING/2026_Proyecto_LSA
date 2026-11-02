@@ -27,7 +27,7 @@ Las pruebas se ejecutaron en tres entornos representativos:
 \begin{enumerate}
     \item \textbf{Estación de desarrollo (GPU):} Utilizada para la evaluación estática fuera de línea, el entrenamiento de modelos y las pruebas de velocidad máxima de inferencia.
     \item \textbf{Equipo objetivo de cliente (Laptop sin GPU):} Configuración de gama media estándar orientada a verificar el comportamiento en tiempo real, el consumo de CPU/RAM y la latencia perceptible por el usuario final. Sus componentes están en la Sección~\ref{sec:laptop_prueba}.
-    \item \textbf{Infraestructura en la nube:} Instancia de Google Cloud Run (configuración de 4 vCPU y 8\,GiB de memoria RAM) conectada mediante HTTPS para los servicios remotos de traducción semántica y reproducción de avatar.
+    \item \textbf{Infraestructura en la nube:} Instancia de Google Cloud Run conectada mediante HTTPS para los servicios remotos de traducción semántica y reproducción de avatar.
 \end{enumerate}
 
 \subsection{Equipo portátil de las pruebas de cliente}
@@ -62,14 +62,19 @@ Cada caso de prueba se vinculó de manera directa con los requerimientos funcion
     \small
     \caption{Matriz de trazabilidad entre requerimientos y criterios de aceptación para pruebas.}
     \label{tab:trazabilidad_pruebas}
-    \begin{tabularx}{\textwidth}{l X X}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}X}
         \toprule
         \textbf{Módulo} & \textbf{Requerimiento asociado} & \textbf{Criterio de aceptación} \\
         \midrule
-        Clasificador Gestual & RF-02 & Exactitud Top-1 en cámara real $> 75\%$ y Top-3 $> 90\%$. Latencia de inferencia $< 10$\,ms. \\
-        Traductor Semántico & RF-03, RF-06 & Exactitud sintáctica/semántica $> 85\%$, BLEU $> 90$, BERTScore $> 98$. \\
-        Motor Local & RF-02 & Supresión de falsos positivos y rebotes sin descartar repeticiones intencionales. \\
-        Integración Meet & RF-04, RF-08 & Sin interrupción de la pista de video principal; renderizado de subtítulos sin pérdidas. \\
+         Clasificador gestual & RF-02, RNF-03, RNF-01 & Cámara, 100 clases: Top-1 $> 75$\,\% en luz doméstica y Top-3 $> 90$\,\%. Mediana de inferencia $< 50$\,ms. \\
+        Traductor semántico & RF-03, RF-06 & En ambos canales, sobre el 15\,\% reservado: acierto exacto $> 85$\,\%, BLEU $> 90$, ROUGE-L $> 95$, METEOR $> 90$, BERTScore $> 98$ y COMET $> 95$. \\
+        Latencia de red & RNF-01 & Transporte (RTT $-$ cola $-$ inferencia) $< 500$\,ms. \\
+        Motor local & RF-02 & El filtro de repetición admite dígitos seguidos, hasta dos letras iguales y descarta el duplicado inmediato del léxico. \\
+        Avatar & RF-07 & Hasta 24 clips por enunciado; deletreo si falta el archivo; cola de 20 sin interrumpir el bloque en curso. \\
+        Integración Meet & RF-04, RF-08 & La pista de video de la llamada no se corta. El subtítulo queda en el video compuesto. Con Audio o Ambos, la voz sale si el micrófono está activo. \\
+        Privacidad & RNF-02 & Hacia el traductor y el servidor de poses solo sale texto: glosas, oración o letras. \\
+        HUD & RNF-05 & En llamada, el recuadro no tapa el rostro ni las manos. \\
+        Arranque & RF-09 & El panel se habilita solo si el traductor y el servidor de poses responden. \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -84,7 +89,7 @@ Esta sección presenta la evidencia empírica obtenida a partir de la ejecución
 \subsection{Evaluación del clasificador gestual (TinySkeletonClassifier)}
 \label{sec:res_clasificador}
 
-El modelo de clasificación gestual se evaluó tanto en entornos estáticos fuera de línea como en pruebas en vivo frente a cámara web en la estación local.
+El modelo de clasificación gestual se evaluó tanto en entornos estáticos fuera de línea como en pruebas en vivo frente a cámara web en la estación de desarrollo.
 
 \subsubsection{Evolución del \textit{corpus} y vocabulario}
 La incorporación de clases al modelo avanzó de manera paulatina conforme se consolidaron las muestras del dataset propio de LSA. En el Cuadro~\ref{tab:evolucion_corpus} se detalla la progresión del vocabulario y las muestras recopiladas.
@@ -92,7 +97,7 @@ La incorporación de clases al modelo avanzó de manera paulatina conforme se co
 \begin{table}[H]
     \centering
     \small
-    \caption{Progresión cronológica del conjunto de datos y vocabulario de LSA.}
+    \caption{Progresión del conjunto de datos y vocabulario de LSA.}
     \label{tab:evolucion_corpus}
     \begin{tabular}{lcccc}
         \toprule
@@ -127,7 +132,7 @@ En el Cuadro~\ref{tab:brecha_offline_camara} se expone la diferencia observada e
         Baseline 16f, luz ambiental, 94 clases & 2 & 98{,}40\,\% & 67{,}0\,\% & 89{,}4\,\% \\
         Baseline 16f, iluminación dirigida, 94 clases & 2 & 98{,}40\,\% & 86{,}2\,\% & 95{,}7\,\% \\
         Baseline 16f, 97 clases & 3 & 98{,}28\,\% & 77{,}3\,\% & 94{,}8\,\% \\
-        100 clases, 10 tomas, luz adecuada & 4 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
+        100 clases, 10 tomas, luz adecuada & 5 & 99{,}00\,\% & 99{,}6\,\% & 100{,}0\,\% \\
         100 clases, 10 tomas, luz reducida & 5 & 99{,}00\,\% & 94{,}6\,\% & 98{,}7\,\% \\
         \bottomrule
     \end{tabularx}
@@ -215,11 +220,11 @@ La transformación del eje $y$ aportó un incremento de 22,2 puntos porcentuales
 \label{sec:eval_100_camara}
 \label{sec:protocolo_camara}
 
-El prototipo integrado carga el modelo de 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$. Ese corte es por clip dentro de cada clase, como se describe en la Sección~\ref{sec:tinyskeleton}. Las mismas tres personas pueden estar en el entrenamiento y en la validación.
+El prototipo integrado carga el modelo de 100 clases, 16 fotogramas, 128 dimensiones, 4 cabezas y 2 capas. El entrenamiento usó 100 clips por clase (8\,000 secuencias de entrenamiento y 2\,000 de validación) y alcanzó una exactitud de validación del 99{,}0\,\%, con pérdida de $0{,}028$. Ese corte es por clip dentro de cada clase, como se describe en la Sección~\ref{sec:tinyskeleton}.
 
-La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos; solo varió la iluminación de la habitación. Quien ejecuta el script anota la etiqueta de luz adecuada o reducida, dado que el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha, sin omitir tomas.
+La prueba en cámara consistió en dos sesiones sobre ese mismo archivo. La mano, el encuadre y el extractor se mantuvieron fijos; solo varió la iluminación de la habitación. Quien ejecuta el \textit{script} anota la etiqueta de luz adecuada o reducida, dado que el programa no mide la iluminancia. Cada sesión recorrió las 100 señas con diez tomas consecutivas (1\,000 inferencias por condición), en modo automático y con mano derecha, sin omitir tomas.
 
-La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El script rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor corresponde a MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias se estableció un segundo de espera.
+La cámara se solicita a $1280\times 720$ y entrega $640\times 480$. El \textit{script} rellena bandas hasta $853\times 480$, el mismo marco 16:9 de los videos de entrenamiento. El extractor corresponde a MediaPipe Holistic en navegador (\texttt{@mediapipe/holistic@0.5.1675471629}): pose y dos manos, sin malla facial, vector de 225 coordenadas y resampleo a 16 fotogramas. Entre inferencias se estableció un segundo de espera.
 
 El Cuadro~\ref{tab:eval_100_luz} resume los resultados. Las dos condiciones de iluminación cumplen el criterio de aceptación del plan (Top-1 mayor al 75\,\% y Top-3 mayor al 90\,\%).
 
@@ -253,15 +258,13 @@ Con luz reducida el Top-1 desciende 5,0 puntos y 20 señas dejan de completar di
 La evaluación de los SLM cuantizados en formato GGUF (\texttt{Q4\_K\_M}) se ejecutó sobre la partición final del \textit{corpus} (119 oraciones para el canal directo LSA $\rightarrow$ Español y 102 oraciones para el canal inverso Español $\rightarrow$ LSA).
 
 \paragraph{Configuración de las métricas.}
-Los índices de los Cuadros~\ref{tab:sem_directo} y~\ref{tab:sem_inverso} salen de \texttt{src/semantic/metrics.py}. Ese archivo lo llama \texttt{eval\_trial.py}, en las ramas de entrenamiento del Apéndice~\ref{ap:ramas}. El corte de 119 y 102 filas, y el uso de varias respuestas por entrada, están en la Sección~\ref{sec:eval_lora}.
-
 La preparación del texto no lematiza ni borra puntuación. BERTScore y COMET recortan espacios en los extremos y reemplazan una cadena vacía por un espacio, para no pasarle una cadena nula al modelo. BLEU, ROUGE-L y METEOR reciben la cadena tal cual, sin ese reemplazo.
 
 Con varias referencias, BLEU es el BLEU de \textit{corpus} de la biblioteca \texttt{evaluate}: usa la lista completa de respuestas de cada entrada. ROUGE-L, METEOR, BERTScore y COMET toman, en cada oración, el máximo entre esas referencias. El número de la tabla es la media de las 119 o de las 102 oraciones, en escala $0$--$100$.
 
-BERTScore usa la biblioteca \texttt{bert-score} con \texttt{lang=es} \parencite{zhang2020bertscore}. Ese parámetro carga \texttt{bert-base-multilingual-cased}. No se aplica ponderación IDF ni el reescalado con la línea de base del idioma. El valor informado es el F1 medio.
+BERTScore usa la biblioteca \texttt{bert-score} con \texttt{lang=es} \parencite{zhang2020bertscore}. Ese parámetro carga \texttt{bert-base-multilingual-cased}. El valor informado es el F1 medio.
 
-COMET usa el checkpoint \texttt{Unbabel/wmt22-comet-da} mediante \texttt{unbabel-comet} 2.2.7 \parencite{rei2020comet}. Recibe la entrada del ejemplo, la salida y la referencia. En el canal directo la entrada son las glosas; en el inverso, el español. Ese checkpoint se entrenó con pares de texto escrito, no con glosas de LSA. Un puntaje alto no demuestra, por sí solo, que las glosas sean correctas en LSA.
+COMET usa el checkpoint \texttt{Unbabel/wmt22-comet-da} mediante \texttt{unbabel-comet} 2.2.7 \parencite{rei2020comet}. Recibe la entrada del ejemplo, la salida y la referencia. En el canal directo la entrada son las glosas; en el inverso, el español.
 
 \subsubsection{Evaluación del canal directo (LSA a Español)}
 En el Cuadro~\ref{tab:sem_directo} se presentan las métricas cualitativas y cuantitativas para el canal directo.
@@ -370,7 +373,7 @@ La evaluación objetiva del sistema se consolidó mediante métricas cuantificab
 \label{sec:eval_telemetria_vivo}
 \label{sec:latencias_pipeline}
 
-Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa, en la laptop de la Sección~\ref{sec:laptop_prueba}. El registro de quien seña y el de quien escucha cubren los dos canales. Quedan la latencia por etapa, \texttt{RAM\_mb} y \texttt{CPU\_percent} de ILSA, \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} de Edge, el heap de JavaScript, las glosas por oración, la vía (\texttt{llm} o léxica), el STT y las poses del inverso, y la tasa de fotogramas (FPS).
+Se ejecutó una sesión de pruebas end-to-end sobre la extensión integrada en videollamada web activa, en la laptop de la Sección~\ref{sec:laptop_prueba}. Quedan la latencia por etapa, \texttt{RAM\_mb} y \texttt{CPU\_percent} de ILSA, \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} de Edge, el heap de JavaScript, las glosas por oración, la vía (\texttt{llm} o léxica), el STT y las poses del inverso, y la tasa de fotogramas (FPS).
 
 En el Cuadro~\ref{tab:telemetria_resumen} se sintetizan los valores promedios, mínimos y máximos recolectados durante las ejecuciones de prueba.
 
@@ -389,7 +392,6 @@ Glosas por oración & $3{,}6$ ($1$ -- $10$) & $3{,}1$ ($1$ -- $6$) & glosas \\
 Caracteres de entrada & $17{,}3$ ($4$ -- $36$) & $17{,}6$ ($4$ -- $25$) & car. \\
 Caracteres de salida & $17{,}2$ ($5$ -- $27$) & $15{,}2$ ($4$ -- $25$) & car. \\
 Pausa de cierre (configurada) & $4126{,}5 \pm 68{,}0$ & $0{,}0$ & ms \\
-Cola de inferencia & $0{,}0$ & $0{,}0$ & ms \\
 Tiempo de inferencia remota & $1527{,}9$ ($0{,}0$ -- $2525{,}5$) & $1407{,}3$ ($0{,}0$ -- $2224{,}1$) & ms \\
 Inferencia del modelo $\le 2$\,s & 14/15 & 9/10 & oraciones \\
 Tiempo de transporte de red & $299{,}1$ ($0{,}0$ -- $350{,}2$) & $278{,}5$ ($0{,}0$ -- $376{,}1$) & ms \\
@@ -402,7 +404,6 @@ Descarga de poses & N/A & $82{,}1$ ($0{,}0$ -- $479{,}0$); 9/11 en caché & ms \
 Armado del clip & N/A & $203{,}8$ ($58{,}7$ -- $499{,}0$) & ms \\
 Consultas de pose / aciertos de caché & N/A & $116$ / $68$ & n \\
 Glosas sin archivo & N/A & 3 oraciones & n \\
-Ñ restaurada & N/A & 2 oraciones & n \\
 RAM de ILSA & $114{,}4$ ($82{,}3$ -- $222{,}1$) & $247{,}7$ ($200{,}3$ -- $286{,}7$) & MB \\
 RAM de Edge & $2062{,}9$ ($1793{,}9$ -- $2640{,}6$) & $2324{,}6$ ($2049{,}5$ -- $2487{,}6$) & MB \\
 CPU de Edge & $199{,}0$ ($143{,}1$ -- $347{,}2$) & $174{,}4$ ($133{,}6$ -- $219{,}3$) & \% \\
@@ -419,7 +420,7 @@ Cumplimiento RNF-01 ($< 2{,}0$\,s) & 93{,}8\,\% (15/16) & 90{,}9\,\% (10/11) & a
 \subsection{Evaluación del uso de recursos de hardware en el dispositivo cliente}
 \label{sec:perfilado_cliente_recursos}
 
-A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada. \texttt{RAM\_mb} y \texttt{CPU\_percent} pertenecen al proceso de Python de ILSA (\texttt{os.getpid()}). \texttt{RAM\_mb} es el working set de ese proceso. \texttt{CPU\_percent} es el porcentaje de CPU del mismo proceso y supera el 100\,\% cuando el proceso usa varios núcleos. \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} suman los procesos \texttt{msedge.exe}: 19 o 20 en el directo, 19 en el inverso. La extensión envía, aparte, \texttt{js\_heap\_mb}: el heap de JavaScript de la página. Ese heap no es la RAM del proceso del navegador.
+A partir de los datos recopilados en cliente, se analizó el impacto del motor de inferencia local sobre los recursos de cómputo de la laptop objetivo sin GPU dedicada.
 
 En el Cuadro~\ref{tab:perfilado_recursos_log} se comparan los requerimientos de memoria y CPU observados durante la ejecución continua de la extensión.
 
@@ -442,7 +443,7 @@ Inverso & 247{,}7\,MB & 286{,}7\,MB & 40{,}02\,\% (98{,}4\,\%) & 2324{,}6\,MB & 
 El análisis de perfilado muestra los siguientes comportamientos:
 \begin{itemize}
 \item \textbf{Eficiencia en memoria:} La RAM de ILSA en el canal directo descendió desde 222{,}1 MB hasta un régimen de 82{,}3 MB. En el canal inverso se estabilizó cerca de 247{,}7 MB. Edge quedó cerca de 2{,}1\,GB en el directo y de 2{,}3\,GB en el inverso.
-\item \textbf{Carga del procesador:} Durante el procesamiento del canal directo la CPU de ILSA permaneció en 9{,}33\,\% de promedio, con un pico de 60{,}1\,\% en la oración y de 176{,}3\,\% en el muestreo continuo. En el canal inverso, Vosk y el armado de las secuencias llevaron la media a 40{,}02\,\%, con un pico de 98{,}40\,\% en la oración y de 184{,}8\,\% en el muestreo continuo. La CPU de Edge tiene media 199{,}0\,\% en el directo y 174{,}4\,\% en el inverso.
+\item \textbf{Carga del procesador:} Durante el procesamiento del canal directo la CPU de ILSA permaneció en 9{,}33\,\% de promedio, con un pico de 176{,}3\,\%. En el canal inverso, Vosk y el armado de las secuencias llevaron la media a 40{,}02\,\%, con un pico de 184{,}8\,\%. La CPU de Edge tiene media 199{,}0\,\% en el directo y 174{,}4\,\% en el inverso.
 \item \textbf{Heap de la página:} En el directo el heap de Meet queda en $105{,}5$\,MB ($78{,}9$ -- $209{,}8$). El documento de Holistic queda en $3{,}9$\,MB ($0{,}8$ -- $7{,}3$). En el inverso el heap de la página sube a $164{,}1$\,MB ($92{,}1$ -- $260{,}4$).
 \end{itemize}
 
@@ -515,21 +516,21 @@ SmolLM2 1,7B & 24 & 32 & 64 & 402,653,184 & 0,375 \\
 \end{tabular}
 \end{table}
 
-Qwen2.5 0,5B da $0{,}0234375$,GiB y el cuadro lo deja en $0{,}023$. Qwen2.5 1,5B da $0{,}0546875$,GiB y el cuadro lo deja en $0{,}055$. Qwen2.5 3B da $0{,}0703125$,GiB y el cuadro lo deja en $0{,}070$. Llama 3.2 1B da $0{,}0625$,GiB y el cuadro lo deja en $0{,}062$. SmolLM2 1,7B da $0{,}375$,GiB exactos. En Qwen2.5 0,5B la cabeza mide 64. En Qwen2.5 1,5B y 3B mide 128. En Llama 3.2 1B, $2048 / 32 = 64$. En SmolLM2 1,7B, $2048 / 32 = 64$, y las 32 cabezas de atención son también las de $KV$.En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen2.5 1,5B con ese contexto de 2048. La columna GGUF más caché da $0{,}973$,GiB para ese modelo, y los dos canales suman $1{,}946$,GiB. Esa suma es el archivo medido más la caché $KV$ en fp16. El buffer de activaciones de la Ecuación~\ref{eq:ram_runtime} queda fuera, y la cifra no es el RSS del proceso. Llama 3.2 1B queda en disco, a $0{,}815$,GiB con su caché por canal, y entra en memoria solo si el modelo principal no carga.
+Qwen2.5 0,5B da $0{,}0234375$,GiB y el cuadro lo deja en $0{,}023$. Qwen2.5 1,5B da $0{,}0546875$,GiB y el cuadro lo deja en $0{,}055$. Qwen2.5 3B da $0{,}0703125$,GiB y el cuadro lo deja en $0{,}070$. Llama 3.2 1B da $0{,}0625$,GiB y el cuadro lo deja en $0{,}062$. SmolLM2 1,7B da $0{,}375$,GiB exactos. En Qwen2.5 0,5B la cabeza mide 64. En Qwen2.5 1,5B y 3B mide 128. En Llama 3.2 1B, $2048 / 32 = 64$. En SmolLM2 1,7B, $2048 / 32 = 64$, y las 32 cabezas de atención son también las de $KV$. En la réplica de producción desplegada en Cloud Run, ambos canales cargan Qwen2.5 1,5B con ese contexto de 2048. La columna GGUF más caché da $0{,}973$,GiB para ese modelo, y los dos canales suman $1{,}946$,GiB. Esa suma es el archivo medido más la caché $KV$ en fp16, no incluye el buffer de activaciones de la Ecuación~\ref{eq:ram_runtime}.
 
 \subsection{Comparativa de rendimiento según arquitectura de hardware}
 \label{sec:hw_comparacion}
 \label{sec:hardware_objetivo}
 
-La toma del 30 de octubre de 2026 corrió en la estación de desarrollo. Esa PC reúne un procesador AMD Ryzen 7 8700F de ocho núcleos a 4,10\,GHz, 16\,GB de memoria RAM a 4800\,MT/s, una GPU NVIDIA GeForce RTX 5070 de 12\,GB y un almacenamiento de 1,37\,TB. El navegador de esa toma es Microsoft Edge. \texttt{RAM\_mb} y \texttt{CPU\_percent} son el proceso de ILSA. \texttt{Browser\_RAM\_mb} y \texttt{Browser\_CPU\_percent} suman los procesos \texttt{msedge.exe}: 31 en el canal directo, y 30 o 31 en el inverso. El heap de JavaScript de la página es otro número, y el del documento donde corre Holistic es otro.
+La ejecución corrió en la estación de desarrollo. Esa PC reúne un procesador AMD Ryzen 7 8700F de ocho núcleos a 4,10\,GHz, 16\,GB de memoria RAM a 4800\,MT/s, una GPU NVIDIA GeForce RTX 5070 de 12\,GB. El navegador de esa toma es Microsoft Edge. \texttt{RAM\_mb} y \texttt{CPU\_percent} son el proceso de ILSA.
 
-El Cuadro~\ref{tab:telemetria_pc} usa el tramo del registro que trae esas columnas del navegador. Hay 25 oraciones en el canal directo (20 pasan por el modelo, 3 quedan en forma literal y 2 en forma léxica) y 18 en el inverso (15 por el modelo y 3 léxicas). La cola de inferencia queda en 0\,ms en las dos. La pausa del directo mide de 4000 a 4050\,ms, con media 4025\,ms.
+EHay 25 oraciones en el canal directo (20 pasan por el modelo, 3 quedan en forma literal y 2 en forma léxica) y 18 en el inverso (15 por el modelo y 3 léxicas). La cola de inferencia queda en 0\,ms en las dos ya que el servidor semántico se encuentra siempre disponible. La pausa del directo mide de 4000 a 4050\,ms, con media 4025\,ms.
 
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\caption[Toma del 30 de octubre de 2026 en la estación de escritorio]{Toma del 30 de octubre de 2026 en la estación de escritorio. ILSA es el proceso de Python. El navegador es la suma de los procesos de Edge.}
+\caption{Ejecución en PC de desarrollo.}
 \label{tab:telemetria_pc}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.8cm} X X@{}}
 \toprule

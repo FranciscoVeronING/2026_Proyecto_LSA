@@ -27,18 +27,20 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Forma de los tensores en \textit  {TinySkeletonClassifier}.}}{42}{figure.6.1}\protected@file@percent }
 \newlabel{fig:tinyskeleton_arquitectura}{{6.1}{42}{Forma de los tensores en \textit {TinySkeletonClassifier}}{figure.6.1}{}}
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces Pérdida de entrenamiento y de validación. El eje horizontal es la época.}}{43}{figure.6.2}\protected@file@percent }
-\newlabel{fig:curva_tinyskeleton}{{6.2}{43}{Pérdida de entrenamiento y de validación. El eje horizontal es la época}{figure.6.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.3}Implementación del subsistema de traducción semántico bidireccional}{43}{section.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}Selección y especificación de la suite de modelos de lenguaje}{43}{subsection.6.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Resumen de las técnicas de aumentación de datos aplicadas exclusivamente al conjunto de entrenamiento (multiplicador virtual 25x).}}{43}{table.6.1}\protected@file@percent }
+\newlabel{tab:data_augmentation}{{6.1}{43}{Resumen de las técnicas de aumentación de datos aplicadas exclusivamente al conjunto de entrenamiento (multiplicador virtual 25x)}{table.6.1}{}}
 \def\@LN@column{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.3}{\ignorespaces Matriz de confusión de los 2\,000 clips de validación. Cada clase tiene 20 clips.}}{44}{figure.6.3}\protected@file@percent }
-\newlabel{fig:matriz_tinyskeleton}{{6.3}{44}{Matriz de confusión de los 2\,000 clips de validación. Cada clase tiene 20 clips}{figure.6.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Régimen de entrenamiento y ajuste LoRA}{44}{subsection.6.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces Pérdida de entrenamiento y de validación.}}{44}{figure.6.2}\protected@file@percent }
+\newlabel{fig:curva_tinyskeleton}{{6.2}{44}{Pérdida de entrenamiento y de validación}{figure.6.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.3}{\ignorespaces Matriz de confusión.}}{44}{figure.6.3}\protected@file@percent }
+\newlabel{fig:matriz_tinyskeleton}{{6.3}{44}{Matriz de confusión}{figure.6.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.3}Implementación del subsistema de traducción semántico bidireccional}{44}{section.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}Selección y especificación de la suite de modelos de lenguaje}{44}{subsection.6.3.1}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{Procedimiento de evaluación y post-entrenamiento}{45}{section*.10}\protected@file@percent }
-\newlabel{sec:eval_lora}{{6.3.2}{45}{Procedimiento de evaluación y post-entrenamiento}{section*.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Régimen de entrenamiento y ajuste LoRA}{45}{subsection.6.3.2}\protected@file@percent }
 \def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{Procedimiento de evaluación y post-entrenamiento}{46}{section*.10}\protected@file@percent }
+\newlabel{sec:eval_lora}{{6.3.2}{46}{Procedimiento de evaluación y post-entrenamiento}{section*.10}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3.3}Canal directo (LSA $\rightarrow $ Español)}{46}{subsection.6.3.3}\protected@file@percent }
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3.4}Canal inverso (Español $\rightarrow $ LSA)}{47}{subsection.6.3.4}\protected@file@percent }
@@ -57,8 +59,8 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.5.2}Decisiones técnicas de la reproducción}{52}{subsection.6.5.2}\protected@file@percent }
 \newlabel{sec:impl_esqueleto}{{6.5.2}{52}{Decisiones técnicas de la reproducción}{subsection.6.5.2}{}}
 \@writefile{toc}{\contentsline {paragraph}{Valores del compositor.}{52}{section*.11}\protected@file@percent }
+\newlabel{eq:ema_pose}{{6.7}{52}{Valores del compositor}{equation.6.7}{}}
 \def\@LN@column{1}
-\newlabel{eq:ema_pose}{{6.7}{53}{Valores del compositor}{equation.6.7}{}}
 \@writefile{toc}{\contentsline {paragraph}{Postura de espera.}{53}{section*.12}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Reflejo de la miniatura local.}{53}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6.6}Instancia de validación del prototipo mediante microservicios en la nube}{53}{section.6.6}\protected@file@percent }
@@ -66,50 +68,56 @@
 \def\@LN@column{1}
 \@writefile{toc}{\contentsline {section}{\numberline {6.7}Contratos HTTP de las APIs}{54}{section.6.7}\protected@file@percent }
 \newlabel{sec:contratos_http}{{6.7}{54}{Contratos HTTP de las APIs}{section.6.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.1}Motor local ILSA}{54}{subsection.6.7.1}\protected@file@percent }
+\newlabel{sec:contrato-api-local}{{6.7.1}{54}{Motor local ILSA}{subsection.6.7.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Instantánea compartida}{54}{section*.14}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.1}Motor local ILSA}{55}{subsection.6.7.1}\protected@file@percent }
-\newlabel{sec:contrato-api-local}{{6.7.1}{55}{Motor local ILSA}{subsection.6.7.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{Instantánea compartida}{55}{section*.14}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Campos de la instantánea del modo sordo (\texttt  {GET /state}).}}{55}{table.6.1}\protected@file@percent }
-\newlabel{tab:api-local-snapshot}{{6.1}{55}{Campos de la instantánea del modo sordo (\texttt {GET /state})}{table.6.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces Campos de la instantánea del modo sordo (\texttt  {GET /state}).}}{55}{table.6.2}\protected@file@percent }
+\newlabel{tab:api-local-snapshot}{{6.2}{55}{Campos de la instantánea del modo sordo (\texttt {GET /state})}{table.6.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /state}}{55}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{55}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /config}}{55}{section*.17}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{56}{section*.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /config}}{56}{section*.17}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces Campos de \texttt  {GET /config} en modo sordo.}}{56}{table.6.3}\protected@file@percent }
+\newlabel{tab:api-local-config}{{6.3}{56}{Campos de \texttt {GET /config} en modo sordo}{table.6.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /metrics}}{56}{section*.18}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces Campos de \texttt  {GET /config} en modo sordo.}}{57}{table.6.2}\protected@file@percent }
-\newlabel{tab:api-local-config}{{6.2}{57}{Campos de \texttt {GET /config} en modo sordo}{table.6.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /session}}{57}{section*.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign}}{57}{section*.20}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /stt}}{58}{section*.21}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Campos de \texttt  {GET /metrics}. Resumen de la sesión en memoria (hasta 400 eventos) y ruta del JSONL del día.}}{58}{table.6.4}\protected@file@percent }
+\newlabel{tab:api-local-metrics}{{6.4}{58}{Campos de \texttt {GET /metrics}. Resumen de la sesión en memoria (hasta 400 eventos) y ruta del JSONL del día}{table.6.4}{}}
 \def\@LN@column{1}
-\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces Errores y rechazos de \texttt  {POST /sign}.}}{59}{table.6.3}\protected@file@percent }
-\newlabel{tab:api-local-sign-err}{{6.3}{59}{Errores y rechazos de \texttt {POST /sign}}{table.6.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /hearing}}{59}{section*.22}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.5}{\ignorespaces Claves de \texttt  {ms} en \texttt  {GET /metrics}. Los percentiles se calculan sobre los eventos de la sesión en memoria.}}{59}{table.6.5}\protected@file@percent }
+\newlabel{tab:api-local-metrics-ms}{{6.5}{59}{Claves de \texttt {ms} en \texttt {GET /metrics}. Los percentiles se calculan sobre los eventos de la sesión en memoria}{table.6.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /session}}{59}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign}}{59}{section*.20}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /activity} y \texttt  {POST /utterance/end}}{60}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /tts} y \texttt  {POST /metrics/client}}{60}{section*.24}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.6}{\ignorespaces Errores y rechazos de \texttt  {POST /sign}.}}{60}{table.6.6}\protected@file@percent }
+\newlabel{tab:api-local-sign-err}{{6.6}{60}{Errores y rechazos de \texttt {POST /sign}}{table.6.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /stt}}{60}{section*.21}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /mediapipe/\{name\}} y \texttt  {GET /download/exe}}{61}{section*.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.2}Servicio semántico remoto}{61}{subsection.6.7.2}\protected@file@percent }
-\newlabel{sec:contrato-api-semantico}{{6.7.2}{61}{Servicio semántico remoto}{subsection.6.7.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{61}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign} y \texttt  {POST /hearing}}{61}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /hearing}}{61}{section*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /activity} y \texttt  {POST /utterance/end}}{61}{section*.23}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Errores del servicio semántico remoto.}}{62}{table.6.4}\protected@file@percent }
-\newlabel{tab:api-sem-err}{{6.4}{62}{Errores del servicio semántico remoto}{table.6.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.3}Servicio de poses del avatar}{62}{subsection.6.7.3}\protected@file@percent }
-\newlabel{sec:contrato-api-avatar}{{6.7.3}{62}{Servicio de poses del avatar}{subsection.6.7.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{62}{section*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /tposes/\{glosa\}.pose}}{62}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /tts} y \texttt  {POST /metrics/client}}{62}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /mediapipe/\{name\}} y \texttt  {GET /download/exe}}{62}{section*.25}\protected@file@percent }
 \def\@LN@column{1}
-\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /fingerspell}}{63}{section*.30}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6.5}{\ignorespaces Errores de \texttt  {GET /fingerspell}.}}{63}{table.6.5}\protected@file@percent }
-\newlabel{tab:api-avatar-err}{{6.5}{63}{Errores de \texttt {GET /fingerspell}}{table.6.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.2}Servicio semántico remoto}{63}{subsection.6.7.2}\protected@file@percent }
+\newlabel{sec:contrato-api-semantico}{{6.7.2}{63}{Servicio semántico remoto}{subsection.6.7.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{63}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {POST /sign} y \texttt  {POST /hearing}}{63}{section*.27}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {6.7}{\ignorespaces Errores del servicio semántico remoto.}}{64}{table.6.7}\protected@file@percent }
+\newlabel{tab:api-sem-err}{{6.7}{64}{Errores del servicio semántico remoto}{table.6.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7.3}Servicio de poses del avatar}{64}{subsection.6.7.3}\protected@file@percent }
+\newlabel{sec:contrato-api-avatar}{{6.7.3}{64}{Servicio de poses del avatar}{subsection.6.7.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /health}}{64}{section*.28}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /tposes/\{glosa\}.pose}}{65}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\texttt  {GET /fingerspell}}{65}{section*.30}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.8}{\ignorespaces Errores de \texttt  {GET /fingerspell}.}}{65}{table.6.8}\protected@file@percent }
+\newlabel{tab:api-avatar-err}{{6.8}{65}{Errores de \texttt {GET /fingerspell}}{table.6.8}{}}
 \@setckpt{capitulos/cap06_implementacion}{
-\setcounter{page}{64}
+\setcounter{page}{66}
 \setcounter{equation}{7}
 \setcounter{enumi}{3}
 \setcounter{enumii}{0}
@@ -125,7 +133,7 @@
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
 \setcounter{figure}{3}
-\setcounter{table}{5}
+\setcounter{table}{8}
 \setcounter{parentequation}{0}
 \setcounter{section@level}{3}
 \setcounter{Item}{35}
@@ -134,7 +142,7 @@
 \setcounter{float@type}{8}
 \setcounter{FancyVerbLine}{0}
 \setcounter{linenumber}{1}
-\setcounter{LN@truepage}{70}
+\setcounter{LN@truepage}{72}
 \setcounter{FancyVerbWriteLine}{0}
 \setcounter{FancyVerbBufferLine}{0}
 \setcounter{FV@TrueTabGroupLevel}{0}

@@ -220,7 +220,7 @@ Para detallar la secuencia de intercambio de mensajes, las Figuras~\ref{fig:diag
 \label{fig:diagrama_secuencia_directo}
 \end{figure}
 
-En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también. Con Audio o Ambos, la extensión pide el WAV a ILSA por \texttt{POST /tts}. El script de la página mezcla ese WAV con el micrófono y sustituye la pista de audio que Meet envía. Esa mezcla es la que oye el resto de la llamada.
+En ese diagrama, ILSA arma el texto en el equipo en tres casos: una sola glosa léxica, un enunciado de solo dígitos, o solo letras de dos en adelante y ninguna es I ni T. Una letra sola, un deletreo que incluye I o T, y las señas OJO, VIERNES o AÑOS cuando están solas van al traductor, igual que una frase mixta. Antes de ese envío, las letras seguidas se juntan y los dígitos seguidos también. Con Audio o Ambos, la extensión pide el WAV a ILSA por \texttt{POST /tts}. El \textit{script} de la página mezcla ese WAV con el micrófono y sustituye la pista de audio que Meet envía. Esa mezcla es la que oye el resto de la llamada.
 
 \begin{figure}[H]
     \centering
@@ -432,6 +432,7 @@ El Cuadro~\ref{tab:api-ilsa-local} resume las rutas expuestas por el motor local
     GET & \texttt{/config} & Umbrales de captura del modo en curso. & 200, 503 \\ \hline
     GET & \texttt{/state} & Búfer de glosas, último texto y estado del traductor. & 200, 503 \\ \hline
     GET & \texttt{/metrics} & Conteos y tiempos de la sesión en curso. & 200 \\ \hline
+    POST & \texttt{/metrics/\allowbreak client} & Telemetría del cliente: FPS, heap de Chrome y \texttt{delivery\_ms} de presentación en Meet. & 200 \\ \hline
     POST & \texttt{/session} & Apertura de sesión. El cuerpo fija la lateralidad mediante \texttt{left\_handed}. & 200, 503 \\ \hline
     POST & \texttt{/sign} & Ingesta de hasta 60 fotogramas para clasificación en modo señante. & 200, 400, 503 \\ \hline
     POST & \texttt{/stt} & Transcripción de audio WAV en Base64 a texto en modo oyente. & 200, 400, 502 \\ \hline
@@ -494,7 +495,7 @@ El canal inverso procesa la lista de glosas devuelta por el traductor e infiere 
 \subsection{Procesamiento geométrico de coordenadas y segmentación temporal}
 Los clips cinemáticos registran la secuencia de puntos clave extraídos mediante la ejecución previa e independiente de \textit{MediaPipe Holistic} sobre el video de un informante calificado. Las coordenadas planares $(x, y)$ se representan en el espacio discreto de píxeles de la cámara de captura ($x \in [0, W]$, $y \in [0, H]$) y preservan las proporciones nativas. La componente de profundidad $z$, en \textit{Hand left/right}, posee carácter relativo con origen en la muñeca y actúa como métrica para resolver oclusiones mutuas. Igual idea para \textit{BlazePose}, pero la componente $z$ posee caracter relativo al punto medio de las caderas. Por consiguiente, la proyección gráfica reproyecta $x$ e $y$ directamente sobre el plano bidimensional.
 
-El archivo binario \texttt{.pose} almacena un encabezado ---cadencia e inventario de puntos--- y un tensor de $T$ fotogramas. Cada fotograma reúne los 33 puntos de \textit{pose}, la malla facial y las 21 coordenadas de cada mano. El servicio entrega ese binario intacto. ILSA, ya en el cliente, descarta el 25\,\% inicial y el 25\,\% final de cada clip y conserva el tramo central para el dibujo. Una oración no cabe en un solo archivo: el prototipo pide un \texttt{.pose} por glosa y, si ese archivo no existe, un clip por letra.
+El archivo binario \texttt{.pose} almacena un encabezado, que contiene la cadencia e inventario de puntos, y un tensor de $T$ fotogramas. Cada fotograma reúne los 33 puntos de \textit{pose}, la malla facial y las 21 coordenadas de cada mano. El servicio entrega ese binario intacto. ILSA, ya en el cliente, descarta el 25\,\% inicial y el 25\,\% final de cada clip y conserva el tramo central para el dibujo. Una oración no cabe en un solo archivo: el prototipo pide un \texttt{.pose} por glosa y, si ese archivo no existe, un clip por letra.
 
 \begin{figure}[H]
 \centering
@@ -517,19 +518,19 @@ El archivo binario \texttt{.pose} almacena un encabezado ---cadencia e inventari
 \end{tikzpicture}
 
 \vspace{1.1em}
-{\small\bfseries (b) Oración «Me llamo X» $\rightarrow$ \texttt{YO NOMBRE X}}\\[0.45em]
+{\small\bfseries (b) Oración «Me llamo X» $\rightarrow$ \texttt{NOMBRE MIO X}}\\[0.45em]
 \begin{tikzpicture}[
     font=\footnotesize,
     clip/.style={draw, thick, align=center, inner sep=4pt, minimum height=1.15cm, text width=2.15cm},
     puente/.style={align=center, font=\scriptsize, text width=1.35cm}
 ]
-\node[clip] (yo) {\texttt{YO.pose}\\[-0.1em]{\scriptsize tramo central}};
-\node[puente, right=0.12cm of yo] (p1) {puente\\4 u 8 fot.};
-\node[clip, right=0.12cm of p1] (nom) {\texttt{NOMBRE.pose}\\[-0.1em]{\scriptsize tramo central}};
-\node[puente, right=0.12cm of nom] (p2) {puente\\4 u 8 fot.};
+\node[clip] (nom) {\texttt{NOMBRE.pose}\\[-0.1em]{\scriptsize tramo central}};
+\node[puente, right=0.12cm of nom] (p1) {puente\\4 u 8 fot.};
+\node[clip, right=0.12cm of p1] (mio) {\texttt{MIO.pose}\\[-0.1em]{\scriptsize tramo central}};
+\node[puente, right=0.12cm of mio] (p2) {puente\\4 u 8 fot.};
 \node[clip, right=0.12cm of p2] (x) {deletreo de X\\[-0.1em]{\scriptsize un clip por letra}};
 \end{tikzpicture}
-\caption{Estructura de un archivo \texttt{.pose} y empalme de la oración «Me llamo X». El recorte del 25\,\% no altera el archivo en disco.}
+\caption{Estructura de un archivo \texttt{.pose} y empalme de la oración «Me llamo X».}
 \label{fig:pose_estructura}
 \end{figure}
 

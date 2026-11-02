@@ -2424,19 +2424,18 @@
     <bcf:citekey order="61" intorder="1">lin2004rouge</bcf:citekey>
     <bcf:citekey order="62" intorder="1">banerjee2005meteor</bcf:citekey>
     <bcf:citekey order="63" intorder="1">zhang2020bertscore</bcf:citekey>
-    <bcf:citekey order="64" intorder="1">zhang2020bertscore</bcf:citekey>
-    <bcf:citekey order="65" intorder="1">rei2020comet</bcf:citekey>
-    <bcf:citekey order="68" intorder="1">tiangolo2018fastapi</bcf:citekey>
-    <bcf:citekey order="69" intorder="1">chrome2024manifestv3</bcf:citekey>
-    <bcf:citekey order="70" intorder="1">vanrossum2001pep8</bcf:citekey>
-    <bcf:citekey order="71" intorder="1">ecma2015ecmascript</bcf:citekey>
-    <bcf:citekey order="72" intorder="1">kwon2023vllm</bcf:citekey>
-    <bcf:citekey order="73" intorder="1">korthikanti2023reducing</bcf:citekey>
-    <bcf:citekey order="74" intorder="1">ggml2023kquants</bcf:citekey>
-    <bcf:citekey order="75" intorder="1">zhang2020bertscore</bcf:citekey>
-    <bcf:citekey order="76" intorder="1">rei2020comet</bcf:citekey>
-    <bcf:citekey order="77" intorder="1">pope2023efficiently</bcf:citekey>
-    <bcf:citekey order="78" intorder="1">argentina2023ley27710</bcf:citekey>
+    <bcf:citekey order="64" intorder="1">rei2020comet</bcf:citekey>
+    <bcf:citekey order="67" intorder="1">tiangolo2018fastapi</bcf:citekey>
+    <bcf:citekey order="68" intorder="1">chrome2024manifestv3</bcf:citekey>
+    <bcf:citekey order="69" intorder="1">vanrossum2001pep8</bcf:citekey>
+    <bcf:citekey order="70" intorder="1">ecma2015ecmascript</bcf:citekey>
+    <bcf:citekey order="71" intorder="1">kwon2023vllm</bcf:citekey>
+    <bcf:citekey order="72" intorder="1">korthikanti2023reducing</bcf:citekey>
+    <bcf:citekey order="73" intorder="1">ggml2023kquants</bcf:citekey>
+    <bcf:citekey order="74" intorder="1">zhang2020bertscore</bcf:citekey>
+    <bcf:citekey order="75" intorder="1">rei2020comet</bcf:citekey>
+    <bcf:citekey order="76" intorder="1">pope2023efficiently</bcf:citekey>
+    <bcf:citekey order="77" intorder="1">argentina2023ley27710</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

@@ -646,6 +646,56 @@
       \verb https://arxiv.org/abs/2106.09685
       \endverb
     \endentry
+    \entry{he2015delving}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=6b4b60e909e78633945f3f9c9dc83e01}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Kaiming},
+           giveni={K\bibinitperiod}}}%
+        {{hash=5e72bc22dbcf0984c6d113d280e36990}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Xiangyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=bb295293acacd54387339079ebbe4ead}{%
+           family={Ren},
+           familyi={R\bibinitperiod},
+           given={Shaoqing},
+           giveni={S\bibinitperiod}}}%
+        {{hash=f85751488058842b5777c7b4074077b5}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{6edb98fe38401d2fe4a026f5ce6e8451}
+      \strng{fullhash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{fullhashraw}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{bibnamehash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{authorbibnamehash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{authornamehash}{6edb98fe38401d2fe4a026f5ce6e8451}
+      \strng{authorfullhash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{authorfullhashraw}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the {IEEE} International Conference on Computer Vision ({ICCV})}
+      \field{title}{Delving Deep into Rectifiers: Surpassing Human-Level Performance on {ImageNet} Classification}
+      \field{year}{2015}
+      \field{pages}{1026\bibrangedash 1034}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1109/ICCV.2015.123
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/1502.01852
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/1502.01852
+      \endverb
+    \endentry
     \entry{gerganov2023llamacpp}{software}{}{}
       \name{author}{1}{}{%
         {{hash=04310eba93e5dc1c0adb659291d1aeca}{%
@@ -1737,8 +1787,8 @@
       \strng{authornamehash}{9fac416bda48315557387a9ab477e48b}
       \strng{authorfullhash}{9fac416bda48315557387a9ab477e48b}
       \strng{authorfullhashraw}{9fac416bda48315557387a9ab477e48b}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{PEP 8 -- Style Guide for Python Code}}
@@ -2007,7 +2057,6 @@
       \endverb
     \endentry
   \enddatalist
-  \missing{he2015delving}
 \endrefsection
 \endinput
 
